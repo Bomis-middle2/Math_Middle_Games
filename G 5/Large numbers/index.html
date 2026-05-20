@@ -1,1 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Grade 5 Maths - Large Numbers Runner Game</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(#bdefff,#f7fbff);
+  overflow:hidden;
+}
+#game{
+  width:100vw;
+  height:100vh;
+  position:relative;
+}
+#loader,#startScreen,#endScreen{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(#e9f8ff,#ffffff);
+  z-index:20;
+  text-align:center;
+}
+#loader img,#startScreen img{
+  width:180px;
+  margin-bottom:20px;
+}
+button{
+  padding:14px 28px;
+  border:0;
+  border-radius:14px;
+  background:#0b78ff;
+  color:white;
+  font-size:20px;
+  font-weight:bold;
+  cursor:pointer;
+}
+#hud{
+  position:absolute;
+  top:10px;
+  left:10px;
+  right:10px;
+  display:flex;
+  justify-content:space-between;
+  font-size:20px;
+  font-weight:bold;
+  z-index:5;
+}
+#questionBox{
+  position:absolute;
+  top:55px;
+  left:50%;
+  transform:translateX(-50%);
+  background:white;
+  padding:14px 22px;
+  border-radius:16px;
+  border:3px solid #004aad;
+  font-size:23px;
+  font-weight:bold;
+  text-align:center;
+  width:80%;
+  z-index:5;
+}
+#ground{
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:120px;
+  background:#7ac943;
+  border-top:8px solid #4c9a2a;
+}
+#player{
+  position:absolute;
+  bottom:115px;
+  left:120px;
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  background:#ffb703;
+  border:5px solid #333;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+  z-index:4;
+}
+.option{
+  position:absolute;
+  bottom:120px;
+  width:170px;
+  height:85px;
+  border-radius:18px;
+  background:#fff;
+  border:4px solid #222;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-size:21px;
+  font-weight:bold;
+  padding:8px;
+}
+#message{
+  position:absolute;
+  top:145px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:26px;
+  font-weight:bold;
+  color:#d00000;
+  z-index:8;
+  background:white;
+  padding:10px 20px;
+  border-radius:12px;
+  display:none;
+}
+</style>
+</head>
 
+<body>
+<div id="game">
+
+  <div id="loader">
+    <img src="assets/logo.png" alt="Logo">
+    <h2>Loading Game...</h2>
+  </div>
+
+  <div id="startScreen" style="display:none;">
+    <img src="assets/logo.png" alt="Logo">
+    <h1>Large Numbers Runner</h1>
+    <p>Choose the correct answer and avoid the wrong ones!</p>
+    <button onclick="startGame()">Start Game</button>
+  </div>
+
+  <div id="hud">
+    <div>Score: <span id="score">0</span></div>
+    <div>Attempts: <span id="attempts">2</span></div>
+    <div>Time: <span id="timer">60</span>s</div>
+  </div>
+
+  <div id="questionBox"></div>
+  <div id="message"></div>
+  <div id="player">🏃</div>
+  <div id="ground"></div>
+
+  <div id="endScreen" style="display:none;">
+    <img src="assets/logo.png" alt="Logo">
+    <h1>Game Over!</h1>
+    <h2>Your Score: <span id="finalScore"></span></h2>
+    <button onclick="location.reload()">Play Again</button>
+  </div>
+</div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+const questions = [
+  { q:"1 lakh is equal to:", options:["10,000","1,00,000","10,00,000"], ans:"1,00,000" },
+  { q:"1 million is equal to:", options:["1,00,000","10,00,000","1,00,00,000"], ans:"10,00,000" },
+  { q:"Place value of 7 in 47,325 is:", options:["7","700","7,000"], ans:"7,000" },
+  { q:"Face value of 9 in 9,45,210 is:", options:["9","90,000","9,00,000"], ans:"9" },
+  { q:"Expanded form of 5,432 is:", options:["5000+400+30+2","500+400+30+2","5000+40+30+2"], ans:"5000+400+30+2" },
+  { q:"Which is greatest?", options:["8,76,543","8,67,543","8,76,453"], ans:"8,76,543" },
+  { q:"Round 67 to nearest ten:", options:["60","70","80"], ans:"70" },
+  { q:"Roman numeral for 50 is:", options:["X","L","C"], ans:"L" },
+  { q:"Roman numeral for 100 is:", options:["C","D","M"], ans:"C" },
+  { q:"Smallest number:", options:["4,32,105","4,23,105","4,32,015"], ans:"4,23,105" }
+];
+
+let current = 0, score = 0, attempts = 2, timeLeft = 60;
+let gameRunning = false;
+let optionEls = [];
+let speed = 4;
+let timerInterval, moveInterval;
+
+const qBox = document.getElementById("questionBox");
+const scoreBox = document.getElementById("score");
+const attemptsBox = document.getElementById("attempts");
+const timerBox = document.getElementById("timer");
+const msg = document.getElementById("message");
+
+const correctSound = document.getElementById("correctSound");
+const wrongSound = document.getElementById("wrongSound");
+const clapSound = document.getElementById("clapSound");
+
+window.onload = () => {
+  setTimeout(() => {
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("startScreen").style.display = "flex";
+  }, 1200);
+};
+
+function startGame(){
+  document.getElementById("startScreen").style.display = "none";
+  gameRunning = true;
+  loadQuestion();
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    timerBox.textContent = timeLeft;
+    if(timeLeft <= 0) endGame();
+  }, 1000);
+
+  moveInterval = setInterval(moveOptions, 20);
+}
+
+function loadQuestion(){
+  clearOptions();
+  attempts = 2;
+  attemptsBox.textContent = attempts;
+
+  if(current >= questions.length){
+    endGame();
+    return;
+  }
+
+  let item = questions[current];
+  qBox.textContent = item.q;
+
+  let shuffled = [...item.options].sort(() => Math.random() - 0.5);
+  shuffled.forEach((opt, i) => {
+    let div = document.createElement("div");
+    div.className = "option";
+    div.textContent = opt;
+    div.dataset.answer = opt;
+    div.style.left = (window.innerWidth + i * 250) + "px";
+    div.style.bottom = (120 + i * 95) + "px";
+    document.getElementById("game").appendChild(div);
+    optionEls.push(div);
+  });
+}
+
+function moveOptions(){
+  if(!gameRunning) return;
+
+  optionEls.forEach(opt => {
+    let x = parseInt(opt.style.left);
+    opt.style.left = (x - speed) + "px";
+
+    if(checkCollision(document.getElementById("player"), opt)){
+      handleAnswer(opt.dataset.answer);
+    }
+  });
+
+  if(optionEls.length && parseInt(optionEls[optionEls.length - 1].style.left) < -180){
+    attempts--;
+    attemptsBox.textContent = attempts;
+    wrongSound.play();
+    showMsg("Missed! Try again.");
+
+    if(attempts <= 0){
+      showMsg("Correct answer: " + questions[current].ans);
+      setTimeout(nextQuestion, 1300);
+    } else {
+      setTimeout(loadQuestion, 900);
+    }
+  }
+}
+
+function handleAnswer(selected){
+  if(selected === questions[current].ans){
+    score++;
+    scoreBox.textContent = score;
+    correctSound.play();
+    showMsg("Correct!");
+    setTimeout(nextQuestion, 900);
+  } else {
+    attempts--;
+    attemptsBox.textContent = attempts;
+    wrongSound.play();
+
+    if(attempts <= 0){
+      showMsg("Correct answer: " + questions[current].ans);
+      setTimeout(nextQuestion, 1300);
+    } else {
+      showMsg("Wrong! One more try.");
+      setTimeout(loadQuestion, 900);
+    }
+  }
+}
+
+function nextQuestion(){
+  current++;
+  loadQuestion();
+}
+
+function clearOptions(){
+  optionEls.forEach(el => el.remove());
+  optionEls = [];
+}
+
+function checkCollision(a,b){
+  const r1 = a.getBoundingClientRect();
+  const r2 = b.getBoundingClientRect();
+  return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
+}
+
+function showMsg(text){
+  msg.textContent = text;
+  msg.style.display = "block";
+  setTimeout(() => msg.style.display = "none", 900);
+}
+
+function endGame(){
+  gameRunning = false;
+  clearInterval(timerInterval);
+  clearInterval(moveInterval);
+  clearOptions();
+  clapSound.play();
+  document.getElementById("finalScore").textContent = score + " / " + questions.length;
+  document.getElementById("endScreen").style.display = "flex";
+}
+</script>
+</body>
+</html>
