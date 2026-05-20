@@ -3,23 +3,187 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Basic Operations Paddle Game</title>
+<title>Basic Operations Treasure Hunt</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#e8f7ff;text-align:center;overflow:hidden}
-.screen{position:fixed;inset:0;background:linear-gradient(#eaf9ff,#fff);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;padding:20px}
-.logo{width:160px;margin-bottom:18px}
-button{border:0;border-radius:14px;background:#0066ff;color:white;font-size:20px;font-weight:bold;padding:13px 26px;cursor:pointer}
-#hud{display:flex;justify-content:space-around;font-size:20px;font-weight:bold;padding:10px}
-#question{width:92%;margin:5px auto;background:white;border:3px solid #004aad;border-radius:16px;padding:12px;font-size:22px;font-weight:bold}
-#gameArea{position:relative;width:900px;max-width:96vw;height:500px;margin:8px auto;background:#fff6d5;border:5px solid #222;border-radius:16px;overflow:hidden}
-.brick{position:absolute;width:220px;height:70px;background:white;border:4px solid #222;border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:21px;font-weight:bold;padding:6px}
-#paddle{position:absolute;bottom:18px;width:150px;height:22px;background:#0066ff;border-radius:14px}
-#ball{position:absolute;width:28px;height:28px;background:#ffbe0b;border:4px solid #222;border-radius:50%}
-#msg{font-size:26px;font-weight:bold;min-height:35px}
-#controls{display:flex;justify-content:center;gap:18px;margin-top:8px}
-.ctrl{width:120px;height:50px;font-size:22px}
-.instructions{font-size:21px;line-height:1.6;max-width:700px}
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(#8fd3ff,#dff8ff);
+  overflow:hidden;
+  text-align:center;
+}
+
+.screen{
+  position:fixed;
+  inset:0;
+  background:linear-gradient(#eaf9ff,#fff);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:50;
+  padding:20px;
+}
+
+.logo{
+  width:160px;
+  margin-bottom:20px;
+}
+
+button{
+  border:0;
+  border-radius:14px;
+  background:#0066ff;
+  color:white;
+  font-size:20px;
+  font-weight:bold;
+  padding:13px 28px;
+  cursor:pointer;
+}
+
+#hud{
+  display:flex;
+  justify-content:space-around;
+  padding:12px;
+  font-size:20px;
+  font-weight:bold;
+  flex-wrap:wrap;
+}
+
+#questionBox{
+  width:92%;
+  max-width:900px;
+  margin:8px auto;
+  background:white;
+  border:4px solid #004aad;
+  border-radius:18px;
+  padding:16px;
+  font-size:24px;
+  font-weight:bold;
+}
+
+#gameArea{
+  position:relative;
+  width:1000px;
+  max-width:96vw;
+  height:480px;
+  margin:10px auto;
+  border-radius:20px;
+  overflow:hidden;
+  border:5px solid #333;
+  background:
+  linear-gradient(#74c365 0 70%, #d8c28d 70% 100%);
+}
+
+#map{
+  position:absolute;
+  inset:0;
+  background:
+  repeating-linear-gradient(
+    90deg,
+    transparent 0 95px,
+    rgba(255,255,255,0.08) 95px 100px
+  );
+}
+
+.chest{
+  position:absolute;
+  width:180px;
+  height:170px;
+  cursor:pointer;
+  transition:0.25s;
+}
+
+.chest:hover{
+  transform:scale(1.05);
+}
+
+.chestTop{
+  width:180px;
+  height:70px;
+  background:#7b3f00;
+  border:5px solid #3b1d00;
+  border-radius:18px 18px 8px 8px;
+  position:absolute;
+  top:0;
+}
+
+.chestBody{
+  width:180px;
+  height:110px;
+  background:#a85a10;
+  border:5px solid #3b1d00;
+  border-radius:0 0 18px 18px;
+  position:absolute;
+  top:60px;
+}
+
+.lock{
+  width:28px;
+  height:40px;
+  background:gold;
+  border:4px solid #5c4200;
+  position:absolute;
+  left:76px;
+  top:75px;
+  border-radius:6px;
+}
+
+.answerText{
+  position:absolute;
+  width:100%;
+  bottom:-38px;
+  font-size:24px;
+  font-weight:bold;
+  color:#111;
+}
+
+.open .chestTop{
+  transform:rotate(-28deg);
+  transform-origin:left bottom;
+}
+
+.coinBurst{
+  position:absolute;
+  font-size:38px;
+  animation:burst 1s ease-out forwards;
+}
+
+@keyframes burst{
+  0%{transform:translateY(0) scale(0.5);opacity:1}
+  100%{transform:translateY(-120px) scale(1.5);opacity:0}
+}
+
+.shake{
+  animation:shake 0.4s;
+}
+
+@keyframes shake{
+  0%{transform:translateX(0)}
+  20%{transform:translateX(-10px)}
+  40%{transform:translateX(10px)}
+  60%{transform:translateX(-10px)}
+  80%{transform:translateX(10px)}
+  100%{transform:translateX(0)}
+}
+
+#msg{
+  font-size:30px;
+  font-weight:bold;
+  min-height:40px;
+  margin-top:10px;
+}
+
+.instructions{
+  font-size:22px;
+  line-height:1.6;
+  max-width:720px;
+}
 </style>
 </head>
 
@@ -27,26 +191,34 @@ button{border:0;border-radius:14px;background:#0066ff;color:white;font-size:20px
 
 <div id="loader" class="screen">
   <img src="assets/logo.png" class="logo">
-  <h2>Loading Game...</h2>
+  <h2>Loading Treasure Hunt...</h2>
 </div>
 
 <div id="instructions" class="screen" style="display:none">
   <img src="assets/logo.png" class="logo">
-  <h1>Basic Operations Paddle Game</h1>
+
+  <h1>Basic Operations Treasure Hunt</h1>
+
   <div class="instructions">
-    <p>Read the question.</p>
-    <p>Move the paddle to hit the ball.</p>
-    <p>Break the brick with the correct answer.</p>
-    <p>Use arrow keys or touch buttons.</p>
+    <p>Read the maths question carefully.</p>
+    <p>Click the treasure chest with the correct answer.</p>
+    <p>Correct chest opens with treasure coins!</p>
+    <p>Wrong chest shakes.</p>
     <p>You get only <b>2 chances</b>.</p>
   </div>
-  <button onclick="startGame()">Start Game</button>
+
+  <button onclick="startGame()">Start Adventure</button>
 </div>
 
 <div id="end" class="screen" style="display:none">
   <img src="assets/logo.png" class="logo">
+
   <h1 id="endTitle">Game Over!</h1>
-  <h2>Your Score: <span id="finalScore"></span></h2>
+
+  <h2>Your Score:
+    <span id="finalScore"></span>
+  </h2>
+
   <button onclick="location.reload()">Play Again</button>
 </div>
 
@@ -56,19 +228,16 @@ button{border:0;border-radius:14px;background:#0066ff;color:white;font-size:20px
   <div>Question: <span id="qno">1</span>/10</div>
 </div>
 
-<div id="question">Question will appear here.</div>
+<div id="questionBox">
+  Find the correct treasure chest!
+</div>
 
 <div id="gameArea">
-  <div id="paddle"></div>
-  <div id="ball"></div>
+  <div id="map"></div>
+  <div id="chests"></div>
 </div>
 
 <div id="msg"></div>
-
-<div id="controls">
-  <button class="ctrl" onclick="movePaddle(-45)">⬅ Left</button>
-  <button class="ctrl" onclick="movePaddle(45)">Right ➡</button>
-</div>
 
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
@@ -76,175 +245,281 @@ button{border:0;border-radius:14px;background:#0066ff;color:white;font-size:20px
 
 <script>
 const questions=[
-{q:"Add: 45,678 + 23,456",options:["69,134","68,134","69,034"],ans:"69,134"},
-{q:"Subtract: 86,542 - 24,318",options:["62,224","61,224","62,124"],ans:"62,224"},
-{q:"Multiply: 2,345 × 6",options:["14,070","13,070","14,700"],ans:"14,070"},
-{q:"Divide: 78 ÷ 10. What is the quotient?",options:["7","8","78"],ans:"7"},
-{q:"Divide: 78 ÷ 10. What is the remainder?",options:["7","8","0"],ans:"8"},
-{q:"Divide: 409 ÷ 100. What is the quotient?",options:["4","40","9"],ans:"4"},
-{q:"Divide: 409 ÷ 100. What is the remainder?",options:["9","09","409"],ans:"9"},
-{q:"Divide: 8049 ÷ 1000. What is the quotient?",options:["8","80","49"],ans:"8"},
-{q:"In addition, if the sum of a place is more than 9, we:",options:["carry over","borrow","divide"],ans:"carry over"},
-{q:"In subtraction, when the top digit is smaller, we:",options:["borrow","carry over","multiply"],ans:"borrow"}
+
+{
+q:"45,678 + 23,456 = ?",
+options:["69,134","68,134","69,034"],
+ans:"69,134"
+},
+
+{
+q:"86,542 - 24,318 = ?",
+options:["62,224","61,224","62,124"],
+ans:"62,224"
+},
+
+{
+q:"2,345 × 6 = ?",
+options:["14,070","13,070","14,700"],
+ans:"14,070"
+},
+
+{
+q:"Quotient of 78 ÷ 10",
+options:["7","8","78"],
+ans:"7"
+},
+
+{
+q:"Remainder of 78 ÷ 10",
+options:["7","8","0"],
+ans:"8"
+},
+
+{
+q:"Quotient of 409 ÷ 100",
+options:["4","40","9"],
+ans:"4"
+},
+
+{
+q:"Remainder of 409 ÷ 100",
+options:["9","0","409"],
+ans:"9"
+},
+
+{
+q:"Quotient of 8049 ÷ 1000",
+options:["8","80","49"],
+ans:"8"
+},
+
+{
+q:"If sum exceeds 9, we:",
+options:["carry over","borrow","divide"],
+ans:"carry over"
+},
+
+{
+q:"If top digit is smaller, we:",
+options:["borrow","carry over","multiply"],
+ans:"borrow"
+}
+
 ];
 
-let current=0,score=0,chances=2;
-let paddleX=370,ballX=430,ballY=410,dx=4,dy=-4;
-let running=false,locked=false,gameLoop;
-const area=document.getElementById("gameArea");
-const paddle=document.getElementById("paddle");
-const ball=document.getElementById("ball");
+let current=0;
+let score=0;
+let chances=2;
+let locked=false;
 
 window.onload=()=>{
- setTimeout(()=>{
-  document.getElementById("loader").style.display="none";
-  document.getElementById("instructions").style.display="flex";
- },900);
+
+setTimeout(()=>{
+
+document.getElementById("loader").style.display="none";
+
+document.getElementById("instructions").style.display="flex";
+
+},900);
+
 };
 
 function startGame(){
- document.getElementById("instructions").style.display="none";
- running=true;
- loadQuestion();
- gameLoop=setInterval(updateGame,20);
+
+document.getElementById("instructions").style.display="none";
+
+loadQuestion();
+
 }
 
 function loadQuestion(){
- locked=false;
- clearBricks();
 
- if(current>=questions.length){winGame();return;}
+locked=false;
 
- document.getElementById("qno").textContent=current+1;
- document.getElementById("question").textContent="Q"+(current+1)+". "+questions[current].q;
- document.getElementById("msg").textContent="";
+if(current>=questions.length){
 
- createBricks();
- resetBall();
+winGame();
+return;
+
 }
 
-function createBricks(){
- const item=questions[current];
- const shuffled=[...item.options].sort(()=>Math.random()-0.5);
- const positions=[80,340,600];
+document.getElementById("qno").textContent=current+1;
 
- shuffled.forEach((opt,i)=>{
-  const b=document.createElement("div");
-  b.className="brick";
-  b.textContent=opt;
-  b.dataset.answer=opt;
-  b.style.left=positions[i]+"px";
-  b.style.top="45px";
-  area.appendChild(b);
- });
+document.getElementById("questionBox").textContent=
+"Q"+(current+1)+". "+questions[current].q;
+
+document.getElementById("msg").textContent="";
+
+createChests();
+
 }
 
-function clearBricks(){
- document.querySelectorAll(".brick").forEach(b=>b.remove());
-}
+function createChests(){
 
-function resetBall(){
- paddleX=370;
- ballX=430;
- ballY=410;
- dx=4;
- dy=-4;
- paddle.style.left=paddleX+"px";
- ball.style.left=ballX+"px";
- ball.style.top=ballY+"px";
-}
+const wrap=document.getElementById("chests");
 
-function movePaddle(step){
- paddleX+=step;
- if(paddleX<0)paddleX=0;
- if(paddleX>750)paddleX=750;
- paddle.style.left=paddleX+"px";
-}
+wrap.innerHTML="";
 
-document.addEventListener("keydown",e=>{
- if(e.key==="ArrowLeft")movePaddle(-45);
- if(e.key==="ArrowRight")movePaddle(45);
+const item=questions[current];
+
+const shuffled=[...item.options]
+.sort(()=>Math.random()-0.5);
+
+const positions=[120,410,700];
+
+shuffled.forEach((opt,i)=>{
+
+const chest=document.createElement("div");
+
+chest.className="chest";
+
+chest.style.left=positions[i]+"px";
+
+chest.style.top="180px";
+
+chest.dataset.answer=opt;
+
+chest.innerHTML=`
+
+<div class="chestTop"></div>
+
+<div class="chestBody"></div>
+
+<div class="lock"></div>
+
+<div class="answerText">${opt}</div>
+
+`;
+
+chest.onclick=()=>selectChest(chest,opt);
+
+wrap.appendChild(chest);
+
 });
 
-function updateGame(){
- if(!running || locked)return;
-
- ballX+=dx;
- ballY+=dy;
-
- if(ballX<=0 || ballX>=872)dx*=-1;
- if(ballY<=0)dy*=-1;
-
- const pr=paddle.getBoundingClientRect();
- const br=ball.getBoundingClientRect();
-
- if(!(br.right<pr.left || br.left>pr.right || br.bottom<pr.top || br.top>pr.bottom)){
-  dy=-Math.abs(dy);
- }
-
- document.querySelectorAll(".brick").forEach(b=>{
-  const r=b.getBoundingClientRect();
-  if(!(br.right<r.left || br.left>r.right || br.bottom<r.top || br.top>r.bottom)){
-   locked=true;
-   checkAnswer(b.dataset.answer);
-  }
- });
-
- if(ballY>500){
-  wrong("Ball missed!");
- }
- 
- ball.style.left=ballX+"px";
- ball.style.top=ballY+"px";
 }
 
-function checkAnswer(selected){
- if(selected===questions[current].ans){
-  score++;
-  document.getElementById("score").textContent=score;
-  document.getElementById("correctSound").play();
-  document.getElementById("msg").style.color="green";
-  document.getElementById("msg").textContent="Correct!";
-  current++;
-  setTimeout(loadQuestion,900);
- }else{
-  wrong("Wrong brick!");
- }
+function selectChest(chest,selected){
+
+if(locked)return;
+
+locked=true;
+
+if(selected===questions[current].ans){
+
+correctChest(chest);
+
+}else{
+
+wrongChest(chest);
+
 }
 
-function wrong(text){
- locked=true;
- chances--;
- document.getElementById("chances").textContent=chances;
- document.getElementById("wrongSound").play();
- document.getElementById("msg").style.color="red";
+}
 
- if(chances<=0){
-  document.getElementById("msg").textContent="You Lose!";
-  setTimeout(loseGame,900);
- }else{
-  document.getElementById("msg").textContent=text+" One chance left.";
-  setTimeout(loadQuestion,900);
- }
+function correctChest(chest){
+
+document.getElementById("correctSound").play();
+
+score++;
+
+document.getElementById("score").textContent=score;
+
+document.getElementById("msg").style.color="green";
+
+document.getElementById("msg").textContent=
+"Correct Treasure Found!";
+
+chest.classList.add("open");
+
+for(let i=0;i<12;i++){
+
+const coin=document.createElement("div");
+
+coin.className="coinBurst";
+
+coin.innerHTML="🪙";
+
+coin.style.left=
+(chest.offsetLeft+60+Math.random()*60)+"px";
+
+coin.style.top=
+(chest.offsetTop+40)+"px";
+
+document.getElementById("gameArea")
+.appendChild(coin);
+
+setTimeout(()=>coin.remove(),1000);
+
+}
+
+current++;
+
+setTimeout(loadQuestion,1500);
+
+}
+
+function wrongChest(chest){
+
+document.getElementById("wrongSound").play();
+
+chances--;
+
+document.getElementById("chances").textContent=chances;
+
+document.getElementById("msg").style.color="red";
+
+chest.classList.add("shake");
+
+if(chances<=0){
+
+document.getElementById("msg").textContent=
+"Wrong Treasure! Game Over!";
+
+setTimeout(loseGame,1200);
+
+}else{
+
+document.getElementById("msg").textContent=
+"Wrong Treasure! One chance left.";
+
+setTimeout(()=>{
+
+locked=false;
+
+chest.classList.remove("shake");
+
+},900);
+
+}
+
 }
 
 function winGame(){
- running=false;
- clearInterval(gameLoop);
- clearBricks();
- document.getElementById("clapSound").play();
- document.getElementById("endTitle").textContent="You Win!";
- document.getElementById("finalScore").textContent=score+" / "+questions.length;
- document.getElementById("end").style.display="flex";
+
+document.getElementById("clapSound").play();
+
+document.getElementById("endTitle").textContent=
+"You Win!";
+
+document.getElementById("finalScore").textContent=
+score+" / "+questions.length;
+
+document.getElementById("end").style.display="flex";
+
 }
 
 function loseGame(){
- running=false;
- clearInterval(gameLoop);
- clearBricks();
- document.getElementById("endTitle").textContent="You Lose!";
- document.getElementById("finalScore").textContent=score+" / "+questions.length;
- document.getElementById("end").style.display="flex";
+
+document.getElementById("endTitle").textContent=
+"You Lose!";
+
+document.getElementById("finalScore").textContent=
+score+" / "+questions.length;
+
+document.getElementById("end").style.display="flex";
+
 }
 </script>
 
