@@ -36,9 +36,9 @@ button{border:0;border-radius:14px;background:#0066ff;color:#fff;font-size:20px;
   <h1>Basic Operations Maze</h1>
   <div class="instructions">
     <p>Read the question at the top.</p>
-    <p>Move the player through the maze.</p>
+    <p>Move through the open path.</p>
     <p>Enter the gate with the correct answer.</p>
-    <p>Use arrow keys on laptop or touch buttons on mobile.</p>
+    <p>Use arrow keys or touch buttons.</p>
     <p>You get only <b>2 chances</b>.</p>
   </div>
   <button onclick="startGame()">Start Game</button>
@@ -57,29 +57,37 @@ button{border:0;border-radius:14px;background:#0066ff;color:#fff;font-size:20px;
   <div id="maze">
     <div id="player">🙂</div>
 
-    <div class="wall" style="left:120px;top:0;width:18px;height:270px"></div>
-    <div class="wall" style="left:260px;top:160px;width:18px;height:270px"></div>
-    <div class="wall" style="left:400px;top:0;width:18px;height:260px"></div>
-    <div class="wall" style="left:540px;top:170px;width:18px;height:260px"></div>
-    <div class="wall" style="left:680px;top:0;width:18px;height:270px"></div>
+    <!-- Wider clear-path maze walls -->
+    <div class="wall" style="left:110px;top:0;width:18px;height:130px"></div>
+    <div class="wall" style="left:110px;top:250px;width:18px;height:180px"></div>
 
-    <div class="wall" style="left:120px;top:260px;width:150px;height:18px"></div>
-    <div class="wall" style="left:270px;top:150px;width:145px;height:18px"></div>
-    <div class="wall" style="left:410px;top:250px;width:145px;height:18px"></div>
-    <div class="wall" style="left:550px;top:160px;width:145px;height:18px"></div>
+    <div class="wall" style="left:250px;top:80px;width:18px;height:260px"></div>
+
+    <div class="wall" style="left:390px;top:0;width:18px;height:160px"></div>
+    <div class="wall" style="left:390px;top:280px;width:18px;height:150px"></div>
+
+    <div class="wall" style="left:530px;top:90px;width:18px;height:250px"></div>
+
+    <div class="wall" style="left:670px;top:0;width:18px;height:125px"></div>
+    <div class="wall" style="left:670px;top:250px;width:18px;height:180px"></div>
+
+    <div class="wall" style="left:110px;top:125px;width:150px;height:18px"></div>
+    <div class="wall" style="left:250px;top:325px;width:155px;height:18px"></div>
+    <div class="wall" style="left:390px;top:155px;width:155px;height:18px"></div>
+    <div class="wall" style="left:530px;top:325px;width:155px;height:18px"></div>
 
     <div id="gates"></div>
   </div>
 
   <div id="controls">
     <button class="ctrl blank"></button>
-    <button class="ctrl" onclick="movePlayer(0,-25)">⬆</button>
+    <button class="ctrl" onclick="movePlayer(0,-20)">⬆</button>
     <button class="ctrl blank"></button>
-    <button class="ctrl" onclick="movePlayer(-25,0)">⬅</button>
+    <button class="ctrl" onclick="movePlayer(-20,0)">⬅</button>
     <button class="ctrl" onclick="resetPlayer()">↺</button>
-    <button class="ctrl" onclick="movePlayer(25,0)">➡</button>
+    <button class="ctrl" onclick="movePlayer(20,0)">➡</button>
     <button class="ctrl blank"></button>
-    <button class="ctrl" onclick="movePlayer(0,25)">⬇</button>
+    <button class="ctrl" onclick="movePlayer(0,20)">⬇</button>
     <button class="ctrl blank"></button>
   </div>
 </div>
@@ -111,6 +119,7 @@ const questions=[
 
 let current=0,score=0,chances=2;
 let px=25,py=190;
+let locked=false;
 const player=document.getElementById("player");
 
 window.onload=()=>{
@@ -126,7 +135,9 @@ function startGame(){
 }
 
 function loadQuestion(){
+ locked=false;
  if(current>=questions.length){winGame();return;}
+
  document.getElementById("qno").textContent=current+1;
  document.getElementById("question").textContent="Q"+(current+1)+". "+questions[current].q;
  resetPlayer();
@@ -138,6 +149,7 @@ function createGates(){
  gates.innerHTML="";
  const pos=[35,180,325];
  const shuffled=[...questions[current].options].sort(()=>Math.random()-0.5);
+
  shuffled.forEach((opt,i)=>{
   const g=document.createElement("div");
   g.className="gate";
@@ -156,6 +168,8 @@ function resetPlayer(){
 }
 
 function movePlayer(dx,dy){
+ if(locked)return;
+
  const oldX=px, oldY=py;
  px+=dx; py+=dy;
 
@@ -177,18 +191,21 @@ function movePlayer(dx,dy){
 }
 
 document.addEventListener("keydown",e=>{
- if(e.key==="ArrowUp")movePlayer(0,-25);
- if(e.key==="ArrowDown")movePlayer(0,25);
- if(e.key==="ArrowLeft")movePlayer(-25,0);
- if(e.key==="ArrowRight")movePlayer(25,0);
+ if(e.key==="ArrowUp")movePlayer(0,-20);
+ if(e.key==="ArrowDown")movePlayer(0,20);
+ if(e.key==="ArrowLeft")movePlayer(-20,0);
+ if(e.key==="ArrowRight")movePlayer(20,0);
 });
 
 function hitWall(){
  const pr=player.getBoundingClientRect();
  const walls=document.querySelectorAll(".wall");
+
  for(let w of walls){
   const wr=w.getBoundingClientRect();
-  if(!(pr.right<wr.left||pr.left>wr.right||pr.bottom<wr.top||pr.top>wr.bottom))return true;
+  if(!(pr.right<wr.left||pr.left>wr.right||pr.bottom<wr.top||pr.top>wr.bottom)){
+   return true;
+  }
  }
  return false;
 }
@@ -196,9 +213,13 @@ function hitWall(){
 function checkGate(){
  const pr=player.getBoundingClientRect();
  const gates=document.querySelectorAll(".gate");
+
  for(let g of gates){
   const gr=g.getBoundingClientRect();
+
   if(!(pr.right<gr.left||pr.left>gr.right||pr.bottom<gr.top||pr.top>gr.bottom)){
+   locked=true;
+
    if(g.dataset.answer===questions[current].ans){
     correct();
    }else{
@@ -214,19 +235,20 @@ function correct(){
  document.getElementById("score").textContent=score;
  showMsg("Correct!");
  current++;
- setTimeout(loadQuestion,800);
+ setTimeout(loadQuestion,850);
 }
 
 function wrong(){
  document.getElementById("wrongSound").play();
  chances--;
  document.getElementById("chances").textContent=chances;
+
  if(chances<=0){
   showMsg("You Lose!");
   setTimeout(loseGame,900);
  }else{
   showMsg("Wrong! One chance left.");
-  resetPlayer();
+  setTimeout(loadQuestion,900);
  }
 }
 
