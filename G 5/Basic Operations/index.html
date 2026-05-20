@@ -6,13 +6,18 @@
 <title>Basic Operations Spin Wheel</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
+
 body{
   margin:0;
   font-family:Arial,sans-serif;
   background:linear-gradient(#dff6ff,#ffffff);
   text-align:center;
+  overflow-x:hidden;
 }
+
 .screen{
   position:fixed;
   inset:0;
@@ -24,7 +29,12 @@ body{
   z-index:50;
   padding:20px;
 }
-.logo{width:160px;margin-bottom:18px}
+
+.logo{
+  width:160px;
+  margin-bottom:18px;
+}
+
 button{
   border:0;
   border-radius:14px;
@@ -35,13 +45,17 @@ button{
   padding:13px 26px;
   cursor:pointer;
 }
+
 #hud{
   display:flex;
   justify-content:space-around;
   font-size:20px;
   font-weight:bold;
   padding:14px;
+  flex-wrap:wrap;
+  gap:10px;
 }
+
 #questionBox{
   margin:10px auto;
   width:90%;
@@ -54,34 +68,63 @@ button{
   font-weight:bold;
   min-height:75px;
 }
+
 #wheelWrap{
   position:relative;
-  width:320px;
-  height:320px;
+  width:340px;
+  height:340px;
   margin:20px auto;
 }
+
 #wheel{
-  width:320px;
-  height:320px;
+  position:relative;
+  width:340px;
+  height:340px;
   border-radius:50%;
   border:8px solid #222;
-  background:conic-gradient(
-    #ffbe0b 0deg 60deg,
-    #fb5607 60deg 120deg,
-    #ff006e 120deg 180deg,
-    #8338ec 180deg 240deg,
-    #3a86ff 240deg 300deg,
-    #06d6a0 300deg 360deg
-  );
+  overflow:hidden;
   transition:transform 2s ease-out;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:34px;
+
+  background:
+  conic-gradient(
+    #ffbe0b 0deg 36deg,
+    #fb5607 36deg 72deg,
+    #ff006e 72deg 108deg,
+    #8338ec 108deg 144deg,
+    #3a86ff 144deg 180deg,
+    #06d6a0 180deg 216deg,
+    #ffbe0b 216deg 252deg,
+    #fb5607 252deg 288deg,
+    #ff006e 288deg 324deg,
+    #8338ec 324deg 360deg
+  );
+}
+
+.slice{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:90px;
+  margin-left:-45px;
+  text-align:center;
+  font-size:22px;
   font-weight:bold;
   color:white;
+  transform-origin:center -120px;
   text-shadow:2px 2px #000;
 }
+
+.s1{transform:rotate(18deg)}
+.s2{transform:rotate(54deg)}
+.s3{transform:rotate(90deg)}
+.s4{transform:rotate(126deg)}
+.s5{transform:rotate(162deg)}
+.s6{transform:rotate(198deg)}
+.s7{transform:rotate(234deg)}
+.s8{transform:rotate(270deg)}
+.s9{transform:rotate(306deg)}
+.s10{transform:rotate(342deg)}
+
 #pointer{
   position:absolute;
   top:-18px;
@@ -94,6 +137,7 @@ button{
   border-top:35px solid #d00000;
   z-index:5;
 }
+
 #answers{
   display:flex;
   justify-content:center;
@@ -102,6 +146,7 @@ button{
   margin:18px auto;
   width:92%;
 }
+
 .answer{
   background:white;
   border:4px solid #222;
@@ -112,17 +157,21 @@ button{
   font-size:23px;
   font-weight:bold;
   cursor:pointer;
+  transition:0.2s;
 }
+
 .answer:hover{
   background:#fff3bf;
   transform:scale(1.04);
 }
+
 #msg{
   font-size:27px;
   font-weight:bold;
   min-height:35px;
   margin-top:8px;
 }
+
 .instructions{
   font-size:21px;
   line-height:1.6;
@@ -140,21 +189,29 @@ button{
 
 <div id="instructions" class="screen" style="display:none">
   <img src="assets/logo.png" class="logo">
+
   <h1>Basic Operations Spin Wheel</h1>
+
   <div class="instructions">
-    <p>Click <b>Spin Wheel</b>.</p>
-    <p>Read the question.</p>
+    <p>Spin the wheel.</p>
+    <p>Read the question carefully.</p>
     <p>Click the correct answer.</p>
     <p>You get only <b>2 chances</b>.</p>
     <p>Complete all 10 questions to win.</p>
   </div>
+
   <button onclick="startGame()">Start Game</button>
 </div>
 
 <div id="end" class="screen" style="display:none">
   <img src="assets/logo.png" class="logo">
+
   <h1 id="endTitle">Game Over!</h1>
-  <h2>Your Score: <span id="finalScore"></span></h2>
+
+  <h2>Your Score:
+    <span id="finalScore"></span>
+  </h2>
+
   <button onclick="location.reload()">Play Again</button>
 </div>
 
@@ -164,16 +221,37 @@ button{
   <div>Question: <span id="qno">1</span>/10</div>
 </div>
 
-<div id="questionBox">Click Spin Wheel to begin.</div>
-
-<div id="wheelWrap">
-  <div id="pointer"></div>
-  <div id="wheel">SPIN</div>
+<div id="questionBox">
+  Click Spin Wheel to begin.
 </div>
 
-<button id="spinBtn" onclick="spinWheel()">Spin Wheel</button>
+<div id="wheelWrap">
+
+  <div id="pointer"></div>
+
+  <div id="wheel">
+
+    <div class="slice s1">Q1</div>
+    <div class="slice s2">Q2</div>
+    <div class="slice s3">Q3</div>
+    <div class="slice s4">Q4</div>
+    <div class="slice s5">Q5</div>
+    <div class="slice s6">Q6</div>
+    <div class="slice s7">Q7</div>
+    <div class="slice s8">Q8</div>
+    <div class="slice s9">Q9</div>
+    <div class="slice s10">Q10</div>
+
+  </div>
+
+</div>
+
+<button id="spinBtn" onclick="spinWheel()">
+  Spin Wheel
+</button>
 
 <div id="answers"></div>
+
 <div id="msg"></div>
 
 <audio id="correctSound" src="assets/correct.mp3"></audio>
@@ -181,128 +259,256 @@ button{
 <audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
-const questions=[
-{q:"Add: 45,678 + 23,456",options:["69,134","68,134","69,034"],ans:"69,134"},
-{q:"Subtract: 86,542 - 24,318",options:["62,224","61,224","62,124"],ans:"62,224"},
-{q:"Multiply: 2,345 × 6",options:["14,070","13,070","14,700"],ans:"14,070"},
-{q:"Divide: 78 ÷ 10. What is the quotient?",options:["7","8","78"],ans:"7"},
-{q:"Divide: 78 ÷ 10. What is the remainder?",options:["7","8","0"],ans:"8"},
-{q:"Divide: 409 ÷ 100. What is the quotient?",options:["4","40","9"],ans:"4"},
-{q:"Divide: 409 ÷ 100. What is the remainder?",options:["9","09","409"],ans:"9"},
-{q:"Divide: 8049 ÷ 1000. What is the quotient?",options:["8","80","49"],ans:"8"},
-{q:"In addition, if the sum of a place is more than 9, we:",options:["carry over","borrow","divide"],ans:"carry over"},
-{q:"In subtraction, when the top digit is smaller, we:",options:["borrow","carry over","multiply"],ans:"borrow"}
+const questions = [
+
+{
+q:"Add: 45,678 + 23,456",
+options:["69,134","68,134","69,034"],
+ans:"69,134"
+},
+
+{
+q:"Subtract: 86,542 - 24,318",
+options:["62,224","61,224","62,124"],
+ans:"62,224"
+},
+
+{
+q:"Multiply: 2,345 × 6",
+options:["14,070","13,070","14,700"],
+ans:"14,070"
+},
+
+{
+q:"Divide: 78 ÷ 10. What is the quotient?",
+options:["7","8","78"],
+ans:"7"
+},
+
+{
+q:"Divide: 78 ÷ 10. What is the remainder?",
+options:["7","8","0"],
+ans:"8"
+},
+
+{
+q:"Divide: 409 ÷ 100. What is the quotient?",
+options:["4","40","9"],
+ans:"4"
+},
+
+{
+q:"Divide: 409 ÷ 100. What is the remainder?",
+options:["9","09","409"],
+ans:"9"
+},
+
+{
+q:"Divide: 8049 ÷ 1000. What is the quotient?",
+options:["8","80","49"],
+ans:"8"
+},
+
+{
+q:"In addition, if the sum of a place is more than 9, we:",
+options:["carry over","borrow","divide"],
+ans:"carry over"
+},
+
+{
+q:"In subtraction, when the top digit is smaller, we:",
+options:["borrow","carry over","multiply"],
+ans:"borrow"
+}
+
 ];
 
-let current=0;
-let score=0;
-let chances=2;
-let spinning=false;
-let answered=false;
-let rotation=0;
+let current = 0;
+let score = 0;
+let chances = 2;
+let spinning = false;
+let answered = false;
+let rotation = 0;
 
-window.onload=()=>{
-  setTimeout(()=>{
-    document.getElementById("loader").style.display="none";
-    document.getElementById("instructions").style.display="flex";
-  },900);
+window.onload = ()=>{
+
+setTimeout(()=>{
+
+document.getElementById("loader").style.display="none";
+
+document.getElementById("instructions").style.display="flex";
+
+},900);
+
 };
 
 function startGame(){
-  document.getElementById("instructions").style.display="none";
+
+document.getElementById("instructions").style.display="none";
+
 }
 
 function spinWheel(){
-  if(spinning || current>=questions.length)return;
 
-  answered=false;
-  spinning=true;
-  document.getElementById("answers").innerHTML="";
-  document.getElementById("msg").textContent="";
-  document.getElementById("questionBox").textContent="Spinning...";
+if(spinning || current>=questions.length)return;
 
-  rotation += 720 + Math.floor(Math.random()*360);
-  document.getElementById("wheel").style.transform=`rotate(${rotation}deg)`;
+answered = false;
 
-  setTimeout(()=>{
-    spinning=false;
-    showQuestion();
-  },2100);
+spinning = true;
+
+document.getElementById("answers").innerHTML = "";
+
+document.getElementById("msg").textContent = "";
+
+document.getElementById("questionBox").textContent = "Spinning...";
+
+rotation += 720 + Math.floor(Math.random()*360);
+
+document.getElementById("wheel").style.transform =
+`rotate(${rotation}deg)`;
+
+setTimeout(()=>{
+
+spinning = false;
+
+showQuestion();
+
+},2100);
+
 }
 
 function showQuestion(){
-  const item=questions[current];
-  document.getElementById("qno").textContent=current+1;
-  document.getElementById("questionBox").textContent="Q"+(current+1)+". "+item.q;
 
-  const ansBox=document.getElementById("answers");
-  ansBox.innerHTML="";
+const item = questions[current];
 
-  const shuffled=[...item.options].sort(()=>Math.random()-0.5);
+document.getElementById("qno").textContent = current+1;
 
-  shuffled.forEach(opt=>{
-    const div=document.createElement("div");
-    div.className="answer";
-    div.textContent=opt;
-    div.onclick=()=>checkAnswer(opt);
-    ansBox.appendChild(div);
-  });
+document.getElementById("questionBox").textContent =
+"Q"+(current+1)+". "+item.q;
+
+const ansBox = document.getElementById("answers");
+
+ansBox.innerHTML = "";
+
+const shuffled = [...item.options]
+.sort(()=>Math.random()-0.5);
+
+shuffled.forEach(opt=>{
+
+const div = document.createElement("div");
+
+div.className = "answer";
+
+div.textContent = opt;
+
+div.onclick = ()=>checkAnswer(opt);
+
+ansBox.appendChild(div);
+
+});
+
 }
 
 function checkAnswer(selected){
-  if(answered)return;
-  answered=true;
 
-  const item=questions[current];
+if(answered)return;
 
-  if(selected===item.ans){
-    score++;
-    document.getElementById("score").textContent=score;
-    document.getElementById("correctSound").play();
-    document.getElementById("msg").textContent="Correct!";
-    document.getElementById("msg").style.color="green";
-    current++;
+answered = true;
 
-    if(current>=questions.length){
-      setTimeout(winGame,900);
-    }else{
-      setTimeout(()=>{
-        document.getElementById("answers").innerHTML="";
-        document.getElementById("questionBox").textContent="Click Spin Wheel for next question.";
-        document.getElementById("qno").textContent=current+1;
-      },900);
-    }
+const item = questions[current];
 
-  }else{
-    chances--;
-    document.getElementById("chances").textContent=chances;
-    document.getElementById("wrongSound").play();
+if(selected === item.ans){
 
-    if(chances<=0){
-      document.getElementById("msg").textContent="You Lose!";
-      document.getElementById("msg").style.color="red";
-      setTimeout(loseGame,900);
-    }else{
-      document.getElementById("msg").textContent="Wrong! One chance left.";
-      document.getElementById("msg").style.color="red";
-      setTimeout(()=>{
-        answered=false;
-      },600);
-    }
-  }
+score++;
+
+document.getElementById("score").textContent = score;
+
+document.getElementById("correctSound").play();
+
+document.getElementById("msg").textContent = "Correct!";
+
+document.getElementById("msg").style.color = "green";
+
+current++;
+
+if(current >= questions.length){
+
+setTimeout(winGame,900);
+
+}else{
+
+setTimeout(()=>{
+
+document.getElementById("answers").innerHTML = "";
+
+document.getElementById("questionBox").textContent =
+"Click Spin Wheel for next question.";
+
+document.getElementById("qno").textContent = current+1;
+
+},900);
+
+}
+
+}else{
+
+chances--;
+
+document.getElementById("chances").textContent = chances;
+
+document.getElementById("wrongSound").play();
+
+if(chances <= 0){
+
+document.getElementById("msg").textContent = "You Lose!";
+
+document.getElementById("msg").style.color = "red";
+
+setTimeout(loseGame,900);
+
+}else{
+
+document.getElementById("msg").textContent =
+"Wrong! One chance left.";
+
+document.getElementById("msg").style.color = "red";
+
+setTimeout(()=>{
+
+answered = false;
+
+},600);
+
+}
+
+}
+
 }
 
 function winGame(){
-  document.getElementById("clapSound").play();
-  document.getElementById("endTitle").textContent="You Win!";
-  document.getElementById("finalScore").textContent=score+" / "+questions.length;
-  document.getElementById("end").style.display="flex";
+
+document.getElementById("clapSound").play();
+
+document.getElementById("endTitle").textContent =
+"You Win!";
+
+document.getElementById("finalScore").textContent =
+score + " / " + questions.length;
+
+document.getElementById("end").style.display = "flex";
+
 }
 
 function loseGame(){
-  document.getElementById("endTitle").textContent="You Lose!";
-  document.getElementById("finalScore").textContent=score+" / "+questions.length;
-  document.getElementById("end").style.display="flex";
+
+document.getElementById("endTitle").textContent =
+"You Lose!";
+
+document.getElementById("finalScore").textContent =
+score + " / " + questions.length;
+
+document.getElementById("end").style.display = "flex";
+
 }
 </script>
 
