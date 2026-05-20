@@ -3,25 +3,131 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Basic Operations Maze Game</title>
+<title>Basic Operations Spin Wheel</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#dff6ff;overflow:hidden}
-.screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(#eaf9ff,#fff);z-index:50;padding:20px}
-.logo{width:160px;margin-bottom:16px}
-button{border:0;border-radius:14px;background:#0066ff;color:white;font-size:20px;font-weight:bold;padding:12px 24px;cursor:pointer}
-#game{width:100vw;height:100vh;position:relative;background:#dff6ff;overflow:hidden}
-#hud{position:absolute;top:10px;left:15px;right:15px;display:flex;justify-content:space-between;font-size:19px;font-weight:bold;z-index:10}
-#question{position:absolute;top:55px;left:50%;transform:translateX(-50%);width:90%;background:white;border:3px solid #004aad;border-radius:16px;padding:13px;font-size:22px;font-weight:bold;text-align:center;z-index:10}
-#maze{position:absolute;top:130px;left:50%;transform:translateX(-50%);width:900px;max-width:96vw;height:430px;background:#fff6d5;border:5px solid #333;border-radius:16px;overflow:hidden}
-.wall{position:absolute;background:#333;border-radius:8px;z-index:3}
-#player{position:absolute;width:42px;height:42px;border-radius:50%;background:#ffb703;border:4px solid #222;font-size:27px;display:flex;align-items:center;justify-content:center;z-index:6}
-.gate{position:absolute;width:170px;height:70px;background:white;border:4px solid #222;border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:20px;font-weight:bold;padding:6px;z-index:5}
-#msg{position:absolute;top:105px;left:50%;transform:translateX(-50%);background:white;border-radius:12px;padding:8px 22px;font-size:25px;font-weight:bold;display:none;z-index:20}
-#controls{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:grid;grid-template-columns:80px 80px 80px;gap:8px;z-index:30}
-.ctrl{height:48px;border-radius:12px;font-size:22px;padding:0}
-.blank{visibility:hidden}
-.instructions{font-size:20px;line-height:1.55;max-width:700px}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(#dff6ff,#ffffff);
+  text-align:center;
+}
+.screen{
+  position:fixed;
+  inset:0;
+  background:linear-gradient(#eaf9ff,#fff);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  z-index:50;
+  padding:20px;
+}
+.logo{width:160px;margin-bottom:18px}
+button{
+  border:0;
+  border-radius:14px;
+  background:#0066ff;
+  color:white;
+  font-size:20px;
+  font-weight:bold;
+  padding:13px 26px;
+  cursor:pointer;
+}
+#hud{
+  display:flex;
+  justify-content:space-around;
+  font-size:20px;
+  font-weight:bold;
+  padding:14px;
+}
+#questionBox{
+  margin:10px auto;
+  width:90%;
+  max-width:850px;
+  background:white;
+  border:3px solid #004aad;
+  border-radius:18px;
+  padding:16px;
+  font-size:24px;
+  font-weight:bold;
+  min-height:75px;
+}
+#wheelWrap{
+  position:relative;
+  width:320px;
+  height:320px;
+  margin:20px auto;
+}
+#wheel{
+  width:320px;
+  height:320px;
+  border-radius:50%;
+  border:8px solid #222;
+  background:conic-gradient(
+    #ffbe0b 0deg 60deg,
+    #fb5607 60deg 120deg,
+    #ff006e 120deg 180deg,
+    #8338ec 180deg 240deg,
+    #3a86ff 240deg 300deg,
+    #06d6a0 300deg 360deg
+  );
+  transition:transform 2s ease-out;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:34px;
+  font-weight:bold;
+  color:white;
+  text-shadow:2px 2px #000;
+}
+#pointer{
+  position:absolute;
+  top:-18px;
+  left:50%;
+  transform:translateX(-50%);
+  width:0;
+  height:0;
+  border-left:20px solid transparent;
+  border-right:20px solid transparent;
+  border-top:35px solid #d00000;
+  z-index:5;
+}
+#answers{
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  flex-wrap:wrap;
+  margin:18px auto;
+  width:92%;
+}
+.answer{
+  background:white;
+  border:4px solid #222;
+  border-radius:18px;
+  min-width:210px;
+  min-height:75px;
+  padding:12px;
+  font-size:23px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.answer:hover{
+  background:#fff3bf;
+  transform:scale(1.04);
+}
+#msg{
+  font-size:27px;
+  font-weight:bold;
+  min-height:35px;
+  margin-top:8px;
+}
+.instructions{
+  font-size:21px;
+  line-height:1.6;
+  max-width:700px;
+}
 </style>
 </head>
 
@@ -34,66 +140,15 @@ button{border:0;border-radius:14px;background:#0066ff;color:white;font-size:20px
 
 <div id="instructions" class="screen" style="display:none">
   <img src="assets/logo.png" class="logo">
-  <h1>Basic Operations Maze</h1>
+  <h1>Basic Operations Spin Wheel</h1>
   <div class="instructions">
-    <p>Read the question carefully.</p>
-    <p>Move through the maze without touching black blocks.</p>
-    <p>Reach the correct answer gate.</p>
-    <p>Use keyboard arrows or touch buttons.</p>
+    <p>Click <b>Spin Wheel</b>.</p>
+    <p>Read the question.</p>
+    <p>Click the correct answer.</p>
     <p>You get only <b>2 chances</b>.</p>
+    <p>Complete all 10 questions to win.</p>
   </div>
   <button onclick="startGame()">Start Game</button>
-</div>
-
-<div id="game">
-  <div id="hud">
-    <div>Score: <span id="score">0</span></div>
-    <div>Chances: <span id="chances">2</span></div>
-    <div>Question: <span id="qno">1</span>/10</div>
-  </div>
-
-  <div id="question"></div>
-  <div id="msg"></div>
-
-  <div id="maze">
-    <div id="player">🙂</div>
-
-    <!-- Maze black blocks with clear paths to all 3 answers -->
-    <div class="wall" style="left:140px;top:0;width:18px;height:150px"></div>
-    <div class="wall" style="left:140px;top:260px;width:18px;height:170px"></div>
-
-    <div class="wall" style="left:300px;top:95px;width:18px;height:135px"></div>
-    <div class="wall" style="left:300px;top:310px;width:18px;height:120px"></div>
-
-    <div class="wall" style="left:455px;top:0;width:18px;height:150px"></div>
-    <div class="wall" style="left:455px;top:260px;width:18px;height:170px"></div>
-
-    <div class="wall" style="left:610px;top:95px;width:18px;height:135px"></div>
-    <div class="wall" style="left:610px;top:310px;width:18px;height:120px"></div>
-
-    <div class="wall" style="left:760px;top:0;width:18px;height:85px"></div>
-    <div class="wall" style="left:760px;top:165px;width:18px;height:75px"></div>
-    <div class="wall" style="left:760px;top:315px;width:18px;height:115px"></div>
-
-    <div class="wall" style="left:140px;top:150px;width:175px;height:18px"></div>
-    <div class="wall" style="left:300px;top:230px;width:175px;height:18px"></div>
-    <div class="wall" style="left:455px;top:150px;width:175px;height:18px"></div>
-    <div class="wall" style="left:610px;top:230px;width:170px;height:18px"></div>
-
-    <div id="gates"></div>
-  </div>
-
-  <div id="controls">
-    <button class="ctrl blank"></button>
-    <button class="ctrl" onclick="movePlayer(0,-20)">⬆</button>
-    <button class="ctrl blank"></button>
-    <button class="ctrl" onclick="movePlayer(-20,0)">⬅</button>
-    <button class="ctrl" onclick="resetPlayer()">↺</button>
-    <button class="ctrl" onclick="movePlayer(20,0)">➡</button>
-    <button class="ctrl blank"></button>
-    <button class="ctrl" onclick="movePlayer(0,20)">⬇</button>
-    <button class="ctrl blank"></button>
-  </div>
 </div>
 
 <div id="end" class="screen" style="display:none">
@@ -102,6 +157,24 @@ button{border:0;border-radius:14px;background:#0066ff;color:white;font-size:20px
   <h2>Your Score: <span id="finalScore"></span></h2>
   <button onclick="location.reload()">Play Again</button>
 </div>
+
+<div id="hud">
+  <div>Score: <span id="score">0</span></div>
+  <div>Chances: <span id="chances">2</span></div>
+  <div>Question: <span id="qno">1</span>/10</div>
+</div>
+
+<div id="questionBox">Click Spin Wheel to begin.</div>
+
+<div id="wheelWrap">
+  <div id="pointer"></div>
+  <div id="wheel">SPIN</div>
+</div>
+
+<button id="spinBtn" onclick="spinWheel()">Spin Wheel</button>
+
+<div id="answers"></div>
+<div id="msg"></div>
 
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
@@ -121,150 +194,117 @@ const questions=[
 {q:"In subtraction, when the top digit is smaller, we:",options:["borrow","carry over","multiply"],ans:"borrow"}
 ];
 
-let current=0,score=0,chances=2;
-let px=45,py=190,locked=false;
-const player=document.getElementById("player");
+let current=0;
+let score=0;
+let chances=2;
+let spinning=false;
+let answered=false;
+let rotation=0;
 
 window.onload=()=>{
- setTimeout(()=>{
-  document.getElementById("loader").style.display="none";
-  document.getElementById("instructions").style.display="flex";
- },900);
+  setTimeout(()=>{
+    document.getElementById("loader").style.display="none";
+    document.getElementById("instructions").style.display="flex";
+  },900);
 };
 
 function startGame(){
- document.getElementById("instructions").style.display="none";
- loadQuestion();
+  document.getElementById("instructions").style.display="none";
 }
 
-function loadQuestion(){
- locked=false;
- if(current>=questions.length){winGame();return;}
- document.getElementById("qno").textContent=current+1;
- document.getElementById("question").textContent="Q"+(current+1)+". "+questions[current].q;
- resetPlayer();
- createGates();
+function spinWheel(){
+  if(spinning || current>=questions.length)return;
+
+  answered=false;
+  spinning=true;
+  document.getElementById("answers").innerHTML="";
+  document.getElementById("msg").textContent="";
+  document.getElementById("questionBox").textContent="Spinning...";
+
+  rotation += 720 + Math.floor(Math.random()*360);
+  document.getElementById("wheel").style.transform=`rotate(${rotation}deg)`;
+
+  setTimeout(()=>{
+    spinning=false;
+    showQuestion();
+  },2100);
 }
 
-function createGates(){
- const gates=document.getElementById("gates");
- gates.innerHTML="";
- const pos=[60,180,300];
- const shuffled=[...questions[current].options].sort(()=>Math.random()-0.5);
+function showQuestion(){
+  const item=questions[current];
+  document.getElementById("qno").textContent=current+1;
+  document.getElementById("questionBox").textContent="Q"+(current+1)+". "+item.q;
 
- shuffled.forEach((opt,i)=>{
-  const g=document.createElement("div");
-  g.className="gate";
-  g.textContent=opt;
-  g.dataset.answer=opt;
-  g.style.left="705px";
-  g.style.top=pos[i]+"px";
-  gates.appendChild(g);
- });
+  const ansBox=document.getElementById("answers");
+  ansBox.innerHTML="";
+
+  const shuffled=[...item.options].sort(()=>Math.random()-0.5);
+
+  shuffled.forEach(opt=>{
+    const div=document.createElement("div");
+    div.className="answer";
+    div.textContent=opt;
+    div.onclick=()=>checkAnswer(opt);
+    ansBox.appendChild(div);
+  });
 }
 
-function resetPlayer(){
- px=45;
- py=190;
- player.style.left=px+"px";
- player.style.top=py+"px";
-}
+function checkAnswer(selected){
+  if(answered)return;
+  answered=true;
 
-function movePlayer(dx,dy){
- if(locked)return;
- const oldX=px,oldY=py;
- px+=dx; py+=dy;
+  const item=questions[current];
 
- if(px<0)px=0;
- if(py<0)py=0;
- if(px>858)px=858;
- if(py>388)py=388;
+  if(selected===item.ans){
+    score++;
+    document.getElementById("score").textContent=score;
+    document.getElementById("correctSound").play();
+    document.getElementById("msg").textContent="Correct!";
+    document.getElementById("msg").style.color="green";
+    current++;
 
- player.style.left=px+"px";
- player.style.top=py+"px";
+    if(current>=questions.length){
+      setTimeout(winGame,900);
+    }else{
+      setTimeout(()=>{
+        document.getElementById("answers").innerHTML="";
+        document.getElementById("questionBox").textContent="Click Spin Wheel for next question.";
+        document.getElementById("qno").textContent=current+1;
+      },900);
+    }
 
- if(hitWall()){
-  px=oldX; py=oldY;
-  player.style.left=px+"px";
-  player.style.top=py+"px";
- }
+  }else{
+    chances--;
+    document.getElementById("chances").textContent=chances;
+    document.getElementById("wrongSound").play();
 
- checkGate();
-}
-
-document.addEventListener("keydown",e=>{
- if(e.key==="ArrowUp")movePlayer(0,-20);
- if(e.key==="ArrowDown")movePlayer(0,20);
- if(e.key==="ArrowLeft")movePlayer(-20,0);
- if(e.key==="ArrowRight")movePlayer(20,0);
-});
-
-function hitWall(){
- const pr=player.getBoundingClientRect();
- const walls=document.querySelectorAll(".wall");
- for(let w of walls){
-  const wr=w.getBoundingClientRect();
-  if(!(pr.right<wr.left||pr.left>wr.right||pr.bottom<wr.top||pr.top>wr.bottom)){
-   return true;
+    if(chances<=0){
+      document.getElementById("msg").textContent="You Lose!";
+      document.getElementById("msg").style.color="red";
+      setTimeout(loseGame,900);
+    }else{
+      document.getElementById("msg").textContent="Wrong! One chance left.";
+      document.getElementById("msg").style.color="red";
+      setTimeout(()=>{
+        answered=false;
+      },600);
+    }
   }
- }
- return false;
-}
-
-function checkGate(){
- const pr=player.getBoundingClientRect();
- document.querySelectorAll(".gate").forEach(g=>{
-  const gr=g.getBoundingClientRect();
-  if(!(pr.right<gr.left||pr.left>gr.right||pr.bottom<gr.top||pr.top>gr.bottom)){
-   locked=true;
-   if(g.dataset.answer===questions[current].ans) correct();
-   else wrong();
-  }
- });
-}
-
-function correct(){
- document.getElementById("correctSound").play();
- score++;
- document.getElementById("score").textContent=score;
- showMsg("Correct!");
- current++;
- setTimeout(loadQuestion,850);
-}
-
-function wrong(){
- document.getElementById("wrongSound").play();
- chances--;
- document.getElementById("chances").textContent=chances;
-
- if(chances<=0){
-  showMsg("You Lose!");
-  setTimeout(loseGame,900);
- }else{
-  showMsg("Wrong! One chance left.");
-  setTimeout(loadQuestion,900);
- }
-}
-
-function showMsg(t){
- const m=document.getElementById("msg");
- m.textContent=t;
- m.style.display="block";
- setTimeout(()=>m.style.display="none",800);
 }
 
 function winGame(){
- document.getElementById("clapSound").play();
- document.getElementById("endTitle").textContent="You Win!";
- document.getElementById("finalScore").textContent=score+" / "+questions.length;
- document.getElementById("end").style.display="flex";
+  document.getElementById("clapSound").play();
+  document.getElementById("endTitle").textContent="You Win!";
+  document.getElementById("finalScore").textContent=score+" / "+questions.length;
+  document.getElementById("end").style.display="flex";
 }
 
 function loseGame(){
- document.getElementById("endTitle").textContent="You Lose!";
- document.getElementById("finalScore").textContent=score+" / "+questions.length;
- document.getElementById("end").style.display="flex";
+  document.getElementById("endTitle").textContent="You Lose!";
+  document.getElementById("finalScore").textContent=score+" / "+questions.length;
+  document.getElementById("end").style.display="flex";
 }
 </script>
+
 </body>
 </html>
