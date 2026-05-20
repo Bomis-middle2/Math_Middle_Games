@@ -4,26 +4,101 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Basic Operations Maze Game</title>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#e9f7ff;overflow:hidden}
-.screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(#eaf9ff,#fff);z-index:50;padding:20px}
+
+.screen{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  background:linear-gradient(#eaf9ff,#fff);z-index:50;padding:20px
+}
+
 .logo{width:160px;margin-bottom:16px}
-button{border:0;border-radius:14px;background:#0066ff;color:#fff;font-size:20px;font-weight:bold;padding:12px 24px;cursor:pointer}
+
+button{
+  border:0;border-radius:14px;background:#0066ff;color:#fff;
+  font-size:20px;font-weight:bold;padding:12px 24px;cursor:pointer
+}
+
 #game{width:100vw;height:100vh;position:relative;background:#dff6ff;overflow:hidden}
-#hud{position:absolute;top:10px;left:15px;right:15px;display:flex;justify-content:space-between;font-size:19px;font-weight:bold;z-index:10}
-#question{position:absolute;top:55px;left:50%;transform:translateX(-50%);width:90%;background:white;border:3px solid #004aad;border-radius:16px;padding:13px;font-size:22px;font-weight:bold;text-align:center;z-index:10}
-#maze{position:absolute;top:130px;left:50%;transform:translateX(-50%);width:900px;max-width:96vw;height:430px;background:#fff7d6;border:5px solid #333;border-radius:16px;overflow:hidden}
-.wall{position:absolute;background:#333;border-radius:8px}
-#player{position:absolute;width:42px;height:42px;border-radius:50%;background:#ffb703;border:4px solid #222;font-size:27px;display:flex;align-items:center;justify-content:center;z-index:6}
-.gate{position:absolute;width:170px;height:70px;background:#fff;border:4px solid #222;border-radius:14px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:20px;font-weight:bold;padding:6px;z-index:4}
-#msg{position:absolute;top:105px;left:50%;transform:translateX(-50%);background:white;border-radius:12px;padding:8px 22px;font-size:25px;font-weight:bold;display:none;z-index:20}
-#controls{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:grid;grid-template-columns:80px 80px 80px;gap:8px;z-index:30}
+
+#hud{
+  position:absolute;top:10px;left:15px;right:15px;
+  display:flex;justify-content:space-between;
+  font-size:19px;font-weight:bold;z-index:10
+}
+
+#question{
+  position:absolute;top:55px;left:50%;transform:translateX(-50%);
+  width:90%;background:white;border:3px solid #004aad;
+  border-radius:16px;padding:13px;font-size:22px;
+  font-weight:bold;text-align:center;z-index:10
+}
+
+#maze{
+  position:absolute;
+  top:130px;
+  left:50%;
+  transform:translateX(-50%);
+  width:900px;
+  max-width:96vw;
+  height:430px;
+  background:#fff7d6;
+  border:5px solid #333;
+  border-radius:16px;
+  overflow:hidden;
+}
+
+.path{
+  position:absolute;
+  background:#bff2b8;
+  border-radius:18px;
+  z-index:1;
+}
+
+.wall{
+  position:absolute;
+  background:#333;
+  border-radius:8px;
+  z-index:3;
+}
+
+#player{
+  position:absolute;
+  width:42px;height:42px;border-radius:50%;
+  background:#ffb703;border:4px solid #222;
+  font-size:27px;display:flex;align-items:center;
+  justify-content:center;z-index:6
+}
+
+.gate{
+  position:absolute;width:170px;height:70px;background:#fff;
+  border:4px solid #222;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;font-size:20px;font-weight:bold;
+  padding:6px;z-index:5
+}
+
+#msg{
+  position:absolute;top:105px;left:50%;transform:translateX(-50%);
+  background:white;border-radius:12px;padding:8px 22px;
+  font-size:25px;font-weight:bold;display:none;z-index:20
+}
+
+#controls{
+  position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
+  display:grid;grid-template-columns:80px 80px 80px;
+  gap:8px;z-index:30
+}
+
 .ctrl{height:48px;border-radius:12px;font-size:22px;padding:0}
 .blank{visibility:hidden}
 .instructions{font-size:20px;line-height:1.55;max-width:700px}
 </style>
 </head>
+
 <body>
 
 <div id="loader" class="screen">
@@ -36,7 +111,7 @@ button{border:0;border-radius:14px;background:#0066ff;color:#fff;font-size:20px;
   <h1>Basic Operations Maze</h1>
   <div class="instructions">
     <p>Read the question at the top.</p>
-    <p>Move through the open path.</p>
+    <p>Follow the green path through the maze.</p>
     <p>Enter the gate with the correct answer.</p>
     <p>Use arrow keys or touch buttons.</p>
     <p>You get only <b>2 chances</b>.</p>
@@ -55,27 +130,38 @@ button{border:0;border-radius:14px;background:#0066ff;color:#fff;font-size:20px;
   <div id="msg"></div>
 
   <div id="maze">
+    <!-- visible green maze path -->
+    <div class="path" style="left:15px;top:175px;width:150px;height:80px"></div>
+    <div class="path" style="left:120px;top:55px;width:90px;height:200px"></div>
+    <div class="path" style="left:120px;top:55px;width:170px;height:80px"></div>
+    <div class="path" style="left:250px;top:55px;width:90px;height:300px"></div>
+    <div class="path" style="left:250px;top:275px;width:170px;height:80px"></div>
+    <div class="path" style="left:380px;top:135px;width:90px;height:220px"></div>
+    <div class="path" style="left:380px;top:135px;width:170px;height:80px"></div>
+    <div class="path" style="left:510px;top:135px;width:90px;height:220px"></div>
+    <div class="path" style="left:510px;top:275px;width:170px;height:80px"></div>
+    <div class="path" style="left:640px;top:55px;width:90px;height:300px"></div>
+    <div class="path" style="left:640px;top:55px;width:240px;height:80px"></div>
+    <div class="path" style="left:640px;top:175px;width:240px;height:80px"></div>
+    <div class="path" style="left:640px;top:295px;width:240px;height:80px"></div>
+
+    <!-- walls -->
+    <div class="wall" style="left:105px;top:0;width:18px;height:165px"></div>
+    <div class="wall" style="left:105px;top:265px;width:18px;height:165px"></div>
+
+    <div class="wall" style="left:225px;top:145px;width:18px;height:285px"></div>
+    <div class="wall" style="left:345px;top:0;width:18px;height:265px"></div>
+    <div class="wall" style="left:465px;top:225px;width:18px;height:205px"></div>
+    <div class="wall" style="left:585px;top:0;width:18px;height:265px"></div>
+    <div class="wall" style="left:705px;top:145px;width:18px;height:130px"></div>
+
+    <div class="wall" style="left:105px;top:145px;width:140px;height:18px"></div>
+    <div class="wall" style="left:225px;top:265px;width:140px;height:18px"></div>
+    <div class="wall" style="left:345px;top:115px;width:140px;height:18px"></div>
+    <div class="wall" style="left:465px;top:255px;width:140px;height:18px"></div>
+    <div class="wall" style="left:585px;top:145px;width:140px;height:18px"></div>
+
     <div id="player">🙂</div>
-
-    <!-- Wider clear-path maze walls -->
-    <div class="wall" style="left:110px;top:0;width:18px;height:130px"></div>
-    <div class="wall" style="left:110px;top:250px;width:18px;height:180px"></div>
-
-    <div class="wall" style="left:250px;top:80px;width:18px;height:260px"></div>
-
-    <div class="wall" style="left:390px;top:0;width:18px;height:160px"></div>
-    <div class="wall" style="left:390px;top:280px;width:18px;height:150px"></div>
-
-    <div class="wall" style="left:530px;top:90px;width:18px;height:250px"></div>
-
-    <div class="wall" style="left:670px;top:0;width:18px;height:125px"></div>
-    <div class="wall" style="left:670px;top:250px;width:18px;height:180px"></div>
-
-    <div class="wall" style="left:110px;top:125px;width:150px;height:18px"></div>
-    <div class="wall" style="left:250px;top:325px;width:155px;height:18px"></div>
-    <div class="wall" style="left:390px;top:155px;width:155px;height:18px"></div>
-    <div class="wall" style="left:530px;top:325px;width:155px;height:18px"></div>
-
     <div id="gates"></div>
   </div>
 
@@ -118,7 +204,7 @@ const questions=[
 ];
 
 let current=0,score=0,chances=2;
-let px=25,py=190;
+let px=35,py=195;
 let locked=false;
 const player=document.getElementById("player");
 
@@ -147,7 +233,7 @@ function loadQuestion(){
 function createGates(){
  const gates=document.getElementById("gates");
  gates.innerHTML="";
- const pos=[35,180,325];
+ const pos=[60,180,300];
  const shuffled=[...questions[current].options].sort(()=>Math.random()-0.5);
 
  shuffled.forEach((opt,i)=>{
@@ -155,14 +241,14 @@ function createGates(){
   g.className="gate";
   g.textContent=opt;
   g.dataset.answer=opt;
-  g.style.left="715px";
+  g.style.left="710px";
   g.style.top=pos[i]+"px";
   gates.appendChild(g);
  });
 }
 
 function resetPlayer(){
- px=25;py=190;
+ px=35;py=195;
  player.style.left=px+"px";
  player.style.top=py+"px";
 }
@@ -272,5 +358,6 @@ function loseGame(){
  document.getElementById("end").style.display="flex";
 }
 </script>
+
 </body>
 </html>
