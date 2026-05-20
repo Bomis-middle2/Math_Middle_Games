@@ -1,161 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Grade 5 Maths - Large Numbers Runner Game</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Large Numbers Runner Game</title>
 <style>
 *{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:linear-gradient(#bdefff,#f7fbff);
-  overflow:hidden;
-}
-#game{
-  width:100vw;
-  height:100vh;
-  position:relative;
-}
-#loader,#startScreen,#endScreen{
-  position:absolute;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  background:linear-gradient(#e9f8ff,#ffffff);
-  z-index:20;
-  text-align:center;
-}
-#loader img,#startScreen img{
-  width:180px;
-  margin-bottom:20px;
-}
-button{
-  padding:14px 28px;
-  border:0;
-  border-radius:14px;
-  background:#0b78ff;
-  color:white;
-  font-size:20px;
-  font-weight:bold;
-  cursor:pointer;
-}
-#hud{
-  position:absolute;
-  top:10px;
-  left:10px;
-  right:10px;
-  display:flex;
-  justify-content:space-between;
-  font-size:20px;
-  font-weight:bold;
-  z-index:5;
-}
-#questionBox{
-  position:absolute;
-  top:55px;
-  left:50%;
-  transform:translateX(-50%);
-  background:white;
-  padding:14px 22px;
-  border-radius:16px;
-  border:3px solid #004aad;
-  font-size:23px;
-  font-weight:bold;
-  text-align:center;
-  width:80%;
-  z-index:5;
-}
-#ground{
-  position:absolute;
-  bottom:0;
-  width:100%;
-  height:120px;
-  background:#7ac943;
-  border-top:8px solid #4c9a2a;
-}
-#player{
-  position:absolute;
-  bottom:115px;
-  left:120px;
-  width:70px;
-  height:70px;
-  border-radius:50%;
-  background:#ffb703;
-  border:5px solid #333;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:34px;
-  z-index:4;
-}
-.option{
-  position:absolute;
-  bottom:120px;
-  width:170px;
-  height:85px;
-  border-radius:18px;
-  background:#fff;
-  border:4px solid #222;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  font-size:21px;
-  font-weight:bold;
-  padding:8px;
-}
-#message{
-  position:absolute;
-  top:145px;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:26px;
-  font-weight:bold;
-  color:#d00000;
-  z-index:8;
-  background:white;
-  padding:10px 20px;
-  border-radius:12px;
-  display:none;
-}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(#bfefff,#fff);overflow:hidden}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(#eefaff,#fff);z-index:10}
+.logo{width:170px;margin-bottom:18px}
+button{border:0;border-radius:14px;background:#0066ff;color:white;font-size:20px;font-weight:bold;padding:14px 28px;cursor:pointer}
+#gameArea{width:100vw;height:100vh;position:relative}
+#hud{position:absolute;top:12px;left:20px;right:20px;display:flex;justify-content:space-between;font-size:20px;font-weight:bold;z-index:5}
+#question{position:absolute;top:60px;left:50%;transform:translateX(-50%);width:86%;background:white;border:3px solid #004aad;border-radius:18px;padding:16px;font-size:24px;font-weight:bold;text-align:center;z-index:5}
+#runner{position:absolute;bottom:115px;left:70px;font-size:64px;z-index:3;animation:run .45s infinite alternate}
+@keyframes run{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+#ground{position:absolute;bottom:0;width:100%;height:115px;background:#59b947;border-top:8px solid #2f7d20}
+.optionBox{position:absolute;bottom:155px;width:100%;display:flex;justify-content:center;gap:25px;z-index:4}
+.option{width:250px;min-height:95px;background:#fff;border:4px solid #222;border-radius:20px;font-size:24px;font-weight:bold;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;cursor:pointer;box-shadow:0 6px 0 #999}
+.option:hover{transform:scale(1.04);background:#fff7d6}
+#msg{position:absolute;top:145px;left:50%;transform:translateX(-50%);font-size:26px;font-weight:bold;background:white;border-radius:12px;padding:10px 22px;display:none;z-index:9}
+.roadLine{position:absolute;bottom:55px;width:120px;height:8px;background:white;border-radius:10px;animation:moveRoad 1.2s linear infinite}
+@keyframes moveRoad{from{right:-130px}to{right:100%}}
 </style>
 </head>
-
 <body>
-<div id="game">
 
-  <div id="loader">
-    <img src="assets/logo.png" alt="Logo">
-    <h2>Loading Game...</h2>
-  </div>
+<div id="loader" class="screen">
+  <img src="assets/logo.png" class="logo">
+  <h2>Loading Large Numbers Runner...</h2>
+</div>
 
-  <div id="startScreen" style="display:none;">
-    <img src="assets/logo.png" alt="Logo">
-    <h1>Large Numbers Runner</h1>
-    <p>Choose the correct answer and avoid the wrong ones!</p>
-    <button onclick="startGame()">Start Game</button>
-  </div>
+<div id="start" class="screen" style="display:none">
+  <img src="assets/logo.png" class="logo">
+  <h1>Large Numbers Runner</h1>
+  <p>Tap the correct answer to help the runner move ahead!</p>
+  <button onclick="startGame()">Start Game</button>
+</div>
 
+<div id="gameArea">
   <div id="hud">
     <div>Score: <span id="score">0</span></div>
     <div>Attempts: <span id="attempts">2</span></div>
-    <div>Time: <span id="timer">60</span>s</div>
+    <div>Time: <span id="time">60</span>s</div>
   </div>
 
-  <div id="questionBox"></div>
-  <div id="message"></div>
-  <div id="player">🏃</div>
+  <div id="question"></div>
+  <div id="msg"></div>
+  <div id="runner">🏃</div>
+
+  <div class="optionBox" id="options"></div>
+
+  <div class="roadLine" style="animation-delay:0s"></div>
+  <div class="roadLine" style="animation-delay:.4s"></div>
+  <div class="roadLine" style="animation-delay:.8s"></div>
+
   <div id="ground"></div>
+</div>
 
-  <div id="endScreen" style="display:none;">
-    <img src="assets/logo.png" alt="Logo">
-    <h1>Game Over!</h1>
-    <h2>Your Score: <span id="finalScore"></span></h2>
-    <button onclick="location.reload()">Play Again</button>
-  </div>
+<div id="end" class="screen" style="display:none">
+  <img src="assets/logo.png" class="logo">
+  <h1>Game Over!</h1>
+  <h2>Your Score: <span id="finalScore"></span></h2>
+  <button onclick="location.reload()">Play Again</button>
 </div>
 
 <audio id="correctSound" src="assets/correct.mp3"></audio>
@@ -164,161 +71,153 @@ button{
 
 <script>
 const questions = [
-  { q:"1 lakh is equal to:", options:["10,000","1,00,000","10,00,000"], ans:"1,00,000" },
-  { q:"1 million is equal to:", options:["1,00,000","10,00,000","1,00,00,000"], ans:"10,00,000" },
-  { q:"Place value of 7 in 47,325 is:", options:["7","700","7,000"], ans:"7,000" },
-  { q:"Face value of 9 in 9,45,210 is:", options:["9","90,000","9,00,000"], ans:"9" },
-  { q:"Expanded form of 5,432 is:", options:["5000+400+30+2","500+400+30+2","5000+40+30+2"], ans:"5000+400+30+2" },
-  { q:"Which is greatest?", options:["8,76,543","8,67,543","8,76,453"], ans:"8,76,543" },
-  { q:"Round 67 to nearest ten:", options:["60","70","80"], ans:"70" },
-  { q:"Roman numeral for 50 is:", options:["X","L","C"], ans:"L" },
-  { q:"Roman numeral for 100 is:", options:["C","D","M"], ans:"C" },
-  { q:"Smallest number:", options:["4,32,105","4,23,105","4,32,015"], ans:"4,23,105" }
+  {
+    concept:"Indian System",
+    q:"In the Indian system, 1 crore is equal to:",
+    options:["10,00,000","1,00,00,000","1,00,000"],
+    ans:"1,00,00,000"
+  },
+  {
+    concept:"International System",
+    q:"In the International system, 1 million is equal to:",
+    options:["10,00,000","1,00,000","1,00,00,000"],
+    ans:"10,00,000"
+  },
+  {
+    concept:"Place Value",
+    q:"What is the place value of 8 in 48,56,210?",
+    options:["8","8,00,000","80,000"],
+    ans:"8,00,000"
+  },
+  {
+    concept:"Face Value",
+    q:"What is the face value of 6 in 76,43,219?",
+    options:["6","60,000","6,00,000"],
+    ans:"6"
+  },
+  {
+    concept:"Expanded Form",
+    q:"Which is the expanded form of 3,45,208?",
+    options:["3,00,000 + 40,000 + 5,000 + 200 + 8","3,00,000 + 4,000 + 500 + 20 + 8","30,000 + 40,000 + 5,000 + 200 + 8"],
+    ans:"3,00,000 + 40,000 + 5,000 + 200 + 8"
+  },
+  {
+    concept:"Comparing Numbers",
+    q:"Which number is the greatest?",
+    options:["9,87,654","9,78,654","9,87,564"],
+    ans:"9,87,654"
+  },
+  {
+    concept:"Ordering Numbers",
+    q:"Which is the correct ascending order?",
+    options:["45,210 ; 45,120 ; 45,012","45,012 ; 45,120 ; 45,210","45,210 ; 45,012 ; 45,120"],
+    ans:"45,012 ; 45,120 ; 45,210"
+  },
+  {
+    concept:"Rounding Off",
+    q:"Round 78,346 to the nearest thousand.",
+    options:["78,000","79,000","80,000"],
+    ans:"78,000"
+  },
+  {
+    concept:"Roman Numerals",
+    q:"What is the Roman numeral for 90?",
+    options:["LXXXX","XC","CX"],
+    ans:"XC"
+  },
+  {
+    concept:"Operations with Large Numbers",
+    q:"What is 25,000 + 35,000?",
+    options:["50,000","60,000","70,000"],
+    ans:"60,000"
+  }
 ];
 
-let current = 0, score = 0, attempts = 2, timeLeft = 60;
-let gameRunning = false;
-let optionEls = [];
-let speed = 4;
-let timerInterval, moveInterval;
+let index=0, score=0, attempts=2, time=60, timer;
 
-const qBox = document.getElementById("questionBox");
-const scoreBox = document.getElementById("score");
-const attemptsBox = document.getElementById("attempts");
-const timerBox = document.getElementById("timer");
-const msg = document.getElementById("message");
-
-const correctSound = document.getElementById("correctSound");
-const wrongSound = document.getElementById("wrongSound");
-const clapSound = document.getElementById("clapSound");
-
-window.onload = () => {
-  setTimeout(() => {
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("startScreen").style.display = "flex";
-  }, 1200);
+window.onload=()=>{
+  setTimeout(()=>{
+    document.getElementById("loader").style.display="none";
+    document.getElementById("start").style.display="flex";
+  },1000);
 };
 
 function startGame(){
-  document.getElementById("startScreen").style.display = "none";
-  gameRunning = true;
+  document.getElementById("start").style.display="none";
   loadQuestion();
-
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    timerBox.textContent = timeLeft;
-    if(timeLeft <= 0) endGame();
-  }, 1000);
-
-  moveInterval = setInterval(moveOptions, 20);
+  timer=setInterval(()=>{
+    time--;
+    document.getElementById("time").textContent=time;
+    if(time<=0) endGame();
+  },1000);
 }
 
 function loadQuestion(){
-  clearOptions();
-  attempts = 2;
-  attemptsBox.textContent = attempts;
+  attempts=2;
+  document.getElementById("attempts").textContent=attempts;
 
-  if(current >= questions.length){
+  if(index>=questions.length){
     endGame();
     return;
   }
 
-  let item = questions[current];
-  qBox.textContent = item.q;
+  const item=questions[index];
+  document.getElementById("question").textContent =
+    "Q" + (index+1) + ". " + item.q;
 
-  let shuffled = [...item.options].sort(() => Math.random() - 0.5);
-  shuffled.forEach((opt, i) => {
-    let div = document.createElement("div");
-    div.className = "option";
-    div.textContent = opt;
-    div.dataset.answer = opt;
-    div.style.left = (window.innerWidth + i * 250) + "px";
-    div.style.bottom = (120 + i * 95) + "px";
-    document.getElementById("game").appendChild(div);
-    optionEls.push(div);
+  const optionsDiv=document.getElementById("options");
+  optionsDiv.innerHTML="";
+
+  const shuffled=[...item.options].sort(()=>Math.random()-0.5);
+
+  shuffled.forEach(opt=>{
+    const div=document.createElement("div");
+    div.className="option";
+    div.textContent=opt;
+    div.onclick=()=>checkAnswer(opt);
+    optionsDiv.appendChild(div);
   });
 }
 
-function moveOptions(){
-  if(!gameRunning) return;
+function checkAnswer(selected){
+  const item=questions[index];
 
-  optionEls.forEach(opt => {
-    let x = parseInt(opt.style.left);
-    opt.style.left = (x - speed) + "px";
-
-    if(checkCollision(document.getElementById("player"), opt)){
-      handleAnswer(opt.dataset.answer);
-    }
-  });
-
-  if(optionEls.length && parseInt(optionEls[optionEls.length - 1].style.left) < -180){
-    attempts--;
-    attemptsBox.textContent = attempts;
-    wrongSound.play();
-    showMsg("Missed! Try again.");
-
-    if(attempts <= 0){
-      showMsg("Correct answer: " + questions[current].ans);
-      setTimeout(nextQuestion, 1300);
-    } else {
-      setTimeout(loadQuestion, 900);
-    }
-  }
-}
-
-function handleAnswer(selected){
-  if(selected === questions[current].ans){
+  if(selected===item.ans){
     score++;
-    scoreBox.textContent = score;
-    correctSound.play();
+    document.getElementById("score").textContent=score;
+    document.getElementById("correctSound").play();
     showMsg("Correct!");
-    setTimeout(nextQuestion, 900);
-  } else {
+    index++;
+    setTimeout(loadQuestion,900);
+  }else{
     attempts--;
-    attemptsBox.textContent = attempts;
-    wrongSound.play();
+    document.getElementById("attempts").textContent=attempts;
+    document.getElementById("wrongSound").play();
 
-    if(attempts <= 0){
-      showMsg("Correct answer: " + questions[current].ans);
-      setTimeout(nextQuestion, 1300);
-    } else {
-      showMsg("Wrong! One more try.");
-      setTimeout(loadQuestion, 900);
+    if(attempts===0){
+      showMsg("Correct answer: " + item.ans);
+      index++;
+      setTimeout(loadQuestion,1500);
+    }else{
+      showMsg("Try again!");
     }
   }
-}
-
-function nextQuestion(){
-  current++;
-  loadQuestion();
-}
-
-function clearOptions(){
-  optionEls.forEach(el => el.remove());
-  optionEls = [];
-}
-
-function checkCollision(a,b){
-  const r1 = a.getBoundingClientRect();
-  const r2 = b.getBoundingClientRect();
-  return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
 }
 
 function showMsg(text){
-  msg.textContent = text;
-  msg.style.display = "block";
-  setTimeout(() => msg.style.display = "none", 900);
+  const msg=document.getElementById("msg");
+  msg.textContent=text;
+  msg.style.display="block";
+  setTimeout(()=>msg.style.display="none",900);
 }
 
 function endGame(){
-  gameRunning = false;
-  clearInterval(timerInterval);
-  clearInterval(moveInterval);
-  clearOptions();
-  clapSound.play();
-  document.getElementById("finalScore").textContent = score + " / " + questions.length;
-  document.getElementById("endScreen").style.display = "flex";
+  clearInterval(timer);
+  document.getElementById("clapSound").play();
+  document.getElementById("finalScore").textContent=score + " / " + questions.length;
+  document.getElementById("end").style.display="flex";
 }
 </script>
+
 </body>
 </html>
