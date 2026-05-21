@@ -1,3 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fraction Kingdom Adventure</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  overflow:hidden;
+  background:#dff4ff;
+  text-align:center;
+}
+
+.screen{
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(#fff3d6,#ffffff);
+  z-index:50;
+  padding:20px;
+}
+
+.logo{width:160px;margin-bottom:18px}
+
+button{
+  border:0;
+  border-radius:14px;
+  padding:14px 28px;
+  font-size:20px;
+  font-weight:bold;
+  background:#d62828;
+  color:white;
+  cursor:pointer;
+}
+
+#hud{
+  display:flex;
+  justify-content:space-around;
+  padding:12px;
+  font-size:20px;
+  font-weight:bold;
+  background:white;
+  flex-wrap:wrap;
+}
+
+#levelTitle{
+  font-size:34px;
+  font-weight:bold;
+  margin-top:10px;
+  color:#7b2cbf;
+}
+
+#questionBox{
+  width:92%;
+  max-width:900px;
+  margin:12px auto;
+  background:white;
+  border:4px solid #7b2cbf;
+  border-radius:18px;
+  padding:16px;
+  font-size:24px;
+  font-weight:bold;
+  min-height:80px;
+}
+
+#gameArea{
+  position:relative;
+  width:1000px;
+  max-width:96vw;
+  height:520px;
+  margin:auto;
+  background:linear-gradient(#9bf6ff,#d8f3dc);
+  border:5px solid #333;
+  border-radius:20px;
+  overflow:hidden;
+  padding-top:25px;
+}
+
+#msg{
+  font-size:30px;
+  font-weight:bold;
+  min-height:40px;
+  margin-top:10px;
+}
+
+.instructions{
+  font-size:22px;
+  line-height:1.6;
+  max-width:760px;
+}
+
+#pizza{
+  position:relative;
+  width:340px;
+  height:340px;
+  margin:20px auto;
+  border-radius:50%;
+  overflow:hidden;
+  border:10px solid #c97b30;
+  background:#ffd166;
+}
+
+.slice{
+  position:absolute;
+  width:50%;
+  height:50%;
+  left:50%;
+  top:50%;
+  transform-origin:0% 0%;
+  border:2px solid white;
+  cursor:pointer;
+  background:#ffd166;
+}
+
+.selected{background:#ef476f!important}
+
+.optionBtn{
+  padding:16px 28px;
+  margin:16px;
+  font-size:30px;
+  border-radius:16px;
+  border:4px solid #333;
+  background:white;
+  color:#111;
+  cursor:pointer;
+  font-weight:bold;
+  min-width:170px;
+  min-height:80px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.visual{
+  font-size:120px;
+  margin:20px auto;
+}
+</style>
+</head>
+
+<body>
+
+<div id="loader" class="screen">
+  <img src="assets/logo.png" class="logo">
+  <h2>Loading Fraction Kingdom Adventure...</h2>
+</div>
+
+<div id="instructions" class="screen" style="display:none">
+  <img src="assets/logo.png" class="logo">
+  <h1>Fraction Kingdom Adventure 👑</h1>
+  <div class="instructions">
+    <p>Complete all fraction challenges.</p>
+    <p>Levels appear in a random order.</p>
+    <p>You get <b>2 chances per level</b>.</p>
+    <p>After 2 wrong attempts, the correct answer is shown.</p>
+  </div>
+  <button onclick="startGame()">Start Adventure</button>
+</div>
+
+<div id="end" class="screen" style="display:none">
+  <img src="assets/logo.png" class="logo">
+  <h1>You Saved The Fraction Kingdom! 👑</h1>
+  <h2>Your Score: <span id="finalScore"></span></h2>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
+<div id="hud">
+  <div>⭐ Score: <span id="score">0</span></div>
+  <div>❤️ Chances: <span id="chances">2</span></div>
+  <div>🏰 Level: <span id="levelNo">1</span>/10</div>
+</div>
+
+<div id="levelTitle"></div>
+<div id="questionBox"></div>
+<div id="gameArea"></div>
+<div id="msg"></div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
 const levelBank = [
   {
     title:"🍕 Pizza Village",
@@ -12,6 +202,7 @@ const levelBank = [
     question:"Which fraction is an improper fraction?",
     answer:"11/7",
     type:"choice",
+    visual:"🌳",
     options:["5/9","11/7","2 1/3"]
   },
   {
@@ -19,6 +210,7 @@ const levelBank = [
     question:"Which fraction is equivalent to 3/4?",
     answer:"9/12",
     type:"choice",
+    visual:"✨",
     options:["6/10","9/12","12/15"]
   },
   {
@@ -26,6 +218,7 @@ const levelBank = [
     question:"Choose the greater fraction.",
     answer:"5/6",
     type:"choice",
+    visual:"🐉",
     options:["5/6","7/12","3/8"]
   },
   {
@@ -33,6 +226,7 @@ const levelBank = [
     question:"Simplify 18/24. Give answer in simplest form.",
     answer:"3/4",
     type:"choice",
+    visual:"⚙️",
     options:["6/8","3/4","9/12"]
   },
   {
@@ -40,6 +234,7 @@ const levelBank = [
     question:"Convert 17/5 into a mixed number.",
     answer:"3 2/5",
     type:"choice",
+    visual:"🧙",
     options:["2 3/5","3 2/5","4 1/5"]
   },
   {
@@ -47,6 +242,7 @@ const levelBank = [
     question:"2/9 + 5/9 = ? Give answer in simplest form.",
     answer:"7/9",
     type:"choice",
+    visual:"💰",
     options:["7/18","7/9","3/9"]
   },
   {
@@ -54,6 +250,7 @@ const levelBank = [
     question:"7/10 - 3/10 = ? Give answer in simplest form.",
     answer:"2/5",
     type:"choice",
+    visual:"🌉",
     options:["4/10","2/5","3/5"]
   },
   {
@@ -61,6 +258,7 @@ const levelBank = [
     question:"2/3 × 3/4 = ? Give answer in simplest form.",
     answer:"1/2",
     type:"choice",
+    visual:"⚔️",
     options:["6/12","1/2","5/7"]
   },
   {
@@ -68,8 +266,148 @@ const levelBank = [
     question:"3/5 ÷ 3/10 = ?",
     answer:"2",
     type:"choice",
+    visual:"👑",
     options:["1","2","3"]
   }
 ];
 
-let levels = levelBank.sort(() => Math.random() - 0.5);
+let levels = [...levelBank].sort(() => Math.random() - 0.5);
+let level = 0;
+let score = 0;
+let chances = 2;
+let locked = false;
+
+window.onload = () => {
+  setTimeout(() => {
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("instructions").style.display = "flex";
+  }, 900);
+};
+
+function startGame(){
+  document.getElementById("instructions").style.display = "none";
+  loadLevel();
+}
+
+function resetChances(){
+  chances = 2;
+  locked = false;
+  document.getElementById("chances").textContent = chances;
+}
+
+function loadLevel(){
+  resetChances();
+  document.getElementById("msg").textContent = "";
+  document.getElementById("gameArea").innerHTML = "";
+
+  if(level >= levels.length){
+    finishGame();
+    return;
+  }
+
+  const item = levels[level];
+
+  document.getElementById("levelNo").textContent = level + 1;
+  document.getElementById("levelTitle").textContent = item.title;
+  document.getElementById("questionBox").textContent =
+    "Level " + (level + 1) + ". " + item.question;
+
+  if(item.type === "pizza"){
+    buildPizzaQuestion(item);
+  }else{
+    buildChoiceQuestion(item);
+  }
+}
+
+function buildPizzaQuestion(item){
+  const pizza = document.createElement("div");
+  pizza.id = "pizza";
+  document.getElementById("gameArea").appendChild(pizza);
+
+  const angle = 360 / item.total;
+
+  for(let i = 0; i < item.total; i++){
+    const slice = document.createElement("div");
+    slice.className = "slice";
+    slice.style.transform = `rotate(${i * angle}deg) skewY(${90 - angle}deg)`;
+    slice.onclick = () => {
+      if(!locked) slice.classList.toggle("selected");
+    };
+    pizza.appendChild(slice);
+  }
+
+  const btn = document.createElement("button");
+  btn.innerText = "Check Answer";
+  btn.onclick = () => {
+    if(locked) return;
+    const selected = document.querySelectorAll(".selected").length;
+    if(selected === item.correct){
+      correct();
+    }else{
+      wrong(item.answer);
+    }
+  };
+
+  document.getElementById("gameArea").appendChild(btn);
+}
+
+function buildChoiceQuestion(item){
+  const visual = document.createElement("div");
+  visual.className = "visual";
+  visual.textContent = item.visual || "👑";
+  document.getElementById("gameArea").appendChild(visual);
+
+  const shuffled = [...item.options].sort(() => Math.random() - 0.5);
+
+  shuffled.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.className = "optionBtn";
+    btn.innerText = opt;
+    btn.onclick = () => {
+      if(locked) return;
+      if(opt === item.answer){
+        correct();
+      }else{
+        wrong(item.answer);
+      }
+    };
+    document.getElementById("gameArea").appendChild(btn);
+  });
+}
+
+function correct(){
+  locked = true;
+  document.getElementById("correctSound").play();
+  score++;
+  document.getElementById("score").textContent = score;
+  document.getElementById("msg").style.color = "green";
+  document.getElementById("msg").textContent = "Correct!";
+  level++;
+  setTimeout(loadLevel, 1500);
+}
+
+function wrong(answer){
+  document.getElementById("wrongSound").play();
+  chances--;
+  document.getElementById("chances").textContent = chances;
+  document.getElementById("msg").style.color = "red";
+
+  if(chances > 0){
+    document.getElementById("msg").textContent = "Try Again!";
+  }else{
+    locked = true;
+    document.getElementById("msg").textContent = "Correct Answer: " + answer;
+    level++;
+    setTimeout(loadLevel, 2200);
+  }
+}
+
+function finishGame(){
+  document.getElementById("clapSound").play();
+  document.getElementById("finalScore").textContent = score + " / " + levels.length;
+  document.getElementById("end").style.display = "flex";
+}
+</script>
+
+</body>
+</html>
