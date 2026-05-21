@@ -6,7 +6,9 @@
 <title>Fraction Kingdom Adventure</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+box-sizing:border-box;
+}
 
 body{
 margin:0;
@@ -84,6 +86,7 @@ background:linear-gradient(#9bf6ff,#d8f3dc);
 border:5px solid #333;
 border-radius:20px;
 overflow:hidden;
+padding-top:20px;
 }
 
 #msg{
@@ -105,7 +108,7 @@ max-width:760px;
 position:relative;
 width:340px;
 height:340px;
-margin:30px auto;
+margin:20px auto;
 border-radius:50%;
 overflow:hidden;
 border:10px solid #c97b30;
@@ -126,6 +129,35 @@ background:#ffd166;
 
 .selected{
 background:#ef476f !important;
+}
+
+/* BUTTONS */
+
+.optionBtn{
+padding:16px 28px;
+margin:14px;
+font-size:30px;
+border-radius:16px;
+border:4px solid #333;
+background:white;
+color:#111;
+cursor:pointer;
+font-weight:bold;
+min-width:160px;
+min-height:80px;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+}
+
+/* CARDS */
+
+.fractionCard,
+.matchCard,
+.stone{
+color:#111;
+background:white;
+z-index:10;
 }
 
 /* SORTING */
@@ -149,7 +181,6 @@ align-items:center;
 position:absolute;
 width:130px;
 height:70px;
-background:white;
 border:4px solid #333;
 border-radius:14px;
 display:flex;
@@ -160,13 +191,12 @@ font-weight:bold;
 cursor:pointer;
 }
 
-/* MATCHING */
+/* MATCH */
 
 .matchCard{
 position:absolute;
 width:140px;
 height:80px;
-background:white;
 border:4px solid #333;
 border-radius:14px;
 display:flex;
@@ -181,19 +211,9 @@ cursor:pointer;
 
 .dragon{
 position:absolute;
-right:120px;
-top:160px;
+right:100px;
+top:120px;
 font-size:140px;
-}
-
-.optionBtn{
-padding:16px 28px;
-margin:10px;
-font-size:26px;
-border-radius:14px;
-border:4px solid #333;
-background:white;
-cursor:pointer;
 }
 
 /* MACHINE */
@@ -204,21 +224,20 @@ height:220px;
 background:#adb5bd;
 border:6px solid #333;
 border-radius:24px;
-margin:60px auto;
+margin:50px auto;
 display:flex;
 justify-content:center;
 align-items:center;
-font-size:40px;
+font-size:42px;
 font-weight:bold;
 }
 
-/* PATH */
+/* STONES */
 
 .stone{
 position:absolute;
 width:150px;
 height:70px;
-background:#b08968;
 border:4px solid #333;
 border-radius:18px;
 display:flex;
@@ -248,7 +267,7 @@ cursor:pointer;
 <p>Travel across the Fraction Kingdom.</p>
 <p>Complete all fraction challenges.</p>
 <p>You get only <b>2 chances per level</b>.</p>
-<p>After 2 wrong attempts, correct answer is shown.</p>
+<p>After 2 wrong attempts, the correct answer is shown.</p>
 </div>
 
 <button onclick="startGame()">Start Adventure</button>
@@ -293,76 +312,45 @@ let score=0;
 let chances=2;
 
 window.onload=()=>{
-
 setTimeout(()=>{
-
 document.getElementById("loader").style.display="none";
-
 document.getElementById("instructions").style.display="flex";
-
 },900);
-
 };
 
 function startGame(){
-
 document.getElementById("instructions").style.display="none";
-
 loadLevel();
-
 }
 
 function resetChances(){
-
 chances=2;
-
 document.getElementById("chances").textContent=chances;
-
 }
 
 function correct(){
-
 document.getElementById("correctSound").play();
-
 score++;
-
 document.getElementById("score").textContent=score;
-
 document.getElementById("msg").style.color="green";
-
 document.getElementById("msg").textContent="Correct!";
-
 level++;
-
 setTimeout(loadLevel,1500);
-
 }
 
 function wrong(showAnswer){
-
 document.getElementById("wrongSound").play();
-
 chances--;
-
 document.getElementById("chances").textContent=chances;
-
 document.getElementById("msg").style.color="red";
 
 if(chances>0){
-
 document.getElementById("msg").textContent="Try Again!";
-
 }else{
-
-document.getElementById("msg").textContent=
-"Correct Answer: "+showAnswer;
-
+document.getElementById("msg").textContent="Correct Answer: "+showAnswer;
 level++;
-
 setTimeout(loadLevel,2200);
-
 }
-
 }
 
 function loadLevel(){
@@ -391,32 +379,27 @@ else finishGame();
 
 }
 
-/* LEVEL 1 */
+/* LEVELS */
 
 function pizzaLevel(){
 
-document.getElementById("levelTitle").textContent=
-"🍕 Pizza Village";
+document.getElementById("levelTitle").textContent="🍕 Pizza Village";
 
-document.getElementById("questionBox").textContent=
-"Make 3/4 Pizza";
+document.getElementById("questionBox").textContent="Make 3/4 Pizza";
 
 const pizza=document.createElement("div");
 
 pizza.id="pizza";
 
-document.getElementById("gameArea").appendChild(pizza);
+gameArea.appendChild(pizza);
 
-const total=4;
-
-for(let i=0;i<total;i++){
+for(let i=0;i<4;i++){
 
 const slice=document.createElement("div");
 
 slice.className="slice";
 
-slice.style.transform=
-`rotate(${i*90}deg) skewY(0deg)`;
+slice.style.transform=`rotate(${i*90}deg)`;
 
 slice.onclick=()=>slice.classList.toggle("selected");
 
@@ -428,51 +411,24 @@ const btn=document.createElement("button");
 
 btn.innerText="Check Pizza";
 
-btn.style.marginTop="20px";
-
 btn.onclick=()=>{
 
-const selected=
-document.querySelectorAll(".selected").length;
+const selected=document.querySelectorAll(".selected").length;
 
 if(selected===3)correct();
-else wrong("3 slices");
+else wrong("3 slices selected");
 
 };
 
-document.getElementById("gameArea").appendChild(btn);
+gameArea.appendChild(btn);
 
 }
 
-/* LEVEL 2 */
-
 function sortingLevel(){
 
-document.getElementById("levelTitle").textContent=
-"🌳 Fraction Sorting Forest";
+document.getElementById("levelTitle").textContent="🌳 Fraction Sorting Forest";
 
-document.getElementById("questionBox").textContent=
-"Click the Improper Fraction";
-
-const proper=document.createElement("div");
-
-proper.className="basket";
-proper.style.left="120px";
-proper.innerText="Proper";
-
-const improper=document.createElement("div");
-
-improper.className="basket";
-improper.style.left="390px";
-improper.innerText="Improper";
-
-const mixed=document.createElement("div");
-
-mixed.className="basket";
-mixed.style.left="660px";
-mixed.innerText="Mixed";
-
-gameArea.append(proper,improper,mixed);
+document.getElementById("questionBox").textContent="Click the Improper Fraction";
 
 const arr=["3/5","7/4","1 1/2"];
 
@@ -484,7 +440,7 @@ c.className="fractionCard";
 
 c.style.left=(120+i*260)+"px";
 
-c.style.top="120px";
+c.style.top="160px";
 
 c.innerText=f;
 
@@ -501,25 +457,19 @@ gameArea.appendChild(c);
 
 }
 
-/* LEVEL 3 */
-
 function matchingLevel(){
 
-document.getElementById("levelTitle").textContent=
-"✨ Magic Mirror Cave";
+document.getElementById("levelTitle").textContent="✨ Magic Mirror Cave";
 
-document.getElementById("questionBox").textContent=
-"Find Equivalent Fraction of 1/2";
+document.getElementById("questionBox").textContent="Find Equivalent Fraction of 1/2";
 
-const arr=["2/4","3/5","5/8","7/10"];
-
-arr.forEach((f,i)=>{
+["2/4","3/5","5/8"].forEach((f,i)=>{
 
 const c=document.createElement("div");
 
 c.className="matchCard";
 
-c.style.left=(120+i*190)+"px";
+c.style.left=(180+i*220)+"px";
 
 c.style.top="180px";
 
@@ -538,23 +488,19 @@ gameArea.appendChild(c);
 
 }
 
-/* LEVEL 4 */
-
 function dragonLevel(){
 
-document.getElementById("levelTitle").textContent=
-"🐉 Dragon Bridge";
+document.getElementById("levelTitle").textContent="🐉 Dragon Bridge";
 
-document.getElementById("questionBox").textContent=
-"Choose Bigger Fraction";
+document.getElementById("questionBox").textContent="Choose Bigger Fraction";
 
-const dragon=document.createElement("div");
+const d=document.createElement("div");
 
-dragon.className="dragon";
+d.className="dragon";
 
-dragon.innerText="🐉";
+d.innerText="🐉";
 
-gameArea.appendChild(dragon);
+gameArea.appendChild(d);
 
 ["3/4","2/5"].forEach(f=>{
 
@@ -577,15 +523,11 @@ gameArea.appendChild(b);
 
 }
 
-/* LEVEL 5 */
-
 function machineLevel(){
 
-document.getElementById("levelTitle").textContent=
-"⚙️ Fraction Machine";
+document.getElementById("levelTitle").textContent="⚙️ Fraction Machine";
 
-document.getElementById("questionBox").textContent=
-"Simplify 4/8";
+document.getElementById("questionBox").textContent="Simplify 4/8";
 
 const m=document.createElement("div");
 
@@ -616,15 +558,11 @@ gameArea.appendChild(b);
 
 }
 
-/* LEVEL 6 */
-
 function mixedLevel(){
 
-document.getElementById("levelTitle").textContent=
-"🧙 Wizard Tower";
+document.getElementById("levelTitle").textContent="🧙 Wizard Tower";
 
-document.getElementById("questionBox").textContent=
-"Convert 7/4 into Mixed Number";
+document.getElementById("questionBox").textContent="Convert 7/4 into Mixed Number";
 
 ["1 3/4","2 1/4","3 1/4"].forEach(a=>{
 
@@ -647,15 +585,11 @@ gameArea.appendChild(b);
 
 }
 
-/* LEVEL 7 */
-
 function additionLevel(){
 
-document.getElementById("levelTitle").textContent=
-"💰 Treasure Addition";
+document.getElementById("levelTitle").textContent="💰 Treasure Addition";
 
-document.getElementById("questionBox").textContent=
-"1/4 + 2/4 = ?";
+document.getElementById("questionBox").textContent="1/4 + 2/4 = ?";
 
 ["3/4","2/8","1/2"].forEach(a=>{
 
@@ -678,15 +612,11 @@ gameArea.appendChild(b);
 
 }
 
-/* LEVEL 8 */
-
 function subtractionLevel(){
 
-document.getElementById("levelTitle").textContent=
-"🌉 River Crossing";
+document.getElementById("levelTitle").textContent="🌉 River Crossing";
 
-document.getElementById("questionBox").textContent=
-"5/6 - 2/6 = ?";
+document.getElementById("questionBox").textContent="5/6 - 2/6 = ?";
 
 ["3/6","2/6","1/6"].forEach((a,i)=>{
 
@@ -713,15 +643,11 @@ gameArea.appendChild(s);
 
 }
 
-/* LEVEL 9 */
-
 function multiplicationLevel(){
 
-document.getElementById("levelTitle").textContent=
-"⚔️ Monster Attack";
+document.getElementById("levelTitle").textContent="⚔️ Monster Attack";
 
-document.getElementById("questionBox").textContent=
-"1/2 × 2/3 = ?";
+document.getElementById("questionBox").textContent="1/2 × 2/3 = ?";
 
 ["1/3","2/5","2/6"].forEach(a=>{
 
@@ -744,15 +670,11 @@ gameArea.appendChild(b);
 
 }
 
-/* LEVEL 10 */
-
 function divisionLevel(){
 
-document.getElementById("levelTitle").textContent=
-"👑 Final Boss Castle";
+document.getElementById("levelTitle").textContent="👑 Final Boss Castle";
 
-document.getElementById("questionBox").textContent=
-"1/2 ÷ 1/4 = ?";
+document.getElementById("questionBox").textContent="1/2 ÷ 1/4 = ?";
 
 ["2","4","1"].forEach(a=>{
 
@@ -779,8 +701,7 @@ function finishGame(){
 
 document.getElementById("clapSound").play();
 
-document.getElementById("finalScore").textContent=
-score+" / 10";
+document.getElementById("finalScore").textContent=score+" / 10";
 
 document.getElementById("end").style.display="flex";
 
