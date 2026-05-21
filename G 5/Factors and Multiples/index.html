@@ -3,6 +3,8 @@
 <head>
 <title>Factors & Multiples Racing Game</title>
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <style>
 
 body{
@@ -10,6 +12,7 @@ body{
     text-align:center;
     background:linear-gradient(#87CEEB,#ffffff);
     overflow:hidden;
+    margin:0;
 }
 
 /* LOADER */
@@ -24,18 +27,25 @@ body{
 }
 
 #logo{
-    width:220px;
+    width:min(220px,60vw);
+}
+
+/* TOP LOGO */
+#topLogo{
+    width:min(140px,35vw);
+    margin-top:10px;
 }
 
 /* TITLE */
 h2{
-    margin-top:10px;
+    margin:8px 0;
+    font-size:clamp(24px,4vw,36px);
 }
 
 /* TRACK */
 #track{
-    width:90%;
-    height:120px;
+    width:min(1100px,92vw);
+    height:min(120px,18vh);
     margin:20px auto;
     background:#444;
     border-radius:10px;
@@ -43,7 +53,7 @@ h2{
     overflow:hidden;
 }
 
-/* ROAD LINES */
+/* ROAD LINE */
 #line{
     position:absolute;
     top:55px;
@@ -104,7 +114,7 @@ h2{
 #box{
     background:white;
     padding:20px;
-    width:70%;
+    width:min(900px,92vw);
     margin:auto;
     border-radius:15px;
     box-shadow:0 0 10px gray;
@@ -114,13 +124,15 @@ h2{
 button{
     padding:12px 18px;
     margin:8px;
-    font-size:18px;
+    font-size:clamp(16px,2vw,22px);
     cursor:pointer;
     border:none;
     border-radius:10px;
     background:#0077ff;
     color:white;
     font-weight:bold;
+    min-width:90px;
+    min-height:55px;
 }
 
 button:hover{
@@ -129,7 +141,7 @@ button:hover{
 
 /* PROGRESS */
 #progress{
-    width:80%;
+    width:min(900px,85vw);
     height:24px;
     background:#ddd;
     margin:20px auto;
@@ -147,14 +159,18 @@ button:hover{
 
 /* TEXT */
 #msg{
-    font-size:24px;
+    font-size:clamp(20px,3vw,30px);
     font-weight:bold;
 }
 
 #levelDisplay{
-    font-size:22px;
+    font-size:clamp(18px,3vw,28px);
     font-weight:bold;
     color:#cc0000;
+}
+
+#q{
+    font-size:clamp(20px,3vw,30px);
 }
 
 </style>
@@ -164,8 +180,14 @@ button:hover{
 
 <!-- LOADING SCREEN -->
 <div id="loader">
+
+    <!-- LOGO FILE -->
     <img src="assets/logo.png" id="logo">
+
 </div>
+
+<!-- TOP LOGO -->
+<img src="assets/logo.png" id="topLogo">
 
 <h2>🚗 Factors & Multiples Racing Game</h2>
 
@@ -182,7 +204,9 @@ button:hover{
 
 <!-- PROGRESS -->
 <div id="progress">
+
     <div id="bar"></div>
+
 </div>
 
 <!-- QUESTION BOX -->
@@ -232,17 +256,17 @@ let allQuestions = [
 
 {type:"word", q:"12 chocolates & 18 toffees. Max equal groups?", options:[3,6,9,12], ans:6},
 
-{type:"word", q:"Pack in 5s and 10s. Least number?", options:[10,15,20,25], ans:20},
+{type:"word", q:"Pack in 5s and 10s. Least number?", options:[10,15,20,25], ans:20}
 
 ];
 
-/* ================= HELPERS ================= */
+/* ================= SHUFFLE ================= */
 
 function shuffle(arr){
     return arr.sort(()=>Math.random()-0.5);
 }
 
-/* ================= LEVEL LOGIC ================= */
+/* ================= LEVEL QUESTIONS ================= */
 
 function getLevelQuestions(level){
 
@@ -287,15 +311,15 @@ function getLevelQuestions(level){
 
 /* ================= GAME STATE ================= */
 
-let level = 1;
+let level=1;
 
-let qIndex = 0;
+let qIndex=0;
 
-let currentSet = getLevelQuestions(level);
+let currentSet=getLevelQuestions(level);
 
-let correctAns = null;
+let correctAns=null;
 
-let position = 0;
+let position=0;
 
 /* ================= LOAD QUESTION ================= */
 
@@ -304,36 +328,35 @@ function loadQ(){
     document.getElementById("levelDisplay").innerHTML =
     "🏁 Level " + level;
 
-    let qObj = currentSet[qIndex];
+    let qObj=currentSet[qIndex];
 
-    document.getElementById("q").innerHTML =
-    qObj.q;
+    document.getElementById("q").innerHTML=qObj.q;
 
-    correctAns = qObj.ans;
+    correctAns=qObj.ans;
 
-    let html = "";
+    let html="";
 
     shuffle(qObj.options).forEach(opt=>{
 
         html += `
         <button onclick="check(${opt})">
-            ${opt}
+        ${opt}
         </button>
         `;
 
     });
 
-    document.getElementById("options").innerHTML = html;
+    document.getElementById("options").innerHTML=html;
 
-    document.getElementById("msg").innerHTML = "";
+    document.getElementById("msg").innerHTML="";
 
 }
 
-/* ================= CHECK ================= */
+/* ================= CHECK ANSWER ================= */
 
 function check(ans){
 
-    if(ans === correctAns){
+    if(ans===correctAns){
 
         document.getElementById("msg").innerHTML =
         "✅ Correct!";
@@ -345,24 +368,27 @@ function check(ans){
 
         qIndex++;
 
-        if(qIndex === 5){
+        if(qIndex===5){
 
             level++;
 
-            if(level > 3){
+            if(level>3){
 
                 setTimeout(()=>{
+
                     alert("🏆 You Won The Race!");
+
                     location.reload();
+
                 },500);
 
                 return;
 
             }
 
-            currentSet = getLevelQuestions(level);
+            currentSet=getLevelQuestions(level);
 
-            qIndex = 0;
+            qIndex=0;
 
         }
 
@@ -398,7 +424,7 @@ function moveCar(){
 
 /* ================= START ================= */
 
-window.onload = function(){
+window.onload=function(){
 
     setTimeout(()=>{
 
