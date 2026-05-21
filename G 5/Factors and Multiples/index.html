@@ -2,11 +2,9 @@
 <html>
 <head>
 <title>Factors & Multiples Racing Game</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-
 body{
     font-family:Arial;
     text-align:center;
@@ -15,7 +13,6 @@ body{
     margin:0;
 }
 
-/* LOADER */
 #loader{
     position:fixed;
     inset:0;
@@ -26,17 +23,15 @@ body{
     z-index:9999;
 }
 
-#logo{
+#loader img{
     width:min(220px,60vw);
 }
 
-/* TITLE */
 h2{
     margin:12px 0;
     font-size:clamp(24px,4vw,36px);
 }
 
-/* TRACK */
 #track{
     width:min(1100px,92vw);
     height:min(120px,18vh);
@@ -47,21 +42,14 @@ h2{
     overflow:hidden;
 }
 
-/* ROAD LINE */
 #line{
     position:absolute;
     top:55px;
     width:100%;
     height:10px;
-    background:
-    repeating-linear-gradient(
-        to right,
-        white 0 40px,
-        transparent 40px 80px
-    );
+    background:repeating-linear-gradient(to right,white 0 40px,transparent 40px 80px);
 }
 
-/* CAR */
 #car{
     width:80px;
     height:40px;
@@ -72,8 +60,7 @@ h2{
     border-radius:10px;
 }
 
-#car:before,
-#car:after{
+#car:before,#car:after{
     content:"";
     width:20px;
     height:20px;
@@ -83,28 +70,17 @@ h2{
     bottom:-10px;
 }
 
-#car:before{
-    left:10px;
-}
+#car:before{left:10px}
+#car:after{right:10px}
 
-#car:after{
-    right:10px;
-}
-
-/* FINISH */
 #finish{
     position:absolute;
     right:10px;
     width:8px;
     height:100%;
-    background:
-    repeating-linear-gradient(
-        white 0 15px,
-        black 15px 30px
-    );
+    background:repeating-linear-gradient(white 0 15px,black 15px 30px);
 }
 
-/* QUESTION BOX */
 #box{
     background:white;
     padding:20px;
@@ -114,7 +90,6 @@ h2{
     box-shadow:0 0 10px gray;
 }
 
-/* BUTTONS */
 button{
     padding:12px 18px;
     margin:8px;
@@ -129,11 +104,6 @@ button{
     min-height:55px;
 }
 
-button:hover{
-    background:#0055cc;
-}
-
-/* PROGRESS */
 #progress{
     width:min(900px,85vw);
     height:24px;
@@ -151,7 +121,6 @@ button:hover{
     transition:0.5s;
 }
 
-/* TEXT */
 #msg{
     font-size:clamp(20px,3vw,30px);
     font-weight:bold;
@@ -166,267 +135,129 @@ button:hover{
 #q{
     font-size:clamp(20px,3vw,30px);
 }
-
 </style>
 </head>
 
 <body>
 
-<!-- LOADING SCREEN -->
 <div id="loader">
-
-    <img src="assets/logo.png" id="logo">
-
+    <img src="assets/logo.png">
 </div>
 
 <h2>🚗 Factors & Multiples Racing Game</h2>
 
-<!-- TRACK -->
 <div id="track">
-
     <div id="line"></div>
-
     <div id="car"></div>
-
     <div id="finish"></div>
-
 </div>
 
-<!-- PROGRESS -->
 <div id="progress">
-
     <div id="bar"></div>
-
 </div>
 
-<!-- QUESTION BOX -->
 <div id="box">
-
     <h3 id="q"></h3>
-
     <div id="options"></div>
-
     <p id="msg"></p>
-
     <p id="levelDisplay"></p>
-
 </div>
 
 <script>
-
-/* ================= QUESTION BANK ================= */
-
-let allQuestions = [
-
-{type:"factor", q:"Which is a factor of 24?", options:[5,6,7,11], ans:6},
-
-{type:"factor", q:"Which is a factor of 36?", options:[8,9,10,11], ans:9},
-
-{type:"factor", q:"Which is a factor of 45?", options:[4,6,9,8], ans:9},
-
-{type:"multiple", q:"Which is a multiple of 7?", options:[45,49,50,52], ans:49},
-
-{type:"multiple", q:"Which is a multiple of 9?", options:[63,62,61,65], ans:63},
-
-{type:"multiple", q:"Which is a multiple of 12?", options:[130,132,134,136], ans:132},
-
-{type:"hcf", q:"What is the HCF of 12 and 18?", options:[2,3,6,9], ans:6},
-
-{type:"hcf", q:"What is the HCF of 20 and 30?", options:[5,10,15,20], ans:10},
-
-{type:"hcf", q:"What is the HCF of 16 and 24?", options:[4,6,8,12], ans:8},
-
-{type:"lcm", q:"What is the LCM of 4 and 6?", options:[10,12,18,24], ans:12},
-
-{type:"lcm", q:"What is the LCM of 5 and 8?", options:[20,30,40,45], ans:40},
-
-{type:"lcm", q:"What is the LCM of 3 and 7?", options:[14,18,21,24], ans:21},
-
-{type:"word", q:"Two bells ring every 6 and 8 minutes. When together again?", options:[12,24,36,48], ans:24},
-
-{type:"word", q:"12 chocolates & 18 toffees. Max equal groups?", options:[3,6,9,12], ans:6},
-
-{type:"word", q:"Pack in 5s and 10s. Least number?", options:[10,15,20,25], ans:20}
-
+let allQuestions=[
+{type:"factor",q:"Which is a factor of 24?",options:[5,6,7,11],ans:6},
+{type:"factor",q:"Which is a factor of 36?",options:[8,9,10,11],ans:9},
+{type:"factor",q:"Which is a factor of 45?",options:[4,6,9,8],ans:9},
+{type:"multiple",q:"Which is a multiple of 7?",options:[45,49,50,52],ans:49},
+{type:"multiple",q:"Which is a multiple of 9?",options:[63,62,61,65],ans:63},
+{type:"multiple",q:"Which is a multiple of 12?",options:[130,132,134,136],ans:132},
+{type:"hcf",q:"What is the HCF of 12 and 18?",options:[2,3,6,9],ans:6},
+{type:"hcf",q:"What is the HCF of 20 and 30?",options:[5,10,15,20],ans:10},
+{type:"hcf",q:"What is the HCF of 16 and 24?",options:[4,6,8,12],ans:8},
+{type:"lcm",q:"What is the LCM of 4 and 6?",options:[10,12,18,24],ans:12},
+{type:"lcm",q:"What is the LCM of 5 and 8?",options:[20,30,40,45],ans:40},
+{type:"lcm",q:"What is the LCM of 3 and 7?",options:[14,18,21,24],ans:21},
+{type:"word",q:"Two bells ring every 6 and 8 minutes. When together again?",options:[12,24,36,48],ans:24},
+{type:"word",q:"12 chocolates & 18 toffees. Max equal groups?",options:[3,6,9,12],ans:6},
+{type:"word",q:"Pack in 5s and 10s. Least number?",options:[10,15,20,25],ans:20}
 ];
-
-/* ================= SHUFFLE ================= */
 
 function shuffle(arr){
     return arr.sort(()=>Math.random()-0.5);
 }
 
-/* ================= LEVEL QUESTIONS ================= */
-
 function getLevelQuestions(level){
+    let f=allQuestions.filter(q=>q.type==="factor");
+    let m=allQuestions.filter(q=>q.type==="multiple");
+    let h=allQuestions.filter(q=>q.type==="hcf");
+    let l=allQuestions.filter(q=>q.type==="lcm");
+    let w=allQuestions.filter(q=>q.type==="word");
 
-    let f = allQuestions.filter(q=>q.type==="factor");
-
-    let m = allQuestions.filter(q=>q.type==="multiple");
-
-    let h = allQuestions.filter(q=>q.type==="hcf");
-
-    let l = allQuestions.filter(q=>q.type==="lcm");
-
-    let w = allQuestions.filter(q=>q.type==="word");
-
-    if(level===1){
-
-        return shuffle([
-            ...shuffle(f).slice(0,3),
-            ...shuffle(m).slice(0,2)
-        ]);
-
-    }
-
-    if(level===2){
-
-        return shuffle([
-            ...shuffle(m).slice(0,2),
-            ...shuffle(h).slice(0,3)
-        ]);
-
-    }
-
-    if(level===3){
-
-        return shuffle([
-            ...shuffle(l).slice(0,3),
-            ...shuffle(w).slice(0,2)
-        ]);
-
-    }
-
+    if(level===1)return shuffle([...shuffle(f).slice(0,3),...shuffle(m).slice(0,2)]);
+    if(level===2)return shuffle([...shuffle(m).slice(0,2),...shuffle(h).slice(0,3)]);
+    if(level===3)return shuffle([...shuffle(l).slice(0,3),...shuffle(w).slice(0,2)]);
 }
 
-/* ================= GAME STATE ================= */
-
 let level=1;
-
 let qIndex=0;
-
 let currentSet=getLevelQuestions(level);
-
 let correctAns=null;
-
 let position=0;
 
-/* ================= LOAD QUESTION ================= */
-
 function loadQ(){
-
-    document.getElementById("levelDisplay").innerHTML =
-    "🏁 Level " + level;
-
+    document.getElementById("levelDisplay").innerHTML="🏁 Level "+level;
     let qObj=currentSet[qIndex];
-
     document.getElementById("q").innerHTML=qObj.q;
-
     correctAns=qObj.ans;
 
     let html="";
-
     shuffle(qObj.options).forEach(opt=>{
-
-        html += `
-        <button onclick="check(${opt})">
-        ${opt}
-        </button>
-        `;
-
+        html+=`<button onclick="check(${opt})">${opt}</button>`;
     });
 
     document.getElementById("options").innerHTML=html;
-
     document.getElementById("msg").innerHTML="";
-
 }
 
-/* ================= CHECK ANSWER ================= */
-
 function check(ans){
-
     if(ans===correctAns){
-
-        document.getElementById("msg").innerHTML =
-        "✅ Correct!";
-
-        document.getElementById("msg").style.color =
-        "green";
-
+        document.getElementById("msg").innerHTML="✅ Correct!";
+        document.getElementById("msg").style.color="green";
         moveCar();
-
         qIndex++;
 
         if(qIndex===5){
-
             level++;
-
             if(level>3){
-
                 setTimeout(()=>{
-
                     alert("🏆 You Won The Race!");
-
                     location.reload();
-
                 },500);
-
                 return;
-
             }
-
             currentSet=getLevelQuestions(level);
-
             qIndex=0;
-
         }
 
         setTimeout(loadQ,700);
-
+    }else{
+        document.getElementById("msg").innerHTML="❌ Try Again!";
+        document.getElementById("msg").style.color="red";
     }
-
-    else{
-
-        document.getElementById("msg").innerHTML =
-        "❌ Try Again!";
-
-        document.getElementById("msg").style.color =
-        "red";
-
-    }
-
 }
-
-/* ================= MOVE CAR ================= */
 
 function moveCar(){
-
-    position += 6;
-
-    document.getElementById("car").style.left =
-    position + "%";
-
-    document.getElementById("bar").style.width =
-    position + "%";
-
+    position+=6;
+    document.getElementById("car").style.left=position+"%";
+    document.getElementById("bar").style.width=position+"%";
 }
 
-/* ================= START ================= */
-
 window.onload=function(){
-
     setTimeout(()=>{
-
-        document.getElementById("loader").style.display =
-        "none";
-
+        document.getElementById("loader").style.display="none";
         loadQ();
-
     },2000);
-
 };
-
 </script>
 
 </body>
