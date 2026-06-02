@@ -42,14 +42,17 @@
     }
 
     #app {
-      position: relative;
-      width: 100%;
-      max-width: 480px;
-      margin: 0 auto;
-      min-height: 100vh;
-      overflow: hidden;
-      background: radial-gradient(circle at top, #5c2fa3, #12061f 60%);
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.55);
+       position: relative;
+  width: 100%;
+  max-width: 960px;      /* was 480px */
+  margin: 0 auto;
+  min-height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(circle at top, #5c2fa3, #12061f 60%);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: stretch;
+  justify-content: center; 
     }
 
     /* Animated Number Kingdom background */
@@ -1066,6 +1069,35 @@
         font-size: 13px;
       }
     }
+
+@media (min-width: 900px) {
+  #app {
+    border-radius: 24px;
+    margin: 16px auto;
+  }
+
+  .screen {
+    padding: 24px 32px 28px;
+  }
+
+  .question-area {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .scroll-card {
+    flex: 3;
+  }
+
+  .feedback-row,
+  .bottom-row {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+
   </style>
 </head>
 <body>
@@ -1300,18 +1332,18 @@
 
     const QUESTIONS = [
       {
-        id: 1,
-        type: Q_TYPES.TRUE_FALSE,
-        tag: "Place value",
-        text: "In the number 57,49,216 the digit 7 is in the lakhs place.",
-        helper: "Watch carefully: 5 7 4 9 2 1 6.",
-        options: ["True", "False"],
-        correctIndex: 1,
-        explanation:
-          "In 57,49,216 the places are: 5 (ten-lakhs), 7 (lakhs), 4 (ten-thousands), 9 (thousands), 2 (hundreds), 1 (tens), 6 (ones). So 7 is in the lakhs place, not 5.",
-        trueFalseCorrection:
-          "Actually 7 is in the lakhs place, so the statement is true.",
-        image: null,
+id: 1,
+  type: Q_TYPES.TRUE_FALSE,
+  tag: "Place value",
+  text: "In the number 57,49,216 the digit 7 is in the lakhs place.",
+  helper: "Read from left: 5 (ten-lakhs), 7 (lakhs), 4 (ten-thousands), 9 (thousands), 2 (hundreds), 1 (tens), 6 (ones).",
+  options: ["True", "False"],
+  correctIndex: 0, // TRUE
+  explanation:
+    "In 57,49,216 the places are: 5 (ten-lakhs), 7 (lakhs), 4 (ten-thousands), 9 (thousands), 2 (hundreds), 1 (tens), 6 (ones), so the statement is true.",
+  trueFalseCorrection:
+    "The digit 7 is in the lakhs place, so the statement is true.",
+  image: null, 
       },
       {
         id: 2,
@@ -2001,5 +2033,4 @@
   </script>
 </body>
 </html>
-
 
