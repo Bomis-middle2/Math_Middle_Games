@@ -1,1 +1,333 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Innovine Integers Quest - Grade 6</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+font-family:Arial, sans-serif;
+min-height:100vh;
+background:linear-gradient(135deg,#182848,#4b6cb7);
+color:#fff;
+overflow-x:hidden;
+}
+#splash{
+position:fixed;inset:0;background:#fff;z-index:9999;
+display:flex;align-items:center;justify-content:center;flex-direction:column;
+}
+#splash img{max-width:240px}
+#splash p{color:#182848;margin-top:15px;font-weight:bold}
+.bg span{
+position:fixed;color:rgba(255,255,255,.25);font-size:28px;
+animation:float 10s linear infinite;z-index:-1;
+}
+@keyframes float{
+from{transform:translateY(110vh) rotate(0)}
+to{transform:translateY(-20vh) rotate(360deg)}
+}
+.container{
+max-width:900px;margin:auto;padding:18px;
+min-height:100vh;display:flex;align-items:center;justify-content:center;
+}
+.card{
+width:100%;background:rgba(255,255,255,.14);
+backdrop-filter:blur(12px);border-radius:28px;
+padding:24px;box-shadow:0 18px 40px rgba(0,0,0,.25);
+border:1px solid rgba(255,255,255,.25);
+}
+.logo-small{width:95px;margin-bottom:10px}
+h1{font-size:2rem;margin-bottom:12px}
+p{line-height:1.5}
+button{
+border:0;border-radius:18px;padding:14px 22px;
+font-size:1rem;font-weight:bold;cursor:pointer;
+background:#ffd166;color:#17223b;margin-top:14px;
+box-shadow:0 6px 0 #d59b22;
+}
+button:active{transform:translateY(4px);box-shadow:0 2px 0 #d59b22}
+.topbar{
+display:flex;gap:10px;justify-content:space-between;align-items:center;
+margin-bottom:16px;flex-wrap:wrap;
+}
+.badge{
+background:rgba(255,255,255,.2);padding:10px 14px;border-radius:15px;
+font-weight:bold;
+}
+.progress{
+height:12px;background:rgba(255,255,255,.25);border-radius:20px;
+overflow:hidden;margin-bottom:16px;
+}
+#progressFill{height:100%;width:0;background:#06d6a0;transition:.3s}
+.question{font-size:1.35rem;font-weight:bold;margin:18px 0}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.option{
+background:#fff;color:#17223b;padding:16px;border-radius:18px;
+font-weight:bold;text-align:center;cursor:pointer;
+transition:.2s;border:3px solid transparent;
+}
+.option:hover{transform:scale(1.02)}
+.option.correct{background:#06d6a0;color:#fff}
+.option.wrong{background:#ef476f;color:#fff}
+.dropzone{
+min-height:70px;border:3px dashed #ffd166;border-radius:18px;
+display:flex;align-items:center;justify-content:center;
+margin:16px 0;background:rgba(255,255,255,.12);
+font-weight:bold;
+}
+.drag-items{display:flex;gap:12px;flex-wrap:wrap}
+.drag{
+background:#fff;color:#17223b;padding:14px 18px;border-radius:15px;
+font-weight:bold;cursor:grab;
+}
+.feedback{
+margin-top:15px;font-weight:bold;min-height:35px;font-size:1rem;
+}
+.hidden{display:none}
+.final{text-align:center}
+.final h2{font-size:2.2rem;margin-bottom:12px}
+.cross{
+position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+font-size:90px;color:#ff4d6d;z-index:999;animation:pop .5s ease;
+}
+@keyframes pop{from{transform:translate(-50%,-50%) scale(.4);opacity:.2}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.confetti{
+position:fixed;font-size:24px;animation:fall 1.3s linear forwards;z-index:999;
+}
+@keyframes fall{
+to{transform:translateY(90vh) rotate(360deg);opacity:0}
+}
+@media(max-width:650px){
+.card{padding:18px;border-radius:22px}
+.options{grid-template-columns:1fr}
+h1{font-size:1.55rem}
+.question{font-size:1.1rem}
+button,.option{font-size:.95rem}
+}
+</style>
+</head>
+<body>
+
+<div id="splash">
+<img src="assets/innovine-logo.png" alt="Innovine Logo">
+<p>Loading Integers Quest...</p>
+</div>
+
+<div class="bg">
+<span style="left:10%;animation-delay:0s">★</span>
+<span style="left:25%;animation-delay:2s">−7</span>
+<span style="left:45%;animation-delay:4s">+5</span>
+<span style="left:65%;animation-delay:1s">★</span>
+<span style="left:82%;animation-delay:3s">0</span>
+</div>
+
+<div class="container">
+
+<div id="intro" class="card">
+<img class="logo-small" src="assets/innovine-logo.png" alt="Innovine">
+<h1>Integer Adventure</h1>
+<p>Welcome to Grade 6 Integers Quest. Solve MCQs, True or False, and Drag-and-Drop challenges.</p>
+<p>You get 45 seconds for each question and one retry after a wrong answer.</p>
+<button onclick="startGame()">Start Adventure</button>
+</div>
+
+<div id="quiz" class="card hidden">
+<div class="topbar">
+<div class="badge">Score: <span id="score">0</span></div>
+<div class="badge">Question: <span id="qNo">1</span>/10</div>
+<div class="badge">Time: <span id="time">45</span>s</div>
+</div>
+<div class="progress"><div id="progressFill"></div></div>
+<div id="typeBadge" class="badge"></div>
+<div id="question" class="question"></div>
+<div id="answerArea"></div>
+<div id="feedback" class="feedback"></div>
+<button id="nextBtn" class="hidden" onclick="nextQuestion()">Next Question</button>
+</div>
+
+<div id="result" class="card final hidden">
+<img class="logo-small" src="assets/innovine-logo.png" alt="Innovine">
+<h2>Quest Complete</h2>
+<p>Your Score: <strong><span id="finalScore"></span>/10</strong></p>
+<p id="resultMsg"></p>
+<button onclick="restartGame()">Play Again</button>
+</div>
+
+</div>
+
+<script>
+setTimeout(()=>{document.getElementById("splash").style.display="none"},5000);
+
+const questions=[
+{type:"mcq",q:"Which number is an integer?",options:["3.5","-4","1/2","0.8"],answer:"-4",explain:"Integers include negative numbers, zero, and positive whole numbers."},
+{type:"mcq",q:"Which is the greatest negative integer?",options:["-10","-1","-5","-9"],answer:"-1",explain:"Among negative integers, the number closest to zero is the greatest."},
+{type:"mcq",q:"What is the opposite of -7?",options:["-7","0","7","1"],answer:"7",explain:"The opposite of a negative integer is its positive form."},
+{type:"mcq",q:"What is the sum of -4 and 9?",options:["-13","5","-5","13"],answer:"5",explain:"Moving 9 steps right from -4 gives 5."},
+
+{type:"tf",q:"Zero is neither positive nor negative.",options:["True","False"],answer:"True",explain:"Zero has no positive or negative sign."},
+{type:"tf",q:"-8 is greater than -2.",options:["True","False"],answer:"False",explain:"On the number line, -8 lies to the left of -2, so it is smaller."},
+{type:"tf",q:"The predecessor of 0 is -1.",options:["True","False"],answer:"True",explain:"The predecessor means one less than the given number."},
+
+{type:"drag",q:"Drag the integer that lies between -3 and -1.",items:["-4","-2","0","1"],answer:"-2",explain:"The integer between -3 and -1 is -2."},
+{type:"drag",q:"Drag the correct increase: Temperature rises from -2°C to 5°C.",items:["3°C","5°C","7°C","-7°C"],answer:"7°C",explain:"From -2 to 5 is an increase of 7°C."},
+{type:"drag",q:"Drag the result of -6 + (-3).",items:["9","-9","-3","3"],answer:"-9",explain:"Adding two negative integers gives a negative sum."}
+];
+
+let current=0,score=0,time=45,timer,attempt=0,locked=false;
+
+function startGame(){
+document.getElementById("intro").classList.add("hidden");
+document.getElementById("quiz").classList.remove("hidden");
+loadQuestion();
+}
+
+function loadQuestion(){
+clearInterval(timer);
+time=45;attempt=0;locked=false;
+document.getElementById("time").textContent=time;
+document.getElementById("feedback").textContent="";
+document.getElementById("nextBtn").classList.add("hidden");
+
+let q=questions[current];
+document.getElementById("qNo").textContent=current+1;
+document.getElementById("score").textContent=score;
+document.getElementById("progressFill").style.width=((current)/questions.length*100)+"%";
+document.getElementById("question").textContent=q.q;
+document.getElementById("typeBadge").textContent=q.type==="mcq"?"Pick the Correct Option":q.type==="tf"?"True or False":"Drag and Drop";
+
+let area=document.getElementById("answerArea");
+area.innerHTML="";
+
+if(q.type==="mcq"||q.type==="tf"){
+let box=document.createElement("div");
+box.className="options";
+q.options.forEach(opt=>{
+let div=document.createElement("div");
+div.className="option";
+div.textContent=opt;
+div.onclick=()=>checkAnswer(opt,div);
+box.appendChild(div);
+});
+area.appendChild(box);
+}else{
+let dz=document.createElement("div");
+dz.className="dropzone";
+dz.textContent="Drop your answer here";
+dz.ondragover=e=>e.preventDefault();
+dz.ondrop=e=>{
+e.preventDefault();
+let val=e.dataTransfer.getData("text");
+checkAnswer(val,dz);
+};
+area.appendChild(dz);
+
+let items=document.createElement("div");
+items.className="drag-items";
+q.items.forEach(item=>{
+let d=document.createElement("div");
+d.className="drag";
+d.textContent=item;
+d.draggable=true;
+d.ondragstart=e=>e.dataTransfer.setData("text",item);
+d.onclick=()=>checkAnswer(item,d);
+items.appendChild(d);
+});
+area.appendChild(items);
+}
+
+timer=setInterval(()=>{
+time--;
+document.getElementById("time").textContent=time;
+if(time<=0){
+clearInterval(timer);
+showCorrect("Time up! Correct answer: "+q.answer+". "+q.explain);
+}
+},1000);
+}
+
+function checkAnswer(selected,element){
+if(locked)return;
+let q=questions[current];
+
+if(selected===q.answer){
+locked=true;
+clearInterval(timer);
+score++;
+document.getElementById("score").textContent=score;
+element.classList.add("correct");
+document.getElementById("feedback").textContent="Excellent! "+q.explain;
+starConfetti();
+document.getElementById("nextBtn").classList.remove("hidden");
+}else{
+attempt++;
+showCross();
+element.classList.add("wrong");
+if(attempt===1){
+document.getElementById("feedback").textContent="Try again! You have one more chance.";
+setTimeout(()=>element.classList.remove("wrong"),700);
+}else{
+showCorrect("Correct answer: "+q.answer+". "+q.explain);
+}
+}
+}
+
+function showCorrect(msg){
+locked=true;
+clearInterval(timer);
+document.getElementById("feedback").textContent=msg;
+document.querySelectorAll(".option,.drag").forEach(el=>{
+if(el.textContent===questions[current].answer)el.classList.add("correct");
+});
+document.getElementById("nextBtn").classList.remove("hidden");
+}
+
+function nextQuestion(){
+current++;
+if(current<questions.length){
+loadQuestion();
+}else{
+showResult();
+}
+}
+
+function showResult(){
+document.getElementById("quiz").classList.add("hidden");
+document.getElementById("result").classList.remove("hidden");
+document.getElementById("finalScore").textContent=score;
+document.getElementById("progressFill").style.width="100%";
+let msg=score>=8?"Amazing integer master!":score>=5?"Good effort! Keep practising integers.":"Revise integers and try again.";
+document.getElementById("resultMsg").textContent=msg;
+}
+
+function restartGame(){
+current=0;score=0;
+document.getElementById("result").classList.add("hidden");
+document.getElementById("quiz").classList.remove("hidden");
+loadQuestion();
+}
+
+function starConfetti(){
+for(let i=0;i<25;i++){
+let c=document.createElement("div");
+c.className="confetti";
+c.textContent="★";
+c.style.left=Math.random()*100+"vw";
+c.style.top="-20px";
+c.style.animationDelay=Math.random()*0.3+"s";
+document.body.appendChild(c);
+setTimeout(()=>c.remove(),1500);
+}
+}
+
+function showCross(){
+let x=document.createElement("div");
+x.className="cross";
+x.textContent="✕";
+document.body.appendChild(x);
+setTimeout(()=>x.remove(),500);
+}
+</script>
+</body>
+</html>
