@@ -1,1 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Grade 6 Decimals - Innovine</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff;overflow:hidden}
+.screen{display:none;height:100vh;justify-content:center;align-items:center;flex-direction:column;padding:20px}
+.active{display:flex}
+.card{background:rgba(255,255,255,.12);backdrop-filter:blur(10px);padding:20px;border-radius:20px;max-width:800px;width:95%}
+button{padding:12px 20px;border:none;border-radius:12px;font-size:16px;cursor:pointer}
+.opt{display:block;width:100%;margin:8px 0}
+#top{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px;font-weight:bold}
+.progress{height:10px;background:#444;border-radius:10px;overflow:hidden}
+.bar{height:10px;background:#4caf50;width:0%}
+.correct{box-shadow:0 0 25px #00ff88}.wrong{animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-5px)}}
+.logo{max-width:300px}
+</style>
+</head>
+<body>
 
+<div id="splash" class="screen active">
+<img src="assets/innovine-logo.png" class="logo">
+</div>
+
+<div id="intro" class="screen">
+<div class="card" style="text-align:center">
+<h1>Decimals</h1>
+<h2>Grade 6 Mathematics</h2>
+<button onclick="startGame()">Start Adventure</button>
+</div>
+</div>
+
+<div id="game" class="screen">
+<div class="card">
+<div id="top">
+<div id="score">Score: 0</div>
+<div id="qno">Question: 1/10</div>
+<div id="timer">45s</div>
+</div>
+<div class="progress"><div id="bar" class="bar"></div></div>
+<h2 id="question"></h2>
+<div id="options"></div>
+<p id="msg"></p>
+<button id="nextBtn" onclick="nextQ()" style="display:none">Next Question</button>
+</div>
+</div>
+
+<div id="result" class="screen">
+<div class="card" style="text-align:center">
+<h1>Game Complete!</h1>
+<h2 id="finalScore"></h2>
+<button onclick="location.reload()">Play Again</button>
+</div>
+</div>
+
+<audio id="correct" src="assets/correct.mp3"></audio>
+<audio id="wrong" src="assets/wrong.mp3"></audio>
+<audio id="claps" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+const questions=[
+{t:"mcq",q:"A juice bottle contains 3.75 litres. Which digit is in the tenths place?",o:["3","7","5","0"],a:1,e:"7 is in the tenths place."},
+{t:"mcq",q:"Which decimal is greatest?",o:["5.08","5.8","5.18","5.80"],a:1,e:"5.8 and 5.80 are equal and greatest."},
+{t:"tf",q:"4.60 is equal to 4.6",a:true,e:"Trailing zero does not change value."},
+{t:"tf",q:"In 7.234, digit 3 is in the hundredths place.",a:true,e:"2 tenths, 3 hundredths."},
+{t:"tf",q:"8.09 is greater than 8.9",a:false,e:"8.9 = 8.90 which is greater."},
+{t:"mcq",q:"0.75 equals which fraction?",o:["75/100","7/100","75/10","3/4"],a:0,e:"0.75 = 75/100."},
+{t:"mcq",q:"Smallest decimal?",o:["3.45","3.05","3.5","3.15"],a:1,e:"3.05 is smallest."},
+{t:"mcq",q:"In 7.06, 6 is in which place?",o:["Tenths","Ones","Hundredths","Thousands"],a:2,e:"6 is in hundredths place."},
+{t:"mcq",q:"2.5 m + 1.75 m = ?",o:["4.15","4.25","4.35","3.25"],a:1,e:"Answer is 4.25 m."},
+{t:"mcq",q:"8.75 + 1.25 = ?",o:["9","10","10.25","11"],a:1,e:"Total is 10."}
+];
+
+let i=0,score=0,time=45,retry=0,timer;
+setTimeout(()=>{splash.classList.remove('active');intro.classList.add('active')},5000);
+
+function startGame(){
+intro.classList.remove('active');
+game.classList.add('active');
+loadQ();
+}
+
+function loadQ(){
+document.getElementById("msg").innerHTML="";
+document.getElementById("nextBtn").style.display="none";
+retry=0;
+let q=questions[i];
+qno.innerHTML=`Question: ${i+1}/10`;
+scoreEl();
+bar.style.width=((i)/10*100)+"%";
+question.innerHTML=q.q;
+options.innerHTML="";
+time=45;
+timer.innerHTML="45s";
+clearInterval(window.tt);
+window.tt=setInterval(()=>{
+time--; timer.innerHTML=time+"s";
+if(time<=0){clearInterval(window.tt);timeoutQ();}
+},1000);
+
+if(q.t=="mcq"){
+q.o.forEach((x,idx)=>{
+let b=document.createElement("button");
+b.className="opt";
+b.innerText=x;
+b.onclick=()=>check(idx);
+options.appendChild(b);
+});
+}else{
+["True","False"].forEach(v=>{
+let b=document.createElement("button");
+b.className="opt";
+b.innerText=v;
+b.onclick=()=>check(v=="True");
+options.appendChild(b);
+});
+}
+}
+
+function check(ans){
+let q=questions[i];
+let ok=ans===q.a;
+if(ok){
+clearInterval(window.tt);
+score++;
+scoreEl();
+correct.play();
+setTimeout(()=>claps.play(),250);
+msg.innerHTML="Excellent! "+q.e;
+nextBtn.style.display="block";
+}else{
+wrong.play();
+if(retry==0){retry++; msg.innerHTML="Try Again!";}
+else{
+clearInterval(window.tt);
+msg.innerHTML="Correct Answer Shown. "+q.e;
+nextBtn.style.display="block";
+}
+}
+}
+
+function timeoutQ(){
+msg.innerHTML="Time Up! "+questions[i].e;
+nextBtn.style.display="block";
+}
+
+function nextQ(){
+i++;
+if(i>=questions.length){
+game.classList.remove("active");
+result.classList.add("active");
+finalScore.innerHTML=`Your Score: ${score}/10`;
+if(score>=8){claps.play();}
+return;
+}
+loadQ();
+}
+
+function scoreEl(){scoreDiv=document.getElementById("score");scoreDiv.innerHTML="Score: "+score;}
+</script>
+</body>
+</html>
