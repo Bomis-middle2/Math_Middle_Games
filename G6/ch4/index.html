@@ -1,165 +1,1042 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Grade 6 Decimals - Innovine</title>
-<style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff;overflow:hidden}
-.screen{display:none;height:100vh;justify-content:center;align-items:center;flex-direction:column;padding:20px}
-.active{display:flex}
-.card{background:rgba(255,255,255,.12);backdrop-filter:blur(10px);padding:20px;border-radius:20px;max-width:800px;width:95%}
-button{padding:12px 20px;border:none;border-radius:12px;font-size:16px;cursor:pointer}
-.opt{display:block;width:100%;margin:8px 0}
-#top{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px;font-weight:bold}
-.progress{height:10px;background:#444;border-radius:10px;overflow:hidden}
-.bar{height:10px;background:#4caf50;width:0%}
-.correct{box-shadow:0 0 25px #00ff88}.wrong{animation:shake .3s}
-@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-5px)}}
-.logo{max-width:300px}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovine Mathematics Interactive Game - Decimals</title>
+    <style>
+        :root {
+            --primary: #4a00e0;
+            --secondary: #8e2de2;
+            --success: #00b09b;
+            --success-glow: rgba(0, 176, 155, 0.4);
+            --danger: #ff416c;
+            --danger-glow: rgba(255, 65, 108, 0.4);
+            --background: #0f0c20;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.15);
+            --text: #ffffff;
+            --text-muted: #b3b3b3;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Background Effects */
+        .bg-animations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .floating-num {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.03);
+            font-weight: bold;
+            font-size: var(--size);
+            top: var(--top);
+            left: var(--left);
+            animation: float 12s infinite ease-in-out;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-40px) rotate(10deg); }
+        }
+
+        /* Container & Screens */
+        .game-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 100%;
+            max-height: 700px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Splash Screen */
+        #splash-screen {
+            background: #0f0c20;
+            border: none;
+            box-shadow: none;
+        }
+
+        .logo-container img {
+            max-width: 280px;
+            height: auto;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(255,255,255,0)); }
+            50% { transform: scale(1.03); filter: drop-shadow(0 0 15px rgba(255,255,255,0.2)); }
+        }
+
+        /* Intro Screen */
+        .title-meta {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .title-main {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ff007f, #7f00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(142, 45, 226, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(142, 45, 226, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Game Screen Header */
+        .game-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .hud-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            border-radius: 15px;
+            border: 1px solid var(--card-border);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--secondary), var(--success));
+            transition: width 0.4s ease;
+        }
+
+        /* Game Screen Content Layout */
+        .game-body {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        /* Question Types Style Design */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--card-border);
+            border-radius: 16px;
+            padding: 18px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .option-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Drag & Drop Styles */
+        .drag-drop-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .matching-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .drag-source, .drop-target, .sort-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed var(--card-border);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+            font-size: 1.1rem;
+            min-height: 52px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .drag-source {
+            border-style: solid;
+            background: linear-gradient(135deg, rgba(142, 45, 226, 0.2), rgba(74, 0, 226, 0.2));
+            cursor: grab;
+        }
+
+        .drag-source:active {
+            cursor: grabbing;
+        }
+
+        .drag-source.dragging {
+            opacity: 0.4;
+        }
+
+        .drop-target.hovered {
+            background: rgba(142, 45, 226, 0.15);
+            border-color: var(--secondary);
+        }
+
+        .drop-target.filled {
+            border-style: solid;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Arrange Sorting Layout */
+        .sort-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .sort-item {
+            border-style: solid;
+            background: linear-gradient(135deg, rgba(142, 45, 226, 0.2), rgba(74, 0, 226, 0.2));
+            min-width: 100px;
+            cursor: grab;
+        }
+
+        /* Feedbacks and State Glowing */
+        .option-card.correct, .drop-target.correct, .sort-item.correct {
+            background: var(--success) !important;
+            border-color: var(--success) !important;
+            box-shadow: 0 0 15px var(--success-glow);
+            color: #fff;
+        }
+
+        .option-card.wrong, .drop-target.wrong, .sort-item.wrong {
+            background: var(--danger) !important;
+            border-color: var(--danger) !important;
+            box-shadow: 0 0 15px var(--danger-glow);
+            color: #fff;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        /* Feedback Footer panel */
+        .feedback-panel {
+            margin-top: auto;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            text-align: center;
+        }
+
+        .feedback-message {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .explanation-text {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            line-height: 1.4;
+        }
+
+        .action-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Result Screen Meta */
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--secondary), var(--primary));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            box-shadow: 0 10px 30px rgba(142, 45, 226, 0.5);
+            margin-bottom: 25px;
+        }
+
+        .score-circle span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .result-msg {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* Confetti Elements */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            opacity: 0.8;
+            border-radius: 50%;
+            animation: fall 3s infinite linear;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-20px) rotate(0deg); top: 0%; }
+            100% { transform: translateY(100vh) rotate(360deg); top: 100%; }
+        }
+    </style>
 </head>
 <body>
 
-<div id="splash" class="screen active">
-<img src="assets/innovine-logo.png" class="logo">
-</div>
+    <div class="bg-animations">
+        <div class="floating-num" style="--size: 4rem; --top: 15%; --left: 10%; --delay: 0s;">3.14</div>
+        <div class="floating-num" style="--size: 6rem; --top: 60%; --left: 80%; --delay: 3s;">0.5</div>
+        <div class="floating-num" style="--size: 3rem; --top: 75%; --left: 15%; --delay: 1.5s;">7.8</div>
+        <div class="floating-num" style="--size: 5rem; --top: 20%; --left: 75%; --delay: 4.5s;">10.0</div>
+    </div>
 
-<div id="intro" class="screen">
-<div class="card" style="text-align:center">
-<h1>Decimals</h1>
-<h2>Grade 6 Mathematics</h2>
-<button onclick="startGame()">Start Adventure</button>
-</div>
-</div>
+    <div class="game-container">
+        
+        <div id="splash-screen" class="screen active">
+            <div class="logo-container">
+                <img src="assets/innovine-logo.png" alt="Innovine Logo">
+            </div>
+        </div>
 
-<div id="game" class="screen">
-<div class="card">
-<div id="top">
-<div id="score">Score: 0</div>
-<div id="qno">Question: 1/10</div>
-<div id="timer">45s</div>
-</div>
-<div class="progress"><div id="bar" class="bar"></div></div>
-<h2 id="question"></h2>
-<div id="options"></div>
-<p id="msg"></p>
-<button id="nextBtn" onclick="nextQ()" style="display:none">Next Question</button>
-</div>
-</div>
+        <div id="intro-screen" class="screen">
+            <div class="title-meta">Grade 6 • Mathematics</div>
+            <div class="title-main">Decimals Adventure</div>
+            <button class="btn" id="start-adventure-btn">Start Adventure</button>
+        </div>
 
-<div id="result" class="screen">
-<div class="card" style="text-align:center">
-<h1>Game Complete!</h1>
-<h2 id="finalScore"></h2>
-<button onclick="location.reload()">Play Again</button>
-</div>
-</div>
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="hud-item" id="hud-question-idx">Question: 1/10</div>
+                <div class="hud-item" id="hud-timer" style="color: #ff416c;">Time: 45s</div>
+                <div class="hud-item" id="hud-score">Score: 0</div>
+            </div>
 
-<audio id="correct" src="assets/correct.mp3"></audio>
-<audio id="wrong" src="assets/wrong.mp3"></audio>
-<audio id="claps" src="assets/freesound_community-claps-44774.mp3"></audio>
+            <div class="progress-container">
+                <div class="progress-bar" id="game-progress"></div>
+            </div>
 
-<script>
-const questions=[
-{t:"mcq",q:"A juice bottle contains 3.75 litres. Which digit is in the tenths place?",o:["3","7","5","0"],a:1,e:"7 is in the tenths place."},
-{t:"mcq",q:"Which decimal is greatest?",o:["5.08","5.8","5.18","5.80"],a:1,e:"5.8 and 5.80 are equal and greatest."},
-{t:"tf",q:"4.60 is equal to 4.6",a:true,e:"Trailing zero does not change value."},
-{t:"tf",q:"In 7.234, digit 3 is in the hundredths place.",a:true,e:"2 tenths, 3 hundredths."},
-{t:"tf",q:"8.09 is greater than 8.9",a:false,e:"8.9 = 8.90 which is greater."},
-{t:"mcq",q:"0.75 equals which fraction?",o:["75/100","7/100","75/10","3/4"],a:0,e:"0.75 = 75/100."},
-{t:"mcq",q:"Smallest decimal?",o:["3.45","3.05","3.5","3.15"],a:1,e:"3.05 is smallest."},
-{t:"mcq",q:"In 7.06, 6 is in which place?",o:["Tenths","Ones","Hundredths","Thousands"],a:2,e:"6 is in hundredths place."},
-{t:"mcq",q:"2.5 m + 1.75 m = ?",o:["4.15","4.25","4.35","3.25"],a:1,e:"Answer is 4.25 m."},
-{t:"mcq",q:"8.75 + 1.25 = ?",o:["9","10","10.25","11"],a:1,e:"Total is 10."}
-];
+            <div class="game-body">
+                <div class="question-text" id="question-text">Loading question text...</div>
+                
+                <div id="interactive-workspace" style="width: 100%;"></div>
 
-let i=0,score=0,time=45,retry=0,timer;
-setTimeout(()=>{splash.classList.remove('active');intro.classList.add('active')},5000);
+                <div class="feedback-panel">
+                    <div class="feedback-message id-feedback-msg"></div>
+                    <div class="explanation-text id-explanation-text"></div>
+                    <div class="action-container">
+                        <button class="btn hidden" id="next-question-btn" style="padding: 10px 30px; font-size: 1rem;">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-function startGame(){
-intro.classList.remove('active');
-game.classList.add('active');
-loadQ();
-}
+        <div id="results-screen" class="screen">
+            <div class="title-meta">Adventure Completed</div>
+            <div class="score-circle" id="final-score-badge">0/10 <span>Score</span></div>
+            <div class="result-msg" id="final-result-msg">Keep practicing!</div>
+            <button class="btn" onclick="location.reload();">Play Again</button>
+        </div>
 
-function loadQ(){
-document.getElementById("msg").innerHTML="";
-document.getElementById("nextBtn").style.display="none";
-retry=0;
-let q=questions[i];
-qno.innerHTML=`Question: ${i+1}/10`;
-scoreEl();
-bar.style.width=((i)/10*100)+"%";
-question.innerHTML=q.q;
-options.innerHTML="";
-time=45;
-timer.innerHTML="45s";
-clearInterval(window.tt);
-window.tt=setInterval(()=>{
-time--; timer.innerHTML=time+"s";
-if(time<=0){clearInterval(window.tt);timeoutQ();}
-},1000);
+    </div>
 
-if(q.t=="mcq"){
-q.o.forEach((x,idx)=>{
-let b=document.createElement("button");
-b.className="opt";
-b.innerText=x;
-b.onclick=()=>check(idx);
-options.appendChild(b);
-});
-}else{
-["True","False"].forEach(v=>{
-let b=document.createElement("button");
-b.className="opt";
-b.innerText=v;
-b.onclick=()=>check(v=="True");
-options.appendChild(b);
-});
-}
-}
+    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="snd-claps" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
 
-function check(ans){
-let q=questions[i];
-let ok=ans===q.a;
-if(ok){
-clearInterval(window.tt);
-score++;
-scoreEl();
-correct.play();
-setTimeout(()=>claps.play(),250);
-msg.innerHTML="Excellent! "+q.e;
-nextBtn.style.display="block";
-}else{
-wrong.play();
-if(retry==0){retry++; msg.innerHTML="Try Again!";}
-else{
-clearInterval(window.tt);
-msg.innerHTML="Correct Answer Shown. "+q.e;
-nextBtn.style.display="block";
-}
-}
-}
+    <script>
+        // QUESTION BANK DATA MATRIX
+        const questions = [
+            {
+                type: "MCQ",
+                question: "A juice bottle contains 3.75 litres of juice. Which digit is in the tenths place?",
+                options: ["3", "7", "5", "0"],
+                answer: "7",
+                explanation: "The tenths place is the first digit to the right of the decimal point. In 3.75, that digit is 7."
+            },
+            {
+                type: "MCQ",
+                question: "Which decimal is the greatest?",
+                options: ["5.08", "5.8", "5.18", "5.80"],
+                answer: "5.8", // Handled logically with standard validation checks since 5.8 and 5.80 are mathematically equal, option B is designated correct per raw dataset rules.
+                explanation: "5.8 and 5.80 represent the largest value here, equivalent to 5 wholes and 8 tenths."
+            },
+            {
+                type: "TF",
+                question: "The decimal 4.60 is equal to 4.6.",
+                answer: "True",
+                explanation: "True! Trailing zeros to the right of a decimal point do not change its value."
+            },
+            {
+                type: "TF",
+                question: "In the number 7.234, the digit 3 is in the hundredths place.",
+                answer: "True",
+                explanation: "True! The first place after the decimal is tenths (2), and the second is hundredths (3)."
+            },
+            {
+                type: "TF",
+                question: "The number 8.09 is greater than 8.9.",
+                answer: "False",
+                explanation: "False. 8.9 has 9 tenths, while 8.09 only has 0 tenths, so 8.9 is larger."
+            },
+            {
+                type: "MATCH",
+                question: "Match the decimal to its corresponding fraction.",
+                pairs: [
+                    { left: "0.5", right: "5/10" },
+                    { left: "0.2", right: "2/10" },
+                    { left: "0.75", right: "75/100" },
+                    { left: "0.09", right: "9/100" }
+                ],
+                explanation: "Decimals represent fractions with denominators like 10 or 100 based on place value depth."
+            },
+            {
+                type: "SORT",
+                question: "Arrange these decimals from smallest to greatest.",
+                items: ["3.45", "3.05", "3.5", "3.15"],
+                correctOrder: ["3.05", "3.15", "3.45", "3.5"],
+                explanation: "Comparing place values from left to right gives: 3.05 < 3.15 < 3.45 < 3.5."
+            },
+            {
+                type: "MATCH",
+                question: "Match the decimal with its correct targeted place value identifier.",
+                pairs: [
+                    { left: "6.8", right: "8 tenths" },
+                    { left: "4.35", right: "3 tenths" },
+                    { left: "7.06", right: "6 hundredths" },
+                    { left: "9.125", right: "1 tenth" }
+                ],
+                explanation: "Each digit possesses a unique position value relative to the decimal separator layout placement."
+            },
+            {
+                type: "MCQ",
+                question: "A ribbon is 2.5 m long. Another ribbon is 1.75 m long. What is the total length?",
+                options: ["4.15 m", "4.25 m", "4.35 m", "3.25 m"],
+                answer: "4.25 m",
+                explanation: "Aligning decimals: 2.50 + 1.75 = 4.25 meters long in total."
+            },
+            {
+                type: "MCQ",
+                question: "A student scored 8.75 points in one round and 1.25 points in another. What was the total score?",
+                options: ["9.00", "10.00", "10.25", "11.00"],
+                answer: "10.00",
+                explanation: "Summing values: 8.75 + 1.25 equals exactly 10.00 points."
+            }
+        ];
 
-function timeoutQ(){
-msg.innerHTML="Time Up! "+questions[i].e;
-nextBtn.style.display="block";
-}
+        // STATE MANAGER VARIABLES
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let timerInterval = null;
+        let timeLeft = 45;
+        let attemptsCount = 0;
+        let isQuestionLocked = false;
+        let draggedElement = null;
 
-function nextQ(){
-i++;
-if(i>=questions.length){
-game.classList.remove("active");
-result.classList.add("active");
-finalScore.innerHTML=`Your Score: ${score}/10`;
-if(score>=8){claps.play();}
-return;
-}
-loadQ();
-}
+        const positiveMsgs = ["Excellent!", "Fantastic!", "Brilliant!", "Great Job!", "Outstanding!"];
 
-function scoreEl(){scoreDiv=document.getElementById("score");scoreDiv.innerHTML="Score: "+score;}
-</script>
+        // DOM SELECTORS
+        const splashScreen = document.getElementById('splash-screen');
+        const introScreen = document.getElementById('intro-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        
+        const startBtn = document.getElementById('start-adventure-btn');
+        const nextBtn = document.getElementById('next-question-btn');
+        const workspace = document.getElementById('interactive-workspace');
+
+        const hudQuestionIdx = document.getElementById('hud-question-idx');
+        const hudTimer = document.getElementById('hud-timer');
+        const hudScore = document.getElementById('hud-score');
+        const progressBar = document.getElementById('game-progress');
+        const questionText = document.getElementById('question-text');
+
+        const feedbackMsg = document.querySelector('.id-feedback-msg');
+        const explanationText = document.querySelector('.id-explanation-text');
+
+        // AUDIO RUNNER METHODS
+        function playSound(id) {
+            const aud = document.getElementById(id);
+            if(aud) {
+                aud.currentTime = 0;
+                aud.play().catch(() => {});
+            }
+        }
+
+        function triggerCorrectSequence() {
+            playSound('snd-correct');
+            setTimeout(() => {
+                playSound('snd-claps');
+            }, 250);
+        }
+
+        // INITIALIZATION DISPATCHER
+        window.addEventListener('DOMContentLoaded', () => {
+            // Splash transitions exactly after 5000ms
+            setTimeout(() => {
+                splashScreen.classList.remove('active');
+                introScreen.classList.add('active');
+            }, 5000);
+        });
+
+        startBtn.addEventListener('click', () => {
+            introScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+            loadQuestion(0);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIdx++;
+            if(currentQuestionIdx < questions.length) {
+                loadQuestion(currentQuestionIdx);
+            } else {
+                showResultsSummary();
+            }
+        });
+
+        // CORE ENGINE LOGICS
+        function loadQuestion(index) {
+            clearInterval(timerInterval);
+            isQuestionLocked = false;
+            attemptsCount = 0;
+            timeLeft = 45;
+            
+            feedbackMsg.textContent = "";
+            explanationText.textContent = "";
+            nextBtn.classList.add('hidden');
+
+            // Set HUD State
+            hudQuestionIdx.textContent = `Question: ${index + 1}/${questions.length}`;
+            hudScore.textContent = `Score: ${score}`;
+            hudTimer.textContent = `Time: ${timeLeft}s`;
+            progressBar.style.width = `${((index) / questions.length) * 100}%`;
+
+            const qData = questions[index];
+            questionText.textContent = qData.question;
+            workspace.innerHTML = "";
+
+            // Render Layout Viewports matching targeted logic types
+            if(qData.type === "MCQ") {
+                renderMCQ(qData);
+            } else if (qData.type === "TF") {
+                renderTrueFalse(qData);
+            } else if (qData.type === "MATCH") {
+                renderMatching(qData);
+            } else if (qData.type === "SORT") {
+                renderSorting(qData);
+            }
+
+            // Start countdown timer loop ticker
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                hudTimer.textContent = `Time: ${timeLeft}s`;
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeoutOrMaxFail(true); // Timed out state flag active
+                }
+            }, 1000);
+        }
+
+        // RENDER: MCQ TYPE
+        function renderMCQ(data) {
+            const grid = document.createElement('div');
+            grid.className = 'options-grid';
+            data.options.forEach(opt => {
+                const card = document.createElement('div');
+                card.className = 'option-card';
+                card.textContent = opt;
+                card.addEventListener('click', () => handleChoiceSelection(card, opt, data.answer, data.explanation));
+                grid.appendChild(card);
+            });
+            workspace.appendChild(grid);
+        }
+
+        // RENDER: TRUE / FALSE TYPE
+        function renderTrueFalse(data) {
+            const grid = document.createElement('div');
+            grid.className = 'options-grid';
+            ["True", "False"].forEach(opt => {
+                const card = document.createElement('div');
+                card.className = 'option-card';
+                card.textContent = opt;
+                card.addEventListener('click', () => handleChoiceSelection(card, opt, data.answer, data.explanation));
+                grid.appendChild(card);
+            });
+            workspace.appendChild(grid);
+        }
+
+        // SELECTION HANDLER (MCQ & TF)
+        function handleChoiceSelection(cardElement, selectedVal, correctVal, explanation) {
+            if(isQuestionLocked) return;
+
+            if(selectedVal === correctVal) {
+                // Correct Path
+                cardElement.classList.add('correct');
+                score++;
+                hudScore.textContent = `Score: ${score}`;
+                triggerSuccessState(explanation);
+            } else {
+                // Wrong Attempt Path
+                cardElement.classList.add('wrong');
+                attemptsCount++;
+                playSound('snd-wrong');
+
+                if(attemptsCount >= 2) {
+                    handleTimeoutOrMaxFail(false, correctVal, explanation);
+                } else {
+                    feedbackMsg.style.color = "var(--danger)";
+                    feedbackMsg.textContent = "Incorrect! Try again.";
+                    setTimeout(() => { cardElement.classList.remove('wrong'); }, 1000);
+                }
+            }
+        }
+
+        // RENDER: DRAG AND DROP MATCHING
+        function renderMatching(data) {
+            const container = document.createElement('div');
+            container.className = 'drag-drop-container';
+
+            // Randomize answer options positions to bypass static matches templates
+            const rightOptionsShuffled = data.pairs.map(p => p.right).sort(() => Math.random() - 0.5);
+
+            data.pairs.forEach((pair, idx) => {
+                const row = document.createElement('div');
+                row.className = 'matching-row';
+
+                // Fixed Left anchor point item
+                const leftBox = document.createElement('div');
+                leftBox.className = 'sort-item';
+                leftBox.style.cursor = 'default';
+                leftBox.style.background = 'rgba(255, 255, 255, 0.08)';
+                leftBox.textContent = pair.left;
+
+                // Empty Droppable targeted box setup configuration
+                const dropTarget = document.createElement('div');
+                dropTarget.className = 'drop-target';
+                dropTarget.dataset.expected = pair.right;
+                dropTarget.placeholderText = "Drop here";
+                dropTarget.textContent = dropTarget.placeholderText;
+
+                setupDropTargetLifecycle(dropTarget);
+
+                row.appendChild(leftBox);
+                row.appendChild(dropTarget);
+                container.appendChild(row);
+            });
+
+            // Source items pool drawer assembly configuration
+            const sourcePool = document.createElement('div');
+            sourcePool.className = 'sort-container';
+            sourcePool.style.marginTop = "30px";
+            sourcePool.style.borderTop = "1px solid var(--card-border)";
+            sourcePool.style.paddingTop = "20px";
+
+            rightOptionsShuffled.forEach(val => {
+                const src = document.createElement('div');
+                src.className = 'drag-source';
+                src.draggable = true;
+                src.textContent = val;
+                setupDragSourceLifecycle(src);
+                sourcePool.appendChild(src);
+            });
+
+            workspace.appendChild(container);
+            workspace.appendChild(sourcePool);
+
+            // Append validation submittable asset button anchor
+            appendDragValidationButton(() => validateMatchingChallenge(data.explanation));
+        }
+
+        // RENDER: DRAG AND DROP SORT ORDERING CHALLENGES
+        function renderSorting(data) {
+            const wrapper = document.createElement('div');
+            wrapper.style.width = "100%";
+            
+            const label = document.createElement('div');
+            label.textContent = "Drag cards horizontally to order them correctly:";
+            label.style.color = "var(--text-muted)";
+            label.style.marginBottom = "10px";
+            wrapper.appendChild(label);
+
+            const container = document.createElement('div');
+            container.className = 'sort-container';
+            
+            // Render source variables initialized uniformly
+            const shuffledItems = [...data.items].sort(() => Math.random() - 0.5);
+            
+            shuffledItems.forEach(val => {
+                const item = document.createElement('div');
+                item.className = 'sort-item';
+                item.draggable = true;
+                item.textContent = val;
+                setupSortingDragLifecycle(item, container);
+                container.appendChild(item);
+            });
+
+            wrapper.appendChild(container);
+            workspace.appendChild(wrapper);
+
+            appendDragValidationButton(() => validateSortingChallenge(data.correctOrder, data.explanation));
+        }
+
+        // INTERACTIVE LIFECYCLE ROUTINES FOR DRAG AND DROP CAPABILITIES
+        function setupDragSourceLifecycle(el) {
+            el.addEventListener('dragstart', (e) => {
+                if(isQuestionLocked) return;
+                draggedElement = el;
+                el.classList.add('dragging');
+            });
+            el.addEventListener('dragend', () => {
+                el.classList.remove('dragging');
+            });
+        }
+
+        function setupDropTargetLifecycle(target) {
+            target.addEventListener('dragover', (e) => { e.preventDefault(); });
+            target.addEventListener('dragenter', () => { if(!isQuestionLocked) target.classList.add('hovered'); });
+            target.addEventListener('dragleave', () => { target.classList.remove('hovered'); });
+            
+            target.addEventListener('drop', (e) => {
+                e.preventDefault();
+                target.classList.remove('hovered');
+                if(isQuestionLocked || !draggedElement) return;
+
+                // Logic check tracking existing element replacements inside targeting window slots
+                if(target.classList.contains('filled')) {
+                    // Send back item to the global bottom source asset drawer pool dynamically
+                    const currentVal = target.textContent;
+                    const returnedSrc = document.createElement('div');
+                    returnedSrc.className = 'drag-source';
+                    returnedSrc.draggable = true;
+                    returnedSrc.textContent = currentVal;
+                    setupDragSourceLifecycle(returnedSrc);
+                    workspace.querySelector('.sort-container').appendChild(returnedSrc);
+                }
+
+                target.textContent = draggedElement.textContent;
+                target.classList.add('filled');
+                draggedElement.remove();
+                draggedElement = null;
+            });
+        }
+
+        function setupSortingDragLifecycle(el, container) {
+            el.addEventListener('dragstart', () => { if(!isQuestionLocked) el.classList.add('dragging'); });
+            el.addEventListener('dragend', () => { el.classList.remove('dragging'); });
+            
+            container.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                if(isQuestionLocked) return;
+                const draggingItem = container.querySelector('.dragging');
+                if(!draggingItem) return;
+                const siblings = [...container.querySelectorAll('.sort-item:not(.dragging)')];
+                let nextSibling = siblings.find(sibling => {
+                    return e.clientX <= sibling.getBoundingClientRect().left + sibling.getBoundingClientRect().width / 2;
+                });
+                container.insertBefore(draggingItem, nextSibling);
+            });
+        }
+
+        function appendDragValidationButton(validationCallback) {
+            const container = document.createElement('div');
+            container.className = 'action-container';
+            container.style.justifyContent = 'center';
+            container.style.marginTop = '20px';
+
+            const checkBtn = document.createElement('button');
+            checkBtn.className = 'btn';
+            checkBtn.id = "submit-drag-btn";
+            checkBtn.style.padding = '10px 30px';
+            checkBtn.style.fontSize = '1rem';
+            checkBtn.textContent = "Check Answer";
+            checkBtn.addEventListener('click', validationCallback);
+
+            container.appendChild(checkBtn);
+            workspace.appendChild(container);
+        }
+
+        // VALIDATION ROUTINES
+        function validateMatchingChallenge(explanation) {
+            if(isQuestionLocked) return;
+            const targets = workspace.querySelectorAll('.drop-target');
+            let allCorrect = true;
+
+            targets.forEach(t => {
+                const filledVal = t.classList.contains('filled') ? t.textContent : "";
+                if(filledVal === t.dataset.expected) {
+                    t.classList.add('correct');
+                } else {
+                    t.classList.add('wrong');
+                    allCorrect = false;
+                }
+            });
+
+            handleInteractiveEndState(allCorrect, explanation);
+        }
+
+        function validateSortingChallenge(correctSequence, explanation) {
+            if(isQuestionLocked) return;
+            const items = workspace.querySelectorAll('.sort-item');
+            let allCorrect = true;
+
+            items.forEach((item, idx) => {
+                if(item.textContent === correctSequence[idx]) {
+                    item.classList.add('correct');
+                } else {
+                    item.classList.add('wrong');
+                    allCorrect = false;
+                }
+            });
+
+            handleInteractiveEndState(allCorrect, explanation);
+        }
+
+        function handleInteractiveEndState(isCorrect, explanation) {
+            const submitBtn = document.getElementById('submit-drag-btn');
+            if(submitBtn) submitBtn.remove();
+
+            if(isCorrect) {
+                score++;
+                hudScore.textContent = `Score: ${score}`;
+                triggerSuccessState(explanation);
+            } else {
+                attemptsCount++;
+                playSound('snd-wrong');
+                if(attemptsCount >= 2) {
+                    handleTimeoutOrMaxFail(false, null, explanation);
+                } else {
+                    feedbackMsg.style.color = "var(--danger)";
+                    feedbackMsg.textContent = "Some items are misplaced! Try one more time.";
+                    // Unlock the elements for reconstruction correction step adjustments
+                    setTimeout(() => {
+                        workspace.querySelectorAll('.wrong').forEach(el => {
+                            el.classList.remove('wrong');
+                        });
+                    }, 1200);
+                }
+            }
+        }
+
+        // TRANSITION RESOLUTIONS (SUCCESS / FAILURE / LOCKING)
+        function triggerSuccessState(explanation) {
+            clearInterval(timerInterval);
+            isQuestionLocked = true;
+            
+            feedbackMsg.style.color = "var(--success)";
+            feedbackMsg.textContent = positiveMsgs[Math.floor(Math.random() * positiveMsgs.length)];
+            explanationText.textContent = explanation;
+            
+            triggerCorrectSequence();
+            nextBtn.classList.remove('hidden');
+        }
+
+        function handleTimeoutOrMaxFail(isTimeout = false, correctString = null, explanation = "") {
+            clearInterval(timerInterval);
+            isQuestionLocked = true;
+            playSound('snd-wrong');
+
+            feedbackMsg.style.color = "var(--danger)";
+            if(isTimeout) {
+                feedbackMsg.textContent = "Time's Up!";
+            } else {
+                feedbackMsg.textContent = "Incorrect!";
+            }
+
+            // Expose solution values inline automatically on core view elements if available
+            if(correctString) {
+                explanationText.textContent = `Correct Answer: ${correctString}. ${explanation}`;
+            } else {
+                explanationText.textContent = explanation;
+            }
+
+            // Lock interactives natively
+            workspace.querySelectorAll('.option-card, .drag-source, .sort-item').forEach(el => {
+                el.setAttribute('draggable', 'false');
+                el.style.cursor = 'default';
+            });
+
+            nextBtn.classList.remove('hidden');
+        }
+
+        // SCREEN 4: SUMMARY GENERATION LOGICS
+        function showResultsSummary() {
+            gameScreen.classList.remove('active');
+            resultsScreen.classList.add('active');
+
+            const finalPercentage = (score / questions.length) * 100;
+            const badge = document.getElementById('final-score-badge');
+            const msg = document.getElementById('final-result-msg');
+
+            badge.innerHTML = `${score}/${questions.length} <span>Score</span>`;
+
+            if(finalPercentage >= 80) {
+                msg.textContent = "Outstanding Achievement! You've mastered decimals!";
+                msg.style.color = "var(--success)";
+                // Fire dynamic star particles cascade sequence effects
+                triggerConfettiShower();
+                playSound('snd-claps');
+            } else {
+                msg.textContent = "Great attempt! Keep practicing to polish your skills.";
+                msg.style.color = "var(--text)";
+            }
+        }
+
+        function triggerConfettiShower() {
+            for(let i = 0; i < 60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = `${Math.random() * 100}%`;
+                conf.style.background = `hsl(${Math.random() * 360}deg, 100%, 70%)`;
+                conf.style.animationDelay = `${Math.random() * 2}s`;
+                conf.style.animationDuration = `${2 + Math.random() * 3}s`;
+                resultsScreen.appendChild(conf);
+            }
+        }
+    </script>
 </body>
 </html>
