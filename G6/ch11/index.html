@@ -1,1 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Innovine Mathematics - Grade 6 Data Handling</title>
+    <style>
+        :root {
+            --primary: #111827;
+            --secondary: #1f2937;
+            --brand-purple: #6366f1;
+            --brand-indigo: #4f46e5;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.4);
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 50%, #4f46e5 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            color: var(--dark);
+            position: relative;
+        }
+
+        /* Animated Background Layer */
+        .bg-animations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .bg-star {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.12);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: float-star 22s infinite linear;
+        }
+
+        @keyframes float-star {
+            0% { transform: translateY(110vh) translateX(0) scale(0.5) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-15vh) translateX(60px) scale(1.2) rotate(360deg); opacity: 0; }
+        }
+
+        /* Core Stage Wrapper Component */
+        .game-container {
+            width: 92%;
+            max-width: 680px;
+            background: var(--glass);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+            padding: 35px;
+            z-index: 10;
+            position: relative;
+            text-align: center;
+            min-height: 520px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            animation: transitionIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes transitionIn {
+            from { opacity: 0; transform: scale(0.96) translateY(15px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Screen 1: Mandatory Splash Presentation Window */
+        #splash-screen {
+            background: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #splash-screen img {
+            max-width: 320px;
+            width: 70%;
+            height: auto;
+            animation: rhythmicPulse 2.5s infinite ease-in-out;
+        }
+
+        @keyframes rhythmicPulse {
+            0% { transform: scale(0.95); opacity: 0.85; }
+            50% { transform: scale(1.02); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.85; }
+        }
+
+        /* Screen 2: Title Typography and Introduction Frame */
+        .intro-title {
+            font-size: 2.4rem;
+            color: var(--brand-indigo);
+            margin-bottom: 8px;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+        }
+
+        .intro-subtitle {
+            font-size: 1.35rem;
+            color: #475569;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        /* Primary Styled Control Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--brand-purple) 0%, var(--brand-indigo) 100%);
+            color: white;
+            border: none;
+            padding: 16px 42px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            outline: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Top HUD Progress Components */
+        .hud-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: #334155;
+            font-size: 1rem;
+        }
+
+        .hud-item {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 14px;
+            background: #e2e8f0;
+            border-radius: 9999px;
+            margin-bottom: 28px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            border-radius: 9999px;
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Interactive Question Components */
+        .question-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 26px;
+            text-align: left;
+            width: 100%;
+            line-height: 1.45;
+        }
+
+        /* Selection Options Grid Framework */
+        .options-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .option-card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 18px 22px;
+            text-align: left;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .option-card:hover {
+            border-color: var(--brand-purple);
+            background: #fafafa;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .option-card.correct {
+            border-color: var(--success) !important;
+            background-color: #ecfdf5 !important;
+            color: #065f46;
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2);
+        }
+
+        .option-card.wrong {
+            border-color: var(--error) !important;
+            background-color: #fef2f2 !important;
+            color: #991b1b;
+            box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.2);
+        }
+
+        /* Feedback and Descriptive Box Elements */
+        .feedback-box {
+            width: 100%;
+            margin-top: 15px;
+            padding: 18px;
+            border-radius: 16px;
+            display: none;
+            text-align: left;
+            animation: fadeInOverlay 0.3s ease;
+        }
+
+        @keyframes fadeInOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .feedback-title {
+            font-weight: 800;
+            font-size: 1.3rem;
+            margin-bottom: 6px;
+        }
+
+        .feedback-explanation {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #334155;
+        }
+
+        .feedback-box.success-bg {
+            background-color: #ecfdf5;
+            border-left: 6px solid var(--success);
+            color: #065f46;
+        }
+
+        .feedback-box.error-bg {
+            background-color: #fef2f2;
+            border-left: 6px solid var(--error);
+            color: #991b1b;
+        }
+
+        .action-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        /* End Frame Score Elements */
+        .results-score {
+            font-size: 4.2rem;
+            font-weight: 800;
+            color: var(--brand-indigo);
+            margin: 15px 0;
+            letter-spacing: -0.05em;
+        }
+
+        .results-msg {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 35px;
+            color: #1e293b;
+        }
+
+        /* Secondary FX Systems */
+        .shake-effect {
+            animation: shakeHorizontal 0.4s ease-in-out;
+        }
+
+        @keyframes shakeHorizontal {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        .glow-success-effect {
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+        }
+
+        .star-confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #fff;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: confettiFall 2.4s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-30px) translateX(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) translateX(140px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Cross Screen Device Layout Compatibility */
+        @media(max-width: 480px) {
+            .game-container {
+                padding: 24px 16px;
+                width: 94%;
+                min-height: 480px;
+            }
+            .intro-title { font-size: 1.85rem; }
+            .question-text { font-size: 1.2rem; }
+            .option-card { font-size: 1rem; padding: 15px; }
+            .hud-container { font-size: 0.9rem; }
+            .results-score { font-size: 3.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animations" id="star-layer"></div>
+
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+    </div>
+
+    <div class="game-container" id="stage-wrapper">
+
+        <div id="intro-screen" class="screen">
+            <h1 class="intro-title">Data Handling</h1>
+            <h3 class="intro-subtitle">Grade 6</h3>
+            <button class="btn" onclick="startAdventure()">Start Adventure</button>
+        </div>
+
+        <div id="play-screen" class="screen">
+            <div class="hud-container">
+                <div class="hud-item" id="lbl-question-count">Question: 1/10</div>
+                <div class="hud-item" id="lbl-timer">Time: 45s</div>
+                <div class="hud-item" id="lbl-score">Score: 0</div>
+            </div>
+            
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="progress-meter"></div>
+            </div>
+
+            <div class="question-text" id="target-question"></div>
+            
+            <div class="options-grid" id="target-options"></div>
+
+            <div class="feedback-box" id="feedback-panel">
+                <div class="feedback-title" id="lbl-feedback-title"></div>
+                <div class="feedback-explanation" id="lbl-feedback-explanation"></div>
+            </div>
+
+            <div class="action-container">
+                <button class="btn" id="btn-next" onclick="advanceChallenge()" style="display: none; padding: 12px 28px; font-size: 1rem; border-radius: 12px;">Next</button>
+            </div>
+        </div>
+
+        <div id="results-screen" class="screen">
+            <h1 class="intro-title">Adventure Completed!</h1>
+            <div class="results-score" id="lbl-results-score">0/10</div>
+            <div class="results-msg" id="lbl-results-message">Keep on practicing!</div>
+            <button class="btn" onclick="restartAdventure()">Play Again</button>
+        </div>
+
+    </div>
+
+    <script>
+        // High-Quality Dataset structured configuration mapping 
+        const gameQuestions = [
+            {
+                q: "The data set is: 5, 8, 3, 9, 8, 6, 8. What is the mode?",
+                options: ["3", "6", "8", "9"],
+                correct: 2,
+                exp: "The value 8 appears 3 times in the data set, which is more than any other number. Therefore, 8 is the mode."
+            },
+            {
+                q: "The data set is: 4, 7, 9, 10, 15. What is the mean?",
+                options: ["9", "10", "11", "12"],
+                correct: 0,
+                exp: "Add the numbers: 4 + 7 + 9 + 10 + 15 = 45. Divide by the total count (5 values): 45 ÷ 5 = 9."
+            },
+            {
+                q: "The data set is: 2, 5, 7, 9, 12, 18. What is the median?",
+                options: ["7", "8", "9", "10"],
+                correct: 1,
+                exp: "Since there is an even number of values (6), find the average of the two middle terms (7 and 9): (7 + 9) ÷ 2 = 8."
+            },
+            {
+                q: "The data set is: 3, 10, 15, 20, 25. What is the range?",
+                options: ["15", "18", "20", "22"],
+                correct: 3,
+                exp: "The range is calculated by subtracting the smallest number from the largest number: 25 - 3 = 22."
+            },
+            {
+                q: "In a frequency table, the data 2, 3, 2, 4, 3, 2, 5, 3, 2 shows how many times does 2 appear?",
+                options: ["2", "3", "4", "5"],
+                correct: 2,
+                exp: "Counting the number of times 2 occurs in the list gives exactly 4 occurrences."
+            },
+            {
+                q: "In a pictograph, 🍎 = 5 apples. If a student has 🍎🍎🍎, how many apples does he have?",
+                options: ["10", "12", "15", "20"],
+                correct: 2,
+                exp: "Each apple symbol represents 5 units. Since there are 3 symbols: 3 × 5 = 15 apples."
+            },
+            {
+                q: "The marks of 5 students are 12, 15, 18, 10, 20. What is the mean of their marks?",
+                options: ["14", "15", "16", "17"],
+                correct: 1,
+                exp: "Sum of values = 12 + 15 + 18 + 10 + 20 = 75. Divide by the number of students (5): 75 ÷ 5 = 15."
+            },
+            {
+                q: "A bar graph shows the number of books sold in 4 days: Monday = 15, Tuesday = 20, Wednesday = 10, Thursday = 25. On which day were the most books sold?",
+                options: ["Monday", "Tuesday", "Wednesday", "Thursday"],
+                correct: 3,
+                exp: "Thursday has the highest value of 25 books, making it the day with the highest column entry."
+            },
+            {
+                q: "A pie chart shows the favorite subjects of a class: Math = 40%, Science = 30%, English = 20%, History = 10%. Which subject is the most favorite?",
+                options: ["Science", "English", "Math", "History"],
+                correct: 2,
+                exp: "Math accounts for the largest slice of the pie chart at 40%, indicating it is the most preferred subject."
+            },
+            {
+                q: "The data set is: 6, 8, 10, 12, 14. What is the median of this data?",
+                options: ["8", "10", "12", "14"],
+                correct: 1,
+                exp: "The values are already arranged in ascending order. The single middle term of this 5-item data set is 10."
+            }
+        ];
+
+        // Frame Operational Runtime Memory State
+        let activeIndex = 0;
+        let cumulativeScore = 0;
+        let livesRegistry = 2;
+        let intervalTimerRef = null;
+        let executionTimeLeft = 45;
+        let stateSelectionLocked = false;
+
+        // Sound System Initialization Mappings
+        const clipCorrect = new Audio('assets/correct.mp3');
+        const clipWrong = new Audio('assets/wrong.mp3');
+        const clipClaps = new Audio('assets/freesound_community-claps-44774.mp3');
+
+        const successExclamations = ["Excellent!", "Fantastic!", "Brilliant!", "Great Job!", "Outstanding!"];
+
+        // Document Initialization Listeners
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeStarsBackground();
+            // Core restriction configuration framework: exactly 5000ms splash window execution time
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+                revealScreen('intro-screen');
+            }, 5000);
+        });
+
+        function initializeStarsBackground() {
+            const backgroundLayer = document.getElementById('star-layer');
+            for(let i=0; i<14; i++) {
+                let star = document.createElement('div');
+                star.className = 'bg-star';
+                let dimensionalBound = Math.random() * 30 + 15;
+                star.style.width = `${dimensionalBound}px`;
+                star.style.height = `${dimensionalBound}px`;
+                star.style.left = `${Math.random() * 95}%`;
+                star.style.animationDelay = `${Math.random() * 10}s`;
+                star.style.animationDuration = `${Math.random() * 12 + 12}s`;
+                backgroundLayer.appendChild(star);
+            }
+        }
+
+        function revealScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startAdventure() {
+            activeIndex = 0;
+            cumulativeScore = 0;
+            revealScreen('play-screen');
+            renderChallengeRound();
+        }
+
+        function renderChallengeRound() {
+            stateSelectionLocked = false;
+            livesRegistry = 2;
+            executionTimeLeft = 45;
+            
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('feedback-panel').style.display = 'none';
+            document.getElementById('stage-wrapper').classList.remove('shake-effect', 'glow-success-effect');
+
+            document.getElementById('lbl-question-count').innerText = `Question: ${activeIndex + 1}/${gameQuestions.length}`;
+            document.getElementById('lbl-score').innerText = `Score: ${cumulativeScore}`;
+            document.getElementById('lbl-timer').innerText = `Time: ${executionTimeLeft}s`;
+            
+            let scalingWidthPercent = ((activeIndex) / gameQuestions.length) * 100;
+            document.getElementById('progress-meter').style.width = `${scalingWidthPercent}%`;
+
+            const currentContext = gameQuestions[activeIndex];
+            document.getElementById('target-question').innerText = currentContext.q;
+
+            const selectionBoxGrid = document.getElementById('target-options');
+            selectionBoxGrid.innerHTML = '';
+
+            currentContext.options.forEach((optionText, matchIndex) => {
+                let nodeElement = document.createElement('div');
+                nodeElement.className = 'option-card';
+                nodeElement.innerText = optionText;
+                nodeElement.setAttribute('data-index', matchIndex);
+                nodeElement.onclick = () => validateSelectionInput(nodeElement, matchIndex);
+                selectionBoxGrid.appendChild(nodeElement);
+            });
+
+            clearInterval(intervalTimerRef);
+            intervalTimerRef = setInterval(() => {
+                executionTimeLeft--;
+                document.getElementById('lbl-timer').innerText = `Time: ${executionTimeLeft}s`;
+                if(executionTimeLeft <= 0) {
+                    clearInterval(intervalTimerRef);
+                    triggerTimeoutExpiry();
+                }
+            }, 1000);
+        }
+
+        function validateSelectionInput(nodeCard, innerIndex) {
+            if(stateSelectionLocked) return;
+
+            const criteriaContext = gameQuestions[activeIndex];
+
+            if(innerIndex === criteriaContext.correct) {
+                stateSelectionLocked = true;
+                clearInterval(intervalTimerRef);
+                nodeCard.classList.add('correct');
+                document.getElementById('stage-wrapper').classList.add('glow-success-effect');
+                
+                clipCorrect.play();
+                setTimeout(() => { clipClaps.play(); }, 250);
+
+                executeConfettiAnimation();
+                renderPanelFeedback(true, successExclamations[Math.floor(Math.random() * successExclamations.length)], criteriaContext.exp);
+                cumulativeScore++;
+                document.getElementById('lbl-score').innerText = `Score: ${cumulativeScore}`;
+                document.getElementById('btn-next').style.display = 'inline-block';
+            } else {
+                livesRegistry--;
+                nodeCard.classList.add('wrong');
+                document.getElementById('stage-wrapper').classList.add('shake-effect');
+                clipWrong.play();
+                
+                setTimeout(() => {
+                    document.getElementById('stage-wrapper').classList.remove('shake-effect');
+                }, 400);
+
+                if(livesRegistry > 0) {
+                    nodeCard.style.pointerEvents = 'none';
+                    renderPanelFeedback(false, "Try Again!", "That selection is incorrect. Evaluate the statistical definition and try your remaining choice.");
+                } else {
+                    stateSelectionLocked = true;
+                    clearInterval(intervalTimerRef);
+                    exposeCorrectIndexSelection();
+                    renderPanelFeedback(false, "Incorrect", criteriaContext.exp);
+                    document.getElementById('btn-next').style.display = 'inline-block';
+                }
+            }
+        }
+
+        function triggerTimeoutExpiry() {
+            stateSelectionLocked = true;
+            exposeCorrectIndexSelection();
+            renderPanelFeedback(false, "Time's Up!", gameQuestions[activeIndex].exp);
+            document.getElementById('btn-next').style.display = 'inline-block';
+        }
+
+        function exposeCorrectIndexSelection() {
+            const indexTargetValue = gameQuestions[activeIndex].correct;
+            const cardCollectionNodes = document.querySelectorAll('.option-card');
+            cardCollectionNodes.forEach(c => {
+                if(parseInt(c.getAttribute('data-index')) === indexTargetValue) {
+                    c.classList.add('correct');
+                }
+            });
+        }
+
+        function renderPanelFeedback(isOutcomeSuccess, outputTitle, outputExplanation) {
+            const interfaceBox = document.getElementById('feedback-panel');
+            const elementHeading = document.getElementById('lbl-feedback-title');
+            const elementDescription = document.getElementById('lbl-feedback-explanation');
+
+            interfaceBox.className = 'feedback-box ' + (isOutcomeSuccess ? 'success-bg' : 'error-bg');
+            elementHeading.innerText = outputTitle;
+            elementDescription.innerText = outputExplanation;
+            interfaceBox.style.display = 'block';
+        }
+
+        function advanceChallenge() {
+            activeIndex++;
+            if(activeIndex < gameQuestions.length) {
+                renderChallengeRound();
+            } else {
+                concludeAdventureSummary();
+            }
+        }
+
+        function concludeAdventureSummary() {
+            clearInterval(intervalTimerRef);
+            document.getElementById('progress-meter').style.width = `100%`;
+            revealScreen('results-screen');
+            
+            document.getElementById('lbl-results-score').innerText = `${cumulativeScore} / ${gameQuestions.length}`;
+            
+            const statisticalPerformance = cumulativeScore / gameQuestions.length;
+            if(statisticalPerformance >= 0.8) {
+                document.getElementById('lbl-results-message').innerText = "Exceptional Data Analysis Master! ⭐";
+                clipClaps.play();
+                executeConfettiAnimation();
+            } else if(statisticalPerformance >= 0.5) {
+                document.getElementById('lbl-results-message').innerText = "Good effort! Review the statistics terms and play again to improve.";
+            } else {
+                document.getElementById('lbl-results-message').innerText = "Keep practicing! Review data representation rules and try again.";
+            }
+        }
+
+        function restartAdventure() {
+            startAdventure();
+        }
+
+        function executeConfettiAnimation() {
+            for(let i=0; i<32; i++) {
+                let segment = document.createElement('div');
+                segment.className = 'star-confetti';
+                segment.style.left = `${Math.random() * 100}%`;
+                segment.style.backgroundColor = `hsl(${Math.random() * 360}deg, 90%, 60%)`;
+                segment.style.animationDelay = `${Math.random() * 0.3}s`;
+                document.body.appendChild(segment);
+                setTimeout(() => segment.remove(), 2400);
+            }
+        }
+    </script>
+</body>
+</html>
