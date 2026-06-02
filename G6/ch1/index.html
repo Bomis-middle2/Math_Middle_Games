@@ -6,19 +6,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --bg-purple: #2a184a;
-      --bg-purple-dark: #1b0f31;
-      --bg-gold: #f5c542;
-      --bg-gold-soft: #f9e3a3;
-      --accent-teal: #35d0c8;
-      --accent-green: #5edc74;
+      --bg-sky-top: #e9f5ff;
+      --bg-sky-bottom: #fef6df;
+      --bg-horizon: #f7e1a5;
+      --accent-gold: #f1c24b;
+      --accent-gold-soft: #f9e6a9;
+      --accent-green: #5bbd72;
+      --accent-green-dark: #2c7c40;
+      --accent-teal: #38b7c4;
       --accent-red: #ff5c5c;
-      --scroll-bg: #fff9e6;
-      --wood-brown: #a56a2b;
-      --wood-dark: #6a3d16;
-      --text-light: #fdf5ff;
-      --text-dark: #2b133b;
-      --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.35);
+      --text-main: #24324a;
+      --text-soft: #5a6478;
+      --scroll-bg: #fffdf5;
+      --scroll-border: #f0c56c;
+      --wood-brown: #b3753a;
+      --wood-dark: #7a4a22;
+      --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.2);
       --transition-fast: 0.2s ease-out;
       --transition-med: 0.35s ease-out;
     }
@@ -32,30 +35,37 @@
     }
 
     body {
-      background: radial-gradient(circle at top, #5c2fa3, #12061f 55%);
-      color: var(--text-light);
+      background: linear-gradient(
+        180deg,
+        var(--bg-sky-top),
+        var(--bg-sky-bottom)
+      );
       min-height: 100vh;
       display: flex;
-      align-items: stretch;
       justify-content: center;
-      overflow: hidden;
+      align-items: stretch;
+      color: var(--text-main);
     }
 
     #app {
-       position: relative;
-  width: 100%;
-  max-width: 960px;      /* was 480px */
-  margin: 0 auto;
-  min-height: 100vh;
-  overflow: hidden;
-  background: radial-gradient(circle at top, #5c2fa3, #12061f 60%);
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.55);
-  display: flex;
-  align-items: stretch;
-  justify-content: center; 
+      position: relative;
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: linear-gradient(
+        180deg,
+        var(--bg-sky-top),
+        var(--bg-sky-bottom)
+      );
+      overflow: hidden;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.12);
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
     }
 
-    /* Animated Number Kingdom background */
+    /* Daytime Number Kingdom background */
     .number-kingdom-layer {
       position: absolute;
       inset: 0;
@@ -64,119 +74,127 @@
       z-index: 0;
     }
 
+    .horizon-band {
+      position: absolute;
+      bottom: 0;
+      left: -10%;
+      width: 120%;
+      height: 40%;
+      background: linear-gradient(
+        to top,
+        #e6d2a3,
+        var(--bg-horizon),
+        transparent
+      );
+    }
+
     .castle-silhouette {
       position: absolute;
-      bottom: -10%;
+      bottom: 10%;
       left: 50%;
       transform: translateX(-50%);
       width: 140%;
-      height: 35%;
+      height: 40%;
       background: linear-gradient(
         to top,
-        rgba(0, 0, 0, 0.6),
-        rgba(0, 0, 0, 0.05)
+        rgba(186, 171, 142, 0.9),
+        rgba(229, 214, 188, 0.6)
       );
       clip-path: polygon(
         0% 100%,
         0% 60%,
-        10% 55%,
-        14% 40%,
-        18% 55%,
-        26% 52%,
-        28% 35%,
-        32% 35%,
-        34% 50%,
-        40% 48%,
-        44% 30%,
-        48% 48%,
-        55% 42%,
-        57% 25%,
-        60% 42%,
-        68% 47%,
-        70% 30%,
-        74% 30%,
-        76% 45%,
-        84% 50%,
+        8% 56%,
+        12% 40%,
+        16% 56%,
+        24% 52%,
+        26% 36%,
+        30% 36%,
+        32% 50%,
+        38% 48%,
+        42% 30%,
+        46% 48%,
+        52% 44%,
+        54% 26%,
+        58% 44%,
+        65% 48%,
+        68% 32%,
+        72% 32%,
+        75% 50%,
+        82% 54%,
         90% 60%,
         100% 62%,
         100% 100%
       );
-      opacity: 0.5;
+      opacity: 0.3;
     }
 
-    .floating-star,
-    .floating-number {
+    .floating-number,
+    .floating-bubble {
       position: absolute;
-      color: rgba(255, 255, 255, 0.6);
       font-weight: 700;
-      font-size: 18px;
-      animation: floatUp 18s linear infinite;
-      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
-    }
-
-    .floating-star::before {
-      content: "★";
+      color: rgba(76, 108, 145, 0.55);
+      animation: floatSoft 18s linear infinite;
     }
 
     .floating-number {
       font-size: 20px;
     }
 
-    @keyframes floatUp {
+    .floating-bubble {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 2px solid rgba(255, 255, 255, 0.7);
+      background: radial-gradient(circle at top, #ffffff, rgba(255, 255, 255, 0));
+    }
+
+    @keyframes floatSoft {
       from {
-        transform: translateY(100vh) translateX(0);
+        transform: translateY(120%) translateX(0);
         opacity: 0;
       }
-      20% {
-        opacity: 0.9;
+      15% {
+        opacity: 0.6;
       }
       to {
-        transform: translateY(-120px) translateX(-20px);
+        transform: translateY(-20%) translateX(-10px);
         opacity: 0;
       }
     }
 
-    .streamer {
+    .soft-ray {
       position: absolute;
-      width: 3px;
-      height: 80px;
-      background: linear-gradient(
-        to bottom,
-        rgba(245, 197, 66, 0),
-        rgba(245, 197, 66, 0.85)
+      top: -10%;
+      left: 10%;
+      width: 140%;
+      height: 60%;
+      background: radial-gradient(
+        circle at top left,
+        rgba(255, 255, 255, 0.9),
+        transparent 60%
       );
-      opacity: 0.5;
-      animation: sway 6s ease-in-out infinite;
+      opacity: 0.6;
     }
 
-    @keyframes sway {
-      0% {
-        transform: translateY(-30px) rotate(-6deg);
-      }
-      50% {
-        transform: translateY(30px) rotate(8deg);
-      }
-      100% {
-        transform: translateY(-30px) rotate(-6deg);
-      }
-    }
-
-    /* Main surface */
+    /* Screens */
     .screen {
       position: relative;
       z-index: 2;
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
       min-height: 100vh;
       padding: 16px 16px 24px;
       display: none;
       display: none;
+      flex-direction: column;
     }
 
     .screen.active {
       display: flex;
-      flex-direction: column;
     }
 
-    /* Splash (Innovine logo first 5s) */
+    /* Splash screen */
     #splash-screen {
       align-items: center;
       justify-content: center;
@@ -185,7 +203,7 @@
     }
 
     .splash-logo-wrap {
-      background: radial-gradient(circle, #ffffff 0, #ffe9aa 40%, #f3c14f 80%);
+      background: radial-gradient(circle, #ffffff, #f7d480);
       border-radius: 32px;
       padding: 24px;
       box-shadow: var(--shadow-soft);
@@ -194,7 +212,7 @@
 
     .splash-logo-wrap img {
       display: block;
-      width: 180px;
+      width: 190px;
       max-width: 60vw;
       height: auto;
     }
@@ -211,11 +229,10 @@
 
     .splash-text {
       font-size: 18px;
-      color: #ffeeda;
-      text-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
+      color: var(--text-soft);
     }
 
-    /* Intro / home screen */
+    /* Intro screen */
     #intro-screen {
       padding-top: 28px;
       gap: 16px;
@@ -227,39 +244,35 @@
       gap: 6px;
       padding: 6px 12px;
       border-radius: 999px;
-      background: rgba(0, 0, 0, 0.35);
+      background: rgba(255, 255, 255, 0.7);
       font-size: 12px;
       letter-spacing: 0.05em;
       text-transform: uppercase;
-    }
-
-    .badge span {
-      display: inline-block;
+      color: var(--text-soft);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
     }
 
     .game-title {
       font-size: 26px;
-      line-height: 1.1;
-      margin-top: 4px;
+      line-height: 1.15;
+      margin-top: 6px;
       font-weight: 800;
-      color: #ffe7a1;
-      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
+      color: var(--text-main);
     }
 
     .game-subtitle {
       margin-top: 4px;
       font-size: 14px;
-      color: #fdf7ff;
-      opacity: 0.9;
+      color: var(--text-soft);
     }
 
     .scroll-panel {
       margin-top: 16px;
-      background: radial-gradient(circle at top, #fffdf2, #ffe4a5);
+      background: var(--scroll-bg);
       border-radius: 18px;
       padding: 14px 16px 16px;
       box-shadow: var(--shadow-soft);
-      border: 3px solid #f0c46a;
+      border: 2px solid var(--scroll-border);
       position: relative;
     }
 
@@ -270,29 +283,29 @@
       top: -10px;
       width: 46px;
       height: 18px;
-      background: #e3b560;
+      background: #f3c676;
       border-radius: 999px;
-      box-shadow: 0 3px 0 #c0903b;
+      box-shadow: 0 3px 0 #d09c45;
     }
 
     .scroll-panel::before {
-      left: 9px;
+      left: 10px;
     }
 
     .scroll-panel::after {
-      right: 9px;
+      right: 10px;
     }
 
     .scroll-heading {
       font-weight: 700;
       font-size: 16px;
-      color: var(--text-dark);
+      color: var(--text-main);
       margin-bottom: 6px;
     }
 
     .scroll-text {
       font-size: 13px;
-      color: #4c2b22;
+      color: var(--text-soft);
       line-height: 1.4;
     }
 
@@ -307,9 +320,9 @@
       padding: 4px 8px;
       border-radius: 999px;
       font-size: 11px;
-      background: rgba(88, 42, 135, 0.08);
-      border: 1px solid rgba(88, 42, 135, 0.4);
-      color: #4a246e;
+      background: rgba(255, 248, 218, 0.9);
+      border: 1px solid rgba(240, 187, 98, 0.9);
+      color: #7a4a22;
     }
 
     .bottom-cta {
@@ -330,9 +343,9 @@
       font-size: 15px;
       letter-spacing: 0.03em;
       text-transform: uppercase;
-      color: #2b1036;
-      background: linear-gradient(135deg, #ffdf7c, #f9c23a);
-      box-shadow: 0 8px 0 #c4901f, 0 10px 20px rgba(0, 0, 0, 0.35);
+      color: #2e2411;
+      background: linear-gradient(135deg, #ffe68a, #f4c23c);
+      box-shadow: 0 8px 0 #c4922e, 0 10px 20px rgba(0, 0, 0, 0.2);
       cursor: pointer;
       transform: translateY(0);
       transition: transform var(--transition-fast), box-shadow var(--transition-fast),
@@ -342,12 +355,12 @@
     .primary-btn:hover {
       filter: brightness(1.05);
       transform: translateY(2px);
-      box-shadow: 0 4px 0 #c4901f, 0 6px 14px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 4px 0 #c4922e, 0 6px 14px rgba(0, 0, 0, 0.18);
     }
 
     .primary-btn:active {
       transform: translateY(4px);
-      box-shadow: 0 0 0 #c4901f, 0 2px 10px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 0 0 #c4922e, 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     .secondary-btn {
@@ -358,16 +371,16 @@
       border-radius: 999px;
       font-weight: 600;
       font-size: 13px;
-      color: #f6efff;
-      background: rgba(9, 2, 26, 0.7);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-soft);
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(187, 199, 215, 0.8);
       cursor: pointer;
       transition: background var(--transition-fast), border-color var(--transition-fast);
     }
 
     .secondary-btn:hover {
-      background: rgba(12, 3, 34, 0.9);
-      border-color: rgba(255, 255, 255, 0.4);
+      background: #ffffff;
+      border-color: #9fb0c9;
     }
 
     /* Game HUD */
@@ -395,10 +408,11 @@
     .pill {
       padding: 4px 8px;
       border-radius: 999px;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(255, 255, 255, 0.85);
       display: inline-flex;
       align-items: center;
       gap: 5px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
     }
 
     .pill-label {
@@ -406,11 +420,13 @@
       text-transform: uppercase;
       letter-spacing: 0.06em;
       font-size: 10px;
+      color: var(--text-soft);
     }
 
     .pill-value {
       font-weight: 700;
       font-size: 12px;
+      color: var(--text-main);
     }
 
     .timer-bar {
@@ -419,21 +435,21 @@
       width: 100%;
       height: 10px;
       border-radius: 999px;
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(255, 255, 255, 0.85);
       overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     }
 
     .timer-fill {
       position: absolute;
       inset: 0;
       width: 100%;
-      background: linear-gradient(90deg, #3cf29d, #f9d64b, #ff7243);
+      background: linear-gradient(90deg, #5bbd72, #f3c24d, #f27b5b);
       transform-origin: left center;
       transform: scaleX(1);
-      transition: transform linear;
     }
 
-    /* Question card - treasure scroll */
+    /* Question card */
     .question-area {
       margin-top: 10px;
       flex: 1;
@@ -444,11 +460,11 @@
 
     .scroll-card {
       position: relative;
-      background: radial-gradient(circle at top, #fffdf5, #ffe8b5);
+      background: var(--scroll-bg);
       border-radius: 20px;
       padding: 14px 16px 12px;
       box-shadow: var(--shadow-soft);
-      border: 3px solid #f2c56c;
+      border: 2px solid var(--scroll-border);
       overflow: hidden;
     }
 
@@ -458,22 +474,22 @@
       position: absolute;
       left: 0;
       width: 100%;
-      height: 10px;
+      height: 8px;
       background: repeating-linear-gradient(
         90deg,
-        #e2b668 0,
-        #e2b668 12px,
-        #f4d48e 12px,
-        #f4d48e 24px
+        #f1c56a 0,
+        #f1c56a 12px,
+        #f8df9a 12px,
+        #f8df9a 24px
       );
     }
 
     .scroll-card::before {
-      top: -3px;
+      top: -4px;
     }
 
     .scroll-card::after {
-      bottom: -3px;
+      bottom: -4px;
     }
 
     .question-meta {
@@ -481,34 +497,34 @@
       justify-content: space-between;
       align-items: center;
       font-size: 11px;
-      color: #835229;
+      color: var(--text-soft);
       margin-bottom: 4px;
     }
 
     .question-tag {
       padding: 2px 8px;
       border-radius: 999px;
-      background: rgba(243, 198, 117, 0.24);
-      border: 1px solid rgba(224, 165, 79, 0.7);
+      background: rgba(255, 243, 214, 0.9);
+      border: 1px solid rgba(240, 187, 98, 0.9);
       font-weight: 600;
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.06em;
+      color: #7a4a22;
     }
 
     .question-text {
       font-size: 15px;
       font-weight: 700;
-      color: #3c1d32;
+      color: var(--text-main);
       margin-top: 4px;
       line-height: 1.4;
     }
 
     .question-helper {
       font-size: 12px;
-      color: #70432c;
+      color: var(--text-soft);
       margin-top: 4px;
-      opacity: 0.9;
     }
 
     .question-image {
@@ -521,29 +537,29 @@
       max-height: 120px;
       object-fit: contain;
       border-radius: 12px;
-      box-shadow: 0 5px 14px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 5px 14px rgba(0, 0, 0, 0.15);
     }
 
-    /* Wooden target boards for options */
+    /* Options: wooden targets */
     .options-grid {
       margin-top: 10px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
       gap: 10px;
     }
 
     .wood-target {
       position: relative;
-      background: radial-gradient(circle at top, #f3d2a9, #b57534);
+      background: radial-gradient(circle at top, #ffe0aa, #c7863f);
       border-radius: 18px;
       padding: 10px 10px 12px;
-      box-shadow: 0 6px 0 #6f4118, 0 10px 18px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 6px 0 #7a4a22, 0 10px 18px rgba(0, 0, 0, 0.18);
       cursor: pointer;
-      color: #241108;
+      color: #3a2414;
       text-align: center;
       font-weight: 700;
       font-size: 14px;
-      border: 2px solid rgba(255, 255, 255, 0.15);
+      border: 2px solid rgba(255, 255, 255, 0.6);
       transition: transform var(--transition-med), box-shadow var(--transition-med),
         filter var(--transition-med);
       overflow: hidden;
@@ -554,14 +570,14 @@
       position: absolute;
       inset: 8px;
       border-radius: 14px;
-      border: 2px dashed rgba(69, 35, 12, 0.5);
-      opacity: 0.7;
+      border: 2px dashed rgba(96, 55, 26, 0.6);
+      opacity: 0.8;
       pointer-events: none;
     }
 
     .wood-target:hover {
       transform: translateY(2px) scale(1.03);
-      box-shadow: 0 4px 0 #6f4118, 0 8px 16px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 4px 0 #7a4a22, 0 8px 16px rgba(0, 0, 0, 0.2);
       filter: brightness(1.03);
     }
 
@@ -569,19 +585,19 @@
       cursor: default;
       opacity: 0.6;
       transform: none;
-      box-shadow: 0 4px 0 #6f4118, 0 6px 12px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 0 #7a4a22, 0 6px 12px rgba(0, 0, 0, 0.15);
     }
 
     .wood-target.correct {
       animation: pulseCorrect 0.35s ease-out forwards;
       border-color: var(--accent-green);
-      box-shadow: 0 6px 0 #2f6a33, 0 10px 20px rgba(15, 82, 24, 0.7);
+      box-shadow: 0 6px 0 #2f6a33, 0 10px 20px rgba(15, 82, 24, 0.4);
     }
 
     .wood-target.wrong {
       animation: shakeWrong 0.25s ease-out;
       border-color: var(--accent-red);
-      box-shadow: 0 6px 0 #7b2222, 0 10px 20px rgba(120, 30, 30, 0.7);
+      box-shadow: 0 6px 0 #7b2222, 0 10px 20px rgba(120, 30, 30, 0.3);
     }
 
     @keyframes pulseCorrect {
@@ -621,8 +637,8 @@
       right: -6px;
       top: -6px;
       border-radius: 50%;
-      background: radial-gradient(circle at center, #fff7aa, #f2c146);
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+      background: radial-gradient(circle at center, #fff8bf, #f1c24b);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.7);
       transform: scale(0);
       transform-origin: center;
       animation: dartScale 0.4s cubic-bezier(0.16, 0.84, 0.44, 1.1) forwards;
@@ -642,7 +658,7 @@
       top: 11px;
       left: 11px;
       background: #e02a4b;
-      box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
     }
 
     .dart-hit::after {
@@ -650,7 +666,7 @@
       height: 4px;
       right: -10px;
       top: 15px;
-      background: linear-gradient(90deg, #fce3d9, #b9333d);
+      background: linear-gradient(90deg, #fde7da, #b9333d);
     }
 
     @keyframes dartScale {
@@ -681,11 +697,10 @@
 
     .place-house {
       flex: 1;
-      min-width: 0;
-      background: linear-gradient(180deg, #f6e5c1, #d3a766);
+      background: linear-gradient(180deg, #f8e3c0, #e0b06a);
       border-radius: 14px;
       padding: 4px 4px 8px;
-      box-shadow: 0 4px 0 #8a5b27, 0 7px 14px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 0 #9a652b, 0 7px 14px rgba(0, 0, 0, 0.18);
       position: relative;
       display: flex;
       flex-direction: column;
@@ -696,11 +711,11 @@
     .place-roof {
       position: absolute;
       top: -12px;
-      width: 70%;
+      width: 72%;
       height: 18px;
-      background: linear-gradient(180deg, #813b24, #5a2212);
+      background: linear-gradient(180deg, #e27b47, #d45b24);
       clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
     }
 
     .place-label {
@@ -709,8 +724,7 @@
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.07em;
-      color: #3c1c0e;
-      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+      color: #4d260f;
     }
 
     .place-dropzone {
@@ -719,7 +733,7 @@
       min-height: 28px;
       border-radius: 10px;
       border: 2px dashed rgba(75, 35, 14, 0.5);
-      background: rgba(255, 248, 232, 0.8);
+      background: rgba(255, 248, 232, 0.9);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -731,8 +745,8 @@
 
     .place-dropzone.active-drop {
       border-style: solid;
-      border-color: #3d8b3f;
-      box-shadow: 0 0 10px rgba(53, 173, 95, 0.6);
+      border-color: var(--accent-green);
+      box-shadow: 0 0 10px rgba(53, 173, 95, 0.5);
     }
 
     .drag-bank {
@@ -746,8 +760,8 @@
       min-width: 34px;
       padding: 6px 8px;
       border-radius: 10px;
-      background: radial-gradient(circle at top, #ffffff, #ffdd9a);
-      box-shadow: 0 4px 0 #a46a2c, 0 7px 12px rgba(0, 0, 0, 0.55);
+      background: radial-gradient(circle at top, #ffffff, #ffe4ac);
+      box-shadow: 0 4px 0 #a46a2c, 0 7px 12px rgba(0, 0, 0, 0.18);
       font-weight: 800;
       font-size: 14px;
       color: #3c1806;
@@ -762,12 +776,11 @@
 
     .drag-bank-label {
       font-size: 11px;
-      color: #f1d6aa;
-      opacity: 0.8;
+      color: var(--text-soft);
       margin-top: 2px;
     }
 
-    /* Feedback and explanations */
+    /* Feedback & bottom controls */
     .feedback-row {
       margin-top: 6px;
       display: flex;
@@ -782,20 +795,74 @@
     }
 
     .feedback-message.correct {
-      color: #9cfab0;
+      color: var(--accent-green-dark);
     }
 
     .feedback-message.wrong {
-      color: #ff9a9a;
+      color: var(--accent-red);
     }
 
     .feedback-message.info {
-      color: #ffe9c1;
+      color: var(--text-soft);
     }
 
     .small-prompt {
       font-size: 11px;
-      opacity: 0.8;
+      color: var(--text-soft);
+      opacity: 0.85;
+    }
+
+    .bottom-row {
+      margin-top: auto;
+      padding-top: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .ghost-btn {
+      border-radius: 999px;
+      border: 1px dashed rgba(151, 166, 189, 0.9);
+      padding: 8px 12px;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--text-soft);
+      cursor: pointer;
+    }
+
+    .ghost-btn:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .next-btn {
+      border-radius: 999px;
+      border: none;
+      padding: 10px 16px;
+      font-size: 13px;
+      background: linear-gradient(135deg, #60e597, #38b7c4);
+      color: #093227;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #237865, 0 8px 18px rgba(0, 0, 0, 0.18);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+        filter var(--transition-fast);
+    }
+
+    .next-btn:hover:not(:disabled) {
+      filter: brightness(1.07);
+      transform: translateY(2px);
+      box-shadow: 0 4px 0 #237865, 0 6px 14px rgba(0, 0, 0, 0.15);
+    }
+
+    .next-btn:disabled {
+      opacity: 0.45;
+      cursor: default;
+      transform: none;
+      box-shadow: 0 4px 0 #237865, 0 5px 10px rgba(0, 0, 0, 0.15);
     }
 
     /* Red cross indicator */
@@ -811,15 +878,15 @@
     }
 
     .wrong-indicator-icon {
-      width: 120px;
-      height: 120px;
+      width: 110px;
+      height: 110px;
       border-radius: 50%;
-      border: 4px solid rgba(255, 255, 255, 0.85);
-      background: radial-gradient(circle at center, #ff4f6f, #b11226);
+      border: 4px solid rgba(255, 255, 255, 0.9);
+      background: radial-gradient(circle at center, #ff7083, #e2363d);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.25);
       transform: scale(0.5);
     }
 
@@ -831,7 +898,7 @@
       height: 10px;
       border-radius: 999px;
       background: #ffe2e8;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
     }
 
     .wrong-indicator-icon::before {
@@ -888,7 +955,7 @@
 
     .confetti-star {
       position: absolute;
-      color: #ffe67a;
+      color: #ffd46a;
       font-size: 18px;
       text-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
       animation: confettiFall 1s ease-out forwards;
@@ -911,60 +978,6 @@
       }
     }
 
-    /* Bottom nav controls */
-    .bottom-row {
-      margin-top: auto;
-      padding-top: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .ghost-btn {
-      border-radius: 999px;
-      border: 1px dashed rgba(255, 255, 255, 0.45);
-      padding: 8px 12px;
-      font-size: 11px;
-      background: transparent;
-      color: #f9f3ff;
-      cursor: pointer;
-    }
-
-    .ghost-btn:disabled {
-      opacity: 0.4;
-      cursor: default;
-    }
-
-    .next-btn {
-      border-radius: 999px;
-      border: none;
-      padding: 10px 16px;
-      font-size: 13px;
-      background: linear-gradient(135deg, #60e597, #35d0c8);
-      color: #09211a;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      cursor: pointer;
-      box-shadow: 0 6px 0 #1a7b5c, 0 8px 18px rgba(0, 0, 0, 0.4);
-      transition: transform var(--transition-fast), box-shadow var(--transition-fast),
-        filter var(--transition-fast);
-    }
-
-    .next-btn:hover:not(:disabled) {
-      filter: brightness(1.08);
-      transform: translateY(2px);
-      box-shadow: 0 4px 0 #1a7b5c, 0 6px 14px rgba(0, 0, 0, 0.4);
-    }
-
-    .next-btn:disabled {
-      opacity: 0.45;
-      cursor: default;
-      transform: none;
-      box-shadow: 0 4px 0 #1a7b5c, 0 5px 10px rgba(0, 0, 0, 0.35);
-    }
-
     /* Result screen */
     #result-screen {
       padding-top: 28px;
@@ -974,12 +987,12 @@
 
     .result-card {
       margin-top: 10px;
-      background: radial-gradient(circle at top, #fffdf2, #ffe2a7);
+      background: var(--scroll-bg);
       border-radius: 20px;
       padding: 18px 18px 16px;
       box-shadow: var(--shadow-soft);
-      border: 3px solid #f4c45b;
-      color: #3b1627;
+      border: 2px solid var(--scroll-border);
+      color: var(--text-main);
     }
 
     .result-title {
@@ -990,7 +1003,7 @@
 
     .result-subtitle {
       font-size: 13px;
-      color: #6d3e2d;
+      color: var(--text-soft);
     }
 
     .result-score {
@@ -1001,7 +1014,6 @@
       gap: 12px;
       font-size: 15px;
       font-weight: 700;
-      color: #2f0f3a;
     }
 
     .score-badge {
@@ -1009,22 +1021,23 @@
       border-radius: 14px;
       background: linear-gradient(135deg, #ffe87a, #f5c32f);
       box-shadow: 0 3px 0 #c38b24;
+      color: #2f1f0e;
     }
 
     .xp-badge {
       padding: 6px 10px;
       border-radius: 999px;
       font-size: 11px;
-      background: rgba(89, 209, 140, 0.16);
-      border: 1px solid rgba(88, 222, 154, 0.8);
-      color: #0b7a3a;
+      background: rgba(89, 209, 140, 0.1);
+      border: 1px solid rgba(88, 222, 154, 0.6);
+      color: var(--accent-green-dark);
     }
 
     .result-list {
       margin-top: 12px;
       font-size: 13px;
       text-align: left;
-      color: #4c2217;
+      color: var(--text-soft);
     }
 
     .result-list li {
@@ -1043,12 +1056,12 @@
       padding: 4px 10px;
       border-radius: 999px;
       font-size: 11px;
-      background: rgba(89, 45, 140, 0.1);
-      border: 1px solid rgba(89, 45, 140, 0.6);
-      color: #4a215d;
+      background: rgba(95, 140, 215, 0.1);
+      border: 1px solid rgba(95, 140, 215, 0.6);
+      color: #324767;
     }
 
-    /* Utility */
+    /* Utility & responsive */
     .hidden {
       display: none !important;
     }
@@ -1070,34 +1083,32 @@
       }
     }
 
-@media (min-width: 900px) {
-  #app {
-    border-radius: 24px;
-    margin: 16px auto;
-  }
+    @media (min-width: 900px) {
+      #app {
+        border-radius: 24px;
+        margin: 16px auto;
+      }
 
-  .screen {
-    padding: 24px 32px 28px;
-  }
+      .screen {
+        padding: 24px 32px 28px;
+      }
 
-  .question-area {
-    flex-direction: row;
-    align-items: stretch;
-  }
+      .question-area {
+        flex-direction: row;
+        align-items: stretch;
+      }
 
-  .scroll-card {
-    flex: 3;
-  }
+      .scroll-card {
+        flex: 3;
+      }
 
-  .feedback-row,
-  .bottom-row {
-    max-width: 640px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-
+      .feedback-row,
+      .bottom-row {
+        max-width: 640px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1108,15 +1119,17 @@
       <div class="wrong-indicator-icon"></div>
     </div>
 
+    <!-- Splash: Innovine logo 5 seconds -->
     <div class="screen active" id="splash-screen">
       <div class="splash-logo-wrap">
         <img src="assets/innovine-logo.png" alt="Innovine logo" />
       </div>
       <div class="splash-text">
-        Welcome to Innovine Number Kingdom<br />Loading your adventure...
+        Welcome to Innovine Number Kingdom<br />Warming up your quest...
       </div>
     </div>
 
+    <!-- Intro -->
     <div class="screen" id="intro-screen">
       <div>
         <div class="badge">
@@ -1126,20 +1139,19 @@
         </div>
         <h1 class="game-title">Number Kingdom: Knowing Our Numbers</h1>
         <p class="game-subtitle">
-          Conquer the number castle with place value, comparison, and clever moves.
+          Practice place value, large numbers, comparison, and rounding in a playful kingdom setting.
         </p>
       </div>
 
       <div class="scroll-panel">
         <div class="scroll-heading">How to play</div>
         <div class="scroll-text">
-          Aim at wooden targets, drop digits into place-value houses, and clear
-          each challenge before time runs out.
-          You get one retry for each question—after that, the kingdom reveals the
-          right answer with a short explanation.
+          Aim at wooden targets, drag digits into place-value houses, and answer each challenge
+          before time runs out. You get one retry for every question—after that, the correct answer
+          and a short explanation appear to help you learn.
         </div>
         <div class="key-pill-row">
-          <span class="key-pill">45s timer · per question</span>
+          <span class="key-pill">45s per question</span>
           <span class="key-pill">1 retry · then reveal</span>
           <span class="key-pill">True/False · MCQ · Drag &amp; drop</span>
         </div>
@@ -1153,6 +1165,7 @@
       </div>
     </div>
 
+    <!-- Game -->
     <div class="screen" id="game-screen">
       <div class="hud">
         <div class="hud-left">
@@ -1218,21 +1231,22 @@
       </div>
     </div>
 
+    <!-- Result -->
     <div class="screen" id="result-screen">
       <div>
         <div class="badge">
-          <span>Chapter 1 clear</span>
+          <span>Chapter 1 complete</span>
         </div>
         <h2 class="game-title">Quest Summary</h2>
         <p class="game-subtitle">
-          See how your number powers grew in the kingdom.
+          See how your number skills grew in the kingdom.
         </p>
       </div>
 
       <div class="result-card">
         <div class="result-title" id="result-title">Well played!</div>
         <div class="result-subtitle" id="result-subtitle">
-          You defended the castle with confident calculations.
+          You navigated the Number Kingdom with confident calculations.
         </div>
 
         <div class="result-score">
@@ -1256,7 +1270,7 @@
 
         <div class="chip-row">
           <span class="chip">Place value houses</span>
-          <span class="chip">Comparing giant numbers</span>
+          <span class="chip">Comparing large numbers</span>
           <span class="chip">Expanded form</span>
         </div>
       </div>
@@ -1273,36 +1287,37 @@
   </div>
 
   <script>
-    // Background decoration: floating numbers & stars
+    // Daytime background
     (function setupBackground() {
       const bg = document.getElementById("background-layer");
+      const rays = document.createElement("div");
+      rays.className = "soft-ray";
+      bg.appendChild(rays);
+
+      const horizon = document.createElement("div");
+      horizon.className = "horizon-band";
+      bg.appendChild(horizon);
+
       const castle = document.createElement("div");
       castle.className = "castle-silhouette";
       bg.appendChild(castle);
 
       const nums = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-      for (let i = 0; i < 18; i++) {
+      for (let i = 0; i < 14; i++) {
         const isNum = Math.random() < 0.6;
-        const el = document.createElement("div");
+        let el;
         if (isNum) {
+          el = document.createElement("div");
           el.className = "floating-number";
           el.textContent = nums[Math.floor(Math.random() * nums.length)];
         } else {
-          el.className = "floating-star";
+          el = document.createElement("div");
+          el.className = "floating-bubble";
         }
         el.style.left = Math.random() * 100 + "%";
         el.style.animationDelay = -(Math.random() * 18) + "s";
-        el.style.fontSize = 16 + Math.random() * 10 + "px";
+        el.style.fontSize = 16 + Math.random() * 8 + "px";
         bg.appendChild(el);
-      }
-
-      for (let i = 0; i < 5; i++) {
-        const s = document.createElement("div");
-        s.className = "streamer";
-        s.style.left = 10 + i * 18 + "%";
-        s.style.top = 10 + Math.random() * 40 + "%";
-        s.style.animationDelay = -(Math.random() * 6) + "s";
-        bg.appendChild(s);
       }
     })();
 
@@ -1332,25 +1347,27 @@
 
     const QUESTIONS = [
       {
-id: 1,
-  type: Q_TYPES.TRUE_FALSE,
-  tag: "Place value",
-  text: "In the number 57,49,216 the digit 7 is in the lakhs place.",
-  helper: "Read from left: 5 (ten-lakhs), 7 (lakhs), 4 (ten-thousands), 9 (thousands), 2 (hundreds), 1 (tens), 6 (ones).",
-  options: ["True", "False"],
-  correctIndex: 0, // TRUE
-  explanation:
-    "In 57,49,216 the places are: 5 (ten-lakhs), 7 (lakhs), 4 (ten-thousands), 9 (thousands), 2 (hundreds), 1 (tens), 6 (ones), so the statement is true.",
-  trueFalseCorrection:
-    "The digit 7 is in the lakhs place, so the statement is true.",
-  image: null, 
+        id: 1,
+        type: Q_TYPES.TRUE_FALSE,
+        tag: "Place value",
+        text: "In the number 57,49,216 the digit 7 is in the lakhs place.",
+        helper:
+          "From left: 5 (ten-lakhs), 7 (lakhs), 4 (ten-thousands), 9 (thousands), 2 (hundreds), 1 (tens), 6 (ones).",
+        options: ["True", "False"],
+        correctIndex: 0,
+        explanation:
+          "In 57,49,216 the digit 7 is in the lakhs place, so the statement is true.",
+        trueFalseCorrection:
+          "The digit 7 is in the lakhs place, so this statement is true.",
+        image: null,
       },
       {
         id: 2,
         type: Q_TYPES.MCQ,
         tag: "Reading numbers",
         text: "How is 3,40,50,602 read in words?",
-        helper: "Think in groups: crores, lakhs, thousands, hundreds, tens, ones.",
+        helper:
+          "Split into groups: crore, lakh, thousand, and the last three digits.",
         options: [
           "Three crore forty lakh fifty thousand six hundred two",
           "Three crore four lakh five thousand six hundred two",
@@ -1359,7 +1376,7 @@ id: 1,
         ],
         correctIndex: 0,
         explanation:
-          "3,40,50,602 is split as 3 crore, 40 lakh, 50 thousand, 602, so the full reading is 'Three crore forty lakh fifty thousand six hundred two'.",
+          "3,40,50,602 = 3 crore, 40 lakh, 50 thousand, 602, so we read it as 'Three crore forty lakh fifty thousand six hundred two'.",
         image: null,
       },
       {
@@ -1367,11 +1384,12 @@ id: 1,
         type: Q_TYPES.TRUE_FALSE,
         tag: "Comparing",
         text: "The number 8,09,999 is greater than 8,10,001.",
-        helper: "Compare from the leftmost digit: lakhs, ten-thousands, thousands...",
+        helper:
+          "Compare from the left: 8 lakh 9 thousand 999 vs 8 lakh 10 thousand 1.",
         options: ["True", "False"],
         correctIndex: 1,
         explanation:
-          "8,10,001 has ten thousand whereas 8,09,999 has only nine thousand, so 8,10,001 is greater.",
+          "8,10,001 has ten thousand, whereas 8,09,999 has only nine thousand, so 8,10,001 is greater.",
         trueFalseCorrection:
           "8,10,001 is greater, so the statement is false.",
         image: null,
@@ -1381,11 +1399,12 @@ id: 1,
         type: Q_TYPES.MCQ,
         tag: "Largest number",
         text: "Form the greatest 6-digit number using digits 9, 0, 4, 8, 7, 3 exactly once.",
-        helper: "For the greatest number, place the largest available digit in the highest place (lakhs).",
+        helper:
+          "For the greatest number, arrange digits in descending order but don't put 0 in the lakhs place.",
         options: ["987430", "984730", "987340", "987043"],
         correctIndex: 2,
         explanation:
-          "Arrange digits in descending order but avoid zero in the lakhs place: 9, 8, 7, 3, 4, 0 → 987340.",
+          "Digits in descending order are 9, 8, 7, 4, 3, 0. To avoid 0 in the lakhs place we use 9, 8, 7, 3, 4, 0 → 987340.",
         image: null,
       },
       {
@@ -1393,13 +1412,13 @@ id: 1,
         type: Q_TYPES.TRUE_FALSE,
         tag: "Indian system",
         text: "In the Indian place value system, the first comma from the right comes after three digits and then after every two digits.",
-        helper: "Think of 12,34,56,789 as a pattern.",
+        helper: "Example: 12,34,56,789 follows this comma rule.",
         options: ["True", "False"],
         correctIndex: 0,
         explanation:
-          "The Indian system groups the rightmost three digits together, then adds commas after every two digits as we move left.",
+          "The Indian system groups the last three digits together and then uses commas after every two digits as we move left.",
         trueFalseCorrection:
-          "That is the rule in the Indian system, so the statement is true.",
+          "That is exactly how commas are placed in the Indian system, so the statement is true.",
         image: null,
       },
       {
@@ -1407,11 +1426,12 @@ id: 1,
         type: Q_TYPES.MCQ,
         tag: "Rounding",
         text: "Round 4,72,638 to the nearest thousand.",
-        helper: "Look at the hundreds digit to decide whether to round up or down.",
+        helper:
+          "Look at the hundreds digit (6). If it is 5 or more, round the thousands digit up.",
         options: ["4,72,000", "4,73,000", "4,70,000", "4,75,000"],
         correctIndex: 1,
         explanation:
-          "The hundreds digit is 6 (≥ 5), so the thousands digit increases from 2 to 3, giving 4,73,000.",
+          "The hundreds digit is 6 (≥ 5), so the thousands digit 2 increases to 3, giving 4,73,000.",
         image: null,
       },
       {
@@ -1419,10 +1439,18 @@ id: 1,
         type: Q_TYPES.DRAG_PLACE,
         tag: "Place value",
         text: "Drag each digit of 3,48,205 to its correct place-value house.",
-        helper: "Hint: 3 is in lakhs, 4 in ten-thousands, 8 in thousands, 2 in hundreds, 0 in tens, 5 in ones.",
+        helper:
+          "3 is in lakhs, 4 in ten-thousands, 8 in thousands, 2 in hundreds, 0 in tens, 5 in ones.",
         dragConfig: {
           number: "348205",
-          places: ["Lakhs", "Ten-thousands", "Thousands", "Hundreds", "Tens", "Ones"],
+          places: [
+            "Lakhs",
+            "Ten-thousands",
+            "Thousands",
+            "Hundreds",
+            "Tens",
+            "Ones",
+          ],
           map: {
             Lakhs: "3",
             "Ten-thousands": "4",
@@ -1433,7 +1461,7 @@ id: 1,
           },
         },
         explanation:
-          "In 3,48,205 the place values from left to right are: lakhs (3), ten-thousands (4), thousands (8), hundreds (2), tens (0), ones (5).",
+          "In 3,48,205 the places from left to right are: lakhs (3), ten-thousands (4), thousands (8), hundreds (2), tens (0), ones (5).",
         image: null,
       },
       {
@@ -1441,11 +1469,11 @@ id: 1,
         type: Q_TYPES.MCQ,
         tag: "Smallest number",
         text: "Which is the smallest 5-digit number that can be formed using digits 0, 2, 5, 7, 9 exactly once?",
-        helper: "The leftmost digit cannot be 0.",
+        helper: "The first digit cannot be 0; choose the smallest non-zero digit for the ten-thousands place.",
         options: ["02579", "20579", "25790", "90257"],
         correctIndex: 1,
         explanation:
-          "The smallest first digit (non-zero) is 2, then arrange remaining digits in ascending order: 0, 5, 7, 9 → 20579.",
+          "The smallest possible first digit is 2 (non-zero). Arrange the remaining digits 0, 5, 7, 9 in ascending order → 20579.",
         image: null,
       },
       {
@@ -1453,13 +1481,14 @@ id: 1,
         type: Q_TYPES.TRUE_FALSE,
         tag: "Expanded form",
         text: "The expanded form of 6,02,305 is 6,00,000 + 2,000 + 300 + 5.",
-        helper: "Check the digits in each place carefully.",
+        helper:
+          "Check the digit in each place: 6 lakh, 0 ten-thousand, 2 thousand, 3 hundreds, 0 tens, 5 ones.",
         options: ["True", "False"],
         correctIndex: 1,
         explanation:
-          "6,02,305 is 6,00,000 + 2,000 + 300 + 5 would mean 6,02,305 has a 3 in the hundreds place, but the number actually has 3 in the tens place.",
+          "In 6,02,305 the 3 is in the tens place, not the hundreds place, so the correct expanded form is 6,00,000 + 2,000 + 30 + 5.",
         trueFalseCorrection:
-          "Correct expanded form is 6,00,000 + 2,000 + 30 + 5.",
+          "Correct expanded form is 6,00,000 + 2,000 + 30 + 5, so the statement is false.",
         image: null,
       },
       {
@@ -1467,11 +1496,12 @@ id: 1,
         type: Q_TYPES.MCQ,
         tag: "Closest number",
         text: "Which of these is closest to 5,00,000?",
-        helper: "Think about the difference from 5,00,000.",
+        helper:
+          "Compare each option's difference from 5,00,000.",
         options: ["4,80,000", "5,20,000", "4,99,900", "5,10,050"],
         correctIndex: 2,
         explanation:
-          "4,99,900 is just 100 less than 5,00,000, which is closer than the other options.",
+          "4,99,900 is just 100 less than 5,00,000, which is a smaller difference than for the other options.",
         image: null,
       },
     ];
@@ -1530,7 +1560,7 @@ id: 1,
 
     document.getElementById("how-btn").addEventListener("click", () => {
       alert(
-        "Chapter 1 – Knowing Our Numbers:\n\n• Focus: place value, large numbers, expanded form, comparison, rounding.\n• Scoring: +10 for each correct on first try, +6 on retry.\n• Timer: 45 seconds per question."
+        "Chapter 1 – Knowing Our Numbers:\\n\\n• Focus: place value, large numbers, expanded form, comparison, rounding.\\n• Scoring: +10 for correct on first try (+12 for drag & drop), +6 on retry (+8 for drag & drop).\\n• Timer: 45 seconds per question."
       );
     });
 
@@ -1813,7 +1843,7 @@ id: 1,
       });
 
       const digits = q.dragConfig.number.split("");
-      digits.forEach((d, idx) => {
+      digits.forEach((d) => {
         const card = document.createElement("div");
         card.className = "number-card";
         card.textContent = d;
@@ -2027,6 +2057,7 @@ id: 1,
       showScreen("result");
     }
 
+    // Auto-move from splash to intro after 5 seconds
     setTimeout(() => {
       showScreen("intro");
     }, 5000);
