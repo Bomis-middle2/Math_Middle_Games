@@ -1,1 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Innovine Mathematics - Grade 6 Perimeter and Area</title>
+    <style>
+        :root {
+            --primary: #0f172a;
+            --secondary: #1e293b;
+            --brand-main: #3b82f6;
+            --brand-grad: #2563eb;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --dark: #020617;
+            --light: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.88);
+            --glass-border: rgba(255, 255, 255, 0.5);
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 40%, #1d4ed8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            color: var(--dark);
+            position: relative;
+        }
+
+        /* Animated Background Star Layer */
+        .bg-animations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .bg-star {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.15);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: float-upward 20s infinite linear;
+        }
+
+        @keyframes float-upward {
+            0% { transform: translateY(110vh) translateX(0) scale(0.6) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-15vh) translateX(50px) scale(1.3) rotate(360deg); opacity: 0; }
+        }
+
+        /* Core Stage Wrapper Component */
+        .game-container {
+            width: 92%;
+            max-width: 680px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.35);
+            padding: 35px;
+            z-index: 10;
+            position: relative;
+            text-align: center;
+            min-height: 520px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            animation: screenFadeIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes screenFadeIn {
+            from { opacity: 0; transform: scale(0.95) translateY(15px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Screen 1: Mandatory Presentation Splash View */
+        #splash-screen {
+            background: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #splash-screen img {
+            max-width: 320px;
+            width: 70%;
+            height: auto;
+            animation: brandingPulse 2.5s infinite ease-in-out;
+        }
+
+        @keyframes brandingPulse {
+            0% { transform: scale(0.96); opacity: 0.85; }
+            50% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(0.96); opacity: 0.85; }
+        }
+
+        /* Screen 2: Title Typography and Introduction Frame */
+        .intro-title {
+            font-size: 2.35rem;
+            color: var(--brand-grad);
+            margin-bottom: 8px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .intro-subtitle {
+            font-size: 1.35rem;
+            color: #475569;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        /* Primary Premium Control Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--brand-main) 0%, var(--brand-grad) 100%);
+            color: white;
+            border: none;
+            padding: 16px 44px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px -3px rgba(37, 99, 235, 0.35);
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            outline: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(37, 99, 235, 0.45);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Top HUD Element Trackers */
+        .hud-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: #334155;
+            font-size: 1rem;
+        }
+
+        .hud-item {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 14px;
+            background: #e2e8f0;
+            border-radius: 9999px;
+            margin-bottom: 28px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.01);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            border-radius: 9999px;
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Interactive Question Elements */
+        .question-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 26px;
+            text-align: left;
+            width: 100%;
+            line-height: 1.45;
+        }
+
+        /* Selection Layout Framework */
+        .options-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .option-card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 18px 22px;
+            text-align: left;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+        }
+
+        .option-card:hover {
+            border-color: var(--brand-main);
+            background: #f8fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .option-card.correct {
+            border-color: var(--success) !important;
+            background-color: #ecfdf5 !important;
+            color: #065f46;
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2);
+        }
+
+        .option-card.wrong {
+            border-color: var(--error) !important;
+            background-color: #fef2f2 !important;
+            color: #991b1b;
+            box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.2);
+        }
+
+        /* Descriptive Feedback Containers */
+        .feedback-box {
+            width: 100%;
+            margin-top: 15px;
+            padding: 18px;
+            border-radius: 16px;
+            display: none;
+            text-align: left;
+            animation: fadeInOverlay 0.35s ease;
+        }
+
+        @keyframes fadeInOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .feedback-title {
+            font-weight: 800;
+            font-size: 1.3rem;
+            margin-bottom: 6px;
+        }
+
+        .feedback-explanation {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #334155;
+        }
+
+        .feedback-box.success-bg {
+            background-color: #ecfdf5;
+            border-left: 6px solid var(--success);
+            color: #065f46;
+        }
+
+        .feedback-box.error-bg {
+            background-color: #fef2f2;
+            border-left: 6px solid var(--error);
+            color: #991b1b;
+        }
+
+        .action-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        /* Results Screen Framework Elements */
+        .results-score {
+            font-size: 4.2rem;
+            font-weight: 800;
+            color: var(--brand-grad);
+            margin: 15px 0;
+            letter-spacing: -0.05em;
+        }
+
+        .results-msg {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 35px;
+            color: #1e293b;
+        }
+
+        /* Secondary FX Systems */
+        .shake-effect {
+            animation: shakeHorizontal 0.4s ease-in-out;
+        }
+
+        @keyframes shakeHorizontal {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        .glow-success-effect {
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.55);
+        }
+
+        .star-confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: #fff;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: starFall 2.5s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        @keyframes starFall {
+            0% { transform: translateY(-30px) translateX(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) translateX(130px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Cross Screen Device Layout Compatibility */
+        @media(max-width: 480px) {
+            .game-container {
+                padding: 24px 16px;
+                width: 94%;
+                min-height: 480px;
+            }
+            .intro-title { font-size: 1.85rem; }
+            .question-text { font-size: 1.2rem; }
+            .option-card { font-size: 1rem; padding: 15px; }
+            .hud-container { font-size: 0.9rem; }
+            .results-score { font-size: 3.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animations" id="ambient-star-field"></div>
+
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+    </div>
+
+    <div class="game-container" id="game-stage">
+
+        <div id="intro-screen" class="screen">
+            <h1 class="intro-title">Perimeter and Area</h1>
+            <h3 class="intro-subtitle">Grade 6</h3>
+            <button class="btn" onclick="startAdventure()">Start Adventure</button>
+        </div>
+
+        <div id="play-screen" class="screen">
+            <div class="hud-container">
+                <div class="hud-item" id="hud-q-tracker">Question: 1/10</div>
+                <div class="hud-item" id="hud-timer-tracker">Time: 45s</div>
+                <div class="hud-item" id="hud-score-tracker">Score: 0</div>
+            </div>
+            
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="hud-progress-meter"></div>
+            </div>
+
+            <div class="question-text" id="hud-question-text"></div>
+            
+            <div class="options-grid" id="hud-options-box"></div>
+
+            <div class="feedback-box" id="hud-feedback-box">
+                <div class="feedback-title" id="lbl-feedback-title"></div>
+                <div class="feedback-explanation" id="lbl-feedback-explanation"></div>
+            </div>
+
+            <div class="action-container">
+                <button class="btn" id="btn-next" onclick="advanceChallenge()" style="display: none; padding: 12px 28px; font-size: 1rem; border-radius: 12px;">Next</button>
+            </div>
+        </div>
+
+        <div id="results-screen" class="screen">
+            <h1 class="intro-title">Adventure Completed!</h1>
+            <div class="results-score" id="lbl-results-score">0/10</div>
+            <div class="results-msg" id="lbl-results-message">Keep on practicing!</div>
+            <button class="btn" onclick="restartAdventure()">Play Again</button>
+        </div>
+
+    </div>
+
+    <script>
+        // High Quality Local Question Memory State Arrays
+        const activeQuestionsConfig = [
+            {
+                q: "What is the perimeter of a rectangle with length 12 cm and breadth 8 cm?",
+                options: ["20 cm", "40 cm", "96 cm", "48 cm"],
+                correct: 1,
+                exp: "Perimeter of a rectangle = 2 × (length + breadth) = 2 × (12 + 8) = 2 × 20 = 40 cm."
+            },
+            {
+                q: "What is the area of a square with side 9 m?",
+                options: ["18 m²", "36 m²", "81 m²", "72 m²"],
+                correct: 2,
+                exp: "Area of a square = side × side = 9 m × 9 m = 81 m²."
+            },
+            {
+                q: "What is the perimeter of an equilateral triangle with side 7 cm?",
+                options: ["14 cm", "21 cm", "28 cm", "49 cm"],
+                correct: 1,
+                exp: "An equilateral triangle has 3 equal sides. Perimeter = 3 × side = 3 × 7 cm = 21 cm."
+            },
+            {
+                q: "The perimeter of a square is 48 cm. What is the length of one side?",
+                options: ["8 cm", "10 cm", "12 cm", "14 cm"],
+                correct: 2,
+                exp: "Perimeter of a square = 4 × side. Therefore, side = Perimeter ÷ 4 = 48 ÷ 4 = 12 cm."
+            },
+            {
+                q: "A rectangle has area 60 m² and length 12 m. What is its breadth?",
+                options: ["4 m", "5 m", "6 m", "8 m"],
+                correct: 1,
+                exp: "Area of a rectangle = length × breadth. Therefore, breadth = Area ÷ length = 60 ÷ 12 = 5 m."
+            },
+            {
+                q: "What is the perimeter of a regular pentagon with each side 6 cm?",
+                options: ["24 cm", "30 cm", "36 cm", "42 cm"],
+                correct: 1,
+                exp: "A regular pentagon has 5 equal sides. Perimeter = 5 × side = 5 × 6 cm = 30 cm."
+            },
+            {
+                q: "The sides of a triangle are 5 cm, 7 cm, and 9 cm. What is its perimeter?",
+                options: ["18 cm", "20 cm", "21 cm", "24 cm"],
+                correct: 2,
+                exp: "Perimeter of a triangle = sum of all its sides = 5 cm + 7 cm + 9 cm = 21 cm."
+            },
+            {
+                q: "What is the area of a rectangle with length 15 cm and breadth 10 cm?",
+                options: ["25 cm²", "50 cm²", "150 cm²", "300 cm²"],
+                correct: 2,
+                exp: "Area of a rectangle = length × breadth = 15 cm × 10 cm = 150 cm²."
+            },
+            {
+                q: "Rahul runs around a square park of side 50 m once. How much distance does he cover?",
+                options: ["50 m", "100 m", "150 m", "200 m"],
+                correct: 3,
+                exp: "Distance covered in one round is equal to the perimeter of the square park = 4 × side = 4 × 50 m = 200 m."
+            },
+            {
+                q: "A wire is bent into a rectangle of length 20 cm and breadth 10 cm. If the same wire is bent into a square, what is the side of the square?",
+                options: ["10 cm", "15 cm", "20 cm", "30 cm"],
+                correct: 1,
+                exp: "Perimeter of rectangle = 2 × (20 + 10) = 60 cm. Since it is bent into a square, the square's perimeter is also 60 cm. Side of square = 60 ÷ 4 = 15 cm."
+            }
+        ];
+
+        // Frame Operational Runtime Variables
+        let currentChallengeIndex = 0;
+        let gameScore = 0;
+        let roundRetriesLeft = 2;
+        let countdownTimerRef = null;
+        let roundTimeRemaining = 45;
+        let userActionLocked = false;
+
+        // Audio System Mapped Resource References
+        const sndTrackCorrect = new Audio('assets/correct.mp3');
+        const sndTrackWrong = new Audio('assets/wrong.mp3');
+        const sndTrackClaps = new Audio('assets/freesound_community-claps-44774.mp3');
+
+        const successPhrasesList = ["Excellent!", "Fantastic!", "Brilliant!", "Great Job!", "Outstanding!"];
+
+        // Application Lifecycles Entry Point
+        window.addEventListener('DOMContentLoaded', () => {
+            generateAmbientStars();
+            // Core explicit runtime constraint: exactly 5000ms duration for splash presentation overlay view
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+                revealActiveFrame('intro-screen');
+            }, 5000);
+        });
+
+        function generateAmbientStars() {
+            const backgroundStage = document.getElementById('ambient-star-field');
+            for(let i=0; i<15; i++) {
+                let starNode = document.createElement('div');
+                starNode.className = 'bg-star';
+                let scaleDimension = Math.random() * 25 + 15;
+                starNode.style.width = `${scaleDimension}px`;
+                starNode.style.height = `${scaleDimension}px`;
+                starNode.style.left = `${Math.random() * 95}%`;
+                starNode.style.animationDelay = `${Math.random() * 12}s`;
+                starNode.style.animationDuration = `${Math.random() * 12 + 10}s`;
+                backgroundStage.appendChild(starNode);
+            }
+        }
+
+        function revealActiveFrame(frameId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(frameId).classList.add('active');
+        }
+
+        function startAdventure() {
+            currentChallengeIndex = 0;
+            gameScore = 0;
+            revealActiveFrame('play-screen');
+            loadChallengeRound();
+        }
+
+        function loadChallengeRound() {
+            userActionLocked = false;
+            roundRetriesLeft = 2;
+            roundTimeRemaining = 45;
+            
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('hud-feedback-box').style.display = 'none';
+            document.getElementById('game-stage').classList.remove('shake-effect', 'glow-success-effect');
+
+            document.getElementById('hud-q-tracker').innerText = `Question: ${currentChallengeIndex + 1}/${activeQuestionsConfig.length}`;
+            document.getElementById('hud-score-tracker').innerText = `Score: ${gameScore}`;
+            document.getElementById('hud-timer-tracker').innerText = `Time: ${roundTimeRemaining}s`;
+            
+            let currentProgressPercent = ((currentChallengeIndex) / activeQuestionsConfig.length) * 100;
+            document.getElementById('hud-progress-meter').style.width = `${currentProgressPercent}%`;
+
+            const currentQuestionConfig = activeQuestionsConfig[currentChallengeIndex];
+            document.getElementById('hud-question-text').innerText = currentQuestionConfig.q;
+
+            const gridOptionsWrapper = document.getElementById('hud-options-box');
+            gridOptionsWrapper.innerHTML = '';
+
+            currentQuestionConfig.options.forEach((textString, optionIdx) => {
+                let cardElement = document.createElement('div');
+                cardElement.className = 'option-card';
+                cardElement.innerText = textString;
+                cardElement.setAttribute('data-index', optionIdx);
+                cardElement.onclick = () => processUserSelectionInput(cardElement, optionIdx);
+                gridOptionsWrapper.appendChild(cardElement);
+            });
+
+            clearInterval(countdownTimerRef);
+            countdownTimerRef = setInterval(() => {
+                roundTimeRemaining--;
+                document.getElementById('hud-timer-tracker').innerText = `Time: ${roundTimeRemaining}s`;
+                if(roundTimeRemaining <= 0) {
+                    clearInterval(countdownTimerRef);
+                    processRoundTimeoutExpiry();
+                }
+            }, 1000);
+        }
+
+        function processUserSelectionInput(cardNode, evaluatedIndex) {
+            if(userActionLocked) return;
+
+            const currentRoundQuestion = activeQuestionsConfig[currentChallengeIndex];
+
+            if(evaluatedIndex === currentRoundQuestion.correct) {
+                userActionLocked = true;
+                clearInterval(countdownTimerRef);
+                cardNode.classList.add('correct');
+                document.getElementById('game-stage').classList.add('glow-success-effect');
+                
+                sndTrackCorrect.play();
+                setTimeout(() => { sndTrackClaps.play(); }, 250);
+
+                triggerVisualConfettiFX();
+                renderChallengeFeedbackPanel(true, successPhrasesList[Math.floor(Math.random() * successPhrasesList.length)], currentRoundQuestion.exp);
+                gameScore++;
+                document.getElementById('hud-score-tracker').innerText = `Score: ${gameScore}`;
+                document.getElementById('btn-next').style.display = 'inline-block';
+            } else {
+                roundRetriesLeft--;
+                cardNode.classList.add('wrong');
+                document.getElementById('game-stage').classList.add('shake-effect');
+                sndTrackWrong.play();
+                
+                setTimeout(() => {
+                    document.getElementById('game-stage').classList.remove('shake-effect');
+                }, 400);
+
+                if(roundRetriesLeft > 0) {
+                    cardNode.style.pointerEvents = 'none';
+                    renderChallengeFeedbackPanel(false, "Try Again!", "That answer is incorrect. Review geometric rules and select another remaining option.");
+                } else {
+                    userActionLocked = true;
+                    clearInterval(countdownTimerRef);
+                    revealCorrectRoundOption();
+                    renderChallengeFeedbackPanel(false, "Incorrect", currentRoundQuestion.exp);
+                    document.getElementById('btn-next').style.display = 'inline-block';
+                }
+            }
+        }
+
+        function processRoundTimeoutExpiry() {
+            userActionLocked = true;
+            revealCorrectRoundOption();
+            renderChallengeFeedbackPanel(false, "Time's Up!", activeQuestionsConfig[currentChallengeIndex].exp);
+            document.getElementById('btn-next').style.display = 'inline-block';
+        }
+
+        function revealCorrectRoundOption() {
+            const correctTargetValue = activeQuestionsConfig[currentChallengeIndex].correct;
+            const absoluteCardElements = document.querySelectorAll('.option-card');
+            absoluteCardElements.forEach(c => {
+                if(parseInt(c.getAttribute('data-index')) === correctTargetValue) {
+                    c.classList.add('correct');
+                }
+            });
+        }
+
+        function renderChallengeFeedbackPanel(isRoundOutcomeSuccess, textualHeading, explanatoryString) {
+            const panelWrapper = document.getElementById('hud-feedback-box');
+            const targetTitle = document.getElementById('lbl-feedback-title');
+            const targetDescription = document.getElementById('lbl-feedback-explanation');
+
+            panelWrapper.className = 'feedback-box ' + (isRoundOutcomeSuccess ? 'success-bg' : 'error-bg');
+            targetTitle.innerText = textualHeading;
+            targetDescription.innerText = explanatoryString;
+            panelWrapper.style.display = 'block';
+        }
+
+        function advanceChallenge() {
+            currentChallengeIndex++;
+            if(currentChallengeIndex < activeQuestionsConfig.length) {
+                loadChallengeRound();
+            } else {
+                concludeAdventurePerformanceSummary();
+            }
+        }
+
+        function concludeAdventurePerformanceSummary() {
+            clearInterval(countdownTimerRef);
+            document.getElementById('hud-progress-meter').style.width = `100%`;
+            revealActiveFrame('results-screen');
+            
+            document.getElementById('lbl-results-score').innerText = `${gameScore} / ${activeQuestionsConfig.length}`;
+            
+            const operationalSuccessRatio = gameScore / activeQuestionsConfig.length;
+            if(operationalSuccessRatio >= 0.8) {
+                document.getElementById('lbl-results-message').innerText = "Exceptional Geometric Mastery! ⭐";
+                sndTrackClaps.play();
+                triggerVisualConfettiFX();
+            } else if(operationalSuccessRatio >= 0.5) {
+                document.getElementById('lbl-results-message').innerText = "Good effort! Review formulas and play again to improve your accuracy.";
+            } else {
+                document.getElementById('lbl-results-message').innerText = "Keep practicing! Review perimeter and area properties and try again.";
+            }
+        }
+
+        function restartAdventure() {
+            startAdventure();
+        }
+
+        function triggerVisualConfettiFX() {
+            for(let i=0; i<32; i++) {
+                let starBit = document.createElement('div');
+                starBit.className = 'star-confetti';
+                starBit.style.left = `${Math.random() * 100}%`;
+                starBit.style.backgroundColor = `hsl(${Math.random() * 360}deg, 90%, 60%)`;
+                starBit.style.animationDelay = `${Math.random() * 0.3}s`;
+                document.body.appendChild(starBit);
+                setTimeout(() => starBit.remove(), 2500);
+            }
+        }
+    </script>
+</body>
+</html>
