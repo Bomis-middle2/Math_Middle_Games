@@ -1,187 +1,90 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Innovine Integers Quest</title>
+<title>Innovine Number Kingdom - Integers Quest</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff;overflow-x:hidden}
+body{margin:0;font-family:Arial;background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff;overflow-x:hidden}
+#splash{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999}
+#splash img{width:220px}
 .screen{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
-.card{max-width:900px;width:100%;background:rgba(255,255,255,.12);backdrop-filter:blur(10px);padding:25px;border-radius:25px}
+.card{max-width:900px;width:100%;background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border-radius:25px;padding:25px}
 .hidden{display:none}
-h1,h2{text-align:center;margin-bottom:15px}
-.btn{padding:14px 22px;border:none;border-radius:15px;background:#ffd166;font-weight:bold;cursor:pointer}
-.top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:15px}
-.badge{background:rgba(255,255,255,.2);padding:10px;border-radius:12px}
-.option{background:#fff;color:#222;padding:15px;margin:10px 0;border-radius:15px;cursor:pointer}
-.option:hover{transform:scale(1.02)}
+.option,.drag{background:#fff;color:#222;padding:14px;border-radius:14px;margin:10px 0;cursor:pointer}
 .correct{background:#06d6a0!important;color:#fff}
 .wrong{background:#ef476f!important;color:#fff}
-.dropzone{border:3px dashed #ffd166;padding:25px;border-radius:15px;text-align:center;margin:15px 0}
-.drag{display:inline-block;background:#fff;color:#222;padding:12px 18px;border-radius:12px;margin:8px;cursor:grab}
-#splash{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center}
-#splash img{width:220px}
+.top{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}
+.badge{background:rgba(255,255,255,.2);padding:10px;border-radius:10px}
+.dropzone{border:3px dashed gold;padding:20px;border-radius:12px;margin:10px 0;text-align:center}
+button{padding:12px 20px;border:none;border-radius:12px;background:#ffd166;font-weight:bold}
 </style>
 </head>
 <body>
-
-<div id="splash">
-<img src="assets/innovine-logo.png">
-<h2 style="color:#1e3c72">Innovine Number Kingdom</h2>
-</div>
+<div id="splash"><img src="assets/innovine-logo.png"><h2 style="color:#1e3c72">Innovine Number Kingdom</h2></div>
 
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 <audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <div id="intro" class="screen">
-<div class="card">
-<h1>Integers Quest</h1>
-<p>4 MCQ + 3 True/False + 3 Drag & Drop</p><br>
-<center><button class="btn" onclick="startGame()">Start Adventure</button></center>
-</div>
+<div class="card"><h1>Grade 6 - Integers Quest</h1><p>Answer all 10 challenges.</p><button onclick="startGame()">Start Adventure</button></div>
 </div>
 
 <div id="quiz" class="screen hidden">
 <div class="card">
 <div class="top">
-<div class="badge">Score: <span id="score">0</span></div>
-<div class="badge">Question: <span id="qnum">1</span>/10</div>
-<div class="badge">Time: <span id="timer">45</span>s</div>
+<div class="badge">Score <span id="score">0</span></div>
+<div class="badge">Q <span id="qnum">1</span>/10</div>
+<div class="badge">Time <span id="time">45</span>s</div>
 </div>
 <h2 id="question"></h2>
 <div id="area"></div>
-<p id="feedback"></p><br>
-<button id="nextBtn" class="btn hidden" onclick="nextQuestion()">Next</button>
+<p id="feedback"></p>
+<button id="nextBtn" class="hidden" onclick="nextQ()">Next</button>
 </div>
 </div>
 
 <div id="result" class="screen hidden">
-<div class="card">
-<h1>Quest Complete</h1>
-<h2 id="finalScore"></h2>
-<center><button class="btn" onclick="location.reload()">Play Again</button></center>
-</div>
+<div class="card"><h1>Quest Complete</h1><h2 id="final"></h2><button onclick="location.reload()">Play Again</button></div>
 </div>
 
 <script>
-setTimeout(()=>document.getElementById("splash").style.display="none",5000);
+setTimeout(()=>document.getElementById('splash').style.display='none',5000);
 
-const praise=["Excellent!","Fantastic!","Brilliant!","Great Job!","Outstanding!"];
-
-const questions=[
-{type:"mcq",q:"Which number is an integer?",options:["3.5","-4","1/2","0.8"],a:"-4",e:"Integers are whole numbers and their negatives."},
-{type:"mcq",q:"Which is the greatest negative integer?",options:["-10","-1","-5","-9"],a:"-1",e:"Closest negative number to zero."},
-{type:"mcq",q:"What is the opposite of -7?",options:["-7","0","7","1"],a:"7",e:"Opposite means additive inverse."},
-{type:"mcq",q:"What is the sum of -4 and 9?",options:["-13","5","-5","13"],a:"5",e:"9-4=5."},
-{type:"tf",q:"Zero is neither positive nor negative.",options:["True","False"],a:"True",e:"Zero has no sign."},
-{type:"tf",q:"-8 is greater than -2.",options:["True","False"],a:"False",e:"-8 is smaller."},
-{type:"tf",q:"The predecessor of 0 is -1.",options:["True","False"],a:"True",e:"One less than 0."},
-{type:"drag",q:"Drag the integer between -3 and -1.",items:["-4","-2","0","1"],a:"-2",e:"-2 lies between them."},
-{type:"drag",q:"Drag the increase from -2°C to 5°C.",items:["3°C","5°C","7°C","-7°C"],a:"7°C",e:"Increase is 7°C."},
-{type:"drag",q:"Drag the result of -6 + (-3).",items:["9","-9","-3","3"],a:"-9",e:"Adding negatives gives negative."}
+const qs=[
+{t:'mcq',q:'Which number is an integer?',o:['3.5','-4','1/2','0.8'],a:'-4',e:'Integers include negative whole numbers.'},
+{t:'mcq',q:'Which is the greatest negative integer?',o:['-10','-1','-5','-9'],a:'-1',e:'Closest to zero.'},
+{t:'mcq',q:'What is the opposite of -7?',o:['-7','0','7','1'],a:'7',e:'Opposite means additive inverse.'},
+{t:'mcq',q:'What is the sum of -4 and 9?',o:['-13','5','-5','13'],a:'5',e:'9-4=5.'},
+{t:'tf',q:'Zero is neither positive nor negative.',o:['True','False'],a:'True',e:'Correct.'},
+{t:'tf',q:'-8 is greater than -2.',o:['True','False'],a:'False',e:'-8 is smaller.'},
+{t:'tf',q:'The predecessor of 0 is -1.',o:['True','False'],a:'True',e:'One less than 0.'},
+{t:'drag',q:'Drag integer between -3 and -1.',i:['-4','-2','0','1'],a:'-2',e:'-2 lies between.'},
+{t:'drag',q:'Drag increase from -2°C to 5°C.',i:['3°C','5°C','7°C','-7°C'],a:'7°C',e:'Increase is 7.'},
+{t:'drag',q:'Drag result of -6 + (-3).',i:['9','-9','-3','3'],a:'-9',e:'Sum is -9.'}
 ];
+let c=0,s=0,a=0,tm=45,intv;
 
-let current=0,score=0,attempt=0,time=45,timer;
-
-function play(id){let a=document.getElementById(id);a.currentTime=0;a.play().catch(()=>{});}
-
-function startGame(){
-document.getElementById('intro').classList.add('hidden');
-document.getElementById('quiz').classList.remove('hidden');
-loadQuestion();
-}
-
-function loadQuestion(){
-attempt=0;
-document.getElementById('feedback').innerHTML="";
-document.getElementById('nextBtn').classList.add('hidden');
-let q=questions[current];
-document.getElementById('qnum').innerText=current+1;
-document.getElementById('question').innerText=q.q;
-let area=document.getElementById('area');
-area.innerHTML='';
-
-clearInterval(timer);
-time=45;
-document.getElementById('timer').innerText=time;
-timer=setInterval(()=>{
-time--;
-document.getElementById('timer').innerText=time;
-if(time<=0){clearInterval(timer);showAnswer();}
-},1000);
-
-if(q.type=="mcq"||q.type=="tf"){
-q.options.forEach(o=>{
-let d=document.createElement('div');
-d.className='option';
-d.innerText=o;
-d.onclick=()=>check(o,d);
-area.appendChild(d);
-});
-}else{
-let dz=document.createElement('div');
-dz.className='dropzone';
-dz.innerText='Drop Here';
-dz.ondragover=e=>e.preventDefault();
-dz.ondrop=e=>{e.preventDefault();check(e.dataTransfer.getData('text'),dz);};
-area.appendChild(dz);
-
-q.items.forEach(i=>{
-let d=document.createElement('div');
-d.className='drag';
-d.draggable=true;
-d.innerText=i;
-d.ondragstart=e=>e.dataTransfer.setData('text',i);
-d.onclick=()=>check(i,d);
-area.appendChild(d);
-});
+function play(id){let x=document.getElementById(id);x.currentTime=0;x.play().catch(()=>{});}
+function startGame(){intro.classList.add('hidden');quiz.classList.remove('hidden');load();}
+function load(){
+a=0;clearInterval(intv);tm=45;time.innerText=tm;feedback.innerHTML='';nextBtn.classList.add('hidden');
+let q=qs[c];qnum.innerText=c+1;question.innerText=q.q;area.innerHTML='';
+intv=setInterval(()=>{tm--;time.innerText=tm;if(tm<=0){showAns();}},1000);
+if(q.t!='drag'){q.o.forEach(v=>{let d=document.createElement('div');d.className='option';d.innerText=v;d.onclick=()=>check(v,d);area.appendChild(d);});}
+else{
+let dz=document.createElement('div');dz.className='dropzone';dz.innerText='Drop Here';dz.ondragover=e=>e.preventDefault();dz.ondrop=e=>{e.preventDefault();check(e.dataTransfer.getData('text'),dz)};area.appendChild(dz);
+q.i.forEach(v=>{let d=document.createElement('div');d.className='drag';d.draggable=true;d.innerText=v;d.ondragstart=e=>e.dataTransfer.setData('text',v);d.onclick=()=>check(v,d);area.appendChild(d);});
 }
 }
-
-function check(val,el){
-let q=questions[current];
-if(val===q.a){
-clearInterval(timer);
-score++;
-document.getElementById('score').innerText=score;
-el.classList.add('correct');
-play('correctSound');
-setTimeout(()=>play('clapSound'),250);
-document.getElementById('feedback').innerHTML=praise[Math.floor(Math.random()*praise.length)]+" "+q.e;
-document.getElementById('nextBtn').classList.remove('hidden');
-}else{
-attempt++;
-play('wrongSound');
-el.classList.add('wrong');
-if(attempt<2){
-document.getElementById('feedback').innerHTML="Try Again!";
-}else{
-showAnswer();
+function check(v,el){
+let q=qs[c];
+if(v==q.a){clearInterval(intv);s++;score.innerText=s;el.classList.add('correct');play('correctSound');setTimeout(()=>play('clapSound'),250);feedback.innerHTML='Excellent! '+q.e;nextBtn.classList.remove('hidden');}
+else{a++;play('wrongSound');el.classList.add('wrong');if(a<2)feedback.innerHTML='Try Again';else showAns();}
 }
-}
-}
-
-function showAnswer(){
-clearInterval(timer);
-let q=questions[current];
-document.getElementById('feedback').innerHTML="Correct Answer: "+q.a+"<br>"+q.e;
-document.getElementById('nextBtn').classList.remove('hidden');
-}
-
-function nextQuestion(){
-current++;
-if(current<questions.length) loadQuestion();
-else finish();
-}
-
-function finish(){
-document.getElementById('quiz').classList.add('hidden');
-document.getElementById('result').classList.remove('hidden');
-document.getElementById('finalScore').innerHTML="Score: "+score+"/10";
-}
+function showAns(){clearInterval(intv);feedback.innerHTML='Correct Answer: '+qs[c].a+'<br>'+qs[c].e;nextBtn.classList.remove('hidden');}
+function nextQ(){c++; if(c<qs.length)load(); else{quiz.classList.add('hidden');result.classList.remove('hidden');final.innerText='Score: '+s+'/10'; if(s>=8)play('clapSound');}}
 </script>
 </body>
 </html>
