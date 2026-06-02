@@ -1,1 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovine Mathematics Interactive Game - Shapes and Polygons</title>
+    <style>
+        :root {
+            --primary: #4a00e0;
+            --secondary: #8e2de2;
+            --success: #00b09b;
+            --success-glow: rgba(0, 176, 155, 0.4);
+            --danger: #ff416c;
+            --danger-glow: rgba(255, 65, 108, 0.4);
+            --background: #0f0c20;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.15);
+            --text: #ffffff;
+            --text-muted: #b3b3b3;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Background Graphics and Floating Elements */
+        .bg-animations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .floating-shape {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.03);
+            font-weight: bold;
+            font-size: var(--size);
+            top: var(--top);
+            left: var(--left);
+            animation: float Around 16s infinite ease-in-out;
+            animation-delay: var(--delay);
+        }
+
+        @keyframes floatAround {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-35px) rotate(20deg); }
+        }
+
+        /* Viewport Container Framework */
+        .game-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 100%;
+            max-height: 700px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            animation: screenEntrance 0.5s ease-out forwards;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes screenEntrance {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Splash Window */
+        #splash-screen {
+            background: #0f0c20;
+            border: none;
+            box-shadow: none;
+        }
+
+        .logo-container img {
+            max-width: 280px;
+            height: auto;
+            animation: logoPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(255,255,255,0)); }
+            50% { transform: scale(1.04); filter: drop-shadow(0 0 20px rgba(255,255,255,0.25)); }
+        }
+
+        /* Welcome Intro Window */
+        .title-meta {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .title-main {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ff007f, #7f00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(142, 45, 226, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(142, 45, 226, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* HUD & Status Bar Trackers */
+        .game-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .hud-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 20px;
+            border-radius: 15px;
+            border: 1px solid var(--card-border);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--secondary), var(--success));
+            transition: width 0.4s ease;
+        }
+
+        /* Core Stage Content Arena */
+        .game-body {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .question-text {
+            font-size: 1.35rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        /* Options Infrastructure Panels */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--card-border);
+            border-radius: 16px;
+            padding: 18px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .option-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Drag & Drop Matrix Grid Alignment Layout */
+        .drag-drop-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .matching-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .drag-source, .drop-target, .sort-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed var(--card-border);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            font-size: 1.05rem;
+            min-height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .drag-source {
+            border-style: solid;
+            background: linear-gradient(135deg, rgba(142, 45, 226, 0.2), rgba(74, 0, 226, 0.2));
+            cursor: grab;
+        }
+
+        .drag-source:active {
+            cursor: grabbing;
+        }
+
+        .drag-source.dragging {
+            opacity: 0.4;
+        }
+
+        .drop-target.hovered {
+            background: rgba(142, 45, 226, 0.15);
+            border-color: var(--secondary);
+        }
+
+        .drop-target.filled {
+            border-style: solid;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Horizontal Sorting Panels Layout */
+        .sort-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        .sort-item {
+            border-style: solid;
+            background: linear-gradient(135deg, rgba(142, 45, 226, 0.2), rgba(74, 0, 226, 0.2));
+            min-width: 115px;
+            cursor: grab;
+        }
+
+        /* Dynamic Feedback Evaluation Structural System Modifications */
+        .option-card.correct, .drop-target.correct, .sort-item.correct {
+            background: var(--success) !important;
+            border-color: var(--success) !important;
+            box-shadow: 0 0 15px var(--success-glow);
+            color: #fff;
+        }
+
+        .option-card.wrong, .drop-target.wrong, .sort-item.wrong {
+            background: var(--danger) !important;
+            border-color: var(--danger) !important;
+            box-shadow: 0 0 15px var(--danger-glow);
+            color: #fff;
+            animation: elementShaking 0.4s ease-in-out;
+        }
+
+        @keyframes elementShaking {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        /* Integrated Shared Feedback Terminal Console Panel */
+        .feedback-panel {
+            margin-top: auto;
+            min-height: 95px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            text-align: center;
+        }
+
+        .feedback-message {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .explanation-text {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            max-width: 620px;
+            line-height: 1.4;
+        }
+
+        .action-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 12px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Results Display Terminal Window */
+        .score-circle {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--secondary), var(--primary));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            box-shadow: 0 10px 30px rgba(142, 45, 226, 0.5);
+            margin-bottom: 25px;
+        }
+
+        .score-circle span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .result-msg {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* Celebration Confetti Items */
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            opacity: 0.8;
+            border-radius: 50%;
+            animation: particleFalling 2.8s infinite linear;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        @keyframes particleFalling {
+            0% { transform: translateY(-20px) rotate(0deg); top: 0%; }
+            100% { transform: translateY(100vh) rotate(360deg); top: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animations">
+        <div class="floating-shape" style="--size: 4rem; --top: 10%; --left: 7%; --delay: 0s;">▲</div>
+        <div class="floating-shape" style="--size: 5rem; --top: 60%; --left: 85%; --delay: 2s;">⬡</div>
+        <div class="floating-shape" style="--size: 3.5rem; --top: 80%; --left: 10%; --delay: 1.5s;">■</div>
+        <div class="floating-shape" style="--size: 4.5rem; --top: 15%; --left: 75%; --delay: 3.5s;">⬟</div>
+    </div>
+
+    <div class="game-container">
+        
+        <div id="splash-screen" class="screen active">
+            <div class="logo-container">
+                <img src="assets/innovine-logo.png" alt="Innovine Logo">
+            </div>
+        </div>
+
+        <div id="intro-screen" class="screen">
+            <div class="title-meta">Grade 6 • Chapter 7</div>
+            <div class="title-main">Shapes and Polygons Adventure</div>
+            <button class="btn" id="start-adventure-btn">Start Adventure</button>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="hud-item" id="hud-question-idx">Question: 1/10</div>
+                <div class="hud-item" id="hud-timer" style="color: #ff416c;">Time: 45s</div>
+                <div class="hud-item" id="hud-score">Score: 0</div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="game-progress"></div>
+            </div>
+
+            <div class="game-body">
+                <div class="question-text" id="question-text">Loading question assets configuration...</div>
+                
+                <div id="interactive-workspace" style="width: 100%;"></div>
+
+                <div class="feedback-panel">
+                    <div class="feedback-message id-feedback-msg"></div>
+                    <div class="explanation-text id-explanation-text"></div>
+                    <div class="action-container">
+                        <button class="btn hidden" id="next-question-btn" style="padding: 10px 30px; font-size: 1rem;">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="results-screen" class="screen">
+            <div class="title-meta">Adventure Completed</div>
+            <div class="score-circle" id="final-score-badge">0/10 <span>Score</span></div>
+            <div class="result-msg" id="final-result-msg">Great attempt!</div>
+            <button class="btn" onclick="location.reload();">Play Again</button>
+        </div>
+
+    </div>
+
+    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="snd-claps" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+    <script>
+        // CORE MATRIX - INPUT SOURCE DATABASE QUESTIONS
+        const questions = [
+            {
+                type: "MCQ",
+                question: "A traffic sign is shaped like a triangle. How many sides does a triangle have?",
+                options: ["2", "3", "4", "5"],
+                answer: "3",
+                explanation: "A triangle has 3 sides and 3 vertices."
+            },
+            {
+                type: "MCQ",
+                question: "A classroom window has opposite sides equal and all angles measuring 90°. Which shape is it most likely to be?",
+                options: ["Triangle", "Rectangle", "Pentagon", "Circle"],
+                answer: "Rectangle",
+                explanation: "A rectangle has opposite sides equal and four right angles."
+            },
+            {
+                type: "MCQ",
+                question: "Which polygon has 5 sides?",
+                options: ["Hexagon", "Triangle", "Pentagon", "Octagon"],
+                answer: "Pentagon",
+                explanation: "A pentagon has 5 sides."
+            },
+            {
+                type: "TF",
+                question: "A square is also a rectangle.",
+                answer: "True",
+                explanation: "A square has all the properties of a rectangle."
+            },
+            {
+                type: "TF",
+                question: "A circle has vertices.",
+                answer: "False",
+                explanation: "A circle has no sides and no vertices."
+            },
+            {
+                type: "TF",
+                question: "A hexagon has 6 sides.",
+                answer: "True",
+                explanation: "Hexa means six."
+            },
+            {
+                type: "MATCH",
+                question: "Match the shape with its number of sides.",
+                pairs: [
+                    { left: "Triangle", right: "3" },
+                    { left: "Rectangle", right: "4" },
+                    { left: "Pentagon", right: "5" },
+                    { left: "Hexagon", right: "6" }
+                ],
+                explanation: "Polygons are classified according to the number of their sides: Tri(3), Quad(4), Penta(5), Hexa(6)."
+            },
+            {
+                type: "SORT",
+                question: "Arrange the polygons from the least number of sides to the greatest number of sides.",
+                items: ["Hexagon", "Triangle", "Pentagon", "Quadrilateral"],
+                correctOrder: ["Triangle", "Quadrilateral", "Pentagon", "Hexagon"],
+                explanation: "Sorting by sides gives: Triangle (3) < Quadrilateral (4) < Pentagon (5) < Hexagon (6)."
+            },
+            {
+                type: "MATCH",
+                question: "Match the real-life object with the shape it resembles.",
+                pairs: [
+                    { left: "Dice face", right: "Square" },
+                    { left: "Door", right: "Rectangle" },
+                    { left: "Honeycomb cell", right: "Hexagon" },
+                    { left: "Pizza slice", right: "Triangle" }
+                ],
+                explanation: "Geometric formations exist everywhere naturally throughout our daily environments!"
+            },
+            {
+                type: "MCQ",
+                question: "A shape has 8 sides and 8 vertices. What is it called?",
+                options: ["Pentagon", "Hexagon", "Heptagon", "Octagon"],
+                answer: "Octagon",
+                explanation: "An octagon has 8 sides and 8 vertices."
+            }
+        ];
+
+        // ENGINE APP RUNTIME CONTROL PARAMETERS
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let timerInterval = null;
+        let timeLeft = 45;
+        let attemptsCount = 0;
+        let isQuestionLocked = false;
+        let draggedElement = null;
+
+        const positiveMsgs = ["Excellent!", "Fantastic!", "Brilliant!", "Great Job!", "Outstanding!"];
+
+        // DOM SELECTOR HOOKUPS
+        const splashScreen = document.getElementById('splash-screen');
+        const introScreen = document.getElementById('intro-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const resultsScreen = document.getElementById('results-screen');
+        
+        const startBtn = document.getElementById('start-adventure-btn');
+        const nextBtn = document.getElementById('next-question-btn');
+        const workspace = document.getElementById('interactive-workspace');
+
+        const hudQuestionIdx = document.getElementById('hud-question-idx');
+        const hudTimer = document.getElementById('hud-timer');
+        const hudScore = document.getElementById('hud-score');
+        const progressBar = document.getElementById('game-progress');
+        const questionText = document.getElementById('question-text');
+
+        const feedbackMsg = document.querySelector('.id-feedback-msg');
+        const explanationText = document.querySelector('.id-explanation-text');
+
+        // AUDIO DISPATCH SYSTEM ENGINES
+        function playSound(id) {
+            const aud = document.getElementById(id);
+            if(aud) {
+                aud.currentTime = 0;
+                aud.play().catch(() => {});
+            }
+        }
+
+        function triggerCorrectSequence() {
+            playSound('snd-correct');
+            setTimeout(() => {
+                playSound('snd-claps');
+            }, 250);
+        }
+
+        // WINDOW APPLICATION STATE SETUP LIFECYCLE
+        window.addEventListener('DOMContentLoaded', () => {
+            // Splash transitions out to intro environment screen at exactly 5 seconds
+            setTimeout(() => {
+                splashScreen.classList.remove('active');
+                introScreen.classList.add('active');
+            }, 5000);
+        });
+
+        startBtn.addEventListener('click', () => {
+            introScreen.classList.remove('active');
+            gameScreen.classList.add('active');
+            loadQuestion(0);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIdx++;
+            if(currentQuestionIdx < questions.length) {
+                loadQuestion(currentQuestionIdx);
+            } else {
+                showResultsSummary();
+            }
+        });
+
+        // QUESTION LOADING SYSTEM DISPATCHER
+        function loadQuestion(index) {
+            clearInterval(timerInterval);
+            isQuestionLocked = false;
+            attemptsCount = 0;
+            timeLeft = 45;
+            
+            feedbackMsg.textContent = "";
+            explanationText.textContent = "";
+            nextBtn.classList.add('hidden');
+
+            // Synchronize HUD Status Variables
+            hudQuestionIdx.textContent = `Question: ${index + 1}/${questions.length}`;
+            hudScore.textContent = `Score: ${score}`;
+            hudTimer.textContent = `Time: ${timeLeft}s`;
+            progressBar.style.width = `${((index) / questions.length) * 100}%`;
+
+            const qData = questions[index];
+            questionText.textContent = qData.question;
+            workspace.innerHTML = "";
+
+            // Evaluate Layout Component Injection Types
+            if(qData.type === "MCQ") {
+                renderMCQ(qData);
+            } else if (qData.type === "TF") {
+                renderTrueFalse(qData);
+            } else if (qData.type === "MATCH") {
+                renderMatching(qData);
+            } else if (qData.type === "SORT") {
+                renderSorting(qData);
+            }
+
+            // Fire Timer Continuous Countdown Loop Tick Thread
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                hudTimer.textContent = `Time: ${timeLeft}s`;
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeoutOrMaxFail(true);
+                }
+            }, 1000);
+        }
+
+        // DESIGN WRAPPER: MCQ CHALLENGE INTERFACE
+        function renderMCQ(data) {
+            const grid = document.createElement('div');
+            grid.className = 'options-grid';
+            data.options.forEach(opt => {
+                const card = document.createElement('div');
+                card.className = 'option-card';
+                card.textContent = opt;
+                card.addEventListener('click', () => handleChoiceSelection(card, opt, data.answer, data.explanation));
+                grid.appendChild(card);
+            });
+            workspace.appendChild(grid);
+        }
+
+        // DESIGN WRAPPER: TRUE / FALSE CHALLENGE INTERFACE
+        function renderTrueFalse(data) {
+            const grid = document.createElement('div');
+            grid.className = 'options-grid';
+            ["True", "False"].forEach(opt => {
+                const card = document.createElement('div');
+                card.className = 'option-card';
+                card.textContent = opt;
+                card.addEventListener('click', () => handleChoiceSelection(card, opt, data.answer, data.explanation));
+                grid.appendChild(card);
+            });
+            workspace.appendChild(grid);
+        }
+
+        // EVALUATOR ROUTINE (FOR MCQ & TF INTERACTIVES)
+        function handleChoiceSelection(cardElement, selectedVal, correctVal, explanation) {
+            if(isQuestionLocked) return;
+
+            if(selectedVal === correctVal) {
+                cardElement.classList.add('correct');
+                score++;
+                hudScore.textContent = `Score: ${score}`;
+                triggerSuccessState(explanation);
+            } else {
+                cardElement.classList.add('wrong');
+                attemptsCount++;
+                playSound('snd-wrong');
+
+                if(attemptsCount >= 2) {
+                    handleTimeoutOrMaxFail(false, correctVal, explanation);
+                } else {
+                    feedbackMsg.style.color = "var(--danger)";
+                    feedbackMsg.textContent = "Incorrect! Try again.";
+                    setTimeout(() => { cardElement.classList.remove('wrong'); }, 1000);
+                }
+            }
+        }
+
+        // DESIGN WRAPPER: MATCHING CONNECTIONS D&D TEMPLATE
+        function renderMatching(data) {
+            const container = document.createElement('div');
+            container.className = 'drag-drop-container';
+
+            // Randomize right matches options to prevent uniform parallel pairs positioning
+            const rightOptionsShuffled = data.pairs.map(p => p.right).sort(() => Math.random() - 0.5);
+
+            data.pairs.forEach((pair) => {
+                const row = document.createElement('div');
+                row.className = 'matching-row';
+
+                const leftBox = document.createElement('div');
+                leftBox.className = 'sort-item';
+                leftBox.style.cursor = 'default';
+                leftBox.style.background = 'rgba(255, 255, 255, 0.08)';
+                leftBox.textContent = pair.left;
+
+                const dropTarget = document.createElement('div');
+                dropTarget.className = 'drop-target';
+                dropTarget.dataset.expected = pair.right;
+                dropTarget.textContent = "Drop matched card here";
+
+                setupDropTargetLifecycle(dropTarget);
+
+                row.appendChild(leftBox);
+                row.appendChild(dropTarget);
+                container.appendChild(row);
+            });
+
+            const sourcePool = document.createElement('div');
+            sourcePool.className = 'sort-container';
+            sourcePool.style.marginTop = "25px";
+            sourcePool.style.borderTop = "1px solid var(--card-border)";
+            sourcePool.style.paddingTop = "15px";
+
+            rightOptionsShuffled.forEach(val => {
+                const src = document.createElement('div');
+                src.className = 'drag-source';
+                src.draggable = true;
+                src.textContent = val;
+                setupDragSourceLifecycle(src);
+                sourcePool.appendChild(src);
+            });
+
+            workspace.appendChild(container);
+            workspace.appendChild(sourcePool);
+
+            appendDragValidationButton(() => validateMatchingChallenge(data.explanation));
+        }
+
+        // DESIGN WRAPPER: SORT SEQUENCE ALIGNMENT D&D TEMPLATE
+        function renderSorting(data) {
+            const wrapper = document.createElement('div');
+            wrapper.style.width = "100%";
+            
+            const label = document.createElement('div');
+            label.textContent = "Drag cards horizontally to order them from least to greatest sides:";
+            label.style.color = "var(--text-muted)";
+            label.style.marginBottom = "10px";
+            wrapper.appendChild(label);
+
+            const container = document.createElement('div');
+            container.className = 'sort-container';
+            
+            const shuffledItems = [...data.items].sort(() => Math.random() - 0.5);
+            
+            shuffledItems.forEach(val => {
+                const item = document.createElement('div');
+                item.className = 'sort-item';
+                item.draggable = true;
+                item.textContent = val;
+                setupSortingDragLifecycle(item, container);
+                container.appendChild(item);
+            });
+
+            wrapper.appendChild(container);
+            workspace.appendChild(wrapper);
+
+            appendDragValidationButton(() => validateSortingChallenge(data.correctOrder, data.explanation));
+        }
+
+        // DRAG AND DROP RUNTIME LIFECYCLE LISTENERS UTILITIES
+        function setupDragSourceLifecycle(el) {
+            el.addEventListener('dragstart', () => {
+                if(isQuestionLocked) return;
+                draggedElement = el;
+                el.classList.add('dragging');
+            });
+            el.addEventListener('dragend', () => { el.classList.remove('dragging'); });
+        }
+
+        function setupDropTargetLifecycle(target) {
+            target.addEventListener('dragover', (e) => { e.preventDefault(); });
+            target.addEventListener('dragenter', () => { if(!isQuestionLocked) target.classList.add('hovered'); });
+            target.addEventListener('dragleave', () => { target.classList.remove('hovered'); });
+            
+            target.addEventListener('drop', (e) => {
+                e.preventDefault();
+                target.classList.remove('hovered');
+                if(isQuestionLocked || !draggedElement) return;
+
+                if(target.classList.contains('filled')) {
+                    const currentVal = target.textContent;
+                    const returnedSrc = document.createElement('div');
+                    returnedSrc.className = 'drag-source';
+                    returnedSrc.draggable = true;
+                    returnedSrc.textContent = currentVal;
+                    setupDragSourceLifecycle(returnedSrc);
+                    workspace.querySelector('.sort-container').appendChild(returnedSrc);
+                }
+
+                target.textContent = draggedElement.textContent;
+                target.classList.add('filled');
+                draggedElement.remove();
+                draggedElement = null;
+            });
+        }
+
+        function setupSortingDragLifecycle(el, container) {
+            el.addEventListener('dragstart', () => { if(!isQuestionLocked) el.classList.add('dragging'); });
+            el.addEventListener('dragend', () => { el.classList.remove('dragging'); });
+            
+            container.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                if(isQuestionLocked) return;
+                const draggingItem = container.querySelector('.dragging');
+                if(!draggingItem) return;
+                const siblings = [...container.querySelectorAll('.sort-item:not(.dragging)')];
+                let nextSibling = siblings.find(sibling => {
+                    return e.clientX <= sibling.getBoundingClientRect().left + sibling.getBoundingClientRect().width / 2;
+                });
+                container.insertBefore(draggingItem, nextSibling);
+            });
+        }
+
+        function appendDragValidationButton(validationCallback) {
+            const container = document.createElement('div');
+            container.className = 'action-container';
+            container.style.justifyContent = 'center';
+            container.style.marginTop = '20px';
+
+            const checkBtn = document.createElement('button');
+            checkBtn.className = 'btn';
+            checkBtn.id = "submit-drag-btn";
+            checkBtn.style.padding = '10px 30px';
+            checkBtn.style.fontSize = '1rem';
+            checkBtn.textContent = "Check Answer";
+            checkBtn.addEventListener('click', validationCallback);
+
+            container.appendChild(checkBtn);
+            workspace.appendChild(container);
+        }
+
+        // EVALUATOR DRAG OBJECT CHALLENGE CODES
+        function validateMatchingChallenge(explanation) {
+            if(isQuestionLocked) return;
+            const targets = workspace.querySelectorAll('.drop-target');
+            let poolCorrect = true;
+
+            targets.forEach(t => {
+                const filledVal = t.classList.contains('filled') ? t.textContent : "";
+                if(filledVal === t.dataset.expected) {
+                    t.classList.add('correct');
+                } else {
+                    t.classList.add('wrong');
+                    poolCorrect = false;
+                }
+            });
+
+            handleInteractiveEndState(poolCorrect, explanation);
+        }
+
+        function validateSortingChallenge(correctSequence, explanation) {
+            if(isQuestionLocked) return;
+            const items = workspace.querySelectorAll('.sort-item');
+            let poolCorrect = true;
+
+            items.forEach((item, idx) => {
+                if(item.textContent === correctSequence[idx]) {
+                    item.classList.add('correct');
+                } else {
+                    item.classList.add('wrong');
+                    poolCorrect = false;
+                }
+            });
+
+            handleInteractiveEndState(poolCorrect, explanation);
+        }
+
+        function handleInteractiveEndState(isCorrect, explanation) {
+            const submitBtn = document.getElementById('submit-drag-btn');
+            if(submitBtn) submitBtn.remove();
+
+            if(isCorrect) {
+                score++;
+                hudScore.textContent = `Score: ${score}`;
+                triggerSuccessState(explanation);
+            } else {
+                attemptsCount++;
+                playSound('snd-wrong');
+                if(attemptsCount >= 2) {
+                    handleTimeoutOrMaxFail(false, null, explanation);
+                } else {
+                    feedbackMsg.style.color = "var(--danger)";
+                    feedbackMsg.textContent = "Some elements are misplaced! Try one more time.";
+                    setTimeout(() => {
+                        workspace.querySelectorAll('.wrong').forEach(el => {
+                            el.classList.remove('wrong');
+                        });
+                    }, 1200);
+                }
+            }
+        }
+
+        // TRANSITIONS AND ANSWER STATUS MANAGEMENT FLOW
+        function triggerSuccessState(explanation) {
+            clearInterval(timerInterval);
+            isQuestionLocked = true;
+            
+            feedbackMsg.style.color = "var(--success)";
+            feedbackMsg.textContent = positiveMsgs[Math.floor(Math.random() * positiveMsgs.length)];
+            explanationText.textContent = explanation;
+            
+            triggerCorrectSequence();
+            nextBtn.classList.remove('hidden');
+        }
+
+        function handleTimeoutOrMaxFail(isTimeout = false, correctString = null, explanation = "") {
+            clearInterval(timerInterval);
+            isQuestionLocked = true;
+            playSound('snd-wrong');
+
+            feedbackMsg.style.color = "var(--danger)";
+            feedbackMsg.textContent = isTimeout ? "Time's Up!" : "Incorrect!";
+
+            if(correctString) {
+                explanationText.textContent = `Correct Answer: ${correctString}. ${explanation}`;
+            } else {
+                explanationText.textContent = explanation;
+            }
+
+            workspace.querySelectorAll('.option-card, .drag-source, .sort-item').forEach(el => {
+                el.setAttribute('draggable', 'false');
+                el.style.cursor = 'default';
+            });
+
+            nextBtn.classList.remove('hidden');
+        }
+
+        // SCREEN 4: DISPATCH RECAP SCORE DETAILS PANEL
+        function showResultsSummary() {
+            gameScreen.classList.remove('active');
+            resultsScreen.classList.add('active');
+
+            const finalPercentage = (score / questions.length) * 100;
+            const badge = document.getElementById('final-score-badge');
+            const msg = document.getElementById('final-result-msg');
+
+            badge.innerHTML = `${score}/${questions.length} <span>Score</span>`;
+
+            if(finalPercentage >= 80) {
+                msg.textContent = "Outstanding Achievement! Geometry Master!";
+                msg.style.color = "var(--success)";
+                triggerConfettiShower();
+                playSound('snd-claps');
+            } else {
+                msg.textContent = "Good try! Review shape properties to scale your performance score.";
+                msg.style.color = "var(--text)";
+            }
+        }
+
+        function triggerConfettiShower() {
+            for(let i = 0; i < 60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = `${Math.random() * 100}%`;
+                conf.style.background = `hsl(${Math.random() * 360}deg, 100%, 70%)`;
+                conf.style.animationDelay = `${Math.random() * 2}s`;
+                conf.style.animationDuration = `${2 + Math.random() * 3}s`;
+                resultsScreen.appendChild(conf);
+            }
+        }
+    </script>
+</body>
+</html>
