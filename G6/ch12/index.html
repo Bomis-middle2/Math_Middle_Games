@@ -1,1 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Innovine Mathematics - Grade 6 Playing with Numbers</title>
+    <style>
+        :root {
+            --primary: #4a154b;
+            --secondary: #611f69;
+            --accent: #007a5a;
+            --success: #2ecc71;
+            --error: #e74c3c;
+            --warning: #f1c40f;
+            --dark: #1d1c1d;
+            --light: #f8f9fa;
+            --glass: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #611f69 0%, #4a154b 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            color: var(--dark);
+            position: relative;
+        }
+
+        /* Floating Background System */
+        .bg-animations {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .floating-element {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.08);
+            font-weight: 800;
+            user-select: none;
+            animation: float-up 25s infinite linear;
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(110vh) translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-15vh) translateX(50px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Core Card Component */
+        .game-container {
+            width: 90%;
+            max-width: 650px;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 28px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            padding: 35px;
+            z-index: 10;
+            position: relative;
+            text-align: center;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Splash Screen Base */
+        #splash-screen {
+            background: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #splash-screen img {
+            max-width: 300px;
+            width: 65%;
+            height: auto;
+            animation: calm-pulse 2.5s infinite ease-in-out;
+        }
+
+        @keyframes calm-pulse {
+            0% { transform: scale(0.96); opacity: 0.85; }
+            50% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(0.96); opacity: 0.85; }
+        }
+
+        /* Intro Screen Typography */
+        .intro-title {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .intro-subtitle {
+            font-size: 1.3rem;
+            color: #5a5a5a;
+            margin-bottom: 35px;
+            font-weight: 600;
+        }
+
+        /* Standardized Action Controls */
+        .btn {
+            background: linear-gradient(135deg, #611f69 0%, #4a154b 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(74, 21, 75, 0.35);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            outline: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(74, 21, 75, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Progress Framework & HUD indicators */
+        .hud-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            font-weight: 700;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .hud-item {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 8px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(0,0,0,0.06);
+            min-width: 105px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 12px;
+            background: #e6e6e6;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            border-radius: 8px;
+            transition: width 0.3s ease;
+        }
+
+        /* Interactive Question Components */
+        .question-text {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 24px;
+            text-align: left;
+            width: 100%;
+            line-height: 1.45;
+        }
+
+        .options-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+            display: flex;
+            align-items: center;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.02);
+        }
+
+        .option-card:hover {
+            border-color: #cbd5e1;
+            background: #fdfdfd;
+            transform: translateY(-1.5px);
+        }
+
+        .option-card.correct {
+            border-color: var(--success) !important;
+            background-color: #edfbf2 !important;
+            color: #155724;
+            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.15);
+        }
+
+        .option-card.wrong {
+            border-color: var(--error) !important;
+            background-color: #fdf2f2 !important;
+            color: #721c24;
+            box-shadow: 0 4px 12px rgba(231, 76, 120, 0.15);
+        }
+
+        /* Feedback Elements */
+        .feedback-box {
+            width: 100%;
+            margin-top: 15px;
+            padding: 16px;
+            border-radius: 16px;
+            display: none;
+            text-align: left;
+            animation: fadeInNormal 0.3s ease;
+        }
+
+        @keyframes fadeInNormal {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .feedback-title {
+            font-weight: 800;
+            font-size: 1.25rem;
+            margin-bottom: 6px;
+        }
+
+        .feedback-explanation {
+            font-size: 1rem;
+            line-height: 1.45;
+            color: #333;
+        }
+
+        .feedback-box.success-bg {
+            background-color: #edfbf2;
+            border-left: 6px solid var(--success);
+            color: #155724;
+        }
+
+        .feedback-box.error-bg {
+            background-color: #fdf2f2;
+            border-left: 6px solid var(--error);
+            color: #721c24;
+        }
+
+        .action-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        /* End Screen Design */
+        .results-score {
+            font-size: 3.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 15px 0;
+            letter-spacing: -1px;
+        }
+
+        .results-msg {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 35px;
+            color: #333;
+        }
+
+        /* Micro-Animations and Feedback FX */
+        .shake-fx {
+            animation: shake-anim 0.4s ease-in-out;
+        }
+
+        @keyframes shake-anim {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+
+        .glow-success-fx {
+            box-shadow: 0 0 25px rgba(46, 204, 113, 0.55);
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: drop-down 2.5s ease-out infinite;
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        @keyframes drop-down {
+            0% { transform: translateY(-50px) translateX(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) translateX(120px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Mobile Layout Adjustments */
+        @media(max-width: 480px) {
+            .game-container {
+                padding: 24px 16px;
+                width: 95%;
+                min-height: 460px;
+            }
+            .intro-title { font-size: 1.75rem; }
+            .question-text { font-size: 1.15rem; }
+            .option-card { font-size: 1rem; padding: 14px; }
+            .hud-container { font-size: 0.85rem; }
+            .results-score { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-animations" id="ambient-layer"></div>
+
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+    </div>
+
+    <div class="game-container" id="main-stage">
+
+        <div id="intro-screen" class="screen">
+            <h1 class="intro-title">Playing with Numbers</h1>
+            <h3 class="intro-subtitle">Grade 6</h3>
+            <button class="btn" onclick="initiateAdventure()">Start Adventure</button>
+        </div>
+
+        <div id="play-screen" class="screen">
+            <div class="hud-container">
+                <div class="hud-item" id="hud-q-counter">Question: 1/10</div>
+                <div class="hud-item" id="hud-timer-label">Time: 45s</div>
+                <div class="hud-item" id="hud-score-label">Score: 0</div>
+            </div>
+            
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="dynamic-progress"></div>
+            </div>
+
+            <div class="question-text" id="interactive-question"></div>
+            
+            <div class="options-grid" id="interactive-options"></div>
+
+            <div class="feedback-box" id="feedback-hub">
+                <div class="feedback-title" id="lbl-feedback-title"></div>
+                <div class="feedback-explanation" id="lbl-feedback-explanation"></div>
+            </div>
+
+            <div class="action-container">
+                <button class="btn" id="ctrl-next-btn" onclick="advanceNext()" style="display: none; padding: 12px 30px; font-size: 1rem;">Next</button>
+            </div>
+        </div>
+
+        <div id="results-screen" class="screen">
+            <h1 class="intro-title">Adventure Completed!</h1>
+            <div class="results-score" id="results-score-display">0/10</div>
+            <div class="results-msg" id="results-message-display">Keep on practicing!</div>
+            <button class="btn" onclick="restartAdventure()">Play Again</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Data Configuration Array mapped to precise specifications
+        const dataset = [
+            {
+                q: "Which of the following is a prime number?",
+                options: ["21", "29", "33", "39"],
+                correct: 1,
+                exp: "29 has only two distinct factors: 1 and itself, making it a prime number. The others have more than two factors."
+            },
+            {
+                q: "Which number is a composite number?",
+                options: ["2", "3", "17", "15"],
+                correct: 3,
+                exp: "15 is a composite number because its factors are 1, 3, 5, and 15 (more than two factors)."
+            },
+            {
+                q: "What is the HCF of 12 and 18?",
+                options: ["3", "6", "9", "12"],
+                correct: 1,
+                exp: "The factors of 12 are 1,2,3,4,6,12 and 18 are 1,2,3,6,9,18. The Highest Common Factor (HCF) is 6."
+            },
+            {
+                q: "What is the LCM of 4 and 6?",
+                options: ["8", "10", "12", "24"],
+                correct: 2,
+                exp: "The multiples of 4 are 4, 8, 12, 16... and 6 are 6, 12, 18... The Lowest Common Multiple (LCM) is 12."
+            },
+            {
+                q: "Which pair of numbers is co-prime?",
+                options: ["8 and 12", "15 and 28", "14 and 21", "18 and 24"],
+                correct: 1,
+                exp: "15 and 28 are co-prime because their only common factor is 1."
+            },
+            {
+                q: "Which of the following numbers are twin primes?",
+                options: ["2 and 4", "3 and 5", "5 and 9", "7 and 11"],
+                correct: 1,
+                exp: "3 and 5 are both prime numbers, and their difference is exactly 2, which makes them twin primes."
+            },
+            {
+                q: "What is the prime factorization of 36?",
+                options: ["2 × 2 × 3 × 3", "2 × 3 × 6", "4 × 9", "2 × 18"],
+                correct: 0,
+                exp: "2 × 2 × 3 × 3 contains only prime factors, and multiplying them gives exactly 36."
+            },
+            {
+                q: "Which of the following is divisible by 9?",
+                options: ["234", "241", "256", "278"],
+                correct: 0,
+                exp: "The sum of the digits of 234 is 2 + 3 + 4 = 9. Since 9 is divisible by 9, the whole number is divisible by 9."
+            },
+            {
+                q: "Which of the following numbers is divisible by 6?",
+                options: ["18", "25", "31", "49"],
+                correct: 0,
+                exp: "18 is an even number (divisible by 2) and the sum of its digits 1 + 8 = 9 (divisible by 3). Therefore, it is divisible by 6."
+            },
+            {
+                q: "What is the least number that is divisible by both 2 and 3?",
+                options: ["4", "5", "6", "12"],
+                correct: 2,
+                exp: "The least common multiple (LCM) of 2 and 3 is 6. It is the smallest number divisible by both."
+            }
+        ];
+
+        // Runtime Global Variables
+        let currentIdx = 0;
+        let runningScore = 0;
+        let roundRetriesLeft = 2;
+        let counterRef = null;
+        let timeRemaining = 45;
+        let lockInteractiveSelection = false;
+
+        // Sound Elements mapped to structural requirements
+        const audioCorrect = new Audio('assets/correct.mp3');
+        const audioWrong = new Audio('assets/wrong.mp3');
+        const audioClaps = new Audio('assets/freesound_community-claps-44774.mp3');
+
+        const structuralGreetings = ["Excellent!", "Fantastic!", "Brilliant!", "Great Job!", "Outstanding!"];
+
+        // Application Lifecycles
+        window.addEventListener('DOMContentLoaded', () => {
+            renderAmbientBackground();
+            // Core restriction: Exactly 5 seconds active splash screen before transition
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+                displayScreen('intro-screen');
+            }, 5000);
+        });
+
+        function renderAmbientBackground() {
+            const container = document.getElementById('ambient-layer');
+            const numericSymbols = ["12", "7", "HCF", "LCM", "÷", "×", "36", "5", "Prime", "Composite"];
+            for(let i = 0; i < 12; i++) {
+                let el = document.createElement('div');
+                el.className = 'floating-element';
+                el.innerText = numericSymbols[Math.floor(Math.random() * numericSymbols.length)];
+                el.style.fontSize = `${Math.random() * 24 + 16}px`;
+                el.style.left = `${Math.random() * 95}%`;
+                el.style.animationDelay = `${Math.random() * 12}s`;
+                el.style.animationDuration = `${Math.random() * 15 + 15}s`;
+                container.appendChild(el);
+            }
+        }
+
+        function displayScreen(targetId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active');
+        }
+
+        function initiateAdventure() {
+            currentIdx = 0;
+            runningScore = 0;
+            displayScreen('play-screen');
+            loadActiveQuestion();
+        }
+
+        function loadActiveQuestion() {
+            lockInteractiveSelection = false;
+            roundRetriesLeft = 2;
+            timeRemaining = 45;
+            
+            document.getElementById('ctrl-next-btn').style.display = 'none';
+            document.getElementById('feedback-hub').style.display = 'none';
+            document.getElementById('main-stage').classList.remove('shake-fx', 'glow-success-fx');
+
+            document.getElementById('hud-q-counter').innerText = `Question: ${currentIdx + 1}/${dataset.length}`;
+            document.getElementById('hud-score-label').innerText = `Score: ${runningScore}`;
+            document.getElementById('hud-timer-label').innerText = `Time: ${timeRemaining}s`;
+            
+            let fillWidthRatio = ((currentIdx) / dataset.length) * 100;
+            document.getElementById('dynamic-progress').style.width = `${fillWidthRatio}%`;
+
+            const indexItem = dataset[currentIdx];
+            document.getElementById('interactive-question').innerText = indexItem.q;
+
+            const targetGrid = document.getElementById('interactive-options');
+            targetGrid.innerHTML = '';
+
+            indexItem.options.forEach((opt, idx) => {
+                let card = document.createElement('div');
+                card.className = 'option-card';
+                card.innerText = opt;
+                card.setAttribute('data-index', idx);
+                card.onclick = () => processSelection(card, idx);
+                targetGrid.appendChild(card);
+            });
+
+            clearInterval(counterRef);
+            counterRef = setInterval(() => {
+                timeRemaining--;
+                document.getElementById('hud-timer-label').innerText = `Time: ${timeRemaining}s`;
+                if(timeRemaining <= 0) {
+                    clearInterval(counterRef);
+                    processTimeExpiry();
+                }
+            }, 1000);
+        }
+
+        function processSelection(cardNode, dataIndex) {
+            if(lockInteractiveSelection) return;
+
+            const itemConfig = dataset[currentIdx];
+
+            if(dataIndex === itemConfig.correct) {
+                lockInteractiveSelection = true;
+                clearInterval(counterRef);
+                cardNode.classList.add('correct');
+                document.getElementById('main-stage').classList.add('glow-success-fx');
+                
+                audioCorrect.play();
+                setTimeout(() => { audioClaps.play(); }, 250);
+
+                triggerConfettiFX();
+                renderFeedbackBox(true, structuralGreetings[Math.floor(Math.random() * structuralGreetings.length)], itemConfig.exp);
+                runningScore++;
+                document.getElementById('hud-score-label').innerText = `Score: ${runningScore}`;
+                document.getElementById('ctrl-next-btn').style.display = 'inline-block';
+            } else {
+                roundRetriesLeft--;
+                cardNode.classList.add('wrong');
+                document.getElementById('main-stage').classList.add('shake-fx');
+                audioWrong.play();
+                
+                setTimeout(() => {
+                    document.getElementById('main-stage').classList.remove('shake-fx');
+                }, 400);
+
+                if(roundRetriesLeft > 0) {
+                    cardNode.style.pointerEvents = 'none';
+                    renderFeedbackBox(false, "Try Again!", "Review the core mathematical property and attempt your second choice.");
+                } else {
+                    lockInteractiveSelection = true;
+                    clearInterval(counterRef);
+                    forceRevealCorrectAnswer();
+                    renderFeedbackBox(false, "Incorrect", itemConfig.exp);
+                    document.getElementById('ctrl-next-btn').style.display = 'inline-block';
+                }
+            }
+        }
+
+        function processTimeExpiry() {
+            lockInteractiveSelection = true;
+            forceRevealCorrectAnswer();
+            renderFeedbackBox(false, "Time's Up!", dataset[currentIdx].exp);
+            document.getElementById('ctrl-next-btn').style.display = 'inline-block';
+        }
+
+        function forceRevealCorrectAnswer() {
+            const correctIndexValue = dataset[currentIdx].correct;
+            const operationalCards = document.querySelectorAll('.option-card');
+            operationalCards.forEach(c => {
+                if(parseInt(c.getAttribute('data-index')) === correctIndexValue) {
+                    c.classList.add('correct');
+                }
+            });
+        }
+
+        function renderFeedbackBox(isSuccessfulRound, mainTitle, textualExplanation) {
+            const frame = document.getElementById('feedback-hub');
+            const elementTitle = document.getElementById('lbl-feedback-title');
+            const elementDesc = document.getElementById('lbl-feedback-explanation');
+
+            frame.className = 'feedback-box ' + (isSuccessfulRound ? 'success-bg' : 'error-bg');
+            elementTitle.innerText = mainTitle;
+            elementDesc.innerText = textualExplanation;
+            frame.style.display = 'block';
+        }
+
+        function advanceNext() {
+            currentIdx++;
+            if(currentIdx < dataset.length) {
+                loadActiveQuestion();
+            } else {
+                renderFinalResults();
+            }
+        }
+
+        function renderFinalResults() {
+            clearInterval(counterRef);
+            document.getElementById('dynamic-progress').style.width = `100%`;
+            displayScreen('results-screen');
+            
+            document.getElementById('results-score-display').innerText = `${runningScore} / ${dataset.length}`;
+            
+            const metricRatio = runningScore / dataset.length;
+            if(metricRatio >= 0.8) {
+                document.getElementById('results-message-display').innerText = "Outstanding Number Master! ⭐";
+                audioClaps.play();
+                triggerConfettiFX();
+            } else if(metricRatio >= 0.5) {
+                document.getElementById('results-message-display').innerText = "Good effort! Practice more to maximize your score.";
+            } else {
+                document.getElementById('results-message-display').innerText = "Keep practicing! Review number properties and try again.";
+            }
+        }
+
+        function restartAdventure() {
+            initiateAdventure();
+        }
+
+        function triggerConfettiFX() {
+            for(let i = 0; i < 35; i++) {
+                let bit = document.createElement('div');
+                bit.className = 'confetti-piece';
+                bit.style.left = `${Math.random() * 100}%`;
+                bit.style.backgroundColor = `hsl(${Math.random() * 360}deg, 85%, 55%)`;
+                bit.style.animationDelay = `${Math.random() * 0.3}s`;
+                document.body.appendChild(bit);
+                setTimeout(() => bit.remove(), 2500);
+            }
+        }
+    </script>
+</body>
+</html>
