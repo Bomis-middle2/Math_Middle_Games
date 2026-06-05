@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jungle Decimal Balance</title>
+    <title>Jungle Vault: Decimal Cracker</title>
     <style>
         * {
             box-sizing: border-box;
@@ -38,7 +38,7 @@
             overflow: hidden;
         }
 
-        /* --- STAGE 1: GUARANTEED 5-SECOND LOGO SPLASH --- */
+        /* --- STAGE 1: STRICT 5-SECOND LOGO DISPLAY --- */
         #hard-splash {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -49,57 +49,48 @@
             justify-content: center;
             align-items: center;
             gap: 20px;
-            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.5s ease;
         }
-        .logo-svg {
-            width: 120px;
-            height: 120px;
-            animation: pulseGlow 2s infinite ease-in-out;
+        .splash-img {
+            max-width: 160px;
+            height: auto;
         }
         .splash-title {
             font-size: 24px;
             font-weight: 900;
             color: #34d399;
             letter-spacing: 3px;
-            text-shadow: 0 4px 12px rgba(52,211,153,0.3);
         }
-        .loader-bar-container {
-            width: 160px;
-            height: 4px;
+        .loader-track {
+            width: 180px;
+            height: 6px;
             background: rgba(255,255,255,0.1);
-            border-radius: 2px;
+            border-radius: 3px;
             overflow: hidden;
         }
-        .loader-bar-fill {
+        .loader-fill {
             width: 0%;
             height: 100%;
             background: #34d399;
-            animation: fillProgress 5s linear forwards;
+            animation: lockFiveSeconds 5s linear forwards;
+        }
+        @keyframes lockFiveSeconds {
+            to { width: 100%; }
         }
 
-        @keyframes pulseGlow {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(52,211,153,0.4)); }
-            50% { transform: scale(1.08); filter: drop-shadow(0 0 20px rgba(52,211,153,0.8)); }
-        }
-        @keyframes fillProgress {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-
-        /* --- STAGE 2 & 3: GAME CONTENT VIEWS --- */
+        /* --- OVERLAY INTERFACES --- */
         .stage-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             display: flex;
             flex-direction: column;
             padding: 20px;
-            gap: 16px;
+            gap: 14px;
             z-index: 10;
-            box-sizing: border-box;
         }
 
         .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.97);
             border: 3px solid #059669;
             border-radius: 20px;
             padding: 20px;
@@ -116,8 +107,8 @@
             border-radius: 14px;
             border: 2px solid #34d399;
         }
-        .header-title { font-weight: 800; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; }
-        .header-score { font-weight: 700; font-size: 0.9rem; background: #047857; padding: 4px 12px; border-radius: 20px; border: 1px solid #34d399;}
+        .header-title { font-weight: 800; font-size: 0.95rem; text-transform: uppercase; }
+        .header-score { font-weight: 700; font-size: 0.85rem; background: #047857; padding: 4px 12px; border-radius: 20px; border: 1px solid #34d399; }
 
         .instruction-text {
             font-size: 0.95rem;
@@ -134,80 +125,86 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
 
         .question-box {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: #064e3b;
             background: #f0fdf4;
-            padding: 16px;
+            padding: 14px;
             border-radius: 14px;
             border: 2px dashed #059669;
             width: 100%;
+            text-align: center;
         }
 
-        /* --- INTERACTIVE SLIDER COMPONENT --- */
-        .slider-engine-container {
-            width: 100%;
-            background: #f8fafc;
-            border: 2px solid #cbd5e1;
-            border-radius: 16px;
-            padding: 20px 14px;
-            margin: auto 0;
+        /* --- THE CRACKER VAULT INTERACTION MECHANIC --- */
+        .vault-dial-wrapper {
+            background: #0f172a;
+            border: 4px solid #475569;
+            border-radius: 50%;
+            width: 190px;
+            height: 190px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4), inset 0 4px 12px rgba(0,0,0,0.6);
+            margin: auto 0;
         }
 
-        .live-value-badge {
-            font-size: 2.2rem;
+        .vault-display-screen {
+            color: #38bdf8;
             font-family: 'Courier New', monospace;
+            font-size: 1.85rem;
             font-weight: 900;
-            color: #059669;
-            background: #022c22;
-            padding: 6px 20px;
-            border-radius: 10px;
             letter-spacing: 1px;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
-            display: inline-block;
-            margin: 0 auto;
+            text-shadow: 0 0 8px rgba(56,189,248,0.6);
+            z-index: 2;
         }
 
-        .range-slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 15px;
-            border-radius: 10px;
-            background: #cbd5e1;
-            outline: none;
-            margin: 10px 0;
-        }
-        .range-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 32px;
-            height: 32px;
+        .stepper-btn {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            background: #334155;
+            color: #ffffff;
+            border: 2px solid #64748b;
             border-radius: 50%;
-            background: #d97706;
-            border: 3px solid #ffffff;
+            font-size: 1.3rem;
+            font-weight: 900;
             cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: transform 0.1s;
-        }
-        .range-slider::-webkit-slider-thumb:active {
-            transform: scale(1.2);
-            background: #b45309;
-        }
-
-        .slider-endpoints {
             display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #64748b;
-            padding: 0 4px;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .stepper-btn:active { background: #1e293b; transform: scale(0.95); }
+        .stepper-btn.minus-left { left: -22px; top: calc(50% - 22px); }
+        .stepper-btn.plus-right { right: -22px; top: calc(50% - 22px); }
+
+        .chance-counter-tray {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: -10px;
+        }
+        .chance-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ef4444;
+            border: 2px solid #fca5a5;
+            box-shadow: 0 0 6px rgba(239,68,68,0.5);
+            transition: background 0.3s;
+        }
+        .chance-dot.used {
+            background: #cbd5e1;
+            border-color: #94a3b8;
+            box-shadow: none;
         }
 
         .action-btn {
@@ -215,8 +212,8 @@
             color: #ffffff;
             border: none;
             border-bottom: 4px solid #b45309;
-            padding: 16px;
-            font-size: 1.1rem;
+            padding: 14px;
+            font-size: 1.05rem;
             font-weight: 700;
             border-radius: 14px;
             cursor: pointer;
@@ -249,41 +246,34 @@
 
     <div id="viewport-root">
         
-        <!-- STAGE 1: 5-Second Built-in SVG Animation Splash -->
+        <!-- STAGE 1: Pure 5-Second Asset Splash Screen -->
         <div id="hard-splash">
-            <!-- Programmatic SVG Vector Logo Asset -->
-            <svg class="logo-svg" viewBox="0 0 100 100">
-                <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="#047857" stroke="#34d399" stroke-width="4"/>
-                <circle cx="50" cy="50" r="22" fill="#d97706"/>
-                <line x1="50" y1="28" x2="50" y2="72" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
-                <line x1="28" y1="50" x2="72" y2="50" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
-            </svg>
-            <div class="splash-title">DECIMAL AXIS</div>
-            <div class="loader-bar-container">
-                <div class="loader-bar-fill"></div>
+            <img src="assets/logo.png" class="splash-img" alt="Jungle Crest Logo" onerror="this.style.display='none';">
+            <div class="splash-title">DECIMAL CRACKER</div>
+            <div class="loader-track">
+                <div class="loader-fill"></div>
             </div>
         </div>
 
-        <!-- STAGE 2: Interactive Quest Rules Configuration Guide -->
+        <!-- STAGE 2: Interactive Quest Rules Guide -->
         <div id="instructions-screen" class="stage-overlay hidden">
-            <div class="glass-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 10px;">
+            <div class="glass-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 12px;">
                 <div class="header-panel" style="background: #047857;">
-                    <div class="header-title">📜 The Calibration Manual</div>
+                    <div class="header-title">📜 Vault Encryption Protocol</div>
                 </div>
                 <div class="instruction-text">
-                    <p>Forget generic buttons! To traverse this trail, you must manually align the physical <strong>Decimal Balance Beam</strong>:</p>
+                    <p>The lock uses numerical combinations based on local values. Spin the target coordinates to unlock the gate:</p>
                     <ul>
-                        <li>1. Read the active level goal carefully.</li>
-                        <li>2. Drag the orange slider node back and forth.</li>
-                        <li>3. Watch the digital tracking display shift value.</li>
-                        <li>4. Lock the dial when it balances perfectly!</li>
+                        <li>1. Use the left (<stong>−</stong>) and right (<strong>+</strong>) nodes to dial numbers.</li>
+                        <li>2. Submit your calculated lock placement choice via the lever.</li>
+                        <li>3. Warning: You have only <strong>2 chances per safe</strong> before the primary sequence locks you out!</li>
                     </ul>
                 </div>
-                <button class="action-btn" onclick="enterActiveSimulation()">Initiate Calibration</button>
+                <button class="action-btn" onclick="engageSimulationMatrix()">Access System Dial</button>
             </div>
         </div>
 
-        <!-- STAGE 3: Core Slidematic Calibration Gameplay Window -->
+        <!-- STAGE 3: Core Mechanical Vault Gameplay View -->
         <div id="gameplay-screen" class="stage-overlay hidden">
             <div class="header-panel">
                 <div id="game-level-tag" class="header-title">Level 1: Places</div>
@@ -291,101 +281,102 @@
             </div>
 
             <div class="glass-panel workspace-area">
-                <!-- Question Prompt text layout -->
-                <div id="game-prompt" class="question-box">Loading calibration matrices...</div>
+                <!-- Question Prompt -->
+                <div id="game-prompt" class="question-box">Decoding encryption parameters...</div>
                 
-                <!-- Interactive Physical Balance Slider Component -->
-                <div class="slider-engine-container">
-                    <div style="text-align:center;">
-                        <div id="slider-live-badge" class="live-value-badge">0.0</div>
-                    </div>
-                    <input type="range" id="beam-slider" class="range-slider" min="0" max="100" value="0" oninput="syncSliderOutput(this.value)">
-                    <div class="slider-endpoints">
-                        <span id="label-endpoint-min">0.0</span>
-                        <span id="label-endpoint-max">1.0</span>
-                    </div>
+                <!-- Physical Dial Mechanism -->
+                <div class="vault-dial-wrapper">
+                    <button class="stepper-btn minus-left" onclick="modifyDialValue(-1)">−</button>
+                    <div id="dial-digital-readout" class="vault-display-screen">0.0</div>
+                    <button class="stepper-btn plus-right" onclick="modifyDialValue(1)">+</button>
                 </div>
 
-                <button class="action-btn submit-lever" onclick="verifySliderAlignment()">Lock Axis Lever</button>
+                <!-- Two-Chance Visual Track Dots -->
+                <div class="chance-counter-tray">
+                    <div id="strike-dot-1" class="chance-dot"></div>
+                    <div id="strike-dot-2" class="chance-dot"></div>
+                </div>
+
+                <button class="action-btn submit-lever" onclick="evaluateCombinationSubmission()">Commit Combination</button>
             </div>
 
-            <div id="game-toast-feedback" class="status-banner">Calibrate the dial to target parameter!</div>
+            <div id="game-toast-feedback" class="status-banner">Align the core safe numbers!</div>
         </div>
 
     </div>
 
     <script>
-        // Synthesized Audio Context Node Generators
-        function playTone(freq, type, duration) {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator(); const gain = ctx.createGain();
-                osc.type = type; osc.frequency.setValueAtTime(freq, ctx.currentTime);
-                gain.gain.setValueAtTime(0.05, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-                osc.connect(gain); gain.connect(ctx.destination);
-                osc.start(); osc.stop(ctx.currentTime + duration);
-            } catch (e) {}
-        }
-        function triggerSuccessAudio() { playTone(523.25, 'sine', 0.15); setTimeout(() => playTone(659.25, 'sine', 0.15), 100); }
-        function triggerFailAudio() { playTone(180, 'sawtooth', 0.3); }
+        // Media Asset Sound Node Initializations
+        const audioCorrect = new Audio('assets/correct.mp3');
+        const audioWrong = new Audio('assets/wrong.mp3');
 
-        // Primary Game State Controller Variables
+        function playAssetSound(type) {
+            try {
+                if(type === 'correct') {
+                    audioCorrect.currentTime = 0;
+                    audioCorrect.play();
+                } else {
+                    audioWrong.currentTime = 0;
+                    audioWrong.play();
+                }
+            } catch(e) { console.log("Audio asset trigger failed, file missing or user interaction blocked."); }
+        }
+
+        // Global Structural States
         let currentLevel = 1;
         let scoreCount = 0;
-        let activeTaskIndex = 0;
-        let currentTargetValue = 0.0; 
+        let taskIndex = 0;
+        let selectedValueIndex = 0;
+        let internalStrikeCounter = 0;
 
-        // 5-Level Slider Challenge Database directly mapping decimal sheet logic
-        const challengeMatrix = {
+        // Custom non-MCQ structured puzzle nodes directly mapping decimal sheet details
+        const puzzleDatabase = {
             1: [
-                { q: "In the context of 5.372, set the balance slider onto the digit value located in the tenths place.", target: 0.3, min: 0.0, max: 1.0, step: 0.1 },
-                { q: "In the context of 5.372, set the balance slider onto the digit value located in the hundredths place.", target: 0.07, min: 0.0, max: 0.10, step: 0.01 }
+                { q: "From the number 5.372: Dial in the isolated value matching the tenth place digit.", choices: ["0.0", "0.3", "0.07", "0.002", "3.0"], target: "0.3" },
+                { q: "From the number 5.372: Dial in the isolated value matching the hundredth place digit.", choices: ["0.0", "0.7", "0.07", "0.007", "7.0"], target: "0.07" }
             ],
             2: [
-                { q: "Calibrate the slider position to equal the fraction 3/4.", target: 0.75, min: 0.0, max: 1.0, step: 0.05 },
-                { q: "Calibrate the slider position to equal the fraction 2/5.", target: 0.4, min: 0.0, max: 1.0, step: 0.1 }
+                { q: "Convert the fraction 3/4 directly into its decimal value.", choices: ["0.0", "0.25", "0.50", "0.75", "1.0"], target: "0.75" },
+                { q: "Convert the fraction 2/5 directly into its matching decimal value.", choices: ["0.0", "0.2", "0.4", "0.6", "0.8"], target: "0.4" }
             ],
             3: [
-                { q: "Recombine this expansion expression into one axis setting: 5 + 0.3 + 0.07 + 0.002", target: 5.372, min: 5.0, max: 6.0, step: 0.001 },
-                { q: "Set the slider to the missing balance value of this identity: 0.52 = 0.5 + [ ? ]", target: 0.02, min: 0.0, max: 0.1, step: 0.01 }
+                { q: "Recombine this expanded notation expression: 5 + 0.3 + 0.07 + 0.002", choices: ["5.0", "5.37", "5.037", "5.372", "53.72"], target: "5.372" },
+                { q: "Solve for the missing identity segment: 0.52 = 0.5 + [ ? ]", choices: ["0.0", "0.2", "0.02", "0.002", "2.0"], target: "0.02" }
             ],
             4: [
-                { q: "Make these values 'Like Decimals' by adding zeros: Match the true value of 0.500.", target: 0.5, min: 0.0, max: 1.0, step: 0.1 },
-                { q: "Find the size difference between the unlike decimals 3.67 and 2.5.", target: 1.17, min: 1.0, max: 2.0, step: 0.01 }
+                { q: "Identify the equivalent value of 0.500 when written as a single decimal place.", choices: ["0.05", "0.5", "5.0", "0.005"], target: "0.5" },
+                { q: "Align unlike decimals: What is the exact value layout difference between 3.67 and 2.5?", choices: ["1.0", "1.12", "1.17", "1.2", "0.67"], target: "1.17" }
             ],
             5: [
-                { q: "Solve alignment sum problem: 1.2 + 2.35", target: 3.55, min: 3.0, max: 4.0, step: 0.05 },
-                { q: "Solve placement multiplication product: 0.3 × 0.2", target: 0.06, min: 0.0, max: 0.2, step: 0.01 }
+                { q: "Execute safe alignment addition: 1.2 + 2.35", choices: ["3.5", "3.55", "2.47", "3.37", "4.0"], target: "3.55" },
+                { q: "Execute system alignment multiplication: 0.3 × 0.2", choices: ["0.6", "0.06", "0.006", "6.0", "0.0"], target: "0.06" }
             ]
         };
 
-        // Enforce the strict 5000ms (5 second) logo window timeout delay sequence
+        // Enforce structural 5000ms delay countdown for the loader splash
         setTimeout(() => {
             const splash = document.getElementById('hard-splash');
             if (splash) splash.style.opacity = '0';
             setTimeout(() => {
                 if (splash && splash.parentNode) splash.parentNode.removeChild(splash);
                 document.getElementById('instructions-screen').classList.remove('hidden');
-            }, 600);
+            }, 500);
         }, 5000);
 
-        function enterActiveSimulation() {
-            playTone(440, 'sine', 0.12);
+        function engageSimulationMatrix() {
             document.getElementById('instructions-screen').classList.add('hidden');
             document.getElementById('gameplay-screen').classList.remove('hidden');
-            loadActiveChallengeBlock();
+            loadActivePuzzleNode();
         }
 
-        function loadActiveChallengeBlock() {
-            const levelData = challengeMatrix[currentLevel];
+        function loadActivePuzzleNode() {
+            const levelData = puzzleDatabase[currentLevel];
 
-            // Auto promotion engine handles clearing the level sets
-            if (activeTaskIndex >= levelData.length) {
+            if (taskIndex >= levelData.length) {
                 currentLevel++;
-                activeTaskIndex = 0;
+                taskIndex = 0;
                 if (currentLevel > 5) {
-                    triggerFinalVictory();
+                    triggerSanctuaryVictory();
                     return;
                 }
             }
@@ -394,68 +385,89 @@
             document.getElementById('game-level-tag').innerText = levelTitles[currentLevel];
             document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
 
-            const item = levelData[activeTaskIndex];
+            // Reset operational parameters per question node
+            internalStrikeCounter = 0;
+            selectedValueIndex = 0;
+            document.getElementById('strike-dot-1').classList.remove('used');
+            document.getElementById('strike-dot-2').classList.remove('used');
+
+            const item = levelData[taskIndex];
             document.getElementById('game-prompt').innerText = item.q;
-            currentTargetValue = item.target;
+            document.getElementById('dial-digital-readout').innerText = item.choices[selectedValueIndex];
 
-            // Re-configure physical input boundaries dynamically per question specifications
-            const slider = document.getElementById('beam-slider');
-            slider.min = item.min;
-            slider.max = item.max;
-            slider.step = item.step;
-            slider.value = item.min;
-
-            document.getElementById('label-endpoint-min').innerText = item.min;
-            document.getElementById('label-endpoint-max').innerText = item.max;
-            
-            syncSliderOutput(item.min);
-            
             const feedback = document.getElementById('game-toast-feedback');
-            feedback.innerText = "Slide node to position and secure the lever!";
+            feedback.innerText = "Use Dial controls to align the cipher parameters!";
             feedback.style.color = "#ffffff";
+            
+            // Re-enable validation button
+            document.querySelector('.submit-lever').disabled = false;
+            document.querySelector('.submit-lever').style.opacity = "1";
         }
 
-        function syncSliderOutput(val) {
-            // Mitigate float rounding anomalies via string parsing
-            const item = challengeMatrix[currentLevel][activeTaskIndex];
-            let decimalPlaces = (item.step.toString().split('.')[1] || []).length;
-            document.getElementById('slider-live-badge').innerText = Number(val).toFixed(decimalPlaces);
+        function modifyDialValue(direction) {
+            const activePool = puzzleDatabase[currentLevel][taskIndex].choices;
+            selectedValueIndex += direction;
+            
+            // Boundary constraints loops around data indexes
+            if (selectedValueIndex < 0) selectedValueIndex = activePool.length - 1;
+            if (selectedValueIndex >= activePool.length) selectedValueIndex = 0;
+
+            document.getElementById('dial-digital-readout').innerText = activePool[selectedValueIndex];
         }
 
-        function verifySliderAlignment() {
-            const sliderValue = parseFloat(document.getElementById('beam-slider').value);
+        function evaluateCombinationSubmission() {
+            const item = puzzleDatabase[currentLevel][taskIndex];
+            const currentSelectionText = item.choices[selectedValueIndex];
             const feedback = document.getElementById('game-toast-feedback');
 
-            // Float variance checks matching target accuracy
-            if (Math.abs(sliderValue - currentTargetValue) < 0.0001) {
+            if (currentSelectionText === item.target) {
                 scoreCount += 20;
-                activeTaskIndex++;
-                feedback.innerText = "🎯 Axis Aligned perfectly! System Stable.";
+                taskIndex++;
+                feedback.innerText = "🎯 Combination Verified! Vault segment uncoupled.";
                 feedback.style.color = "#34d399";
-                triggerSuccessAudio();
-                setTimeout(() => loadActiveChallengeBlock(), 1400);
+                playAssetSound('correct');
+                document.querySelector('.submit-lever').disabled = true;
+                setTimeout(() => loadActivePuzzleNode(), 1500);
             } else {
-                feedback.innerText = "❌ Unbalanced! Calibration off-center. Readjust node.";
-                feedback.style.color = "#f87171";
-                triggerFailAudio();
+                internalStrikeCounter++;
+                playAssetSound('wrong');
+                
+                if (internalStrikeCounter === 1) {
+                    document.getElementById('strike-dot-1').classList.add('used');
+                    feedback.innerText = "⚠️ Mismatch! Check alignment. 1 final chance remains!";
+                    feedback.style.color = "#fca5a5";
+                } else {
+                    document.getElementById('strike-dot-2').classList.add('used');
+                    document.querySelector('.submit-lever').disabled = true;
+                    document.querySelector('.submit-lever').style.opacity = "0.4";
+                    
+                    feedback.innerText = `❌ Lockout! The correct code sequence was: ${item.target}`;
+                    feedback.style.color = "#ef4444";
+                    
+                    // Bypass task after delay to teach correct formulation logic
+                    taskIndex++;
+                    setTimeout(() => loadActivePuzzleNode(), 3000);
+                }
             }
             document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
         }
 
-        function triggerFinalVictory() {
-            triggerSuccessAudio();
-            document.getElementById('game-level-tag').innerText = "Mission Complete!";
+        function triggerSanctuaryVictory() {
+            playAssetSound('correct');
+            document.getElementById('game-level-tag').innerText = "System Breached!";
             document.getElementById('game-prompt').innerHTML = `
-                <div style="font-size: 1.4rem; margin-bottom: 6px;">🌴 Master Explorer!</div>
-                <div style="font-size: 0.95rem; color: #047857; font-weight:600;">The Balance Beam is safe. You have total mastery over Decimal frameworks!</div>
+                <div style="font-size: 1.35rem; margin-bottom: 6px;">🎉 Ancient Vault Unlocked!</div>
+                <div style="font-size: 0.95rem; color: #047857; font-weight: 600;">All 5 layers of numerical compression keys successfully decoded!</div>
             `;
-            document.getElementById('slider-live-badge').innerText = "100%";
-            document.getElementById('game-toast-feedback').innerText = "Jungle Grid Completely Harmonized!";
+            document.getElementById('dial-digital-readout').innerText = "OPEN";
+            document.getElementById('dial-digital-readout').style.color = "#a7f3d0";
+            document.getElementById('game-toast-feedback').innerText = "Ultimate Mathematical Explorer Status Gained!";
             document.getElementById('game-toast-feedback').style.color = "#fcd34d";
             
-            // Turn lever into full system reset toggle button
             const lever = document.querySelector('.submit-lever');
-            lever.innerText = "Restart Simulation";
+            lever.disabled = false;
+            lever.style.opacity = "1";
+            lever.innerText = "Re-seal Sanctuary System";
             lever.onclick = () => location.reload();
         }
     </script>
