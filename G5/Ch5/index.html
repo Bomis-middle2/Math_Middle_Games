@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Jungle Decimal Quest</title>
+    <title>Jungle Decimal Balance</title>
     <style>
         * {
             box-sizing: border-box;
@@ -17,7 +17,7 @@
         body, html {
             width: 100%;
             height: 100%;
-            background-color: #064e3b;
+            background-color: #022c22;
             color: #111827;
             overflow: hidden;
             display: flex;
@@ -25,7 +25,6 @@
             align-items: center;
         }
 
-        /* Responsive Mobile Viewport container with Jungle Background Image Fallback */
         #viewport-root {
             width: 100%;
             max-width: 440px;
@@ -34,59 +33,77 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            background: url('assets/image_4ed3c3.jpg') center no-repeat;
-            background-size: cover;
-            box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+            background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
             overflow: hidden;
         }
 
-        /* 5-Second Solid Splash Screen */
+        /* --- STAGE 1: GUARANTEED 5-SECOND LOGO SPLASH --- */
         #hard-splash {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: #ffffff;
+            background: #022c22;
             z-index: 9999;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.5s ease;
+            gap: 20px;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .splash-content-wrapper {
-            text-align: center;
+        .logo-svg {
+            width: 120px;
+            height: 120px;
+            animation: pulseGlow 2s infinite ease-in-out;
         }
-        .splash-img {
-            max-width: 180px;
-            height: auto;
-            margin-bottom: 12px;
+        .splash-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: #34d399;
+            letter-spacing: 3px;
+            text-shadow: 0 4px 12px rgba(52,211,153,0.3);
         }
-        .splash-fallback-text {
-            font-size: 26px;
-            font-weight: 800;
-            color: #065f46;
-            letter-spacing: 1px;
+        .loader-bar-container {
+            width: 160px;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .loader-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: #34d399;
+            animation: fillProgress 5s linear forwards;
         }
 
-        /* Overlay views for Instructions & Core game wrappers */
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(52,211,153,0.4)); }
+            50% { transform: scale(1.08); filter: drop-shadow(0 0 20px rgba(52,211,153,0.8)); }
+        }
+        @keyframes fillProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* --- STAGE 2 & 3: GAME CONTENT VIEWS --- */
         .stage-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(6, 78, 59, 0.45);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
             display: flex;
             flex-direction: column;
-            padding: 16px;
-            gap: 12px;
+            padding: 20px;
+            gap: 16px;
             z-index: 10;
+            box-sizing: border-box;
         }
 
-        /* Elegant Glass Card UI Layouts */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.96);
-            border: 3px solid #047857;
-            border-radius: 16px;
-            padding: 16px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.95);
+            border: 3px solid #059669;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         .header-panel {
@@ -95,95 +112,134 @@
             align-items: center;
             background: #065f46;
             color: #ffffff;
-            padding: 10px 14px;
-            border-radius: 12px;
+            padding: 12px 16px;
+            border-radius: 14px;
             border: 2px solid #34d399;
         }
-        .header-title { font-weight: 800; font-size: 1rem; text-transform: uppercase; }
-        .header-score { font-weight: 700; font-size: 0.9rem; background: #047857; padding: 4px 10px; border-radius: 20px; }
+        .header-title { font-weight: 800; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .header-score { font-weight: 700; font-size: 0.9rem; background: #047857; padding: 4px 12px; border-radius: 20px; border: 1px solid #34d399;}
 
-        .instruction-body {
-            font-size: 0.92rem;
-            line-height: 1.5;
-            color: #1f2937;
-            margin-bottom: 16px;
+        .instruction-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #064e3b;
+            margin-bottom: 20px;
         }
-        .instruction-body ul {
-            margin-left: 18px;
-            margin-top: 8px;
-        }
-        .instruction-body li {
-            margin-bottom: 6px;
-        }
+        .instruction-text ul { margin-left: 20px; margin-top: 8px; }
+        .instruction-text li { margin-bottom: 8px; font-weight: 600; }
 
         .workspace-area {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             gap: 16px;
-            text-align: center;
         }
 
         .question-box {
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: 800;
-            color: #065f46;
+            color: #064e3b;
             background: #f0fdf4;
-            padding: 14px;
-            border-radius: 12px;
+            padding: 16px;
+            border-radius: 14px;
             border: 2px dashed #059669;
             width: 100%;
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
         }
 
-        /* Choice options buttons block layout matrix */
-        .options-grid {
+        /* --- INTERACTIVE SLIDER COMPONENT --- */
+        .slider-engine-container {
             width: 100%;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 20px 14px;
+            margin: auto 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-        .options-grid.two-col {
-            grid-template-columns: repeat(2, 1fr);
+
+        .live-value-badge {
+            font-size: 2.2rem;
+            font-family: 'Courier New', monospace;
+            font-weight: 900;
+            color: #059669;
+            background: #022c22;
+            padding: 6px 20px;
+            border-radius: 10px;
+            letter-spacing: 1px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+            display: inline-block;
+            margin: 0 auto;
+        }
+
+        .range-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 15px;
+            border-radius: 10px;
+            background: #cbd5e1;
+            outline: none;
+            margin: 10px 0;
+        }
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #d97706;
+            border: 3px solid #ffffff;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+        .range-slider::-webkit-slider-thumb:active {
+            transform: scale(1.2);
+            background: #b45309;
+        }
+
+        .slider-endpoints {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #64748b;
+            padding: 0 4px;
         }
 
         .action-btn {
-            background: #059669;
+            background: #d97706;
             color: #ffffff;
             border: none;
-            border-bottom: 4px solid #047857;
-            padding: 14px;
-            font-size: 1rem;
+            border-bottom: 4px solid #b45309;
+            padding: 16px;
+            font-size: 1.1rem;
             font-weight: 700;
-            border-radius: 12px;
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.1s ease;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
             width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .action-btn:active {
             transform: translateY(2px);
             border-bottom-width: 2px;
         }
-        .action-btn.option-choice {
-            background: #ffffff;
-            color: #065f46;
-            border: 2px solid #059669;
-            border-bottom: 5px solid #059669;
-        }
-        .action-btn.option-choice:active {
-            border-bottom-width: 2px;
-            transform: translateY(3px);
+        .action-btn.submit-lever {
+            background: #059669;
+            border-color: #047857;
         }
 
         .status-banner {
             text-align: center;
             font-weight: 800;
-            font-size: 1rem;
+            font-size: 0.95rem;
             min-height: 24px;
-            transition: color 0.2s ease;
+            color: #ffffff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
         }
 
         .hidden { display: none !important; }
@@ -193,33 +249,41 @@
 
     <div id="viewport-root">
         
+        <!-- STAGE 1: 5-Second Built-in SVG Animation Splash -->
         <div id="hard-splash">
-            <div class="splash-content-wrapper">
-                <img src="assets/logo.png" class="splash-img" alt="Logo" onerror="this.style.display='none';">
-                <div class="splash-fallback-text">DECIMAL QUEST</div>
+            <!-- Programmatic SVG Vector Logo Asset -->
+            <svg class="logo-svg" viewBox="0 0 100 100">
+                <polygon points="50,5 95,25 95,75 50,95 5,75 5,25" fill="#047857" stroke="#34d399" stroke-width="4"/>
+                <circle cx="50" cy="50" r="22" fill="#d97706"/>
+                <line x1="50" y1="28" x2="50" y2="72" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+                <line x1="28" y1="50" x2="72" y2="50" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+            </svg>
+            <div class="splash-title">DECIMAL AXIS</div>
+            <div class="loader-bar-container">
+                <div class="loader-bar-fill"></div>
             </div>
         </div>
 
+        <!-- STAGE 2: Interactive Quest Rules Configuration Guide -->
         <div id="instructions-screen" class="stage-overlay hidden">
-            <div class="glass-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 12px;">
+            <div class="glass-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 10px;">
                 <div class="header-panel" style="background: #047857;">
-                    <div class="header-title">📜 Quest Guide & Rules</div>
+                    <div class="header-title">📜 The Calibration Manual</div>
                 </div>
-                <div class="instruction-body">
-                    <p>Welcome Explorer! Traverse through <strong>5 mythical jungle levels</strong> to master the powers of Decimal Systems:</p>
+                <div class="instruction-text">
+                    <p>Forget generic buttons! To traverse this trail, you must manually align the physical <strong>Decimal Balance Beam</strong>:</p>
                     <ul>
-                        <li><strong>Level 1:</strong> Identify Decimal Place Values.</li>
-                        <li><strong>Level 2:</strong> Convert Fractions to Decimal forms.</li>
-                        <li><strong>Level 3:</strong> Match Expanded Decimal notations.</li>
-                        <li><strong>Level 4:</strong> Separate Like vs Unlike structures.</li>
-                        <li><strong>Level 5:</strong> Master Decimal Arithmetic Math.</li>
+                        <li>1. Read the active level goal carefully.</li>
+                        <li>2. Drag the orange slider node back and forth.</li>
+                        <li>3. Watch the digital tracking display shift value.</li>
+                        <li>4. Lock the dial when it balances perfectly!</li>
                     </ul>
-                    <p style="margin-top: 10px;">Solve each question correctly to advance into the deep heart of the forest!</p>
                 </div>
-                <button class="action-btn" onclick="startGameEngine()">Begin Safari Journey</button>
+                <button class="action-btn" onclick="enterActiveSimulation()">Initiate Calibration</button>
             </div>
         </div>
 
+        <!-- STAGE 3: Core Slidematic Calibration Gameplay Window -->
         <div id="gameplay-screen" class="stage-overlay hidden">
             <div class="header-panel">
                 <div id="game-level-tag" class="header-title">Level 1: Places</div>
@@ -227,180 +291,172 @@
             </div>
 
             <div class="glass-panel workspace-area">
-                <div id="game-prompt" class="question-box">Loading math challenge parameters...</div>
-                <div id="game-choices-container" class="options-grid"></div>
+                <!-- Question Prompt text layout -->
+                <div id="game-prompt" class="question-box">Loading calibration matrices...</div>
+                
+                <!-- Interactive Physical Balance Slider Component -->
+                <div class="slider-engine-container">
+                    <div style="text-align:center;">
+                        <div id="slider-live-badge" class="live-value-badge">0.0</div>
+                    </div>
+                    <input type="range" id="beam-slider" class="range-slider" min="0" max="100" value="0" oninput="syncSliderOutput(this.value)">
+                    <div class="slider-endpoints">
+                        <span id="label-endpoint-min">0.0</span>
+                        <span id="label-endpoint-max">1.0</span>
+                    </div>
+                </div>
+
+                <button class="action-btn submit-lever" onclick="verifySliderAlignment()">Lock Axis Lever</button>
             </div>
 
-            <div id="game-toast-feedback" class="status-banner" style="color: #ffffff;">Select the matching decimal response!</div>
+            <div id="game-toast-feedback" class="status-banner">Calibrate the dial to target parameter!</div>
         </div>
 
     </div>
 
     <script>
-        // Audio Synthesis Context Fallback Trigger Engines
-        function playAudioTone(freq, type, duration) {
+        // Synthesized Audio Context Node Generators
+        function playTone(freq, type, duration) {
             try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.start(); osc.stop(audioCtx.currentTime + duration);
-            } catch (e) { console.log("Audio skipped"); }
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator(); const gain = ctx.createGain();
+                osc.type = type; osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(0.05, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(); osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
         }
-        function playCorrectSound() { playAudioTone(587.33, 'triangle', 0.12); setTimeout(() => playAudioTone(880, 'triangle', 0.2), 100); }
-        function playWrongSound() { playAudioTone(220, 'sawtooth', 0.25); }
-        function playSuccessSound() { playAudioTone(523.25, 'sine', 0.15); setTimeout(() => playAudioTone(659.25, 'sine', 0.15), 120); setTimeout(() => playAudioTone(783.99, 'sine', 0.3), 240); }
+        function triggerSuccessAudio() { playTone(523.25, 'sine', 0.15); setTimeout(() => playTone(659.25, 'sine', 0.15), 100); }
+        function triggerFailAudio() { playTone(180, 'sawtooth', 0.3); }
 
-        // Core Game Structural Variables & Datasets
+        // Primary Game State Controller Variables
         let currentLevel = 1;
         let scoreCount = 0;
-        let currentAnswer = "";
-        let levelTaskIndex = 0;
+        let activeTaskIndex = 0;
+        let currentTargetValue = 0.0; 
 
-        // Level Question Banks matching the exact criteria of your lesson document
-        const levelDatabases = {
+        // 5-Level Slider Challenge Database directly mapping decimal sheet logic
+        const challengeMatrix = {
             1: [
-                { q: "In the number 5.372, what place value is the digit 3 located in?", a: "Tenth place", o: ["Unit place", "Tenth place", "Hundredth place", "Thousandth place"] },
-                { q: "In the number 5.372, what place value is the digit 7 located in?", a: "Hundredth place", o: ["Tenth place", "Hundredth place", "Thousandth place", "Ones place"] },
-                { q: "In the number 5.372, what place value is the digit 2 located in?", a: "Thousandth place", o: ["Tenth place", "Hundredth place", "Thousandth place", "Tens place"] }
+                { q: "In the context of 5.372, set the balance slider onto the digit value located in the tenths place.", target: 0.3, min: 0.0, max: 1.0, step: 0.1 },
+                { q: "In the context of 5.372, set the balance slider onto the digit value located in the hundredths place.", target: 0.07, min: 0.0, max: 0.10, step: 0.01 }
             ],
             2: [
-                { q: "Convert the fraction 3/4 into its equivalent decimal expression.", a: "0.75", o: ["0.34", "0.75", "0.50", "0.25"] },
-                { q: "Convert the fraction 4/10 into its simplified decimal form.", a: "0.4", o: ["0.04", "4.0", "0.4", "0.44"] },
-                { q: "Convert the fraction 2/5 into its correct decimal structure.", a: "0.4", o: ["0.2", "0.5", "0.4", "0.25"] }
+                { q: "Calibrate the slider position to equal the fraction 3/4.", target: 0.75, min: 0.0, max: 1.0, step: 0.05 },
+                { q: "Calibrate the slider position to equal the fraction 2/5.", target: 0.4, min: 0.0, max: 1.0, step: 0.1 }
             ],
             3: [
-                { q: "What is the standard combined decimal form of: 5 + 0.3 + 0.07 + 0.002?", a: "5.372", o: ["53.72", "5.372", "5.0372", "5.37"] },
-                { q: "Expand the decimal value 0.52 using its structural place values.", a: "0.5 + 0.02", o: ["0.5 + 0.2", "0.5 + 0.02", "0.05 + 0.002", "5 + 0.2"] }
+                { q: "Recombine this expansion expression into one axis setting: 5 + 0.3 + 0.07 + 0.002", target: 5.372, min: 5.0, max: 6.0, step: 0.001 },
+                { q: "Set the slider to the missing balance value of this identity: 0.52 = 0.5 + [ ? ]", target: 0.02, min: 0.0, max: 0.1, step: 0.01 }
             ],
             4: [
-                { q: "Which of the following pairs represent Like Decimals (same number of digits after decimal point)?", a: "2.45 and 3.67", o: ["2.45 and 3.67", "2.5 and 3.67", "0.5 and 0.50", "1.234 and 1.2"] },
-                { q: "Identify the set that falls under Unlike Decimals classification.", a: "2.5 and 3.67", o: ["2.45 and 3.67", "2.5 and 3.67", "0.12 and 0.99", "5.00 and 6.00"] }
+                { q: "Make these values 'Like Decimals' by adding zeros: Match the true value of 0.500.", target: 0.5, min: 0.0, max: 1.0, step: 0.1 },
+                { q: "Find the size difference between the unlike decimals 3.67 and 2.5.", target: 1.17, min: 1.0, max: 2.0, step: 0.01 }
             ],
             5: [
-                { q: "Solve: 1.2 + 2.35 (Remember to align your place values correctly!)", a: "3.55", o: ["3.55", "2.47", "3.37", "4.20"] },
-                { q: "Solve: 0.3 × 0.2 (Multiply as integers, then count decimal places)", a: "0.06", o: ["0.6", "0.06", "0.006", "6.0"] },
-                { q: "Solve: 0.50 + 0.50 (Equivalent decimal check)", a: "1.0", o: ["0.100", "1.0", "0.55", "0.01"] }
+                { q: "Solve alignment sum problem: 1.2 + 2.35", target: 3.55, min: 3.0, max: 4.0, step: 0.05 },
+                { q: "Solve placement multiplication product: 0.3 × 0.2", target: 0.06, min: 0.0, max: 0.2, step: 0.01 }
             ]
         };
 
-        // 5-Second Splash Screen Loader Interval
-        let elapsedSplashTime = 0;
-        const splashInterval = setInterval(() => {
-            elapsedSplashTime += 100;
-            if (elapsedSplashTime >= 5000) {
-                clearInterval(splashInterval);
-                const splash = document.getElementById('hard-splash');
-                if (splash) splash.style.opacity = '0';
-                setTimeout(() => {
-                    if (splash && splash.parentNode) splash.parentNode.removeChild(splash);
-                    // Pass to the interactive Instructions View Screen
-                    document.getElementById('instructions-screen').classList.remove('hidden');
-                }, 500);
-            }
-        }, 100);
+        // Enforce the strict 5000ms (5 second) logo window timeout delay sequence
+        setTimeout(() => {
+            const splash = document.getElementById('hard-splash');
+            if (splash) splash.style.opacity = '0';
+            setTimeout(() => {
+                if (splash && splash.parentNode) splash.parentNode.removeChild(splash);
+                document.getElementById('instructions-screen').classList.remove('hidden');
+            }, 600);
+        }, 5000);
 
-        function startGameEngine() {
-            playAudioTone(440, 'sine', 0.15);
+        function enterActiveSimulation() {
+            playTone(440, 'sine', 0.12);
             document.getElementById('instructions-screen').classList.add('hidden');
             document.getElementById('gameplay-screen').classList.remove('hidden');
-            loadLevelChallenge();
+            loadActiveChallengeBlock();
         }
 
-        function loadLevelChallenge() {
-            const currentLevelData = levelDatabases[currentLevel];
-            
-            // If we run out of questions in a level, promote player to next level
-            if (levelTaskIndex >= currentLevelData.length) {
+        function loadActiveChallengeBlock() {
+            const levelData = challengeMatrix[currentLevel];
+
+            // Auto promotion engine handles clearing the level sets
+            if (activeTaskIndex >= levelData.length) {
                 currentLevel++;
-                levelTaskIndex = 0;
+                activeTaskIndex = 0;
                 if (currentLevel > 5) {
-                    triggerGameVictoryScreen();
+                    triggerFinalVictory();
                     return;
                 }
             }
 
-            // Update level tag and interface
             const levelTitles = { 1: "Level 1: Places", 2: "Level 2: Fractions", 3: "Level 3: Expansions", 4: "Level 4: Decimal Types", 5: "Level 5: Arithmetic" };
             document.getElementById('game-level-tag').innerText = levelTitles[currentLevel];
             document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
+
+            const item = levelData[activeTaskIndex];
+            document.getElementById('game-prompt').innerText = item.q;
+            currentTargetValue = item.target;
+
+            // Re-configure physical input boundaries dynamically per question specifications
+            const slider = document.getElementById('beam-slider');
+            slider.min = item.min;
+            slider.max = item.max;
+            slider.step = item.step;
+            slider.value = item.min;
+
+            document.getElementById('label-endpoint-min').innerText = item.min;
+            document.getElementById('label-endpoint-max').innerText = item.max;
             
-            const activeQuestion = levelDatabases[currentLevel][levelTaskIndex];
-            document.getElementById('game-prompt').innerText = activeQuestion.q;
-            currentAnswer = activeQuestion.a;
-
-            // Generate option buttons dynamically
-            const container = document.getElementById('game-choices-container');
-            container.innerHTML = "";
+            syncSliderOutput(item.min);
             
-            // Toggle two-column grid layout based on option character lengths
-            if (activeQuestion.o.every(opt => opt.length < 15)) {
-                container.className = "options-grid two-col";
-            } else {
-                container.className = "options-grid";
-            }
-
-            activeQuestion.o.forEach(optionText => {
-                const btn = document.createElement('button');
-                btn.className = "action-btn option-choice";
-                btn.innerText = optionText;
-                btn.onclick = () => evaluatePlayerChoice(optionText);
-                container.appendChild(btn);
-            });
-
             const feedback = document.getElementById('game-toast-feedback');
-            feedback.innerText = "Analyze carefully before making a choice!";
+            feedback.innerText = "Slide node to position and secure the lever!";
             feedback.style.color = "#ffffff";
         }
 
-        function evaluatePlayerChoice(selectedText) {
+        function syncSliderOutput(val) {
+            // Mitigate float rounding anomalies via string parsing
+            const item = challengeMatrix[currentLevel][activeTaskIndex];
+            let decimalPlaces = (item.step.toString().split('.')[1] || []).length;
+            document.getElementById('slider-live-badge').innerText = Number(val).toFixed(decimalPlaces);
+        }
+
+        function verifySliderAlignment() {
+            const sliderValue = parseFloat(document.getElementById('beam-slider').value);
             const feedback = document.getElementById('game-toast-feedback');
-            if (selectedText === currentAnswer) {
-                scoreCount += 10;
-                levelTaskIndex++;
-                feedback.innerText = "🌿 Correct! You navigated the path safely!";
-                feedback.style.color = "#a7f3d0";
-                playCorrectSound();
-                setTimeout(() => loadLevelChallenge(), 1200);
+
+            // Float variance checks matching target accuracy
+            if (Math.abs(sliderValue - currentTargetValue) < 0.0001) {
+                scoreCount += 20;
+                activeTaskIndex++;
+                feedback.innerText = "🎯 Axis Aligned perfectly! System Stable.";
+                feedback.style.color = "#34d399";
+                triggerSuccessAudio();
+                setTimeout(() => loadActiveChallengeBlock(), 1400);
             } else {
-                feedback.innerText = "❌ Trapped! Re-evaluate decimal alignment values!";
-                feedback.style.color = "#fca5a5";
-                playWrongSound();
+                feedback.innerText = "❌ Unbalanced! Calibration off-center. Readjust node.";
+                feedback.style.color = "#f87171";
+                triggerFailAudio();
             }
             document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
         }
 
-        function triggerGameVictoryScreen() {
-            playSuccessSound();
-            document.getElementById('game-level-tag').innerText = "Quest Complete!";
-            const container = document.getElementById('game-choices-container');
-            container.className = "options-grid";
-            container.innerHTML = "";
-
+        function triggerFinalVictory() {
+            triggerSuccessAudio();
+            document.getElementById('game-level-tag').innerText = "Mission Complete!";
             document.getElementById('game-prompt').innerHTML = `
-                <div style="font-size: 1.5rem; margin-bottom: 8px;">🎉 Congratulations Explorer!</div>
-                <div style="font-size: 1rem; font-weight:600; color: #047857;">You have mastered all Decimal Systems and cleared the Jungle!</div>
+                <div style="font-size: 1.4rem; margin-bottom: 6px;">🌴 Master Explorer!</div>
+                <div style="font-size: 0.95rem; color: #047857; font-weight:600;">The Balance Beam is safe. You have total mastery over Decimal frameworks!</div>
             `;
-
-            const restartBtn = document.createElement('button');
-            restartBtn.className = "action-btn";
-            restartBtn.style.background = "#b45309";
-            restartBtn.style.borderColor = "#92400e";
-            restartBtn.innerText = "Restart Journey";
-            restartBtn.onclick = () => {
-                currentLevel = 1;
-                scoreCount = 0;
-                levelTaskIndex = 0;
-                loadLevelChallenge();
-            };
-            container.appendChild(restartBtn);
-            
-            document.getElementById('game-toast-feedback').innerText = "Legendary Victory Achieved!";
+            document.getElementById('slider-live-badge').innerText = "100%";
+            document.getElementById('game-toast-feedback').innerText = "Jungle Grid Completely Harmonized!";
             document.getElementById('game-toast-feedback').style.color = "#fcd34d";
+            
+            // Turn lever into full system reset toggle button
+            const lever = document.querySelector('.submit-lever');
+            lever.innerText = "Restart Simulation";
+            lever.onclick = () => location.reload();
         }
     </script>
 </body>
