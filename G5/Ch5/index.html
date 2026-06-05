@@ -38,7 +38,7 @@
             overflow: hidden;
         }
 
-        /* --- STAGE 1: STRICT 5-SECOND LOGO DISPLAY --- */
+        /* --- STAGE 1: FIXED 5-SECOND LOGO DISPLAY --- */
         #hard-splash {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -140,51 +140,69 @@
             text-align: center;
         }
 
-        /* --- THE CRACKER VAULT INTERACTION MECHANIC --- */
-        .vault-dial-wrapper {
+        /* --- THE NEW NON-MCQ LOCK DIAL INTERFACE --- */
+        .lock-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             background: #0f172a;
+            padding: 20px 14px;
+            border-radius: 16px;
             border: 4px solid #475569;
-            border-radius: 50%;
-            width: 190px;
-            height: 190px;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.5);
+            margin: auto 0;
+            width: 100%;
+        }
+
+        .dial-column {
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            position: relative;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4), inset 0 4px 12px rgba(0,0,0,0.6);
-            margin: auto 0;
+            gap: 5px;
         }
 
-        .vault-display-screen {
-            color: #38bdf8;
-            font-family: 'Courier New', monospace;
-            font-size: 1.85rem;
-            font-weight: 900;
-            letter-spacing: 1px;
-            text-shadow: 0 0 8px rgba(56,189,248,0.6);
-            z-index: 2;
-        }
-
-        .stepper-btn {
-            position: absolute;
-            width: 44px;
-            height: 44px;
+        .dial-spinner {
+            width: 46px;
+            height: 36px;
             background: #334155;
-            color: #ffffff;
-            border: 2px solid #64748b;
-            border-radius: 50%;
-            font-size: 1.3rem;
+            color: white;
+            border: 1px solid #64748b;
+            border-radius: 6px;
+            font-size: 1.2rem;
             font-weight: 900;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        .stepper-btn:active { background: #1e293b; transform: scale(0.95); }
-        .stepper-btn.minus-left { left: -22px; top: calc(50% - 22px); }
-        .stepper-btn.plus-right { right: -22px; top: calc(50% - 22px); }
+        .dial-spinner:active { background: #1e293b; }
+
+        .dial-screen {
+            width: 48px;
+            height: 54px;
+            background: #020617;
+            border: 2px solid #38bdf8;
+            color: #38bdf8;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.9rem;
+            font-weight: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-shadow: 0 0 6px rgba(56,189,248,0.7);
+        }
+
+        .decimal-separator {
+            color: #38bdf8;
+            font-size: 2.5rem;
+            font-weight: 900;
+            align-self: flex-end;
+            margin-bottom: 34px;
+            text-shadow: 0 0 6px rgba(56,189,248,0.7);
+        }
 
         .chance-counter-tray {
             display: flex;
@@ -249,7 +267,7 @@
         <!-- STAGE 1: Pure 5-Second Asset Splash Screen -->
         <div id="hard-splash">
             <img src="assets/logo.png" class="splash-img" alt="Jungle Crest Logo" onerror="this.style.display='none';">
-            <div class="splash-title">DECIMAL CRACKER</div>
+            <div class="splash-title">DECIMAL VAULT</div>
             <div class="loader-track">
                 <div class="loader-fill"></div>
             </div>
@@ -262,14 +280,14 @@
                     <div class="header-title">📜 Vault Encryption Protocol</div>
                 </div>
                 <div class="instruction-text">
-                    <p>The lock uses numerical combinations based on local values. Spin the target coordinates to unlock the gate:</p>
+                    <p>The ruins' gates are sealed by numerical values. Crank the individual tumbler digits to forge the correct decimal combination:</p>
                     <ul>
-                        <li>1. Use the left (<stong>−</stong>) and right (<strong>+</strong>) nodes to dial numbers.</li>
-                        <li>2. Submit your calculated lock placement choice via the lever.</li>
-                        <li>3. Warning: You have only <strong>2 chances per safe</strong> before the primary sequence locks you out!</li>
+                        <li>1. Use the arrow panels above and below each box to scroll integers.</li>
+                        <li>2. Formulate the precise target value to match the query parameters.</li>
+                        <li>3. Warning: You have only <strong>2 chances per safe</strong> before automated bypass lockouts activate!</li>
                     </ul>
                 </div>
-                <button class="action-btn" onclick="engageSimulationMatrix()">Access System Dial</button>
+                <button class="action-btn" onclick="engageSimulationMatrix()">Access System Tumblers</button>
             </div>
         </div>
 
@@ -284,11 +302,37 @@
                 <!-- Question Prompt -->
                 <div id="game-prompt" class="question-box">Decoding encryption parameters...</div>
                 
-                <!-- Physical Dial Mechanism -->
-                <div class="vault-dial-wrapper">
-                    <button class="stepper-btn minus-left" onclick="modifyDialValue(-1)">−</button>
-                    <div id="dial-digital-readout" class="vault-display-screen">0.0</div>
-                    <button class="stepper-btn plus-right" onclick="modifyDialValue(1)">+</button>
+                <!-- Physical Custom Cylinder Lock Assembly -->
+                <div class="lock-container">
+                    <!-- Whole Number Column -->
+                    <div class="dial-column">
+                        <button class="dial-spinner" onclick="spinDigit('whole', 1)">▲</button>
+                        <div id="digit-whole" class="dial-screen">0</div>
+                        <button class="dial-spinner" onclick="spinDigit('whole', -1)">▼</button>
+                    </div>
+                    
+                    <div class="decimal-separator">.</div>
+                    
+                    <!-- Tenths Column -->
+                    <div class="dial-column">
+                        <button class="dial-spinner" onclick="spinDigit('t1', 1)">▲</button>
+                        <div id="digit-t1" class="dial-screen">0</div>
+                        <button class="dial-spinner" onclick="spinDigit('t1', -1)">▼</button>
+                    </div>
+                    
+                    <!-- Hundredths Column -->
+                    <div class="dial-column">
+                        <button class="dial-spinner" onclick="spinDigit('t2', 1)">▲</button>
+                        <div id="digit-t2" class="dial-screen">0</div>
+                        <button class="dial-spinner" onclick="spinDigit('t2', -1)">▼</button>
+                    </div>
+                    
+                    <!-- Thousandths Column -->
+                    <div class="dial-column">
+                        <button class="dial-spinner" onclick="spinDigit('t3', 1)">▲</button>
+                        <div id="digit-t3" class="dial-screen">0</div>
+                        <button class="dial-spinner" onclick="spinDigit('t3', -1)">▼</button>
+                    </div>
                 </div>
 
                 <!-- Two-Chance Visual Track Dots -->
@@ -300,13 +344,13 @@
                 <button class="action-btn submit-lever" onclick="evaluateCombinationSubmission()">Commit Combination</button>
             </div>
 
-            <div id="game-toast-feedback" class="status-banner">Align the core safe numbers!</div>
+            <div id="game-toast-feedback" class="status-banner">Spin the digits to prime the safe!</div>
         </div>
 
     </div>
 
     <script>
-        // Media Asset Sound Node Initializations
+        // Media Asset Audio Hooks 
         const audioCorrect = new Audio('assets/correct.mp3');
         const audioWrong = new Audio('assets/wrong.mp3');
 
@@ -319,41 +363,43 @@
                     audioWrong.currentTime = 0;
                     audioWrong.play();
                 }
-            } catch(e) { console.log("Audio asset trigger failed, file missing or user interaction blocked."); }
+            } catch(e) { console.log("Audio file missing or gesture blocked."); }
         }
 
         // Global Structural States
         let currentLevel = 1;
         let scoreCount = 0;
         let taskIndex = 0;
-        let selectedValueIndex = 0;
         let internalStrikeCounter = 0;
 
-        // Custom non-MCQ structured puzzle nodes directly mapping decimal sheet details
+        // Current dial integer arrays
+        let currentLockState = { whole: 0, t1: 0, t2: 0, t3: 0 };
+
+        // 5-Level Problem Matrix mapping your provided worksheet exactly
         const puzzleDatabase = {
             1: [
-                { q: "From the number 5.372: Dial in the isolated value matching the tenth place digit.", choices: ["0.0", "0.3", "0.07", "0.002", "3.0"], target: "0.3" },
-                { q: "From the number 5.372: Dial in the isolated value matching the hundredth place digit.", choices: ["0.0", "0.7", "0.07", "0.007", "7.0"], target: "0.07" }
+                { q: "In the number 5.372, look at the tenths place. Set the lock values to isolate just that place value digit (e.g. 0.300).", target: {whole:0, t1:3, t2:0, t3:0} },
+                { q: "In the number 5.372, isolate the value of the digit located in the hundredths place.", target: {whole:0, t1:0, t2:7, t3:0} }
             ],
             2: [
-                { q: "Convert the fraction 3/4 directly into its decimal value.", choices: ["0.0", "0.25", "0.50", "0.75", "1.0"], target: "0.75" },
-                { q: "Convert the fraction 2/5 directly into its matching decimal value.", choices: ["0.0", "0.2", "0.4", "0.6", "0.8"], target: "0.4" }
+                { q: "Convert the fraction 3/4 into its decimal equivalent.", target: {whole:0, t1:7, t2:5, t3:0} },
+                { q: "Convert the fraction 2/5 into its correct decimal structure.", target: {whole:0, t1:4, t2:0, t3:0} }
             ],
             3: [
-                { q: "Recombine this expanded notation expression: 5 + 0.3 + 0.07 + 0.002", choices: ["5.0", "5.37", "5.037", "5.372", "53.72"], target: "5.372" },
-                { q: "Solve for the missing identity segment: 0.52 = 0.5 + [ ? ]", choices: ["0.0", "0.2", "0.02", "0.002", "2.0"], target: "0.02" }
+                { q: "Combine this expanded value expression together: 5 + 0.3 + 0.07 + 0.002", target: {whole:5, t1:3, t2:7, t3:2} },
+                { q: "Solve for the missing identity segment: 0.52 = 0.5 + [ ? ]", target: {whole:0, t1:0, t2:2, t3:0} }
             ],
             4: [
-                { q: "Identify the equivalent value of 0.500 when written as a single decimal place.", choices: ["0.05", "0.5", "5.0", "0.005"], target: "0.5" },
-                { q: "Align unlike decimals: What is the exact value layout difference between 3.67 and 2.5?", choices: ["1.0", "1.12", "1.17", "1.2", "0.67"], target: "1.17" }
+                { q: "Convert the decimal value 0.5 into an equivalent form containing 3 decimal places (Like Decimals).", target: {whole:0, t1:5, t2:0, t3:0} },
+                { q: "Find the size difference between the unlike decimals 3.67 and 2.50.", target: {whole:1, t1:1, t2:7, t3:0} }
             ],
             5: [
-                { q: "Execute safe alignment addition: 1.2 + 2.35", choices: ["3.5", "3.55", "2.47", "3.37", "4.0"], target: "3.55" },
-                { q: "Execute system alignment multiplication: 0.3 × 0.2", choices: ["0.6", "0.06", "0.006", "6.0", "0.0"], target: "0.06" }
+                { q: "Solve the decimal addition problem: 1.2 + 2.35 (Align your place values!)", target: {whole:3, t1:5, t2:5, t3:0} },
+                { q: "Solve the decimal multiplication problem: 0.3 × 0.2", target: {whole:0, t1:0, t2:6, t3:0} }
             ]
         };
 
-        // Enforce structural 5000ms delay countdown for the loader splash
+        // Strict 5-Second Delay Window for Splash Screen 
         setTimeout(() => {
             const splash = document.getElementById('hard-splash');
             if (splash) splash.style.opacity = '0';
@@ -385,45 +431,54 @@
             document.getElementById('game-level-tag').innerText = levelTitles[currentLevel];
             document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
 
-            // Reset operational parameters per question node
+            // Reset UI Parameters per level change
             internalStrikeCounter = 0;
-            selectedValueIndex = 0;
             document.getElementById('strike-dot-1').classList.remove('used');
             document.getElementById('strike-dot-2').classList.remove('used');
 
+            // Reset Tumbler positions
+            currentLockState = { whole: 0, t1: 0, t2: 0, t3: 0 };
+            updateLockDisplay();
+
             const item = levelData[taskIndex];
             document.getElementById('game-prompt').innerText = item.q;
-            document.getElementById('dial-digital-readout').innerText = item.choices[selectedValueIndex];
 
             const feedback = document.getElementById('game-toast-feedback');
-            feedback.innerText = "Use Dial controls to align the cipher parameters!";
+            feedback.innerText = "Crank the tumbler dials to enter coordinates!";
             feedback.style.color = "#ffffff";
             
-            // Re-enable validation button
             document.querySelector('.submit-lever').disabled = false;
             document.querySelector('.submit-lever').style.opacity = "1";
         }
 
-        function modifyDialValue(direction) {
-            const activePool = puzzleDatabase[currentLevel][taskIndex].choices;
-            selectedValueIndex += direction;
-            
-            // Boundary constraints loops around data indexes
-            if (selectedValueIndex < 0) selectedValueIndex = activePool.length - 1;
-            if (selectedValueIndex >= activePool.length) selectedValueIndex = 0;
+        function spinDigit(key, change) {
+            currentLockState[key] += change;
+            if (currentLockState[key] > 9) currentLockState[key] = 0;
+            if (currentLockState[key] < 0) currentLockState[key] = 9;
+            updateLockDisplay();
+        }
 
-            document.getElementById('dial-digital-readout').innerText = activePool[selectedValueIndex];
+        function updateLockDisplay() {
+            document.getElementById('digit-whole').innerText = currentLockState.whole;
+            document.getElementById('digit-t1').innerText = currentLockState.t1;
+            document.getElementById('digit-t2').innerText = currentLockState.t2;
+            document.getElementById('digit-t3').innerText = currentLockState.t3;
         }
 
         function evaluateCombinationSubmission() {
             const item = puzzleDatabase[currentLevel][taskIndex];
-            const currentSelectionText = item.choices[selectedValueIndex];
             const feedback = document.getElementById('game-toast-feedback');
 
-            if (currentSelectionText === item.target) {
+            // Match all object properties
+            const isMatch = currentLockState.whole === item.target.whole &&
+                            currentLockState.t1 === item.target.t1 &&
+                            currentLockState.t2 === item.target.t2 &&
+                            currentLockState.t3 === item.target.t3;
+
+            if (isMatch) {
                 scoreCount += 20;
                 taskIndex++;
-                feedback.innerText = "🎯 Combination Verified! Vault segment uncoupled.";
+                feedback.innerText = "🎯 Lock Clicked! Core segment aligned.";
                 feedback.style.color = "#34d399";
                 playAssetSound('correct');
                 document.querySelector('.submit-lever').disabled = true;
@@ -434,19 +489,20 @@
                 
                 if (internalStrikeCounter === 1) {
                     document.getElementById('strike-dot-1').classList.add('used');
-                    feedback.innerText = "⚠️ Mismatch! Check alignment. 1 final chance remains!";
+                    feedback.innerText = "⚠️ Tumblers jammed! Check alignment. 1 try left!";
                     feedback.style.color = "#fca5a5";
                 } else {
                     document.getElementById('strike-dot-2').classList.add('used');
                     document.querySelector('.submit-lever').disabled = true;
                     document.querySelector('.submit-lever').style.opacity = "0.4";
                     
-                    feedback.innerText = `❌ Lockout! The correct code sequence was: ${item.target}`;
+                    const answerString = `${item.target.whole}.${item.target.t1}${item.target.t2}${item.target.t3}`;
+                    feedback.innerText = `❌ Lockout! Correct frequency code was: ${answerString}`;
                     feedback.style.color = "#ef4444";
                     
-                    // Bypass task after delay to teach correct formulation logic
+                    // Force progress to teach the correction
                     taskIndex++;
-                    setTimeout(() => loadActivePuzzleNode(), 3000);
+                    setTimeout(() => loadActivePuzzleNode(), 3500);
                 }
             }
             document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
@@ -454,20 +510,18 @@
 
         function triggerSanctuaryVictory() {
             playAssetSound('correct');
-            document.getElementById('game-level-tag').innerText = "System Breached!";
+            document.getElementById('game-level-tag').innerText = "Vault Unlocked!";
             document.getElementById('game-prompt').innerHTML = `
-                <div style="font-size: 1.35rem; margin-bottom: 6px;">🎉 Ancient Vault Unlocked!</div>
-                <div style="font-size: 0.95rem; color: #047857; font-weight: 600;">All 5 layers of numerical compression keys successfully decoded!</div>
+                <div style="font-size: 1.35rem; margin-bottom: 6px;">🎉 Ancient Temple Decoded!</div>
+                <div style="font-size: 0.95rem; color: #047857; font-weight: 600;">All decimal locks overridden completely. Great job!</div>
             `;
-            document.getElementById('dial-digital-readout').innerText = "OPEN";
-            document.getElementById('dial-digital-readout').style.color = "#a7f3d0";
-            document.getElementById('game-toast-feedback').innerText = "Ultimate Mathematical Explorer Status Gained!";
+            document.getElementById('game-toast-feedback').innerText = "Ultimate Mathematical Explorer!";
             document.getElementById('game-toast-feedback').style.color = "#fcd34d";
             
             const lever = document.querySelector('.submit-lever');
             lever.disabled = false;
             lever.style.opacity = "1";
-            lever.innerText = "Re-seal Sanctuary System";
+            lever.innerText = "Secure System Matrix";
             lever.onclick = () => location.reload();
         }
     </script>
