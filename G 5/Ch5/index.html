@@ -1,1 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jungle Decimal Quest</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
 
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #064e3b;
+            color: #111827;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Responsive Mobile Viewport container with Jungle Background Image Fallback */
+        #viewport-root {
+            width: 100%;
+            max-width: 440px;
+            height: 100%;
+            max-height: 780px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: url('assets/image_4ed3c3.jpg') center no-repeat;
+            background-size: cover;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+            overflow: hidden;
+        }
+
+        /* 5-Second Solid Splash Screen */
+        #hard-splash {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .splash-content-wrapper {
+            text-align: center;
+        }
+        .splash-img {
+            max-width: 180px;
+            height: auto;
+            margin-bottom: 12px;
+        }
+        .splash-fallback-text {
+            font-size: 26px;
+            font-weight: 800;
+            color: #065f46;
+            letter-spacing: 1px;
+        }
+
+        /* Overlay views for Instructions & Core game wrappers */
+        .stage-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(6, 78, 59, 0.45);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            gap: 12px;
+            z-index: 10;
+        }
+
+        /* Elegant Glass Card UI Layouts */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.96);
+            border: 3px solid #047857;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .header-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #065f46;
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 2px solid #34d399;
+        }
+        .header-title { font-weight: 800; font-size: 1rem; text-transform: uppercase; }
+        .header-score { font-weight: 700; font-size: 0.9rem; background: #047857; padding: 4px 10px; border-radius: 20px; }
+
+        .instruction-body {
+            font-size: 0.92rem;
+            line-height: 1.5;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        .instruction-body ul {
+            margin-left: 18px;
+            margin-top: 8px;
+        }
+        .instruction-body li {
+            margin-bottom: 6px;
+        }
+
+        .workspace-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            text-align: center;
+        }
+
+        .question-box {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #065f46;
+            background: #f0fdf4;
+            padding: 14px;
+            border-radius: 12px;
+            border: 2px dashed #059669;
+            width: 100%;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        /* Choice options buttons block layout matrix */
+        .options-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .options-grid.two-col {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .action-btn {
+            background: #059669;
+            color: #ffffff;
+            border: none;
+            border-bottom: 4px solid #047857;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            width: 100%;
+        }
+        .action-btn:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+        .action-btn.option-choice {
+            background: #ffffff;
+            color: #065f46;
+            border: 2px solid #059669;
+            border-bottom: 5px solid #059669;
+        }
+        .action-btn.option-choice:active {
+            border-bottom-width: 2px;
+            transform: translateY(3px);
+        }
+
+        .status-banner {
+            text-align: center;
+            font-weight: 800;
+            font-size: 1rem;
+            min-height: 24px;
+            transition: color 0.2s ease;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="viewport-root">
+        
+        <div id="hard-splash">
+            <div class="splash-content-wrapper">
+                <img src="assets/logo.png" class="splash-img" alt="Logo" onerror="this.style.display='none';">
+                <div class="splash-fallback-text">DECIMAL QUEST</div>
+            </div>
+        </div>
+
+        <div id="instructions-screen" class="stage-overlay hidden">
+            <div class="glass-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 12px;">
+                <div class="header-panel" style="background: #047857;">
+                    <div class="header-title">📜 Quest Guide & Rules</div>
+                </div>
+                <div class="instruction-body">
+                    <p>Welcome Explorer! Traverse through <strong>5 mythical jungle levels</strong> to master the powers of Decimal Systems:</p>
+                    <ul>
+                        <li><strong>Level 1:</strong> Identify Decimal Place Values.</li>
+                        <li><strong>Level 2:</strong> Convert Fractions to Decimal forms.</li>
+                        <li><strong>Level 3:</strong> Match Expanded Decimal notations.</li>
+                        <li><strong>Level 4:</strong> Separate Like vs Unlike structures.</li>
+                        <li><strong>Level 5:</strong> Master Decimal Arithmetic Math.</li>
+                    </ul>
+                    <p style="margin-top: 10px;">Solve each question correctly to advance into the deep heart of the forest!</p>
+                </div>
+                <button class="action-btn" onclick="startGameEngine()">Begin Safari Journey</button>
+            </div>
+        </div>
+
+        <div id="gameplay-screen" class="stage-overlay hidden">
+            <div class="header-panel">
+                <div id="game-level-tag" class="header-title">Level 1: Places</div>
+                <div id="game-score-tag" class="header-score">Score: 0</div>
+            </div>
+
+            <div class="glass-panel workspace-area">
+                <div id="game-prompt" class="question-box">Loading math challenge parameters...</div>
+                <div id="game-choices-container" class="options-grid"></div>
+            </div>
+
+            <div id="game-toast-feedback" class="status-banner" style="color: #ffffff;">Select the matching decimal response!</div>
+        </div>
+
+    </div>
+
+    <script>
+        // Audio Synthesis Context Fallback Trigger Engines
+        function playAudioTone(freq, type, duration) {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + duration);
+            } catch (e) { console.log("Audio skipped"); }
+        }
+        function playCorrectSound() { playAudioTone(587.33, 'triangle', 0.12); setTimeout(() => playAudioTone(880, 'triangle', 0.2), 100); }
+        function playWrongSound() { playAudioTone(220, 'sawtooth', 0.25); }
+        function playSuccessSound() { playAudioTone(523.25, 'sine', 0.15); setTimeout(() => playAudioTone(659.25, 'sine', 0.15), 120); setTimeout(() => playAudioTone(783.99, 'sine', 0.3), 240); }
+
+        // Core Game Structural Variables & Datasets
+        let currentLevel = 1;
+        let scoreCount = 0;
+        let currentAnswer = "";
+        let levelTaskIndex = 0;
+
+        // Level Question Banks matching the exact criteria of your lesson document
+        const levelDatabases = {
+            1: [
+                { q: "In the number 5.372, what place value is the digit 3 located in?", a: "Tenth place", o: ["Unit place", "Tenth place", "Hundredth place", "Thousandth place"] },
+                { q: "In the number 5.372, what place value is the digit 7 located in?", a: "Hundredth place", o: ["Tenth place", "Hundredth place", "Thousandth place", "Ones place"] },
+                { q: "In the number 5.372, what place value is the digit 2 located in?", a: "Thousandth place", o: ["Tenth place", "Hundredth place", "Thousandth place", "Tens place"] }
+            ],
+            2: [
+                { q: "Convert the fraction 3/4 into its equivalent decimal expression.", a: "0.75", o: ["0.34", "0.75", "0.50", "0.25"] },
+                { q: "Convert the fraction 4/10 into its simplified decimal form.", a: "0.4", o: ["0.04", "4.0", "0.4", "0.44"] },
+                { q: "Convert the fraction 2/5 into its correct decimal structure.", a: "0.4", o: ["0.2", "0.5", "0.4", "0.25"] }
+            ],
+            3: [
+                { q: "What is the standard combined decimal form of: 5 + 0.3 + 0.07 + 0.002?", a: "5.372", o: ["53.72", "5.372", "5.0372", "5.37"] },
+                { q: "Expand the decimal value 0.52 using its structural place values.", a: "0.5 + 0.02", o: ["0.5 + 0.2", "0.5 + 0.02", "0.05 + 0.002", "5 + 0.2"] }
+            ],
+            4: [
+                { q: "Which of the following pairs represent Like Decimals (same number of digits after decimal point)?", a: "2.45 and 3.67", o: ["2.45 and 3.67", "2.5 and 3.67", "0.5 and 0.50", "1.234 and 1.2"] },
+                { q: "Identify the set that falls under Unlike Decimals classification.", a: "2.5 and 3.67", o: ["2.45 and 3.67", "2.5 and 3.67", "0.12 and 0.99", "5.00 and 6.00"] }
+            ],
+            5: [
+                { q: "Solve: 1.2 + 2.35 (Remember to align your place values correctly!)", a: "3.55", o: ["3.55", "2.47", "3.37", "4.20"] },
+                { q: "Solve: 0.3 × 0.2 (Multiply as integers, then count decimal places)", a: "0.06", o: ["0.6", "0.06", "0.006", "6.0"] },
+                { q: "Solve: 0.50 + 0.50 (Equivalent decimal check)", a: "1.0", o: ["0.100", "1.0", "0.55", "0.01"] }
+            ]
+        };
+
+        // 5-Second Splash Screen Loader Interval
+        let elapsedSplashTime = 0;
+        const splashInterval = setInterval(() => {
+            elapsedSplashTime += 100;
+            if (elapsedSplashTime >= 5000) {
+                clearInterval(splashInterval);
+                const splash = document.getElementById('hard-splash');
+                if (splash) splash.style.opacity = '0';
+                setTimeout(() => {
+                    if (splash && splash.parentNode) splash.parentNode.removeChild(splash);
+                    // Pass to the interactive Instructions View Screen
+                    document.getElementById('instructions-screen').classList.remove('hidden');
+                }, 500);
+            }
+        }, 100);
+
+        function startGameEngine() {
+            playAudioTone(440, 'sine', 0.15);
+            document.getElementById('instructions-screen').classList.add('hidden');
+            document.getElementById('gameplay-screen').classList.remove('hidden');
+            loadLevelChallenge();
+        }
+
+        function loadLevelChallenge() {
+            const currentLevelData = levelDatabases[currentLevel];
+            
+            // If we run out of questions in a level, promote player to next level
+            if (levelTaskIndex >= currentLevelData.length) {
+                currentLevel++;
+                levelTaskIndex = 0;
+                if (currentLevel > 5) {
+                    triggerGameVictoryScreen();
+                    return;
+                }
+            }
+
+            // Update level tag and interface
+            const levelTitles = { 1: "Level 1: Places", 2: "Level 2: Fractions", 3: "Level 3: Expansions", 4: "Level 4: Decimal Types", 5: "Level 5: Arithmetic" };
+            document.getElementById('game-level-tag').innerText = levelTitles[currentLevel];
+            document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
+            
+            const activeQuestion = levelDatabases[currentLevel][levelTaskIndex];
+            document.getElementById('game-prompt').innerText = activeQuestion.q;
+            currentAnswer = activeQuestion.a;
+
+            // Generate option buttons dynamically
+            const container = document.getElementById('game-choices-container');
+            container.innerHTML = "";
+            
+            // Toggle two-column grid layout based on option character lengths
+            if (activeQuestion.o.every(opt => opt.length < 15)) {
+                container.className = "options-grid two-col";
+            } else {
+                container.className = "options-grid";
+            }
+
+            activeQuestion.o.forEach(optionText => {
+                const btn = document.createElement('button');
+                btn.className = "action-btn option-choice";
+                btn.innerText = optionText;
+                btn.onclick = () => evaluatePlayerChoice(optionText);
+                container.appendChild(btn);
+            });
+
+            const feedback = document.getElementById('game-toast-feedback');
+            feedback.innerText = "Analyze carefully before making a choice!";
+            feedback.style.color = "#ffffff";
+        }
+
+        function evaluatePlayerChoice(selectedText) {
+            const feedback = document.getElementById('game-toast-feedback');
+            if (selectedText === currentAnswer) {
+                scoreCount += 10;
+                levelTaskIndex++;
+                feedback.innerText = "🌿 Correct! You navigated the path safely!";
+                feedback.style.color = "#a7f3d0";
+                playCorrectSound();
+                setTimeout(() => loadLevelChallenge(), 1200);
+            } else {
+                feedback.innerText = "❌ Trapped! Re-evaluate decimal alignment values!";
+                feedback.style.color = "#fca5a5";
+                playWrongSound();
+            }
+            document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
+        }
+
+        function triggerGameVictoryScreen() {
+            playSuccessSound();
+            document.getElementById('game-level-tag').innerText = "Quest Complete!";
+            const container = document.getElementById('game-choices-container');
+            container.className = "options-grid";
+            container.innerHTML = "";
+
+            document.getElementById('game-prompt').innerHTML = `
+                <div style="font-size: 1.5rem; margin-bottom: 8px;">🎉 Congratulations Explorer!</div>
+                <div style="font-size: 1rem; font-weight:600; color: #047857;">You have mastered all Decimal Systems and cleared the Jungle!</div>
+            `;
+
+            const restartBtn = document.createElement('button');
+            restartBtn.className = "action-btn";
+            restartBtn.style.background = "#b45309";
+            restartBtn.style.borderColor = "#92400e";
+            restartBtn.innerText = "Restart Journey";
+            restartBtn.onclick = () => {
+                currentLevel = 1;
+                scoreCount = 0;
+                levelTaskIndex = 0;
+                loadLevelChallenge();
+            };
+            container.appendChild(restartBtn);
+            
+            document.getElementById('game-toast-feedback').innerText = "Legendary Victory Achieved!";
+            document.getElementById('game-toast-feedback').style.color = "#fcd34d";
+        }
+    </script>
+</body>
+</html>
