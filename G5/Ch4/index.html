@@ -227,14 +227,14 @@ button:hover {
 
 <div id="instructions" class="screen" style="display:none">
   <div class="menu-card">
-    <h1 style="color:#ff007f; margin-bottom:20px; font-size:2.2rem;">Adventure Simulation</h1>
+    <h1 style="color:#00ffff; text-shadow: 0 0 10px rgba(0, 255, 255, 0.3); margin-bottom:20px; font-size:2.2rem;">How to Play</h1>
     <div class="instructions">
-      <p>• Analyze the calculation challenge presented in the panel.</p>
-      <p>• Select or interact directly with elements to input your values.</p>
-      <p>• You have exactly <b>2 attempts</b> to clear each operational setup.</p>
-      <p>• Missing twice locks input and shows the required target parameters instantly.</p>
+      <p>🎯 Read the fraction question carefully at the top of the screen.</p>
+      <p>👆 Tap the pizza slices or click the buttons to pick your answer.</p>
+      <p>❤️ You get <b>2 chances</b> to get each question right!</p>
+      <p>✨ If you miss twice, the game will reveal the correct answer and move forward.</p>
     </div>
-    <button onclick="startGame()">Start Adventure</button>
+    <button style="background: linear-gradient(135deg, #ff007f, #7f00ff); box-shadow: 0 6px 20px rgba(255, 0, 127, 0.3);" onclick="startGame()">Start Game!</button>
   </div>
 </div>
 
@@ -328,7 +328,7 @@ function loadLevel(){
 
   document.getElementById("levelNo").textContent = level + 1;
   document.getElementById("levelTitle").textContent = item.title;
-  document.getElementById("questionBox").textContent = "Challenge " + (level + 1) + ". " + item.question;
+  document.getElementById("questionBox").textContent = "Question " + (level + 1) + ": " + item.question;
 
   if(item.type === "pizza"){
     buildPizzaQuestion(item);
@@ -356,7 +356,7 @@ function buildPizzaQuestion(item){
   }
 
   const verifyBtn = document.createElement("button");
-  verifyBtn.innerText = "Verify Selection";
+  verifyBtn.innerText = "Check Answer";
   verifyBtn.style.marginTop = "15px";
   verifyBtn.onclick = () => {
     if(locked) return;
@@ -402,7 +402,7 @@ function correct(){
   score++;
   document.getElementById("score").textContent = score;
   document.getElementById("msg").style.color = "#10b981";
-  document.getElementById("msg").textContent = "Verification Successful!";
+  document.getElementById("msg").textContent = "Correct! Well done! 🎉";
   level++;
   setTimeout(loadLevel, 1500);
 }
@@ -415,11 +415,11 @@ function wrong(answer){
   document.getElementById("msg").style.color = "#ef4444";
 
   if(chances > 0){
-    document.getElementById("msg").textContent = "Mismatch Detected! Try Again.";
+    document.getElementById("msg").textContent = "Not quite! Try one more time.";
   }else{
     // Second Attempt Failure Trigger: Lock interaction field, highlight correct coordinates, auto-advance
     locked = true;
-    document.getElementById("msg").textContent = "Revealing Correct Parameters...";
+    document.getElementById("msg").textContent = "Let's see the correct answer...";
 
     const currentItem = levels[level];
     if(currentItem.type === "pizza") {
