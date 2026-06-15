@@ -3,288 +3,255 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Fraction Adventure</title>
+<title>Fraction Kingdom Adventure</title>
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    user-select: none;
-    -webkit-user-select: none;
-}
+*{box-sizing:border-box}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #0f0f2d; /* Soft midnight sapphire color profile */
-    color: white;
-    overflow-x: hidden;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  background: #0f0f2d; /* Subtle cosmic midnight sapphire */
+  text-align: center;
+  color: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* 1. 5-Second Splash Loader Viewport Overlays */
 .screen {
-    position: fixed;
-    inset: 0;
-    background: #0f0f2d;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    padding: 24px;
-    text-align: center;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #0f0f2d;
+  z-index: 100;
+  padding: 20px;
 }
+
+/* 1. Ultra Clean Splash Loader Viewport Overlays */
 #loader {
-    background: #ffffff;
-    color: #111111;
+  background: #ffffff;
+  color: #111111;
 }
+
 .logo {
-    width: 220px;
-    max-width: 60vw;
-    margin-bottom: 24px;
+  width: 160px;
+  margin-bottom: 24px;
 }
+
 .loading-box {
-    width: 240px;
-    height: 6px;
-    background: #e0e0e0;
-    border-radius: 3px;
-    overflow: hidden;
-    margin-top: 15px;
+  width: 200px;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
 }
 .loading-fill {
-    width: 0%;
-    height: 100%;
-    background: #ff007f;
-    transition: width 0.1s linear;
+  width: 0%;
+  height: 100%;
+  background: #ff007f;
+  transition: width 0.1s linear;
 }
 
-/* 2. Simplified Instructions Component UI Card */
 .menu-card {
-    background: rgba(255, 255, 255, 0.06);
-    border: 2px solid rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 35px 25px;
-    border-radius: 24px;
-    max-width: 500px;
-    width: 100%;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-}
-.instructions p {
-    font-size: 1.1rem;
-    line-height: 1.5;
-    margin-bottom: 14px;
-    color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 35px 25px;
+  border-radius: 24px;
+  max-width: 550px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
 }
 
 button {
-    border: 0;
-    border-radius: 30px;
-    background: linear-gradient(135deg, #ff007f, #7f00ff);
-    color: white;
-    font-size: 1.15rem;
-    font-weight: bold;
-    padding: 14px 40px;
-    cursor: pointer;
-    letter-spacing: 0.5px;
-    box-shadow: 0 6px 20px rgba(255, 0, 127, 0.3);
-    transition: transform 0.2s, box-shadow 0.2s;
+  border: 0;
+  border-radius: 14px;
+  padding: 14px 28px;
+  font-size: 20px;
+  font-weight: bold;
+  background: #d62828;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 25px rgba(255, 0, 127, 0.5);
-}
-button:active {
-    transform: scale(0.98);
+  transform: scale(1.04);
 }
 
-/* 3. Fully Cross-Device Adaptive Layout Components */
 #hud {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 16px 20px;
-    font-size: 1.15rem;
-    font-weight: bold;
-    color: #00ffff;
-    text-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+  display: flex;
+  justify-content: space-around;
+  padding: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  flex-wrap: wrap;
 }
+
 #levelTitle {
-    font-size: 1.6rem;
-    font-weight: 800;
-    margin-top: 5px;
-    color: #ff007f;
-    text-shadow: 0 0 10px rgba(255, 0, 127, 0.2);
+  font-size: 34px;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #00ffff;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
 }
+
 #questionBox {
-    width: 90%;
-    max-width: 900px;
-    margin: 8px auto 15px auto;
-    background: linear-gradient(145deg, rgba(255, 0, 127, 0.15), rgba(127, 0, 255, 0.08));
-    border: 2px solid #ff007f;
-    border-radius: 18px;
-    padding: 18px;
-    font-size: 1.3rem;
-    font-weight: bold;
-    box-shadow: inset 0 0 15px rgba(255, 0, 127, 0.1);
+  width: 92%;
+  max-width: 900px;
+  margin: 12px auto;
+  background: rgba(255, 255, 255, 0.08);
+  border: 4px solid #7b2cbf;
+  border-radius: 18px;
+  padding: 16px;
+  font-size: 24px;
+  font-weight: bold;
+  min-height: 80px;
 }
+
 #gameArea {
-    position: relative;
-    width: 90%;
-    max-width: 900px;
-    flex: 1;
-    min-height: 330px;
-    margin: 0 auto;
-    border-radius: 24px;
-    border: 3px solid rgba(255, 255, 255, 0.15);
-    background: linear-gradient(#1e1e4f 0%, #13133a 100%);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
+  position: relative;
+  width: 1000px;
+  max-width: 96vw;
+  height: 520px;
+  margin: auto;
+  background: linear-gradient(#1e1e4f 0%, #13133a 100%);
+  border: 5px solid #333;
+  border-radius: 20px;
+  overflow: hidden;
+  padding-top: 25px;
 }
 
-/* Pizza Graphic Vector Components */
+#msg {
+  font-size: 30px;
+  font-weight: bold;
+  min-height: 40px;
+  margin-top: 10px;
+}
+
+.instructions {
+  font-size: 22px;
+  line-height: 1.6;
+  max-width: 760px;
+  text-align: left;
+  margin-bottom: 20px;
+  color: #cbd5e1;
+}
+
 #pizza {
-    position: relative;
-    width: 240px;
-    height: 240px;
-    margin: 10px auto;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 8px solid #c97b30;
-    background: #ffd166;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-}
-.slice {
-    position: absolute;
-    width: 50%;
-    height: 50%;
-    left: 50%;
-    top: 50%;
-    transform-origin: 0% 0%;
-    border: 1.5px solid white;
-    cursor: pointer;
-    background: #ffd166;
-    transition: background 0.2s;
-}
-.selected {
-    background: #ef476f !important;
+  position: relative;
+  width: 340px;
+  height: 340px;
+  margin: 20px auto;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 10px solid #c97b30;
+  background: #ffd166;
 }
 
-/* Choice Buttons Matrix Layout styling */
-.options-wrap {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-    width: 100%;
-    max-width: 700px;
-    margin-top: 10px;
+.slice {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  left: 50%;
+  top: 50%;
+  transform-origin: 0% 0%;
+  border: 2px solid white;
+  cursor: pointer;
+  background: #ffd166;
 }
+
+.selected { background: #ef476f !important; }
+
 .optionBtn {
-    padding: 14px 24px;
-    font-size: 1.5rem;
-    border-radius: 18px;
-    border: 2px solid rgba(255,255,255,0.2);
-    background: rgba(255, 255, 255, 0.08);
-    color: white;
-    cursor: pointer;
-    font-weight: bold;
-    min-width: 140px;
-    transition: transform 0.15s dynamic, background 0.2s, border-color 0.2s;
+  padding: 16px 28px;
+  margin: 16px;
+  font-size: 30px;
+  border-radius: 16px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: bold;
+  min-width: 170px;
+  min-height: 80px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, background 0.2s, border-color 0.2s;
 }
 .optionBtn:hover {
-    transform: scale(1.04);
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255,255,255,0.4);
-}
-.optionBtn:active {
-    transform: scale(0.96);
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
-/* 5. 2-Chance System Color State Assists */
+/* Correct Answer Reveal Glow Classes */
 .btn-reveal-correct {
-    background: rgba(16, 185, 129, 0.25) !important;
-    border-color: #10b981 !important;
-    color: #10b981 !important;
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4) !important;
+  background: rgba(16, 185, 129, 0.3) !important;
+  border-color: #10b981 !important;
+  color: #10b981 !important;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
 }
 .pizza-reveal-correct .slice {
-    border-color: #10b981 !important;
+  border-color: #10b981 !important;
 }
 
 .visual {
-    font-size: 4.5rem;
-    margin-bottom: 10px;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-}
-#msg {
-    font-size: 1.35rem;
-    font-weight: bold;
-    min-height: 35px;
-    margin: 10px auto;
-}
-.celebrate-icon {
-    font-size: 4.5rem;
-    margin-bottom: 15px;
-    filter: drop-shadow(0 0 10px rgba(255,215,0,0.4));
+  font-size: 120px;
+  margin: 20px auto;
 }
 
-@media(max-width: 500px) {
-    #hud { font-size: 1rem; padding: 10px; }
-    #levelTitle { font-size: 1.3rem; }
-    #questionBox { font-size: 1.1rem; padding: 12px; }
-    #pizza { width: 180px; height: 180px; }
-    .optionBtn { font-size: 1.2rem; padding: 10px 20px; min-width: 110px; }
-    #msg { font-size: 1.1rem; }
+.celebrate-icon {
+  font-size: 5rem;
+  margin-bottom: 15px;
 }
 </style>
 </head>
+
 <body>
 
 <div id="loader" class="screen">
-    <img src="assets/logo.png" class="logo" onerror="this.style.display='none'; document.getElementById('fallback-text').style.display='block';">
-    <h1 id="fallback-text" style="display:none; font-size:2.2rem; margin-bottom:10px; font-weight:900; color:#ff007f;">INNOVINE</h1>
-    <h3>Loading Spatial Vectors...</h3>
-    <div class="loading-box">
-        <div id="splash-fill-bar" class="loading-fill"></div>
-    </div>
+  <img src="assets/logo.png" class="logo" onerror="this.style.display='none'; document.getElementById('fallback-text').style.display='block';">
+  <h1 id="fallback-text" style="display:none; font-size:2.5rem; margin-bottom:24px; font-weight:900; color:#ff007f; letter-spacing: 2px;">INNOVINE</h1>
+  <div class="loading-box">
+    <div id="splash-fill-bar" class="loading-fill"></div>
+  </div>
 </div>
 
 <div id="instructions" class="screen" style="display:none">
-    <div class="menu-card">
-        <h2 style="color:#ff007f; margin-bottom:20px; font-size:1.8rem; font-weight:900;">Adventure Simulation</h2>
-        <div class="instructions">
-            <p>Analyze the operational tracking puzzle displayed in the center panel layout.</p>
-            <p>Interact directly with the elements or buttons to match parameters.</p>
-            <p>You have exactly <b>2 attempts</b> to complete each layout loop.</p>
-            <p>If you miss twice, the visual system auto-highlights solutions instantly before advancing!</p>
-        </div>
-        <button onclick="startGame()" style="margin-top:15px;">Start Adventure</button>
+  <div class="menu-card">
+    <h1 style="color:#ff007f; margin-bottom:20px; font-size:2.2rem;">Adventure Simulation</h1>
+    <div class="instructions">
+      <p>• Analyze the calculation challenge presented in the panel.</p>
+      <p>• Select or interact directly with elements to input your values.</p>
+      <p>• You have exactly <b>2 attempts</b> to clear each operational setup.</p>
+      <p>• Missing twice locks input and shows the required target parameters instantly.</p>
     </div>
+    <button onclick="startGame()">Start Adventure</button>
+  </div>
 </div>
 
 <div id="end" class="screen" style="display:none">
-    <div class="menu-card" style="border-color: rgba(0, 255, 255, 0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.6);">
-        <div class="celebrate-icon">🏆</div>
-        <h1 style="color:#00ffff; font-size:2.2rem; margin-bottom:10px; font-weight:900;">System Victory!</h1>
-        <p style="color:#e2e8f0; font-size:1.2rem; margin-bottom:25px;">All algorithmic challenges completely cleared and authenticated.</p>
-        <h2 style="font-size:1.6rem; margin-bottom:30px;">Final Score: <span id="finalScore" style="color:#ff007f;"></span></h2>
-        <button style="background:linear-gradient(135deg, #00ffff, #7f00ff); box-shadow: 0 6px 20px rgba(0,255,255,0.2);" onclick="location.reload()">Play Again</button>
-    </div>
+  <div class="menu-card" style="border-color: #00ffff; box-shadow: 0 20px 50px rgba(0,255,255,0.2);">
+    <div class="celebrate-icon">🏆</div>
+    <h1 style="color:#00ffff; margin-bottom:10px;">Simulation Mastered!</h1>
+    <p style="color:#cbd5e1; font-size:1.2rem; margin-bottom:25px;">All algorithmic verification channels successfully matched.</p>
+    <h2>Final Performance: <span id="finalScore" style="color:#ff007f;"></span></h2>
+    <button style="margin-top:25px; background:#7b2cbf;" onclick="location.reload()">Re-engage System</button>
+  </div>
 </div>
 
 <div id="hud">
-    <div>⭐ Score: <span id="score" style="color:#fff;">0</span></div>
-    <div id="shield-box">❤️ Chances: <span id="chances" style="color:#fff;">❤️❤️</span></div>
-    <div>🏰 Level: <span id="levelNo" style="color:#fff;">1</span>/10</div>
+  <div>⭐ Score: <span id="score">0</span></div>
+  <div>❤️ Chances: <span id="chances">❤️❤️</span></div>
+  <div>🏰 Level: <span id="levelNo">1</span>/10</div>
 </div>
 
 <div id="levelTitle"></div>
@@ -305,9 +272,9 @@ const levelBank = [
   { title:"⚙️ Operational Reducer", question:"Simplify 18/24. Give answer in simplest form.", answer:"3/4", type:"choice", visual:"⚙️", options:["6/8","3/4","9/12"] },
   { title:"🧙 Mixed Core Conversion", question:"Convert 17/5 into a mixed number.", answer:"3 2/5", type:"choice", visual:"🧙", options:["2 3/5","3 2/5","4 1/5"] },
   { title:"💰 Operational Matrix Sum", question:"2/9 + 5/9 = ? Give answer in simplest form.", answer:"7/9", type:"choice", visual:"💰", options:["7/18","7/9","3/9"] },
-  { title:"🌉 Variable Difference", question:"7/10 - 3/10 = ? Give answer in simplest form.", answer:"2/5", type:"choice", visual:"🌉", options:["4/10","2/5","3/5"] },
+  { title:"Bridge Variable Difference", question:"7/10 - 3/10 = ? Give answer in simplest form.", answer:"2/5", type:"choice", visual:"🌉", options:["4/10","2/5","3/5"] },
   { title:"⚔️ Product Evaluation", question:"2/3 × 3/4 = ? Give answer in simplest form.", answer:"1/2", type:"choice", visual:"⚔️", options:["6/12","1/2","5/7"] },
-  { title:"👑 Operational Quotient", question:"3/5 ÷ 3/10 = ?", answer:"2", type:"choice", visual:"👑", options:["1","2","3"] }
+  { title:"🏰 Operational Quotient", question:"3/5 ÷ 3/10 = ?", answer:"2", type:"choice", visual:"👑", options:["1","2","3"] }
 ];
 
 let levels = [...levelBank].sort(() => Math.random() - 0.5);
@@ -316,177 +283,174 @@ let score = 0;
 let chances = 2;
 let locked = false;
 
-// 1. Splash progress handler timed precisely to exactly 5 seconds
+// 1. Strict 5-Second Splash Loading Cycle
 window.onload = () => {
-    let elapsedProgress = 0;
-    const loadTimer = setInterval(() => {
-        elapsedProgress += 2;
-        const fillBar = document.getElementById("splash-fill-bar");
-        if(fillBar) fillBar.style.width = elapsedProgress + "%";
-        
-        if (elapsedProgress >= 100) {
-            clearInterval(loadTimer);
-            document.getElementById("loader").style.display = "none";
-            document.getElementById("instructions").style.display = "flex";
-        }
-    }, 100); // 50 updates * 100ms = 5000ms
+  let progressCount = 0;
+  const loadTimer = setInterval(() => {
+    progressCount += 2;
+    const bar = document.getElementById("splash-fill-bar");
+    if(bar) bar.style.width = progressCount + "%";
+
+    if (progressCount >= 100) {
+      clearInterval(loadTimer);
+      document.getElementById("loader").style.display = "none";
+      document.getElementById("instructions").style.display = "flex";
+    }
+  }, 100); // 50 frames * 100ms = 5000ms
 };
 
 function startGame(){
-    document.getElementById("instructions").style.display = "none";
-    loadLevel();
+  document.getElementById("instructions").style.display = "none";
+  loadLevel();
 }
 
-function updateShieldDisplay() {
-    const shieldBox = document.getElementById("chances");
-    if(!shieldBox) return;
-    if(chances === 2) shieldBox.textContent = "❤️❤️";
-    else if(chances === 1) shieldBox.textContent = "❤️💔";
-    else shieldBox.textContent = "💔💔";
+function updateChancesHUD() {
+  const element = document.getElementById("chances");
+  if(!element) return;
+  if(chances === 2) element.textContent = "❤️❤️";
+  else if(chances === 1) element.textContent = "❤️💔";
+  else element.textContent = "💔💔";
 }
 
 function loadLevel(){
-    chances = 2;
-    locked = false;
-    updateShieldDisplay();
-    document.getElementById("msg").textContent = "";
-    document.getElementById("gameArea").innerHTML = "";
+  chances = 2;
+  locked = false;
+  updateChancesHUD();
+  document.getElementById("msg").textContent = "";
+  document.getElementById("gameArea").innerHTML = "";
 
-    if(level >= levels.length){
-        finishGame();
-        return;
-    }
+  if(level >= levels.length){
+    finishGame();
+    return;
+  }
 
-    const item = levels[level];
-    document.getElementById("levelNo").textContent = level + 1;
-    document.getElementById("levelTitle").textContent = item.title;
-    document.getElementById("questionBox").textContent = "Challenge " + (level + 1) + ": " + item.question;
+  const item = levels[level];
 
-    if(item.type === "pizza"){
-        buildPizzaQuestion(item);
-    } else {
-        buildChoiceQuestion(item);
-    }
+  document.getElementById("levelNo").textContent = level + 1;
+  document.getElementById("levelTitle").textContent = item.title;
+  document.getElementById("questionBox").textContent = "Challenge " + (level + 1) + ". " + item.question;
+
+  if(item.type === "pizza"){
+    buildPizzaQuestion(item);
+  }else{
+    buildChoiceQuestion(item);
+  }
 }
 
 function buildPizzaQuestion(item){
-    const area = document.getElementById("gameArea");
-    
-    const pizza = document.createElement("div");
-    pizza.id = "pizza";
-    area.appendChild(pizza);
+  const targetArea = document.getElementById("gameArea");
+  const pizza = document.createElement("div");
+  pizza.id = "pizza";
+  targetArea.appendChild(pizza);
 
-    const angle = 360 / item.total;
-    for(let i = 0; i < item.total; i++){
-        const slice = document.createElement("div");
-        slice.className = "slice";
-        slice.style.transform = `rotate(${i * angle}deg) skewY(${90 - angle}deg)`;
-        slice.onclick = () => {
-            if(!locked) slice.classList.toggle("selected");
-        };
-        pizza.appendChild(slice);
-    }
+  const angle = 360 / item.total;
 
-    const checkBtn = document.createElement("button");
-    checkBtn.innerText = "Verify Selection";
-    checkBtn.style.marginTop = "20px";
-    checkBtn.onclick = () => {
-        if(locked) return;
-        const selected = document.querySelectorAll(".selected").length;
-        if(selected === item.correct){
-            correct();
-        } else {
-            wrong(item.answer);
-        }
+  for(let i = 0; i < item.total; i++){
+    const slice = document.createElement("div");
+    slice.className = "slice";
+    slice.style.transform = `rotate(${i * angle}deg) skewY(${90 - angle}deg)`;
+    slice.onclick = () => {
+      if(!locked) slice.classList.toggle("selected");
     };
-    area.appendChild(checkBtn);
+    pizza.appendChild(slice);
+  }
+
+  const verifyBtn = document.createElement("button");
+  verifyBtn.innerText = "Verify Selection";
+  verifyBtn.style.marginTop = "15px";
+  verifyBtn.onclick = () => {
+    if(locked) return;
+    const selectedCount = document.querySelectorAll(".selected").length;
+    if(selectedCount === item.correct){
+      correct();
+    }else{
+      wrong(item.answer);
+    }
+  };
+
+  targetArea.appendChild(verifyBtn);
 }
 
 function buildChoiceQuestion(item){
-    const area = document.getElementById("gameArea");
-    
-    const visual = document.createElement("div");
-    visual.className = "visual";
-    visual.textContent = item.visual || "👑";
-    area.appendChild(visual);
+  const targetArea = document.getElementById("gameArea");
+  const visual = document.createElement("div");
+  visual.className = "visual";
+  visual.textContent = item.visual || "👑";
+  targetArea.appendChild(visual);
 
-    const optionsContainer = document.createElement("div");
-    optionsContainer.className = "options-wrap";
-    area.appendChild(optionsContainer);
+  const shuffled = [...item.options].sort(() => Math.random() - 0.5);
 
-    const shuffled = [...item.options].sort(() => Math.random() - 0.5);
-    shuffled.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.className = "optionBtn";
-        btn.innerText = opt;
-        btn.onclick = () => {
-            if(locked) return;
-            if(opt === item.answer){
-                correct();
-            } else {
-                wrong(item.answer, btn);
-            }
-        };
-        optionsContainer.appendChild(btn);
-    });
+  shuffled.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.className = "optionBtn";
+    btn.innerText = opt;
+    btn.onclick = () => {
+      if(locked) return;
+      if(opt === item.answer){
+        correct();
+      }else{
+        wrong(item.answer);
+      }
+    };
+    targetArea.appendChild(btn);
+  });
 }
 
 function correct(){
-    locked = true;
-    try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
-    score++;
-    document.getElementById("score").textContent = score;
-    document.getElementById("msg").style.color = "#10b981";
-    document.getElementById("msg").textContent = "Verification Successful!";
-    level++;
-    setTimeout(loadLevel, 1500);
+  locked = true;
+  try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
+  score++;
+  document.getElementById("score").textContent = score;
+  document.getElementById("msg").style.color = "#10b981";
+  document.getElementById("msg").textContent = "Verification Successful!";
+  level++;
+  setTimeout(loadLevel, 1500);
 }
 
-// 5. Dual-Attempt Dynamic Fallback Processing Engine
-function wrong(answer, targetBtn = null){
-    try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
-    chances--;
-    updateShieldDisplay();
-    document.getElementById("msg").style.color = "#ef4444";
+// 5. Strict 2-Chance Core Architecture Resolution Logic
+function wrong(answer){
+  try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
+  chances--;
+  updateChancesHUD();
+  document.getElementById("msg").style.color = "#ef4444";
 
-    if(chances > 0){
-        document.getElementById("msg").textContent = "Mismatch Detected! Try Again.";
+  if(chances > 0){
+    document.getElementById("msg").textContent = "Mismatch Detected! Try Again.";
+  }else{
+    // Second Attempt Failure Trigger: Lock interaction field, highlight correct coordinates, auto-advance
+    locked = true;
+    document.getElementById("msg").textContent = "Revealing Correct Parameters...";
+
+    const currentItem = levels[level];
+    if(currentItem.type === "pizza") {
+      const pizzaContainer = document.getElementById("pizza");
+      if(pizzaContainer) pizzaContainer.classList.add("pizza-reveal-correct");
+      
+      const slices = document.querySelectorAll(".slice");
+      slices.forEach((sl, index) => {
+        sl.classList.remove("selected");
+        if(index < currentItem.correct) sl.classList.add("selected");
+      });
     } else {
-        // 2 attempts exhausted: Lock engine, highlight true coordinates, advance array
-        locked = true;
-        document.getElementById("msg").textContent = "Revealing Required Parameters...";
-
-        const item = levels[level];
-        if(item.type === "pizza") {
-            const pizzaBox = document.getElementById("pizza");
-            if(pizzaBox) pizzaBox.classList.add("pizza-reveal-correct");
-            
-            // Auto force-correct visual representation to learn from
-            const slices = document.querySelectorAll(".slice");
-            slices.forEach((s, idx) => {
-                s.classList.remove("selected");
-                if(idx < item.correct) s.classList.add("selected");
-            });
-        } else {
-            // Find correct multiple choice asset button element and color highlight it
-            const buttons = document.querySelectorAll(".optionBtn");
-            buttons.forEach(btn => {
-                if(btn.innerText === answer) {
-                    btn.classList.add("btn-reveal-correct");
-                }
-            });
+      const optionButtons = document.querySelectorAll(".optionBtn");
+      optionButtons.forEach(btn => {
+        if(btn.innerText === answer) {
+          btn.classList.add("btn-reveal-correct");
         }
-
-        level++;
-        setTimeout(loadLevel, 2000);
+      });
     }
+
+    level++;
+    setTimeout(loadLevel, 2000);
+  }
 }
 
 function finishGame(){
-    try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
-    document.getElementById("finalScore").textContent = score + " / " + levels.length;
-    document.getElementById("end").style.display = "flex";
+  try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+  document.getElementById("finalScore").textContent = score + " / " + levels.length;
+  document.getElementById("end").style.display = "flex";
 }
 </script>
+
 </body>
 </html>
