@@ -26,7 +26,7 @@ body {
 .screen {
     position: fixed;
     inset: 0;
-    background: #ffffff;
+    background: #0f172a; /* Changed to match theme so it looks cohesive if image is missing */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -35,23 +35,30 @@ body {
     padding: 24px;
     text-align: center;
 }
-.logo {
-    width: 220px;
-    max-width: 60vw;
+.logo-placeholder {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    font-weight: 800;
+    color: #38bdf8;
+    letter-spacing: -1px;
+}
+.logo-subtext {
+    font-size: 1.1rem;
+    color: #94a3b8;
     margin-bottom: 24px;
 }
 .loading-box {
     width: 240px;
     height: 6px;
-    background: #e2e8f0;
+    background: #334155;
     border-radius: 3px;
     overflow: hidden;
-    margin-top: 15px;
 }
 .loading-fill {
     width: 0%;
     height: 100%;
     background: #38bdf8;
+    box-shadow: 0 0 10px #38bdf8;
 }
 
 /* 2. Simplified Instructions Component UI Card */
@@ -332,7 +339,8 @@ button:disabled {
 <body>
 
 <div id="loader" class="screen">
-    <img src="assets/logo.png" alt="Logo" class="logo">
+    <div class="logo-placeholder">MATH RACER</div>
+    <div class="logo-subtext">Loading Grade 5 Modules...</div>
     <div class="loading-box">
         <div id="loading-fill" class="loading-fill"></div>
     </div>
@@ -388,13 +396,19 @@ button:disabled {
 </div>
 
 <script>
-const audio = {
-    correct: new Audio('assets/correct.mp3'),
-    wrong: new Audio('assets/wrong.mp3'),
-    claps: new Audio('assets/freesound_community-claps-44774.mp3')
+// Safe non-blocking audio handling
+const playSound = (type) => {
+    const paths = {
+        correct: 'assets/correct.mp3',
+        wrong: 'assets/wrong.mp3',
+        claps: 'assets/freesound_community-claps-44774.mp3'
+    };
+    try {
+        const snd = new Audio(paths[type]);
+        snd.play().catch(() => {/* suppress browser autoplay blockers safe */});
+    } catch(e) {}
 };
 
-// Target categories linked explicitly to the curriculum criteria image
 const outcomes = ['large_ops', 'large_mul_div', 'base_10', 'word_problems'];
 let totalQuestionsLimit = 10;
 let currentQuestionIndex = 0;
@@ -403,21 +417,23 @@ let gameScore = 0;
 let attempts = 0;
 let interactionLocked = false;
 
-// 5-Second Startup Loading sequence
+// Time-isolated tracking bar loop ensuring it finishes in 5000ms flat
 window.addEventListener('DOMContentLoaded', () => {
     const fill = document.getElementById('loading-fill');
     let progress = 0;
-    const trackingRate = 100 / (5000 / 50); 
+    const duration = 5000;
+    const intervalTime = 50;
+    const increment = 100 / (duration / intervalTime);
     
-    const interval = setInterval(() => {
-        progress += trackingRate;
+    const loaderInterval = setInterval(() => {
+        progress += increment;
         fill.style.width = Math.min(progress, 100) + '%';
         if (progress >= 100) {
-            clearInterval(interval);
+            clearInterval(loaderInterval);
             document.getElementById('loader').classList.add('hidden');
             document.getElementById('instruction-screen').classList.remove('hidden');
         }
-    }, 50);
+    }, intervalTime);
 });
 
 function startGame() {
@@ -426,7 +442,6 @@ function startGame() {
     generateAndLoadChallenge();
 }
 
-// Complete Dynamic Question Matrix Builder Engine
 function generateAndLoadChallenge() {
     interactionLocked = false;
     attempts = 0;
@@ -459,13 +474,11 @@ function createOutcomeProblem(outcome) {
     switch (outcome) {
         case 'large_ops':
             if (isDelta) {
-                // Performing addition of large numbers (5-digit / 6-digit scale)
                 let num1 = Math.floor(Math.random() * 400000) + 100000;
                 let num2 = Math.floor(Math.random() * 400000) + 100000;
                 answer = num1 + num2;
                 questionText = `Solve: ${num1.toLocaleString()} + ${num2.toLocaleString()}`;
             } else {
-                // Performing subtraction of large numbers
                 let num1 = Math.floor(Math.random() * 500000) + 400000;
                 let num2 = Math.floor(Math.random() * 300000) + 100000;
                 answer = num1 - num2;
@@ -475,22 +488,19 @@ function createOutcomeProblem(outcome) {
 
         case 'large_mul_div':
             if (isDelta) {
-                // Performing multiplication of large numbers
-                let num1 = Math.floor(Math.random() * 125) + 75; // 3-digit
-                let num2 = Math.floor(Math.random() * 40) + 12;  // 2-digit
+                let num1 = Math.floor(Math.random() * 125) + 75;
+                let num2 = Math.floor(Math.random() * 40) + 12;
                 answer = num1 * num2;
                 questionText = `Multiply: ${num1} × ${num2}`;
             } else {
-                // Performing division of large numbers
-                let divisor = Math.floor(Math.random() * 15) + 12; // 2-digit divisor
-                answer = Math.floor(Math.random() * 40) + 25;     // Large structured target quotient
+                let divisor = Math.floor(Math.random() * 15) + 12;
+                answer = Math.floor(Math.random() * 40) + 25;
                 let dividend = divisor * answer;
                 questionText = `Divide: ${dividend.toLocaleString()} ÷ ${divisor}`;
             }
             break;
 
         case 'base_10':
-            // Performing division by 10, 100, 1000, 10000
             const bases = [10, 100, 1000, 10000];
             const base = bases[Math.floor(Math.random() * bases.length)];
             let multiplier = Math.floor(Math.random() * 85) + 15;
@@ -500,7 +510,6 @@ function createOutcomeProblem(outcome) {
             break;
 
         case 'word_problems':
-            // Contextual word problem matrices
             const problems = [
                 {
                     q: "A cargo vehicle transports 1,200 crates per trip. If it safely executes 15 consecutive missions, how many total boxes are distributed?",
@@ -515,7 +524,7 @@ function createOutcomeProblem(outcome) {
                     a: 650500 - 120200
                 },
                 {
-                    q: "A modern regional development grid plans to distribute 240,000 tech tokens evenly among 12 primary sectors. How many tokens does each sector recieve?",
+                    q: "A modern regional development grid plans to distribute 240,000 tech tokens evenly among 12 primary sectors. How many tokens does each sector receive?",
                     a: 240000 / 12
                 }
             ];
@@ -525,11 +534,9 @@ function createOutcomeProblem(outcome) {
             break;
     }
 
-    // Generate accurate numerical alternate paths safely
     const choicesSet = new Set([answer]);
     while (choicesSet.size < 4) {
         let variance = Math.floor(Math.random() * 40) - 20;
-        // Scale variance for massive figures dynamically
         if (answer > 1000) variance *= 100;
         
         if (variance !== 0) {
@@ -538,7 +545,6 @@ function createOutcomeProblem(outcome) {
         }
     }
 
-    // Map string names out cleanly for display choices formatting
     return {
         question: questionText,
         correctValue: answer,
@@ -546,7 +552,6 @@ function createOutcomeProblem(outcome) {
     };
 }
 
-// 5) Two-chance interactive evaluation processing layer
 function verifySubmission(selectedValue, elementIdx) {
     if (interactionLocked) return;
     
@@ -558,7 +563,7 @@ function verifySubmission(selectedValue, elementIdx) {
         interactionLocked = true;
         selectedBtn.classList.add('reveal-correct');
         
-        try { audio.correct.play(); } catch(e){}
+        playSound('correct');
         if (attempts === 0) {
             gameScore += 30;
             document.getElementById('score-display').innerText = gameScore;
@@ -572,7 +577,7 @@ function verifySubmission(selectedValue, elementIdx) {
         document.getElementById('next-btn').classList.remove('hidden');
     } else {
         attempts++;
-        try { audio.wrong.play(); } catch(e){}
+        playSound('wrong');
         
         const trackElement = document.getElementById('track');
         trackElement.classList.add('shake');
@@ -625,653 +630,10 @@ function loadNextQuestion() {
     }
 }
 
-// 4) Clean Final Celebration Panel
 function triggerFinishSummary() {
     document.getElementById("game-container").classList.add('hidden');
     document.getElementById("result-screen").classList.remove('hidden');
-    try { audio.claps.play(); } catch(e){}
-    
-    let reportText = `Outstanding operations run! You have verified arithmetic accuracy across large numbers, base-10 metrics, and text word problems. Performance score: ${gameScore} XP.`;
-    if (gameScore === 300) {
-        reportText = `Flawless Curriculum Target Execution! 300 XP run complete. All learning objectives checked perfectly on initial calculation sweeps!`;
-    }
-    
-    document.getElementById("result-msg").innerText = reportText;
-}
-</script>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Math 5 Operation Sprint</title>
-<style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    user-select: none;
-    -webkit-user-select: none;
-}
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #0f172a; 
-    color: #f8fafc;
-    overflow-x: hidden;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-/* 1. 5-Second Splash Loader Viewport Overlays */
-.screen {
-    position: fixed;
-    inset: 0;
-    background: #ffffff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 24px;
-    text-align: center;
-}
-.logo {
-    width: 220px;
-    max-width: 60vw;
-    margin-bottom: 24px;
-}
-.loading-box {
-    width: 240px;
-    height: 6px;
-    background: #e2e8f0;
-    border-radius: 3px;
-    overflow: hidden;
-    margin-top: 15px;
-}
-.loading-fill {
-    width: 0%;
-    height: 100%;
-    background: #38bdf8;
-}
-
-/* 2. Simplified Instructions Component UI Card */
-#instruction-screen {
-    background: #0f172a;
-    z-index: 500;
-}
-.menu-card {
-    background: rgba(30, 41, 59, 0.7);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    padding: 40px 30px;
-    border-radius: 24px;
-    max-width: 540px;
-    width: 100%;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-.menu-card h2 {
-    color: #38bdf8;
-    margin-bottom: 24px;
-    font-size: 1.8rem;
-    letter-spacing: -0.5px;
-}
-.instructions p {
-    font-size: 1.05rem;
-    line-height: 1.6;
-    margin-bottom: 14px;
-    color: #cbd5e1;
-    text-align: left;
-}
-button {
-    border: 0;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #38bdf8, #2563eb);
-    color: white;
-    font-size: 1.15rem;
-    font-weight: bold;
-    padding: 14px 36px;
-    cursor: pointer;
-    box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.3);
-    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-}
-button:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 15px 30px -5px rgba(56, 189, 248, 0.4);
-}
-button:active:not(:disabled) {
-    transform: translateY(0);
-}
-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* 3. Fully Cross-Device Adaptive Layout Components */
-.hidden { display: none !important; }
-
-#game-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 16px;
-}
-
-#hud {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 12px 16px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #38bdf8;
-}
-
-/* Asphalt Track Layout */
-#track {
-    width: 100%;
-    height: 130px;
-    margin: 15px 0;
-    background: #1e293b;
-    border: 4px solid #334155;
-    border-radius: 20px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 4px 20px rgba(0,0,0,0.6);
-}
-#line {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100%;
-    height: 6px;
-    background: repeating-linear-gradient(
-        to right,
-        #ffffff 0px,
-        #ffffff 30px,
-        transparent 30px,
-        transparent 60px
-    );
-    opacity: 0.4;
-}
-#finish {
-    position: absolute;
-    right: 20px;
-    width: 16px;
-    height: 100%;
-    background: repeating-linear-gradient(
-        to bottom,
-        #ffffff 0px,
-        #ffffff 10px,
-        #000000 10px,
-        #000000 20px
-    );
-    border-left: 2px solid #64748b;
-    border-right: 2px solid #64748b;
-}
-
-/* Neon Car Asset styling */
-#car {
-    width: 70px;
-    height: 36px;
-    background: linear-gradient(90deg, #a855f7, #6b21a8);
-    position: absolute;
-    top: calc(50% - 18px);
-    left: 15px;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
-    transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-}
-#car::before, #car::after {
-    content: "";
-    position: absolute;
-    width: 14px;
-    height: 8px;
-    background: #0f172a;
-    border-radius: 2px;
-}
-#car::before { top: -4px; left: 10px; box-shadow: 0 0 0 2px #334155; }
-#car::after { bottom: -4px; left: 10px; box-shadow: 0 0 0 2px #334155; }
-
-.cockpit {
-    position: absolute;
-    right: 12px;
-    top: 6px;
-    width: 24px;
-    height: 24px;
-    background: #ffffff;
-    border-radius: 4px;
-    opacity: 0.8;
-}
-
-/* Dashboard Engine Styling */
-#questionBox {
-    background: #1e293b;
-    border: 2px solid #334155;
-    border-radius: 20px;
-    padding: 24px;
-    margin: 10px 0;
-    text-align: center;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-#q {
-    font-size: 1.35rem;
-    font-weight: 600;
-    line-height: 1.6;
-    color: #f1f5f9;
-    margin-bottom: 24px;
-    min-height: 60px;
-}
-#options {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-}
-.option-btn {
-    background: #334155;
-    color: #f1f5f9;
-    border: 2px solid transparent;
-    border-radius: 14px;
-    padding: 16px;
-    font-size: 1.2rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s, transform 0.1s;
-}
-.option-btn:hover:not(:disabled) {
-    background: #475569;
-}
-
-/* 5. 2-Chance Correction Status Indicators */
-.reveal-correct {
-    background: #10b981 !important;
-    border-color: #34d399 !important;
-    color: #ffffff !important;
-}
-.reveal-wrong {
-    background: #ef4444 !important;
-    border-color: #f87171 !important;
-    color: #ffffff !important;
-}
-
-#feedback-box {
-    margin-top: 20px;
-    padding: 16px;
-    border-radius: 12px;
-    background: rgba(30, 41, 59, 0.5);
-    border-left: 4px solid #a855f7;
-    color: #cbd5e1;
-    font-size: 1.05rem;
-    line-height: 1.5;
-    text-align: left;
-}
-
-.shake {
-    animation: trackShake 0.4s ease-in-out;
-}
-@keyframes trackShake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    75% { transform: translateX(6px); }
-}
-
-.action-row {
-    height: 70px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 15px;
-}
-
-/* Progress Bar Trackers */
-#progress {
-    width: 100%;
-    height: 8px;
-    background: #334155;
-    border-radius: 9999px;
-    overflow: hidden;
-    margin-bottom: 4px;
-}
-#bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #a855f7, #2563eb);
-    border-radius: 9999px;
-    transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-/* 4. Creative Conclusion Layout Overlays */
-#result-screen {
-    background: #0f172a;
-    z-index: 600;
-}
-.creative-pop {
-    font-size: 4.5rem;
-    animation: bouncePop 1.5s infinite alternate cubic-bezier(0.45, 0, 0.55, 1);
-    margin-bottom: 20px;
-}
-@keyframes bouncePop {
-    0% { transform: translateY(0) scale(1); }
-    100% { transform: translateY(-10px) scale(1.08); }
-}
-
-@media (max-width: 640px) {
-    #options { grid-template-columns: 1fr; gap: 12px; }
-    #track { height: 100px; }
-    #car { width: 56px; height: 30px; top: calc(50% - 15px); }
-    .cockpit { width: 18px; height: 18px; top: 6px; right: 8px; }
-    #q { font-size: 1.15rem; }
-    .menu-card { padding: 30px 20px; }
-}
-</style>
-</head>
-<body>
-
-<div id="loader" class="screen">
-    <img src="assets/logo.png" alt="Logo" class="logo">
-    <div class="loading-box">
-        <div id="loading-fill" class="loading-fill"></div>
-    </div>
-</div>
-
-<div id="instruction-screen" class="screen hidden">
-    <div class="menu-card">
-        <h2>Learning Outcomes Sprint</h2>
-        <div class="instructions">
-            <p>• <b>Addition & Subtraction:</b> Master multi-digit large numbers.</p>
-            <p>• <b>Multiplication & Division:</b> Complex operational scaling equations.</p>
-            <p>• <b>Base-10 Shifts:</b> Division systems by 10, 100, 1000, and 10000.</p>
-            <p>• <b>Word Problems:</b> Real-world applications of all four core operations.</p>
-        </div>
-        <button onclick="startGame()">Start Race</button>
-    </div>
-</div>
-
-<div id="game-container" class="hidden">
-    <div id="hud">
-        <span>Sprints: <span id="q-num">1</span>/10</span>
-        <span>Engine Score: <span id="score-display">0</span> XP</span>
-    </div>
-
-    <div id="progress">
-        <div id="bar"></div>
-    </div>
-
-    <div id="track">
-        <div id="line"></div>
-        <div id="finish"></div>
-        <div id="car"><div class="cockpit"></div></div>
-    </div>
-
-    <div id="questionBox">
-        <h3 id="q"></h3>
-        <div id="options"></div>
-        <div id="feedback-box" class="hidden"></div>
-    </div>
-
-    <div class="action-row">
-        <button id="next-btn" class="hidden" onclick="loadNextQuestion()">Next Sprint ➡️</button>
-    </div>
-</div>
-
-<div id="result-screen" class="screen hidden">
-    <div class="menu-card" style="text-align: center;">
-        <div class="creative-pop">⚡🎓🏆</div>
-        <h2 style="color: #38bdf8; margin-bottom: 16px;">Learning Targets Mastered!</h2>
-        <p id="result-msg" style="font-size: 1.15rem; color: #cbd5e1; margin-bottom: 30px; line-height: 1.6;"></p>
-        <button onclick="location.reload()">Race Again</button>
-    </div>
-</div>
-
-<script>
-const audio = {
-    correct: new Audio('assets/correct.mp3'),
-    wrong: new Audio('assets/wrong.mp3'),
-    claps: new Audio('assets/freesound_community-claps-44774.mp3')
-};
-
-// Target categories linked explicitly to the curriculum criteria image
-const outcomes = ['large_ops', 'large_mul_div', 'base_10', 'word_problems'];
-let totalQuestionsLimit = 10;
-let currentQuestionIndex = 0;
-let currentQuestionData = null;
-let gameScore = 0;
-let attempts = 0;
-let interactionLocked = false;
-
-// 5-Second Startup Loading sequence
-window.addEventListener('DOMContentLoaded', () => {
-    const fill = document.getElementById('loading-fill');
-    let progress = 0;
-    const trackingRate = 100 / (5000 / 50); 
-    
-    const interval = setInterval(() => {
-        progress += trackingRate;
-        fill.style.width = Math.min(progress, 100) + '%';
-        if (progress >= 100) {
-            clearInterval(interval);
-            document.getElementById('loader').classList.add('hidden');
-            document.getElementById('instruction-screen').classList.remove('hidden');
-        }
-    }, 50);
-});
-
-function startGame() {
-    document.getElementById('instruction-screen').classList.add('hidden');
-    document.getElementById('game-container').classList.remove('hidden');
-    generateAndLoadChallenge();
-}
-
-// Complete Dynamic Question Matrix Builder Engine
-function generateAndLoadChallenge() {
-    interactionLocked = false;
-    attempts = 0;
-    document.getElementById('next-btn').classList.add('hidden');
-    document.getElementById('feedback-box').classList.add('hidden');
-    document.getElementById('q-num').innerText = currentQuestionIndex + 1;
-
-    const chosenOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
-    currentQuestionData = createOutcomeProblem(chosenOutcome);
-
-    document.getElementById("q").innerHTML = currentQuestionData.question;
-    
-    let btnContainer = document.getElementById("options");
-    btnContainer.innerHTML = "";
-    
-    currentQuestionData.choices.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.id = `opt-btn-${idx}`;
-        btn.innerText = opt;
-        btn.onclick = () => verifySubmission(opt, idx);
-        btnContainer.appendChild(btn);
-    });
-}
-
-function createOutcomeProblem(outcome) {
-    let questionText, answer;
-    const isDelta = Math.random() > 0.5;
-
-    switch (outcome) {
-        case 'large_ops':
-            if (isDelta) {
-                // Performing addition of large numbers (5-digit / 6-digit scale)
-                let num1 = Math.floor(Math.random() * 400000) + 100000;
-                let num2 = Math.floor(Math.random() * 400000) + 100000;
-                answer = num1 + num2;
-                questionText = `Solve: ${num1.toLocaleString()} + ${num2.toLocaleString()}`;
-            } else {
-                // Performing subtraction of large numbers
-                let num1 = Math.floor(Math.random() * 500000) + 400000;
-                let num2 = Math.floor(Math.random() * 300000) + 100000;
-                answer = num1 - num2;
-                questionText = `Solve: ${num1.toLocaleString()} - ${num2.toLocaleString()}`;
-            }
-            break;
-
-        case 'large_mul_div':
-            if (isDelta) {
-                // Performing multiplication of large numbers
-                let num1 = Math.floor(Math.random() * 125) + 75; // 3-digit
-                let num2 = Math.floor(Math.random() * 40) + 12;  // 2-digit
-                answer = num1 * num2;
-                questionText = `Multiply: ${num1} × ${num2}`;
-            } else {
-                // Performing division of large numbers
-                let divisor = Math.floor(Math.random() * 15) + 12; // 2-digit divisor
-                answer = Math.floor(Math.random() * 40) + 25;     // Large structured target quotient
-                let dividend = divisor * answer;
-                questionText = `Divide: ${dividend.toLocaleString()} ÷ ${divisor}`;
-            }
-            break;
-
-        case 'base_10':
-            // Performing division by 10, 100, 1000, 10000
-            const bases = [10, 100, 1000, 10000];
-            const base = bases[Math.floor(Math.random() * bases.length)];
-            let multiplier = Math.floor(Math.random() * 85) + 15;
-            let baseDividend = multiplier * base;
-            answer = multiplier;
-            questionText = `Evaluate the fast mental quotient: ${baseDividend.toLocaleString()} ÷ ${base.toLocaleString()}`;
-            break;
-
-        case 'word_problems':
-            // Contextual word problem matrices
-            const problems = [
-                {
-                    q: "A cargo vehicle transports 1,200 crates per trip. If it safely executes 15 consecutive missions, how many total boxes are distributed?",
-                    a: 1200 * 15
-                },
-                {
-                    q: "An industrial factory framework produces 45,000 components. They are packed evenly into batches of 100. How many output packages are created?",
-                    a: 45000 / 100
-                },
-                {
-                    q: "A structural reserve reservoir held 650,500 liters of hydration fluid. Engineering links drained 120,200 liters for pipeline updates. What capacity remains?",
-                    a: 650500 - 120200
-                },
-                {
-                    q: "A modern regional development grid plans to distribute 240,000 tech tokens evenly among 12 primary sectors. How many tokens does each sector recieve?",
-                    a: 240000 / 12
-                }
-            ];
-            const picked = problems[Math.floor(Math.random() * problems.length)];
-            questionText = picked.q;
-            answer = picked.a;
-            break;
-    }
-
-    // Generate accurate numerical alternate paths safely
-    const choicesSet = new Set([answer]);
-    while (choicesSet.size < 4) {
-        let variance = Math.floor(Math.random() * 40) - 20;
-        // Scale variance for massive figures dynamically
-        if (answer > 1000) variance *= 100;
-        
-        if (variance !== 0) {
-            let alternative = answer + variance;
-            if (alternative > 0) choicesSet.add(alternative);
-        }
-    }
-
-    // Map string names out cleanly for display choices formatting
-    return {
-        question: questionText,
-        correctValue: answer,
-        choices: [...choicesSet].sort(() => Math.random() - 0.5).map(val => val.toLocaleString())
-    };
-}
-
-// 5) Two-chance interactive evaluation processing layer
-function verifySubmission(selectedValue, elementIdx) {
-    if (interactionLocked) return;
-    
-    const fb = document.getElementById('feedback-box');
-    const selectedBtn = document.getElementById(`opt-btn-${elementIdx}`);
-    const targetValue = currentQuestionData.correctValue.toLocaleString();
-
-    if (selectedValue === targetValue) {
-        interactionLocked = true;
-        selectedBtn.classList.add('reveal-correct');
-        
-        try { audio.correct.play(); } catch(e){}
-        if (attempts === 0) {
-            gameScore += 30;
-            document.getElementById('score-display').innerText = gameScore;
-        }
-        
-        fb.innerHTML = `<b>🚀 Operational Mastery Verified!</b> Calculations match the target curriculum criteria perfectly.`;
-        fb.classList.remove('hidden');
-        
-        updateTrackDisplacement();
-        lockDashboardChoices();
-        document.getElementById('next-btn').classList.remove('hidden');
-    } else {
-        attempts++;
-        try { audio.wrong.play(); } catch(e){}
-        
-        const trackElement = document.getElementById('track');
-        trackElement.classList.add('shake');
-        setTimeout(() => trackElement.classList.remove('shake'), 400);
-
-        if (attempts < 2) {
-            selectedBtn.classList.add('reveal-wrong');
-            selectedBtn.disabled = true;
-            fb.innerHTML = `<b>Calculation Alert!</b> Misaligned mathematical value. 1 operational calculation check remaining.`;
-            fb.classList.remove('hidden');
-        } else {
-            interactionLocked = true;
-            selectedBtn.classList.add('reveal-wrong');
-            lockDashboardChoices();
-            
-            const buttons = document.querySelectorAll('.option-btn');
-            buttons.forEach(btn => {
-                if (btn.innerText === targetValue) {
-                    btn.classList.add('reveal-correct');
-                }
-            });
-
-            fb.innerHTML = `<b>Systems Synced!</b> The calculated outcome benchmark value is: <b>${targetValue}</b>. Processing next sector setup.`;
-            fb.classList.remove('hidden');
-            
-            updateTrackDisplacement();
-            document.getElementById('next-btn').classList.remove('hidden');
-        }
-    }
-}
-
-function lockDashboardChoices() {
-    const buttons = document.querySelectorAll('.option-btn');
-    buttons.forEach(btn => btn.disabled = true);
-}
-
-function updateTrackDisplacement() {
-    currentQuestionIndex++;
-    let targetPercent = Math.min((currentQuestionIndex / totalQuestionsLimit) * 85, 85);
-    
-    document.getElementById("car").style.left = `calc(${targetPercent}% + 15px)`;
-    document.getElementById("bar").style.width = (currentQuestionIndex / totalQuestionsLimit) * 100 + "%";
-}
-
-function loadNextQuestion() {
-    if (currentQuestionIndex < totalQuestionsLimit) {
-        generateAndLoadChallenge();
-    } else {
-        triggerFinishSummary();
-    }
-}
-
-// 4) Clean Final Celebration Panel
-function triggerFinishSummary() {
-    document.getElementById("game-container").classList.add('hidden');
-    document.getElementById("result-screen").classList.remove('hidden');
-    try { audio.claps.play(); } catch(e){}
+    playSound('claps');
     
     let reportText = `Outstanding operations run! You have verified arithmetic accuracy across large numbers, base-10 metrics, and text word problems. Performance score: ${gameScore} XP.`;
     if (gameScore === 300) {
