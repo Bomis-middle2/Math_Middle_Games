@@ -354,7 +354,7 @@ button:active {
 
 <div id="game-container" class="hidden">
     <div id="hud">
-        <span>Challenge: <span id="q-num">1</span>/10</span>
+        <span>Challenge: <span id="q-num">1</span>/<span id="q-total">14</span></span>
         <span>Stars: ⭐ <span id="score">0</span></span>
     </div>
 
@@ -412,7 +412,7 @@ button:active {
         <div class="creative-pop">🌟🏆🌟</div>
         <h2 style="color: #ff007f; margin-bottom: 15px;">Congratulations on Completion!</h2>
         <p id="result-msg" style="font-size: 1.15rem; color: #cbd5e1; margin-bottom: 25px; line-height: 1.6;"></p>
-        <button onclick="location.reload()">Restart Lab</button>
+        <button onclick="location.reload()">Restart Game</button>
     </div>
 </div>
 
@@ -423,8 +423,32 @@ const audio = {
     claps: new Audio('assets/freesound_community-claps-44774.mp3')
 };
 
-// Pure question dataset restored from case 1 without any change
+// 4 New basic questions inserted + original 10 questions preserved below
 const questions = [
+    {
+        q: "Which of the following numbers is a factor of 15?",
+        options: ["A) 2", "B) 4", "C) 5", "D) 6"],
+        ans: 2,
+        explain: "5 is a factor of 15 because 15 can be divided by 5 completely without leaving any remainder (5 * 3 = 15)."
+    },
+    {
+        q: "What is the next multiple of 6 in this sequence: 6, 12, 18, __ ?",
+        options: ["A) 20", "B) 22", "C) 24", "D) 30"],
+        ans: 2,
+        explain: "Multiples are found by multiplying the number by 1, 2, 3, 4, etc. Here, 6 * 4 = 24."
+    },
+    {
+        q: "Which number is a common factor of both 8 and 12?",
+        options: ["A) 3", "B) 4", "C) 5", "D) 8"],
+        ans: 1,
+        explain: "4 divides into both 8 (4 * 2 = 8) and 12 (4 * 3 = 12) perfectly, making it a common factor."
+    },
+    {
+        q: "Which of these numbers is a multiple of 10?",
+        options: ["A) 5", "B) 15", "C) 25", "D) 50"],
+        ans: 3,
+        explain: "Multiples of 10 always end with a 0. Since 10 * 5 = 50, 50 is a multiple of 10."
+    },
     {
         q: "A gardener wants to plant 24 saplings in equal rows. Which of these is NOT a possible arrangement for the garden layout?",
         options: ["A) 4 rows of 6", "B) 3 rows of 8", "C) 5 rows of 5", "D) 2 rows of 12"],
@@ -507,6 +531,7 @@ function shuffleArray(arr) {
 // 1) Initializing Logo screen loading tracking framework exactly 5 seconds
 window.addEventListener('DOMContentLoaded', () => {
     shuffleArray(questions);
+    document.getElementById('q-total').innerText = questions.length;
     const fill = document.getElementById('loading-fill');
     let progress = 0;
     
@@ -624,7 +649,7 @@ function showEvaluationPanel() {
     document.getElementById('result-screen').classList.remove('hidden');
     try { audio.claps.play(); } catch(e){}
     
-    let message = `Fantastic effort! You have successfully resolved all our factors and multiples challenges and completed the module!`;
+    let message = `Fantastic effort! You have successfully resolved all our factors and multiples challenges and completed the session!`;
     if (score === questions.length) {
         message = `Sensational work! You managed to solve every single number theory puzzle with absolute precision. Incredible job!`;
     }
