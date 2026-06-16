@@ -20,29 +20,26 @@ body {
     height: 100vh;
     display: flex;
     flex-direction: column;
+    padding: 15px;
 }
 
 /* 1. 5-Second Splash Loader Viewport Overlays */
 .screen {
     position: fixed;
     inset: 0;
-    background: #0f0f2d;
+    background: #ffffff;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 100;
+    z-index: 1000;
     padding: 24px;
     text-align: center;
-}
-#loader {
-    background: #ffffff;
-    color: #111111;
 }
 .logo {
     width: 220px;
     max-width: 60vw;
-    margin-bottom: 24px;
+    height: auto;
 }
 .loading-box {
     width: 240px;
@@ -50,16 +47,19 @@ body {
     background: #e0e0e0;
     border-radius: 3px;
     overflow: hidden;
-    margin-top: 15px;
+    margin-top: 20px;
 }
 .loading-fill {
     width: 0%;
     height: 100%;
     background: #ff007f;
-    transition: width 0.1s linear;
 }
 
 /* 2. Simplified Instructions Component UI Card */
+#instruction-screen {
+    background: #0f0f2d;
+    z-index: 500;
+}
 .menu-card {
     background: rgba(255, 255, 255, 0.06);
     border: 2px solid rgba(255, 255, 255, 0.15);
@@ -70,10 +70,16 @@ body {
     max-width: 500px;
     width: 100%;
     box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    text-align: center;
+}
+.menu-card h2 {
+    color: #ff007f;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
 }
 .instructions p {
     font-size: 1.1rem;
-    line-height: 1.5;
+    line-height: 1.6;
     margin-bottom: 14px;
     color: #cbd5e1;
     text-align: left;
@@ -101,38 +107,47 @@ button:active {
 }
 
 /* 3. Fully Cross-Device Adaptive Layout Components */
+.hidden { display: none !important; }
+
+#game-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
 #hud {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 16px 20px;
+    padding: 10px 5px;
     font-size: 1.15rem;
     font-weight: bold;
     color: #00ffff;
     text-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
 }
 #questionBox {
-    width: 90%;
-    max-width: 900px;
+    width: 100%;
     margin: 5px auto 15px auto;
     background: linear-gradient(145deg, rgba(255, 0, 127, 0.15), rgba(127, 0, 255, 0.08));
     border: 2px solid #ff007f;
     border-radius: 18px;
     padding: 18px;
-    font-size: 1.4rem;
+    font-size: 1.25rem;
     font-weight: bold;
+    line-height: 1.5;
+    text-align: center;
     box-shadow: inset 0 0 15px rgba(255, 0, 127, 0.1);
 }
 #gameArea {
     position: relative;
-    width: 90%;
-    max-width: 900px;
+    width: 100%;
     flex: 1;
-    min-height: 320px;
-    max-height: 460px;
+    min-height: 280px;
+    max-height: 420px;
     margin: 0 auto;
     border-radius: 24px;
     border: 3px solid rgba(255, 255, 255, 0.2);
@@ -147,31 +162,38 @@ button:active {
     justify-content: space-around;
     align-items: center;
     width: 100%;
-    padding: 0 20px;
+    padding: 0 10px;
     gap: 15px;
-    flex-wrap: nowrap;
 }
 
 /* Creative Chest Components Scaling across viewports */
+.chest-wrapper {
+    width: 30%;
+    max-width: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
 .chest {
     position: relative;
     width: 100%;
-    max-width: 190px;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1.2 / 1;
     cursor: pointer;
     transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-.chest:hover {
+.chest:hover:not(.disabled) {
     transform: scale(1.05);
 }
 .chestTop {
     width: 100%;
-    height: 40%;
+    height: 45%;
     background: #7b3f00;
     border: 3px solid #3b1d00;
     border-radius: 14px 14px 4px 4px;
     position: absolute;
     top: 0;
+    z-index: 3;
     transition: transform 0.3s ease;
 }
 .chestBody {
@@ -182,30 +204,37 @@ button:active {
     border-radius: 0 0 14px 14px;
     position: absolute;
     bottom: 0;
+    z-index: 1;
+    transition: background 0.3s, border-color 0.3s;
 }
 .lock {
     width: 16%;
     height: 25%;
     background: gold;
-    border: 2.5px solid #5c4200;
+    border: 2px solid #5c4200;
     position: absolute;
     left: 42%;
-    top: 32%;
+    top: 35%;
     border-radius: 4px;
-    z-index: 2;
+    z-index: 4;
+    transition: opacity 0.2s;
 }
 .answerText {
-    position: absolute;
-    width: 100%;
-    bottom: -35px;
-    font-size: 1.25rem;
+    margin-top: 15px;
+    font-size: 1.2rem;
     font-weight: 800;
     color: #ffffff;
     text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    text-align: center;
 }
+
+/* Open states */
 .open .chestTop {
-    transform: rotate(-30deg) translateY(-10px);
+    transform: rotate(-35deg) translateY(-12px);
     transform-origin: left bottom;
+}
+.open .lock {
+    opacity: 0;
 }
 
 /* 5. 2-Chance System Border/Color Assists Templates */
@@ -217,20 +246,299 @@ button:active {
     background: #059669 !important;
     border-color: #047857 !important;
 }
+.cell-reveal-wrong .chestBody {
+    background: #ef4444 !important;
+    border-color: #991b1b !important;
+}
+.cell-reveal-wrong .chestTop {
+    background: #dc2626 !important;
+    border-color: #991b1b !important;
+}
+.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
 .coinBurst {
     position: absolute;
-    font-size: 2rem;
+    font-size: 2.5rem;
     pointer-events: none;
     z-index: 10;
     animation: burst 0.8s ease-out forwards;
 }
 @keyframes burst {
     0% { transform: translateY(0) scale(0.3); opacity: 1; }
-    100% { transform: translateY(-100px) scale(1.4); opacity: 0; }
+    100% { transform: translateY(-120px) scale(1.5); opacity: 0; }
 }
 .shake {
     animation: shake 0.4s ease-in-out;
 }
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-8px); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+
+.action-row {
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+/* End Game Creative Layout Screen */
+.creative-pop {
+    font-size: 5rem;
+    animation: popScale 1.5s infinite alternate ease-in-out;
+    margin-bottom: 20px;
+}
+@keyframes popScale {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.15); }
+}
+
+@media(max-width: 600px) {
+    #questionBox { font-size: 1.1rem; padding: 12px; }
+    .answerText { font-size: 1rem; margin-top: 8px; }
+    button { padding: 12px 30px; font-size: 1rem; }
+    .creative-pop { font-size: 4rem; }
+}
+</style>
+</head>
+<body>
+
+<div id="loader" class="screen">
+    <img src="assets/logo.png" alt="Logo" class="logo">
+    <div class="loading-box">
+        <div id="loading-fill" class="loading-fill"></div>
+    </div>
+</div>
+
+<div id="instruction-screen" class="screen hidden">
+    <div class="menu-card">
+        <h2>Instructions</h2>
+        <div class="instructions">
+            <p>• Evaluate each problem displayed inside the challenge block carefully.</p>
+            <p>• Select the treasure chest containing the correct balancing solution.</p>
+            <p>• You have exactly 2 chances per challenge to find the true payload path.</p>
+        </div>
+        <button onclick="startGame()">Start Search</button>
+    </div>
+</div>
+
+<div id="game-container" class="hidden">
+    <div id="hud">
+        <span>Challenge: <span id="q-num">1</span>/10</span>
+        <span>Stars: ⭐ <span id="score">0</span></span>
+    </div>
+
+    <div id="questionBox"></div>
+
+    <div id="gameArea">
+        <div id="chests">
+            <div class="chest-wrapper" id="wrap-0">
+                <div class="chest" id="chest-0" onclick="handleSelection(0)">
+                    <div class="chestTop"></div>
+                    <div class="lock"></div>
+                    <div class="chestBody"></div>
+                </div>
+                <div class="answerText" id="text-0"></div>
+            </div>
+
+            <div class="chest-wrapper" id="wrap-1">
+                <div class="chest" id="chest-1" onclick="handleSelection(1)">
+                    <div class="chestTop"></div>
+                    <div class="lock"></div>
+                    <div class="chestBody"></div>
+                </div>
+                <div class="answerText" id="text-1"></div>
+            </div>
+
+            <div class="chest-wrapper" id="wrap-2">
+                <div class="chest" id="chest-2" onclick="handleSelection(2)">
+                    <div class="chestTop"></div>
+                    <div class="lock"></div>
+                    <div class="chestBody"></div>
+                </div>
+                <div class="answerText" id="text-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="action-row">
+        <button id="next-btn" class="hidden" onclick="loadNextQuestion()">Next Challenge ➡️</button>
+    </div>
+</div>
+
+<div id="result-screen" class="screen hidden">
+    <div class="menu-card">
+        <div class="creative-pop">👑🪙👑</div>
+        <h2 style="color: #00ffff; text-shadow: 0 0 10px rgba(0,255,255,0.4);">Search Complete!</h2>
+        <p id="result-msg" style="font-size: 1.15rem; color: #cbd5e1; margin-bottom: 20px; line-height: 1.6;"></p>
+        <button onclick="location.reload()">Restart Hunt</button>
+    </div>
+</div>
+
+<script>
+const audio = {
+    correct: new Audio('assets/correct.mp3'),
+    wrong: new Audio('assets/wrong.mp3'),
+    claps: new Audio('assets/freesound_community-claps-44774.mp3')
+};
+
+// 10 Balanced grade-school structural challenges
+const questions = [
+    { q: "Find the missing structural boundary factor: 14, 28, 42, ?, 70", options: ["56", "54", "62"], ans: 0 },
+    { q: "Identify the highest factor tier shared symmetrically between 16 and 24:", options: ["4", "8", "6"], ans: 1 },
+    { q: "What value completes this equation: 12 * 5 = 15 * ?", options: ["3", "4", "6"], ans: 1 },
+    { q: "Compute the missing multiple payload sequence: 9, 18, 27, ?, 45", options: ["36", "33", "34"], ans: 0 },
+    { q: "Which of the following values acts as a Prime number distribution?", options: ["21", "27", "29"], ans: 2 },
+    { q: "Find the remainder factor when 145 is divided by 12:", options: ["1", "5", "3"], ans: 0 },
+    { q: "Solve for the missing system array variable: 15 * 6 = 9 * ?", options: ["10", "12", "8"], ans: 0 },
+    { q: "What is the lowest common synchronicity metric (LCM) of 6 and 8?", options: ["16", "24", "48"], ans: 1 },
+    { q: "Which numerical value handles an exact common division across 15, 30, and 45?", options: ["15", "10", "6"], ans: 0 },
+    { q: "If a node splits 48 into a factor tree branch of 6, what is its companion link?", options: ["7", "8", "9"], ans: 1 }
+];
+
+let currentIdx = 0;
+let score = 0;
+let attempts = 0;
+let interactionLocked = false;
+
+// Dynamic array randomizer engine
+function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+
+// 1. Splash execution timer framework tracking 5 seconds loading exactly
+window.addEventListener('DOMContentLoaded', () => {
+    shuffleArray(questions);
+    const fill = document.getElementById('loading-fill');
+    let progress = 0;
+    
+    const interval = setInterval(() => {
+        progress += 2;
+        fill.style.width = progress + '%';
+        if (progress >= 100) {
+            clearInterval(interval);
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('instruction-screen').classList.remove('hidden');
+        }
+    }, 90); // Maps to approximately 4.5 - 5 seconds visual track loading
+});
+
+function startGame() {
+    document.getElementById('instruction-screen').classList.add('hidden');
+    document.getElementById('game-container').classList.remove('hidden');
+    loadQuestion();
+}
+
+function loadQuestion() {
+    interactionLocked = false;
+    attempts = 0;
+    document.getElementById('next-btn').classList.add('hidden');
+    document.getElementById('q-num').innerText = currentIdx + 1;
+    
+    const data = questions[currentIdx];
+    document.getElementById('questionBox').innerText = data.q;
+
+    for (let i = 0; i < 3; i++) {
+        const chest = document.getElementById(`chest-${i}`);
+        const wrapper = document.getElementById(`wrap-${i}`);
+        const text = document.getElementById(`text-${i}`);
+        
+        // Reset system flags and styles
+        chest.className = "chest";
+        wrapper.className = "chest-wrapper";
+        text.innerText = data.options[i];
+    }
+}
+
+// 5. Dual-Chance interface action tracking logic
+function handleSelection(selectedIdx) {
+    if (interactionLocked) return;
+    
+    const data = questions[currentIdx];
+    const targetChest = document.getElementById(`chest-${selectedIdx}`);
+    const targetWrapper = document.getElementById(`wrap-${selectedIdx}`);
+
+    if (selectedIdx === data.ans) {
+        // Correct Action Path execution
+        interactionLocked = true;
+        targetChest.classList.add('open', 'cell-reveal-correct');
+        triggerCoinEffect(targetWrapper);
+        
+        try { audio.correct.play(); } catch(e){}
+        if (attempts === 0) score++;
+        document.getElementById('score').innerText = score;
+        
+        disableAllChests();
+        document.getElementById('next-btn').classList.remove('hidden');
+    } else {
+        // Wrong Action Path Execution
+        attempts++;
+        try { audio.wrong.play(); } catch(e){}
+        
+        targetWrapper.classList.add('shake');
+        setTimeout(() => targetWrapper.classList.remove('shake'), 400);
+
+        if (attempts < 2) {
+            // Give 2nd chance
+            targetChest.classList.add('disabled', 'cell-reveal-wrong');
+        } else {
+            // Out of multi-chances, reveal right path immediately
+            interactionLocked = true;
+            targetChest.classList.add('disabled', 'cell-reveal-wrong');
+            disableAllChests();
+            
+            // Highlight actual valid system entity
+            document.getElementById(`chest-${data.ans}`).classList.add('open', 'cell-reveal-correct');
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+    }
+}
+
+function disableAllChests() {
+    for (let i = 0; i < 3; i++) {
+        document.getElementById(`chest-${i}`).classList.add('disabled');
+    }
+}
+
+function triggerCoinEffect(parent) {
+    const burst = document.createElement('div');
+    burst.className = 'coinBurst';
+    burst.innerText = '🪙✨';
+    parent.appendChild(burst);
+    setTimeout(() => burst.remove(), 800);
+}
+
+function loadNextQuestion() {
+    currentIdx++;
+    if (currentIdx < questions.length) {
+        loadQuestion();
+    } else {
+        showEvaluationPanel();
+    }
+}
+
+// 4. Creative conclusion screen missing metrics like grades, topics or chapters
+function showEvaluationPanel() {
+    document.getElementById('game-container').classList.add('hidden');
+    document.getElementById('result-screen').classList.remove('hidden');
+    try { audio.claps.play(); } catch(e){}
+    
+    let message = `Incredible discovery expedition! You navigated through the structural calculations flawlessly, securing a wealth of stars along the map track!`;
+    if (score === questions.length) {
+        message = `Flawless Victory! Every single calculation lock fell into place perfectly, uncovering the absolute maximum treasure allocation payload!`;
+    }
+    
+    document.getElementById('result-msg').innerText = message;
+}
+</script>
+
+</body>
+</html>
