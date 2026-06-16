@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovine Challenge</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #090d16, #111827);
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f3f4f6;
+            --accent-blue: #38bdf8;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 15px;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 550px;
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 35px 25px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* 1) Intro Screen */
+        #logo-screen {
+            background: #000;
+            border: none;
+            box-shadow: none;
+        }
+        .logo-text {
+            font-size: 3.2rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            background: linear-gradient(45deg, #0ea5e9, #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 2.5s infinite ease-in-out;
+        }
+
+        /* 2) Instructions Screen */
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--accent-blue);
+        }
+        p {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: #9ca3af;
+        }
+
+        /* UI Play Buttons */
+        .btn-action {
+            background: linear-gradient(135deg, #38bdf8, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            max-width: 220px;
+        }
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(56, 189, 248, 0.3);
+        }
+
+        /* 3 & 5) Responsive Grid Engine */
+        .game-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #9ca3af;
+            font-weight: 600;
+        }
+        
+        .target-banner {
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 15px;
+            border-radius: 14px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #e0f2fe;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 0 auto 20px auto;
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            max-width: 380px;
+        }
+
+        .grid-cell {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        /* Active Player avatar */
+        .player-token {
+            width: 32px;
+            height: 32px;
+            background: #f97316;
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 0 15px #f97316;
+            z-index: 2;
+            transition: all 0.15s ease-in-out;
+        }
+
+        .grid-cell.wrong-hit {
+            background: rgba(239, 68, 68, 0.2) !important;
+            border-color: var(--accent-red) !important;
+            color: #fca5a5;
+        }
+
+        .grid-cell.correct-hit {
+            background: rgba(34, 197, 94, 0.25) !important;
+            border-color: var(--accent-green) !important;
+            color: #86efac;
+        }
+
+        #game-msg {
+            font-weight: 600;
+            min-height: 24px;
+            margin-bottom: 15px;
+        }
+
+        /* 4) End Screen Visuals */
+        .trophy {
+            font-size: 5.5rem;
+            margin-bottom: 15px;
+            animation: floatY 3s ease-in-out infinite;
+        }
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            top: -10px;
+            border-radius: 50%;
+            animation: fall linear forwards;
+            pointer-events: none;
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
+        @keyframes pulse { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
+        @keyframes floatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+        @keyframes fall { to { transform: translateY(105vh) rotate(360deg); } }
+
+        @media (max-width: 480px) {
+            .screen { padding: 25px 15px; }
+            .logo-text { font-size: 2.3rem; }
+            .grid-cell { font-size: 1.1rem; }
+            .target-banner { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1) LOGO INTRO SCREEN (5 SECONDS) -->
+    <div id="logo-screen" class="screen active">
+        <div class="logo-text">INNOVINE</div>
+    </div>
+
+    <!-- 2) SIMPLE INSTRUCTIONS -->
+    <div id="instruction-screen" class="screen">
+        <h2>Instructions</h2>
+        <p>Move your orange character token across the board to step on the right target cell. Tap adjacent boxes or use your Keyboard Arrow Keys. You have exactly 2 attempts per round.</p>
+        <button class="btn-action" onclick="startGame()">Start Game</button>
+    </div>
+
+    <!-- 3 & 5) PLAYABLE INTERACTIVE GRAPHICS ENGINE -->
+    <div id="game-screen" class="screen">
+        <div class="game-meta">
+            <span id="level-indicator">Round 1/4</span>
+            <span id="chances-indicator">❤️ ❤️</span>
+        </div>
+        <div class="target-banner" id="target-text">Loading challenge...</div>
+        
+        <div class="grid-container" id="board">
+            <div class="player-token" id="player"></div>
+            <!-- 9 Interactive Map Cells Generated Here -->
+            <div class="grid-cell" data-idx="0" onclick="cellClicked(0)"></div>
+            <div class="grid-cell" data-idx="1" onclick="cellClicked(1)"></div>
+            <div class="grid-cell" data-idx="2" onclick="cellClicked(2)"></div>
+            <div class="grid-cell" data-idx="3" onclick="cellClicked(3)"></div>
+            <div class="grid-cell" data-idx="4" onclick="cellClicked(4)"></div>
+            <div class="grid-cell" data-idx="5" onclick="cellClicked(5)"></div>
+            <div class="grid-cell" data-idx="6" onclick="cellClicked(6)"></div>
+            <div class="grid-cell" data-idx="7" onclick="cellClicked(7)"></div>
+            <div class="grid-cell" data-idx="8" onclick="cellClicked(8)"></div>
+        </div>
+
+        <div id="game-msg"></div>
+        <button class="btn-action" id="continue-btn" style="display:none;" onclick="loadRound()">Continue</button>
+    </div>
+
+    <!-- 4) CREATIVE CONGRATULATIONS PAGE -->
+    <div id="end-screen" class="screen">
+        <div class="trophy">🏆</div>
+        <h2>Outstanding Victory!</h2>
+        <p>Incredible maneuvers! You beat the board matrix, completed all rounds safely, and proved your skills.</p>
+        <button class="btn-action" onclick="resetToMenu()">Play Again</button>
+    </div>
+
+    <script>
+        // Game level configuration mapping parameters
+        const levels = [
+            { target: "Step on a number smaller than 0.4", values: ["0.72", "0.5", "0.85", "1.2", "0.15", "0.41", "0.9", "0.63", "2.0"], winIdx: 4 },
+            { target: "Step on the number with 7 in the Hundredths place", values: ["7.21", "0.7", "1.472", "0.007", "70.3", "5.17", "0.707", "17.3", "0.12"], winIdx: 5 },
+            { target: "Step on the value matching the calculation: 2.1 + 1.45", values: ["3.45", "2.55", "3.55", "2.145", "3.6", "4.0", "3.05", "1.66", "3.5"], winIdx: 2 },
+            { target: "Step on the equivalent decimal form of 9/100", values: ["0.9", "0.009", "9.0", "0.90", "0.09", "90.0", "0.109", "0.01", "0.99"], winIdx: 4 }
+        ];
+
+        let currentRound = 0;
+        let playerPos = 4; // Start right in the center cell
+        let chances = 2;
+        let isRoundActive = false;
+
+        // Auto transition from Logo Screen to Instructions after exactly 5 seconds
+        setTimeout(() => {
+            switchScreen('logo-screen', 'instruction-screen');
+        }, 5000);
+
+        function switchScreen(hideId, showId) {
+            document.getElementById(hideId).classList.remove('active');
+            document.getElementById(showId).classList.add('active');
+        }
+
+        function startGame() {
+            currentRound = 0;
+            switchScreen('instruction-screen', 'game-screen');
+            loadRound();
+            setupKeyboardControls();
+        }
+
+        function loadRound() {
+            chances = 2;
+            playerPos = 4; // Reset character position to middle grid cell
+            isRoundActive = true;
+            
+            document.getElementById('level-indicator').innerText = `Round ${currentRound + 1}/${levels.length}`;
+            document.getElementById('chances-indicator').innerText = "❤️ ❤️";
+            document.getElementById('target-text').innerText = levels[currentRound].target;
+            document.getElementById('game-msg').innerText = "Use arrows or tap adjacent tiles to move!";
+            document.getElementById('game-msg').style.color = "var(--text-main)";
+            document.getElementById('continue-btn').style.display = "none";
+
+            // Draw/Render numbers to the cells
+            const cells = document.querySelectorAll('.grid-cell');
+            cells.forEach((cell, i) => {
+                cell.className = "grid-cell";
+                cell.innerText = levels[currentRound].values[i];
+            });
+
+            movePlayerVisual();
+        }
+
+        function movePlayerVisual() {
+            const targetCell = document.querySelector(`[data-idx="${playerPos}"]`);
+            const playerToken = document.getElementById('player');
+            
+            // Append player visually inside the active container cell
+            targetCell.appendChild(playerToken);
+        }
+
+        // Handle physical click/taps
+        function cellClicked(clickedIdx) {
+            if (!isRoundActive) return;
+            
+            // Movement Logic restriction: Only allow stepping onto neighboring cards (Up, down, left, right)
+            const allowedMoves = getValidMoves(playerPos);
+            if (allowedMoves.includes(clickedIdx)) {
+                playerPos = clickedIdx;
+                movePlayerVisual();
+                checkLogicLanding();
+            } else {
+                document.getElementById('game-msg').innerText = "You can only hop to an adjacent grid box!";
+                document.getElementById('game-msg').style.color = "var(--accent-blue)";
+            }
+        }
+
+        function getValidMoves(pos) {
+            const moves = [];
+            if (pos % 3 > 0) moves.push(pos - 1); // Left
+            if (pos % 3 < 2) moves.push(pos + 1); // Right
+            if (pos - 3 >= 0) moves.push(pos - 3); // Up
+            if (pos + 3 < 9) moves.push(pos + 3);  // Down
+            return moves;
+        }
+
+        function checkLogicLanding() {
+            const lvl = levels[currentRound];
+            const currentCell = document.querySelector(`[data-idx="${playerPos}"]`);
+
+            if (playerPos === lvl.winIdx) {
+                // Correct match landed
+                currentCell.classList.add('correct-hit');
+                document.getElementById('game-msg').innerText = "Perfect Match found! Proceed onward.";
+                document.getElementById('game-msg').style.color = "var(--accent-green)";
+                endRoundActions();
+            } else {
+                // Wrong step logic triggered
+                chances--;
+                currentCell.classList.add('wrong-hit');
+                
+                if (chances === 1) {
+                    document.getElementById('chances-indicator').innerText = "❤️ 🖤";
+                    document.getElementById('game-msg').innerText = "Ouch, hazardous field! 1 Chance Left.";
+                    document.getElementById('game-msg').style.color = "var(--accent-blue)";
+                } else {
+                    // Maximum 2 structural chances hit rule execution
+                    document.getElementById('chances-indicator').innerText = "🖤 🖤";
+                    document.getElementById('game-msg').innerText = "Round over! The destination was revealed.";
+                    document.getElementById('game-msg').style.color = "var(--accent-red)";
+                    
+                    // Force display target solution
+                    document.querySelector(`[data-idx="${lvl.winIdx}"]`).classList.add('correct-hit');
+                    endRoundActions();
+                }
+            }
+        }
+
+        function endRoundActions() {
+            isRoundActive = false;
+            document.getElementById('continue-btn').style.display = "inline-block";
+            if (currentRound === levels.length - 1) {
+                document.getElementById('continue-btn').innerText = "Finish Challenge";
+            } else {
+                document.getElementById('continue-btn').innerText = "Next Matrix";
+            }
+        }
+
+        function nextQuestion() { // Triggered by clicking the actions continue button
+            if (currentRound < levels.length - 1) {
+                currentRound++;
+                loadRound();
+            } else {
+                switchScreen('game-screen', 'end-screen');
+                triggerCelebration();
+            }
+        }
+        
+        // Re-route click interface mapping to fix internal function invocation
+        document.getElementById('continue-btn').onclick = function() {
+            if (currentRound < levels.length - 1) {
+                currentRound++;
+                loadRound();
+            } else {
+                switchScreen('game-screen', 'end-screen');
+                triggerCelebration();
+            }
+        };
+
+        // Desktop/Laptop native keyboard matrix navigation handling
+        function setupKeyboardControls() {
+            window.addEventListener('keydown', (e) => {
+                if (!isRoundActive) return;
+                let targetPos = playerPos;
+
+                if (e.key === "ArrowLeft" || e.key === "a") if (playerPos % 3 > 0) targetPos = playerPos - 1;
+                if (e.key === "ArrowRight" || e.key === "d") if (playerPos % 3 < 2) targetPos = playerPos + 1;
+                if (e.key === "ArrowUp" || e.key === "w") if (playerPos - 3 >= 0) targetPos = playerPos - 3;
+                if (e.key === "ArrowDown" || e.key === "s") if (playerPos + 3 < 9) targetPos = playerPos + 3;
+
+                if (targetPos !== playerPos) {
+                    // Check if target has already been flagged as wrong to avoid getting trapped
+                    const targetCell = document.querySelector(`[data-idx="${targetPos}"]`);
+                    if(!targetCell.classList.contains('wrong-hit')) {
+                        playerPos = targetPos;
+                        movePlayerVisual();
+                        checkLogicLanding();
+                    }
+                }
+            });
+        }
+
+        function resetToMenu() {
+            switchScreen('end-screen', 'instruction-screen');
+        }
+
+        // Celebration screen fx
+        function triggerCelebration() {
+            for (let i = 0; i < 90; i++) {
+                const conf = document.createElement('div');
+                conf.classList.add('confetti');
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.animationDelay = Math.random() * 1.5 + 's';
+                conf.style.animationDuration = (Math.random() * 2.5 + 2) + 's';
+                conf.style.background = `hsl(${Math.random() * 360}, 85%, 55%)`;
+                document.body.appendChild(conf);
+                setTimeout(() => conf.remove(), 4500);
+            }
+        }
+    </script>
+</body>
+</html>
