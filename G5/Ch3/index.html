@@ -1,472 +1,597 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Factors & Multiples Racing Game</title>
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
-
-body{
-    font-family:Arial;
-    text-align:center;
-    background:linear-gradient(#87CEEB,#ffffff);
-    overflow:hidden;
-    margin:0;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0f172a; 
+    color: #f8fafc;
+    overflow-x: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-/* LOADER */
-#loader{
-    position:fixed;
-    inset:0;
-    background:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
+/* 1. 5-Second Splash Loader Viewport Overlays */
+.screen {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 24px;
+    text-align: center;
+}
+.logo {
+    width: 220px;
+    max-width: 60vw;
+    margin-bottom: 24px;
+}
+.loading-box {
+    width: 240px;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+.loading-fill {
+    width: 0%;
+    height: 100%;
+    background: #38bdf8;
 }
 
-#loader img{
-    width:min(220px,60vw);
+/* 2. Simplified Instructions Component UI Card */
+#instruction-screen {
+    background: #0f172a;
+    z-index: 500;
+}
+.menu-card {
+    background: rgba(30, 41, 59, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 40px 30px;
+    border-radius: 24px;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+.menu-card h2 {
+    color: #38bdf8;
+    margin-bottom: 24px;
+    font-size: 2rem;
+    letter-spacing: -0.5px;
+}
+.instructions p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    color: #cbd5e1;
+    text-align: left;
+}
+button {
+    border: 0;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #38bdf8, #2563eb);
+    color: white;
+    font-size: 1.15rem;
+    font-weight: bold;
+    padding: 14px 36px;
+    cursor: pointer;
+    box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 30px -5px rgba(56, 189, 248, 0.4);
+}
+button:active:not(:disabled) {
+    transform: translateY(0);
+}
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
-/* TITLE */
-h2{
-    margin:12px 0;
-    font-size:clamp(24px,4vw,36px);
+/* 3. Fully Cross-Device Adaptive Layout Components */
+.hidden { display: none !important; }
+
+#game-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 16px;
 }
 
-/* TRACK */
-#track{
-    width:min(1100px,92vw);
-    height:min(120px,18vh);
-    margin:20px auto;
-    background:#444;
-    border-radius:10px;
-    position:relative;
-    overflow:hidden;
+#hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #38bdf8;
 }
 
-/* ROAD LINE */
-#line{
-    position:absolute;
-    top:55px;
-    width:100%;
-    height:10px;
-    background:
-    repeating-linear-gradient(
+/* Track Area CSS styling */
+#track {
+    width: 100%;
+    height: 130px;
+    margin: 15px 0;
+    background: #1e293b;
+    border: 4px solid #334155;
+    border-radius: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 4px 20px rgba(0,0,0,0.6);
+}
+#line {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 6px;
+    background: repeating-linear-gradient(
         to right,
-        white 0 40px,
-        transparent 40px 80px
+        #ffffff 0px,
+        #ffffff 30px,
+        transparent 30px,
+        transparent 60px
     );
+    opacity: 0.4;
 }
-
-/* CAR */
-#car{
-    width:80px;
-    height:40px;
-    background:red;
-    position:absolute;
-    top:40px;
-    left:0;
-    border-radius:10px;
-}
-
-#car:before,
-#car:after{
-    content:"";
-    width:20px;
-    height:20px;
-    background:black;
-    border-radius:50%;
-    position:absolute;
-    bottom:-10px;
-}
-
-#car:before{
-    left:10px;
-}
-
-#car:after{
-    right:10px;
-}
-
-/* FINISH */
-#finish{
-    position:absolute;
-    right:10px;
-    width:8px;
-    height:100%;
-    background:
-    repeating-linear-gradient(
-        white 0 15px,
-        black 15px 30px
+#finish {
+    position: absolute;
+    right: 20px;
+    width: 16px;
+    height: 100%;
+    background: repeating-linear-gradient(
+        to bottom,
+        #ffffff 0px,
+        #ffffff 10px,
+        #000000 10px,
+        #000000 20px
     );
+    border-left: 2px solid #64748b;
+    border-right: 2px solid #64748b;
 }
 
-/* QUESTION BOX */
-#box{
-    background:white;
-    padding:20px;
-    width:min(900px,92vw);
-    margin:auto;
-    border-radius:15px;
-    box-shadow:0 0 10px gray;
+/* Car Styling */
+#car {
+    width: 70px;
+    height: 36px;
+    background: linear-gradient(90deg, #ef4444, #b91c1c);
+    position: absolute;
+    top: calc(50% - 18px);
+    left: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+    transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+#car::before, #car::after {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 8px;
+    background: #0f172a;
+    border-radius: 2px;
+}
+#car::before { top: -4px; left: 10px; box-shadow: 0 0 0 2px #334155; }
+#car::after { bottom: -4px; left: 10px; box-shadow: 0 0 0 2px #334155; }
+
+.cockpit {
+    position: absolute;
+    right: 12px;
+    top: 6px;
+    width: 24px;
+    height: 24px;
+    background: #38bdf8;
+    border-radius: 4px;
+    opacity: 0.8;
 }
 
-/* BUTTONS */
-button{
-    padding:12px 18px;
-    margin:8px;
-    font-size:clamp(16px,2vw,22px);
-    cursor:pointer;
-    border:none;
-    border-radius:10px;
-    background:#0077ff;
-    color:white;
-    font-weight:bold;
-    min-width:90px;
-    min-height:55px;
+/* Dashboard Component Styles */
+#questionBox {
+    background: #1e293b;
+    border: 2px solid #334155;
+    border-radius: 20px;
+    padding: 24px;
+    margin: 10px 0;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+#q {
+    font-size: 1.35rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #f1f5f9;
+    margin-bottom: 24px;
+}
+#options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+.option-btn {
+    background: #334155;
+    color: #f1f5f9;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    padding: 16px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.1s;
+}
+.option-btn:hover:not(:disabled) {
+    background: #475569;
 }
 
-button:hover{
-    background:#0055cc;
+/* 5. 2-Chance Correction Status Indicators */
+.reveal-correct {
+    background: #10b981 !important;
+    border-color: #34d399 !important;
+    color: #ffffff !important;
+}
+.reveal-wrong {
+    background: #ef4444 !important;
+    border-color: #f87171 !important;
+    color: #ffffff !important;
 }
 
-/* PROGRESS */
-#progress{
-    width:min(900px,85vw);
-    height:24px;
-    background:#ddd;
-    margin:20px auto;
-    border-radius:10px;
-    overflow:hidden;
+#feedback-box {
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 12px;
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid #38bdf8;
+    color: #cbd5e1;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    text-align: left;
 }
 
-#bar{
-    height:100%;
-    width:0%;
-    background:green;
-    border-radius:10px;
-    transition:0.5s;
+.shake {
+    animation: trackShake 0.4s ease-in-out;
+}
+@keyframes trackShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
 }
 
-/* TEXT */
-#msg{
-    font-size:clamp(20px,3vw,30px);
-    font-weight:bold;
+.action-row {
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
 }
 
-#levelDisplay{
-    font-size:clamp(18px,3vw,28px);
-    font-weight:bold;
-    color:#cc0000;
+/* Horizontal Tracker element layout */
+#progress {
+    width: 100%;
+    height: 8px;
+    background: #334155;
+    border-radius: 9999px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+#bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #38bdf8, #2563eb);
+    border-radius: 9999px;
+    transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-#q{
-    font-size:clamp(20px,3vw,30px);
+/* 4. Creative Conclusion Layout Overlays */
+#result-screen {
+    background: #0f172a;
+    z-index: 600;
+}
+.creative-pop {
+    font-size: 4.5rem;
+    animation: bouncePop 1.5s infinite alternate cubic-bezier(0.45, 0, 0.55, 1);
+    margin-bottom: 20px;
+}
+@keyframes bouncePop {
+    0% { transform: translateY(0) scale(1); }
+    100% { transform: translateY(-10px) scale(1.08); }
 }
 
-/* WIN SCREEN */
-#endScreen{
-    position:fixed;
-    inset:0;
-    background:linear-gradient(#eaf9ff,#ffffff);
-    display:none;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    z-index:999;
-    text-align:center;
+@media (max-width: 640px) {
+    #options { grid-template-columns: 1fr; gap: 12px; }
+    #track { height: 100px; }
+    #car { width: 56px; height: 30px; top: calc(50% - 15px); }
+    .cockpit { width: 18px; height: 18px; top: 6px; right: 8px; }
+    #q { font-size: 1.15rem; }
+    .menu-card { padding: 30px 20px; }
 }
-
-#endScreen h1{
-    font-size:clamp(36px,6vw,64px);
-    color:#008000;
-}
-
-#endScreen p{
-    font-size:clamp(22px,3vw,34px);
-    font-weight:bold;
-}
-
 </style>
 </head>
-
 <body>
 
-<!-- LOADING SCREEN -->
-<div id="loader">
-    <img src="assets/logo.png">
+<div id="loader" class="screen">
+    <img src="assets/logo.png" alt="Logo" class="logo">
+    <div class="loading-box">
+        <div id="loading-fill" class="loading-fill"></div>
+    </div>
 </div>
 
-<h2>🚗 Factors & Multiples Racing Game</h2>
-
-<!-- TRACK -->
-<div id="track">
-
-    <div id="line"></div>
-
-    <div id="car"></div>
-
-    <div id="finish"></div>
-
+<div id="instruction-screen" class="screen hidden">
+    <div class="menu-card">
+        <h2>Racing Instructions</h2>
+        <div class="instructions">
+            <p>• Evaluate each arithmetic relationship query displayed inside the main deck dashboard node.</p>
+            <p>• You have exactly 2 chances per prompt node challenge to isolate the correct target choice paths.</p>
+            <p>• Missing a second attempt auto-locks selection arrays, displays answers, and prompts navigation steps.</p>
+        </div>
+        <button onclick="startGame()">Start Race</button>
+    </div>
 </div>
 
-<!-- PROGRESS -->
-<div id="progress">
-    <div id="bar"></div>
+<div id="game-container" class="hidden">
+    <div id="hud">
+        <span>Track Progress: <span id="q-num">1</span>/15</span>
+        <span>Velocity Milestone: <span id="score-display">0</span> KM/H</span>
+    </div>
+
+    <div id="progress">
+        <div id="bar"></div>
+    </div>
+
+    <div id="track">
+        <div id="line"></div>
+        <div id="finish"></div>
+        <div id="car"><div class="cockpit"></div></div>
+    </div>
+
+    <div id="questionBox">
+        <h3 id="q"></h3>
+        <div id="options"></div>
+        <div id="feedback-box" class="hidden"></div>
+    </div>
+
+    <div class="action-row">
+        <button id="next-btn" class="hidden" onclick="loadNextQuestion()">Next Sprint ➡️</button>
+    </div>
 </div>
 
-<!-- QUESTION BOX -->
-<div id="box">
-
-    <h3 id="q"></h3>
-
-    <div id="options"></div>
-
-    <p id="msg"></p>
-
-    <p id="levelDisplay"></p>
-
-</div>
-
-<!-- WIN SCREEN -->
-<div id="endScreen">
-
-    <h1>🏆 You Won the Race!</h1>
-
-    <p>Great job completing all levels.</p>
-
-    <button onclick="location.reload()">
-        Play Again
-    </button>
-
+<div id="result-screen" class="screen hidden">
+    <div class="menu-card" style="text-align: center;">
+        <div class="creative-pop">🏁🏆🌟</div>
+        <h2 style="color: #38bdf8; margin-bottom: 16px;">Finish Line Crossed!</h2>
+        <p id="result-msg" style="font-size: 1.15rem; color: #cbd5e1; margin-bottom: 30px; line-height: 1.6;"></p>
+        <button onclick="location.reload()">Restart Race</button>
+    </div>
 </div>
 
 <script>
-
-/* ================= QUESTION BANK ================= */
-
-let allQuestions = [
-
-{type:"factor", q:"Which is a factor of 24?", options:[5,6,7,11], ans:6},
-
-{type:"factor", q:"Which is a factor of 36?", options:[8,9,10,11], ans:9},
-
-{type:"factor", q:"Which is a factor of 45?", options:[4,6,9,8], ans:9},
-
-{type:"multiple", q:"Which is a multiple of 7?", options:[45,49,50,52], ans:49},
-
-{type:"multiple", q:"Which is a multiple of 9?", options:[63,62,61,65], ans:63},
-
-{type:"multiple", q:"Which is a multiple of 12?", options:[130,132,134,136], ans:132},
-
-{type:"hcf", q:"What is the HCF of 12 and 18?", options:[2,3,6,9], ans:6},
-
-{type:"hcf", q:"What is the HCF of 20 and 30?", options:[5,10,15,20], ans:10},
-
-{type:"hcf", q:"What is the HCF of 16 and 24?", options:[4,6,8,12], ans:8},
-
-{type:"lcm", q:"What is the LCM of 4 and 6?", options:[10,12,18,24], ans:12},
-
-{type:"lcm", q:"What is the LCM of 5 and 8?", options:[20,30,40,45], ans:40},
-
-{type:"lcm", q:"What is the LCM of 3 and 7?", options:[14,18,21,24], ans:21},
-
-{type:"word", q:"Two bells ring every 6 and 8 minutes. When together again?", options:[12,24,36,48], ans:24},
-
-{type:"word", q:"12 chocolates & 18 toffees. Max equal groups?", options:[3,6,9,12], ans:6},
-
-{type:"word", q:"Pack in 5s and 10s. Least number?", options:[10,15,20,25], ans:20}
-
-];
-
-/* ================= SHUFFLE ================= */
-
-function shuffle(arr){
-    return arr.sort(()=>Math.random()-0.5);
-}
-
-/* ================= LEVEL QUESTIONS ================= */
-
-function getLevelQuestions(level){
-
-    let f = allQuestions.filter(q=>q.type==="factor");
-
-    let m = allQuestions.filter(q=>q.type==="multiple");
-
-    let h = allQuestions.filter(q=>q.type==="hcf");
-
-    let l = allQuestions.filter(q=>q.type==="lcm");
-
-    let w = allQuestions.filter(q=>q.type==="word");
-
-    if(level===1){
-
-        return shuffle([
-            ...shuffle(f).slice(0,3),
-            ...shuffle(m).slice(0,2)
-        ]);
-
-    }
-
-    if(level===2){
-
-        return shuffle([
-            ...shuffle(m).slice(0,2),
-            ...shuffle(h).slice(0,3)
-        ]);
-
-    }
-
-    if(level===3){
-
-        return shuffle([
-            ...shuffle(l).slice(0,3),
-            ...shuffle(w).slice(0,2)
-        ]);
-
-    }
-
-}
-
-/* ================= GAME STATE ================= */
-
-let level=1;
-
-let qIndex=0;
-
-let currentSet=getLevelQuestions(level);
-
-let correctAns=null;
-
-let position=0;
-
-/* ================= LOAD QUESTION ================= */
-
-function loadQ(){
-
-    document.getElementById("levelDisplay").innerHTML =
-    "🏁 Level " + level;
-
-    let qObj=currentSet[qIndex];
-
-    document.getElementById("q").innerHTML=qObj.q;
-
-    correctAns=qObj.ans;
-
-    let html="";
-
-    shuffle(qObj.options).forEach(opt=>{
-
-        html += `
-        <button onclick="check(${opt})">
-        ${opt}
-        </button>
-        `;
-
-    });
-
-    document.getElementById("options").innerHTML=html;
-
-    document.getElementById("msg").innerHTML="";
-
-}
-
-/* ================= CHECK ANSWER ================= */
-
-function check(ans){
-
-    if(ans===correctAns){
-
-        document.getElementById("msg").innerHTML =
-        "✅ Correct!";
-
-        document.getElementById("msg").style.color =
-        "green";
-
-        moveCar();
-
-        qIndex++;
-
-        if(qIndex===5){
-
-            level++;
-
-            if(level>3){
-
-                setTimeout(()=>{
-
-                    showWinScreen();
-
-                },500);
-
-                return;
-
-            }
-
-            currentSet=getLevelQuestions(level);
-
-            qIndex=0;
-
-        }
-
-        setTimeout(loadQ,700);
-
-    }
-
-    else{
-
-        document.getElementById("msg").innerHTML =
-        "❌ Try Again!";
-
-        document.getElementById("msg").style.color =
-        "red";
-
-    }
-
-}
-
-/* ================= MOVE CAR ================= */
-
-function moveCar(){
-
-    position += 6;
-
-    document.getElementById("car").style.left =
-    position + "%";
-
-    document.getElementById("bar").style.width =
-    position + "%";
-
-}
-
-/* ================= WIN SCREEN ================= */
-
-function showWinScreen(){
-
-    document.getElementById("endScreen").style.display =
-    "flex";
-
-}
-
-/* ================= START ================= */
-
-window.onload=function(){
-
-    setTimeout(()=>{
-
-        document.getElementById("loader").style.display =
-        "none";
-
-        loadQ();
-
-    },2000);
-
+const audio = {
+    correct: new Audio('assets/correct.mp3'),
+    wrong: new Audio('assets/wrong.mp3'),
+    claps: new Audio('assets/freesound_community-claps-44774.mp3')
 };
 
-</script>
+// All 15 original core questions perfectly preserved intact
+const allQuestions = [
+    {type:"factor", q:"Which is a factor of 24?", options:[5,6,7,11], ans:6},
+    {type:"factor", q:"Which is a factor of 36?", options:[8,9,10,11], ans:9},
+    {type:"factor", q:"Which is a factor of 45?", options:[4,6,9,8], ans:9},
+    {type:"multiple", q:"Which is a multiple of 7?", options:[45,49,50,52], ans:49},
+    {type:"multiple", q:"Which is a multiple of 9?", options:[63,62,61,65], ans:63},
+    {type:"multiple", q:"Which is a multiple of 12?", options:[130,132,134,136], ans:132},
+    {type:"hcf", q:"What is the HCF of 12 and 18?", options:[2,3,6,9], ans:6},
+    {type:"hcf", q:"What is the HCF of 20 and 30?", options:[5,10,15,20], ans:10},
+    {type:"hcf", q:"What is the HCF of 16 and 24?", options:[4,6,8,12], ans:8},
+    {type:"lcm", q:"What is the LCM of 4 and 6?", options:[10,12,18,24], ans:12},
+    {type:"lcm", q:"What is the LCM of 5 and 8?", options:[20,30,40,45], ans:40},
+    {type:"lcm", q:"What is the LCM of 3 and 7?", options:[14,18,21,24], ans:21},
+    {type:"word", q:"Two bells ring every 6 and 8 minutes. When together again?", options:[12,24,36,48], ans:24},
+    {type:"word", q:"12 chocolates & 18 toffees. Max equal groups?", options:[3,6,9,12], ans:6},
+    {type:"word", q:"Pack in 5s and 10s. Least number?", options:[10,15,20,25], ans:20}
+];
 
+function shuffle(arr){
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+function getLevelQuestions(level) {
+    let f = allQuestions.filter(q => q.type === "factor");
+    let m = allQuestions.filter(q => q.type === "multiple");
+    let h = allQuestions.filter(q => q.type === "hcf");
+    let l = allQuestions.filter(q => q.type === "lcm");
+    let w = allQuestions.filter(q => q.type === "word");
+
+    if (level === 1) return shuffle([...shuffle(f).slice(0, 3), ...shuffle(m).slice(0, 2)]);
+    if (level === 2) return shuffle([...shuffle(m).slice(0, 2), ...shuffle(h).slice(0, 3)]);
+    if (level === 3) return shuffle([...shuffle(l).slice(0, 3), ...shuffle(w).slice(0, 2)]);
+}
+
+let level = 1;
+let qIndex = 0;
+let currentSet = getLevelQuestions(level);
+let correctAns = null;
+let milestoneScore = 0;
+let totalDispatchedCount = 0;
+let attempts = 0;
+let interactionLocked = false;
+
+// 1) Logo screen tracker displaying logo strictly for 5000ms
+window.addEventListener('DOMContentLoaded', () => {
+    const fill = document.getElementById('loading-fill');
+    let progress = 0;
+    const trackingRate = 100 / (5000 / 50); 
+    
+    const interval = setInterval(() => {
+        progress += trackingRate;
+        fill.style.width = Math.min(progress, 100) + '%';
+        if (progress >= 100) {
+            clearInterval(interval);
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('instruction-screen').classList.remove('hidden');
+        }
+    }, 50);
+});
+
+function startGame() {
+    document.getElementById('instruction-screen').classList.add('hidden');
+    document.getElementById('game-container').classList.remove('hidden');
+    loadQ();
+}
+
+// Fixed Question Builder Engine
+function loadQ() {
+    interactionLocked = false;
+    attempts = 0;
+    document.getElementById('next-btn').classList.add('hidden');
+    document.getElementById('feedback-box').classList.add('hidden');
+    document.getElementById('q-num').innerText = totalDispatchedCount + 1;
+    
+    let qObj = currentSet[qIndex];
+    
+    // Renders the FULL text string question dynamically
+    document.getElementById("q").innerHTML = qObj.q;
+    correctAns = qObj.ans;
+    
+    let btnContainer = document.getElementById("options");
+    btnContainer.innerHTML = "";
+    
+    // Copies and shuffles option list values seamlessly
+    let displayOptions = [...qObj.options];
+    shuffle(displayOptions);
+    
+    displayOptions.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.id = `opt-btn-${idx}`;
+        btn.innerText = opt; // Preserves pure original button choices completely
+        btn.onclick = () => check(opt, idx);
+        btnContainer.appendChild(btn);
+    });
+}
+
+// 5) Two-chance interactive logic loop
+function check(selectedOption, targetBtnIndex) {
+    if (interactionLocked) return;
+    
+    const fb = document.getElementById('feedback-box');
+    const selectedBtn = document.getElementById(`opt-btn-${targetBtnIndex}`);
+    
+    if (selectedOption === correctAns) {
+        interactionLocked = true;
+        selectedBtn.classList.add('reveal-correct');
+        
+        try { audio.correct.play(); } catch(e){}
+        if (attempts === 0) {
+            milestoneScore += 20;
+            document.getElementById('score-display').innerText = milestoneScore;
+        }
+        
+        fb.innerHTML = `<b>🚀 Acceleration Success!</b> Balanced numerical connection resolved perfectly.`;
+        fb.classList.remove('hidden');
+        
+        moveCarAndProgress();
+        disableAllOptions();
+        document.getElementById('next-btn').classList.remove('hidden');
+    } else {
+        attempts++;
+        try { audio.wrong.play(); } catch(e){}
+        
+        const trackElement = document.getElementById('track');
+        trackElement.classList.add('shake');
+        setTimeout(() => trackElement.classList.remove('shake'), 400);
+        
+        if (attempts < 2) {
+            selectedBtn.classList.add('reveal-wrong');
+            selectedBtn.disabled = true;
+            fb.innerHTML = `<b>Warning: Traction Lost!</b> Unmatched connection chosen. 1 check attempt remaining.`;
+            fb.classList.remove('hidden');
+        } else {
+            interactionLocked = true;
+            selectedBtn.classList.add('reveal-wrong');
+            disableAllOptions();
+            
+            // Highlights correct alternative choice path immediately
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                if (parseInt(btn.innerText) === correctAns) {
+                    btn.classList.add('reveal-correct');
+                }
+            });
+            
+            fb.innerHTML = `<b>Out of Attempts!</b> The correct choice path link was: <b>${correctAns}</b>. Autopilot navigation engine engaged.`;
+            fb.classList.remove('hidden');
+            
+            moveCarAndProgress();
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+    }
+}
+
+function disableAllOptions() {
+    const buttons = document.querySelectorAll('.option-btn');
+    buttons.forEach(btn => btn.disabled = true);
+}
+
+function moveCarAndProgress() {
+    totalDispatchedCount++;
+    let targetPercent = Math.min((totalDispatchedCount / 15) * 85, 85);
+    
+    document.getElementById("car").style.left = `calc(${targetPercent}% + 15px)`;
+    document.getElementById("bar").style.width = (totalDispatchedCount / 15) * 100 + "%";
+}
+
+function loadNextQuestion() {
+    qIndex++;
+    if (qIndex === 5) {
+        level++;
+        if (level > 3) {
+            showWinScreen();
+            return;
+        }
+        currentSet = getLevelQuestions(level);
+        qIndex = 0;
+    }
+    loadQ();
+}
+
+// 4) Creative conclusion panel with no tracking indicators
+function showWinScreen() {
+    document.getElementById("game-container").classList.add('hidden');
+    document.getElementById("result-screen").classList.remove('hidden');
+    try { audio.claps.play(); } catch(e){}
+    
+    let message = `Spectacular driving profile! You safely balanced traction nodes and maintained high velocity across all tracks to claim the checkered flag!`;
+    if (milestoneScore >= 300) {
+        message = `Flawless Podium Finish! Maximum terminal velocity achieved. You mapped every factor and multiple boundary line on the first try!`;
+    }
+    
+    document.getElementById("result-msg").innerText = message;
+}
+</script>
 </body>
 </html>
