@@ -12,10 +12,12 @@ body{margin:0;font-family:Arial,sans-serif;overflow:hidden}
   justify-content:center;align-items:center;text-align:center;
   z-index:50;padding:20px
 }
-/* Dedicated white background for the initial 5s splash screen */
+
+/* Dedicated white background for the initial 5s splash screen with logo */
 #loader{background:#ffffff}
-/* Custom blue/white gradient for UI menus */
+/* Custom blue/white gradient for UI menus (Instructions, End, etc.) NO LOGO */
 #instructions, #end{background:linear-gradient(#eaf9ff,#fff)}
+
 .logo{width:170px;margin-bottom:18px}
 button{
   padding:14px 28px;border:0;border-radius:14px;background:#0066ff;
@@ -160,7 +162,7 @@ let boards=[],moveTimer,timer,active=false,locked=false;
 const runner=document.getElementById("runner");
 
 window.onload=()=>{
-  // Displays the splash screen for exactly 5000 milliseconds (5 seconds)
+  // Displays the splash screen with logo on pure white background for exactly 5000 milliseconds (5 seconds)
   setTimeout(()=>{
     document.getElementById("loader").style.display="none";
     document.getElementById("instructions").style.display="flex";
@@ -290,7 +292,7 @@ function showMsg(t){
   setTimeout(()=>m.style.display="none",900);
 }
 
-// Applies conditional appreciation metrics to the end screen
+// Appreciation Star/Text logic remains
 function processAppreciation() {
   const textContainer = document.getElementById("appreciationText");
   const starContainer = document.getElementById("stars");
