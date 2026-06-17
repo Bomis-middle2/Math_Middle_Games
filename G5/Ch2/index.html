@@ -26,7 +26,7 @@ body {
 .screen {
     position: fixed;
     inset: 0;
-    background: #0f172a; /* Changed to match theme so it looks cohesive if image is missing */
+    background: #0f172a; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -35,18 +35,26 @@ body {
     padding: 24px;
     text-align: center;
 }
-.logo-placeholder {
-    font-size: 3rem;
-    margin-bottom: 10px;
-    font-weight: 800;
-    color: #38bdf8;
-    letter-spacing: -1px;
+
+/* White background wrapper for the logo asset */
+.logo-wrapper {
+    background: #ffffff;
+    padding: 20px 40px;
+    border-radius: 16px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    max-width: 320px;
+    width: 100%;
 }
-.logo-subtext {
-    font-size: 1.1rem;
-    color: #94a3b8;
-    margin-bottom: 24px;
+.logo-img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
 }
+
 .loading-box {
     width: 240px;
     height: 6px;
@@ -339,7 +347,9 @@ button:disabled {
 <body>
 
 <div id="loader" class="screen">
-    <div class="logo-placeholder">MATH RACER</div>
+    <div class="logo-wrapper">
+        <img src="assets/logo.png" alt="Innovine Logo" class="logo-img">
+    </div>
     <div class="loading-box">
         <div id="loading-fill" class="loading-fill"></div>
     </div>
@@ -395,7 +405,6 @@ button:disabled {
 </div>
 
 <script>
-// Safe non-blocking audio handling
 const playSound = (type) => {
     const paths = {
         correct: 'assets/correct.mp3',
@@ -404,7 +413,7 @@ const playSound = (type) => {
     };
     try {
         const snd = new Audio(paths[type]);
-        snd.play().catch(() => {/* suppress browser autoplay blockers safe */});
+        snd.play().catch(() => {});
     } catch(e) {}
 };
 
@@ -416,7 +425,7 @@ let gameScore = 0;
 let attempts = 0;
 let interactionLocked = false;
 
-// Time-isolated tracking bar loop ensuring it finishes in 5000ms flat
+// Strict 5000ms loop for the loading overlay display
 window.addEventListener('DOMContentLoaded', () => {
     const fill = document.getElementById('loading-fill');
     let progress = 0;
