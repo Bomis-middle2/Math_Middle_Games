@@ -26,12 +26,12 @@ body {
 #loader {
     position: fixed;
     inset: 0;
-    background: #ffffff; /* Changed to solid white background */
-    display: flex;
+    background: #ffffff !important; /* Forces solid white background */
+    display: flex !important;       /* Overrides any default browser flash hidden states */
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 99999;                 /* Absolute top layout layer priority */
     padding: 24px;
     text-align: center;
 }
@@ -55,14 +55,14 @@ body {
 .loading-box {
     width: 240px;
     height: 6px;
-    background: #e2e8f0; /* Darker track for visibility on white */
+    background: #e2e8f0; 
     border-radius: 3px;
     overflow: hidden;
 }
 .loading-fill {
     width: 0%;
     height: 100%;
-    background: #2563eb; /* High-contrast blue filling bar */
+    background: #2563eb; 
     box-shadow: 0 0 8px rgba(37, 99, 235, 0.4);
 }
 
@@ -359,7 +359,7 @@ button:disabled {
 </head>
 <body>
 
-<div id="loader">
+<div id="loader" style="display: flex !important;">
     <div class="logo-wrapper">
         <img src="assets/logo.png" alt="Innovine Logo" class="logo-img">
     </div>
@@ -413,7 +413,7 @@ button:disabled {
         <div class="creative-pop">⚡🎓🏆</div>
         <h2 style="color: #38bdf8; margin-bottom: 16px;">Learning Targets Mastered!</h2>
         <p id="result-msg" style="font-size: 1.15rem; color: #cbd5e1; margin-bottom: 30px; line-height: 1.6;"></p>
-        <button onclick="location.reload()">Race Again</button>
+        <button onclick="resetEntireGameWorkflow()">Race Again</button>
     </div>
 </div>
 
@@ -437,25 +437,54 @@ let currentQuestionData = null;
 let gameScore = 0;
 let attempts = 0;
 let interactionLocked = false;
+let loaderInterval = null;
 
-// Strict 5000ms timer track loop for the white splash screen exit
-window.addEventListener('DOMContentLoaded', () => {
+// Extracted processing workflow loop so it can be called instantly
+function runSplashLoaderAnimation() {
+    if(loaderInterval) clearInterval(loaderInterval);
+    
+    const loader = document.getElementById('loader');
+    const instructions = document.getElementById('instruction-screen');
     const fill = document.getElementById('loading-fill');
+    
+    // Explicit override of element visibility states
+    loader.setAttribute("style", "display: flex !important;");
+    instructions.classList.add('hidden');
+    document.getElementById("game-container").classList.add('hidden');
+    document.getElementById("result-screen").classList.add('hidden');
+    
     let progress = 0;
+    fill.style.width = '0%';
     const duration = 5000;
     const intervalTime = 50;
     const increment = 100 / (duration / intervalTime);
     
-    const loaderInterval = setInterval(() => {
+    loaderInterval = setInterval(() => {
         progress += increment;
         fill.style.width = Math.min(progress, 100) + '%';
         if (progress >= 100) {
             clearInterval(loaderInterval);
-            document.getElementById('loader').classList.add('hidden');
-            document.getElementById('instruction-screen').classList.remove('hidden');
+            loader.setAttribute("style", "display: none !important;");
+            instructions.classList.remove('hidden');
         }
     }, intervalTime);
-});
+}
+
+// RUN IMMEDIATELY: Bypasses window load delays to catch hard page refreshes instantly
+runSplashLoaderAnimation();
+
+function resetEntireGameWorkflow() {
+    currentQuestionIndex = 0;
+    gameScore = 0;
+    attempts = 0;
+    interactionLocked = false;
+    
+    document.getElementById('score-display').innerText = '0';
+    document.getElementById('bar').style.width = '0%';
+    document.getElementById('car').style.left = '15px';
+    
+    runSplashLoaderAnimation();
+}
 
 function startGame() {
     document.getElementById('instruction-screen').classList.add('hidden');
