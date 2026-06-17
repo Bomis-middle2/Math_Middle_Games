@@ -98,7 +98,7 @@ button{
     <p>Use <b>↑ Up</b> and <b>↓ Down</b> keys to change lanes.</p>
     <p>On mobile, tap the <b>UP</b> and <b>DOWN</b> buttons.</p>
     <p>Catch the correct answer board.</p>
-    <p>You get <b>2 chances per question</b> before the answer reveals!</p>
+    <p>You get <b>2 chances per question</b>. If you miss, the options restart!</p>
   </div>
   <button onclick="startGame()">Start Game</button>
 </div>
@@ -175,6 +175,7 @@ const masterQuestionBank = [
 let questions=[];
 let current=0,score=0,chances=2,time=120,lane=1;
 let boards=[],moveTimer,timer,active=false,locked=false;
+let currentShuffledOptions=[]; // Remembers current choices mix layout tracking
 
 const runner=document.getElementById("runner");
 
@@ -188,15 +189,12 @@ window.onload=()=>{
   }, 5000);
 };
 
-function startGame()){
+function startGame(){
   document.getElementById("instructions").style.display="none";
-  
-  // Randomizer choice filter setup
   questions = [...masterQuestionBank].sort(() => Math.random() - 0.5).slice(0, 10);
-  
   active=true;
   setRunner();
-  loadQuestion();
+  loadQuestion(true); // true means fully fresh question setup logic track
 
   timer=setInterval(()=>{
     time--;
@@ -224,23 +222,25 @@ document.addEventListener("keydown",e=>{
   if(e.key==="ArrowDown") moveDown();
 });
 
-function loadQuestion(){
+function loadQuestion(isBrandNewQuestion = true){
   clearBoards();
-  chances = 2; 
-  document.getElementById("attempts").textContent = chances;
   locked=false;
 
-  if(current >= questions.length){
-    winGame();
-    return;
+  if(isBrandNewQuestion) {
+    chances = 2; 
+    if(current >= questions.length){
+      winGame();
+      return;
+    }
+    let item = questions[current];
+    currentShuffledOptions = [...item.options].sort(()=>Math.random()-0.5);
   }
-
-  let item=questions[current];
+  
+  document.getElementById("attempts").textContent = chances;
+  let item = questions[current];
   document.getElementById("question").textContent="Q"+(current+1)+". "+item.q;
 
-  let shuffled=[...item.options].sort(()=>Math.random()-0.5);
-
-  shuffled.forEach((opt,i)=>{
+  currentShuffledOptions.forEach((opt,i)=>{
     let b=document.createElement("div");
     b.className="board";
     b.textContent=opt;
@@ -260,7 +260,7 @@ function moveBoards(){
 
     if(collision(runner,b)){
       locked=true;
-      checkAnswer(b.dataset.answer, b);
+      checkAnswer(b.dataset.answer);
     }
   });
 
@@ -270,7 +270,7 @@ function moveBoards(){
   }
 }
 
-function checkAnswer(selected, hitBoard){
+function checkAnswer(selected){
   let item=questions[current];
 
   if(selected===item.ans){
@@ -279,9 +279,8 @@ function checkAnswer(selected, hitBoard){
     document.getElementById("correctSound").play();
     showMsg("Correct!", "green");
     current++;
-    setTimeout(loadQuestion,900);
+    setTimeout(() => loadQuestion(true), 900);
   }else{
-    if(hitBoard) hitBoard.style.display = "none"; 
     wrongChance("Wrong!");
   }
 }
@@ -295,12 +294,15 @@ function wrongChance(text){
     let item=questions[current];
     showMsg(`Incorrect! Correct Answer: ${item.ans}`, "red", 2000);
     current++;
-    setTimeout(loadQuestion, 2000);
+    setTimeout(() => loadQuestion(true), 2000);
   }else{
-    showMsg(text + " Try lane options remaining!", "orange", 1200);
+    // First chance wrong: all options reappear completely from the right hand side track view
+    showMsg(text + " Options Reappearing! Try Again!", "orange", 1500);
     setTimeout(() => {
-      locked = false; 
-    }, 1200);
+      lane = 1; // reset player track center point
+      setRunner();
+      loadQuestion(false); // loads the exact same question options layout track again
+    }, 1500);
   }
 }
 
