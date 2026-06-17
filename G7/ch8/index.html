@@ -1,1 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Rational Rover: Grade 7 Rational Numbers Game</title>
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,sans-serif;margin:0;padding:0;user-select:none;-webkit-user-select:none}
+html,body{width:100%;height:100%;overflow:hidden;color:#1e293b;background:linear-gradient(180deg,#fff7ed 0%,#ffedd5 38%,#e0f2fe 100%);display:flex;justify-content:center;align-items:center}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.42;background:radial-gradient(circle at 15% 18%,rgba(251,146,60,.26),transparent 20%),radial-gradient(circle at 82% 14%,rgba(14,165,233,.22),transparent 21%),linear-gradient(45deg,rgba(249,115,22,.08) 1px,transparent 1px),linear-gradient(135deg,rgba(2,132,199,.08) 1px,transparent 1px);background-size:auto,auto,46px 46px,46px 46px}
+#viewport-root{width:100%;max-width:485px;height:100%;max-height:790px;display:flex;flex-direction:column;padding:clamp(10px,2vw,16px);gap:clamp(8px,1.6vh,12px);opacity:0;transition:opacity .5s ease;position:relative}
+#hard-splash{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;justify-content:center;align-items:center;transition:opacity .5s ease}.splash-img{width:min(280px,70vw);height:auto;object-fit:contain}
+#instruction-modal{position:absolute;inset:0;background:rgba(255,247,237,.97);z-index:5000;display:flex;justify-content:center;align-items:center;padding:20px;text-align:center;border-radius:16px}.ins-box{background:#fff;border:2px solid #fb923c;padding:clamp(18px,5vw,26px);border-radius:20px;box-shadow:0 12px 30px rgba(234,88,12,.18)}.ins-title{font-size:clamp(1.22rem,4vw,1.55rem);color:#c2410c;font-weight:900;margin-bottom:12px}.ins-text{font-size:clamp(.88rem,2.6vw,.98rem);color:#475569;line-height:1.55;margin-bottom:20px}
+.header-card{background:rgba(255,255,255,.9);border:2px solid #fb923c;border-radius:18px;padding:clamp(10px,2.4vw,14px);box-shadow:0 10px 24px rgba(234,88,12,.13);text-align:center}.hud-logo{height:clamp(30px,7vw,40px);object-fit:contain;margin-bottom:6px}.signpost{background:#fff7ed;border:2px solid #ea580c;border-radius:12px;padding:clamp(9px,2vw,12px)}.signpost-title{font-size:clamp(.65rem,2vw,.75rem);color:#0284c7;text-transform:uppercase;letter-spacing:1.5px;font-weight:900}.signpost-value{font-size:clamp(.96rem,3.2vw,1.16rem);font-weight:850;color:#1e293b;margin-top:5px;line-height:1.35}
+.score-row{display:flex;justify-content:space-between;gap:8px;color:#c2410c;font-weight:900;font-size:clamp(.86rem,2.8vw,1rem);padding:0 2px}.map-frame{flex:1 1 auto;background:rgba(255,255,255,.82);border:2px solid #38bdf8;border-radius:18px;position:relative;overflow:hidden;min-height:220px;box-shadow:inset 0 0 20px rgba(14,165,233,.13)}canvas{display:block;width:100%;height:100%}
+.toast-banner{text-align:center;font-weight:800;font-size:clamp(.82rem,2.6vw,.92rem);min-height:24px;color:#475569;line-height:1.25}.switch-deck{display:flex;justify-content:space-between;gap:8px;width:100%}.btn-switch{flex:1;background:#fff;border:2px solid #fed7aa;color:#1e293b;border-radius:14px;padding:clamp(10px,2.4vw,14px) 6px;font-size:clamp(.75rem,2.4vw,.9rem);font-weight:850;cursor:pointer;text-transform:uppercase;transition:.2s;white-space:pre-line;min-height:58px}.btn-switch.active{background:#ffedd5;border-color:#ea580c;color:#c2410c;box-shadow:0 0 15px rgba(249,115,22,.23)}
+.btn-submit{width:100%;background:linear-gradient(135deg,#f97316,#0ea5e9);color:#fff;border:none;border-radius:14px;padding:clamp(13px,3vw,16px);font-size:clamp(.88rem,2.8vw,1rem);font-weight:900;cursor:pointer;text-transform:uppercase;letter-spacing:.7px;box-shadow:0 6px 16px rgba(249,115,22,.25)}.btn-submit:disabled{background:#cbd5e1;color:#64748b;cursor:not-allowed;box-shadow:none}.confetti{position:fixed;top:-10px;width:10px;height:10px;pointer-events:none;animation:fall 1.4s linear forwards}@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}
+@media(max-width:380px){#viewport-root{padding:8px;gap:7px}.switch-deck{gap:6px}.map-frame{min-height:200px}.btn-submit{letter-spacing:.2px}.signpost-title{letter-spacing:1px}.btn-switch{font-size:.72rem}}
+@media(max-height:650px){#viewport-root{max-height:none;gap:7px}.hud-logo{height:28px}.header-card{padding:8px}.signpost{padding:8px}.map-frame{min-height:180px}.btn-switch{padding:9px 5px;min-height:50px}.btn-submit{padding:11px}.ins-box{padding:18px}}
+@media(orientation:landscape) and (max-height:520px){#viewport-root{max-width:850px;display:grid;grid-template-columns:1fr 1.2fr;grid-template-rows:auto 1fr auto auto;gap:8px}.score-row{grid-column:1/3}.header-card{grid-column:1/2;grid-row:2/3}.map-frame{grid-column:2/3;grid-row:2/5;min-height:0}.toast-banner{grid-column:1/2}.switch-deck{grid-column:1/2}.btn-submit{grid-column:1/2}}
+</style>
+</head>
+<body>
+<audio id="s-correct" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="s-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="s-claps" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+<div id="hard-splash"><img src="assets/innovine-logo.png" class="splash-img" alt="Innovine Logo"></div>
+<div id="viewport-root">
+  <div id="instruction-modal"><div class="ins-box"><h2 class="ins-title">Rational Rover Rules</h2><p class="ins-text">Read each Rational Numbers challenge. Select Path 1, 2, or 3 to guide the rover to the correct value. Correct answers earn stars!</p><button class="btn-submit" onclick="dismissInstructions()">Start Mission</button></div></div>
+  <div class="score-row"><span>Challenge: <span id="q-num">1</span>/10</span><span>Stars: ⭐ <span id="score">0</span></span></div>
+  <div class="header-card"><img src="assets/innovine-logo.png" class="hud-logo" alt="Innovine Logo"><div class="signpost"><div class="signpost-title">Rational Numbers Route</div><div class="signpost-value" id="lbl-directive">Loading...</div></div></div>
+  <div class="map-frame"><canvas id="rat-canvas"></canvas></div>
+  <div class="toast-banner" id="lbl-feedback">Choose a path and launch.</div>
+  <div class="switch-deck"><button class="btn-switch" id="sw-0" onclick="choosePath(0)">Path 1</button><button class="btn-switch" id="sw-1" onclick="choosePath(1)">Path 2</button><button class="btn-switch" id="sw-2" onclick="choosePath(2)">Path 3</button></div>
+  <button class="btn-submit" id="btn-dispatch" onclick="launchRover()">Launch Rational Rover</button>
+</div>
+<script>
+let canvas,ctx,currentQ,selected=0,options=[],qIndex=0,score=0,locked=false,animationId=null;
+let rover={progress:0,moving:false,tumbling:false,timer:0,rot:0,ox:0,oy:0,color:'#f97316'};
+const questions=[
+{q:'Which of the following is a rational number?',ans:'-3/5',w:['√2','π'],exp:'A rational number can be written in the form p/q, where q ≠ 0.'},
+{q:'Find: 2/3 + 1/6',ans:'5/6',w:['3/9','1/2'],exp:'2/3 = 4/6, so 4/6 + 1/6 = 5/6.'},
+{q:'Find: 5/7 - 2/7',ans:'3/7',w:['7/7','3/0'],exp:'For like denominators, subtract numerators: 5 - 2 = 3.'},
+{q:'Find: (-4/9) + (7/9)',ans:'1/3',w:['-11/9','3/18'],exp:'(-4 + 7)/9 = 3/9 = 1/3.'},
+{q:'Find: (-2/5) × (3/4)',ans:'-3/10',w:['6/20','3/10'],exp:'Negative × positive is negative. 2×3 / 5×4 = 6/20 = 3/10.'},
+{q:'Find: 3/8 ÷ 3/4',ans:'1/2',w:['9/32','3/2'],exp:'Divide by multiplying by the reciprocal: 3/8 × 4/3 = 1/2.'},
+{q:'Which is the additive inverse of -7/11?',ans:'7/11',w:['-11/7','11/7'],exp:'The additive inverse has the same value with opposite sign.'},
+{q:'Which rational number is greater: -2/5 or -3/5?',ans:'-2/5',w:['-3/5','Both equal'],exp:'On the number line, -2/5 is closer to zero, so it is greater than -3/5.'},
+{q:'The standard form of 12/-18 is:',ans:'-2/3',w:['2/-3','-12/18'],exp:'Divide by 6 and keep the denominator positive: 12/-18 = -2/3.'},
+{q:'Which is equivalent to 4/6?',ans:'2/3',w:['3/2','4/12'],exp:'4/6 simplifies by dividing numerator and denominator by 2, giving 2/3.'}
+];
+setTimeout(()=>{const s=document.getElementById('hard-splash');s.style.opacity='0';setTimeout(()=>{s.remove();document.getElementById('viewport-root').style.opacity='1';init();},500)},5000);
+function init(){canvas=document.getElementById('rat-canvas');ctx=canvas.getContext('2d');resize();window.addEventListener('resize',resize);shuffle(questions);loadQuestion();loop();}
+function resize(){const r=canvas.getBoundingClientRect();canvas.width=Math.max(260,Math.floor(r.width));canvas.height=Math.max(170,Math.floor(r.height));}
+function dismissInstructions(){const m=document.getElementById('instruction-modal');if(m)m.remove();}
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function loadQuestion(){locked=false;currentQ=questions[qIndex];document.getElementById('q-num').innerText=qIndex+1;document.getElementById('lbl-directive').innerText=currentQ.q;document.getElementById('lbl-feedback').innerText='Choose a path and launch.';document.getElementById('lbl-feedback').style.color='#475569';document.getElementById('btn-dispatch').disabled=false;options=shuffle([{text:currentQ.ans,correct:true},{text:currentQ.w[0],correct:false},{text:currentQ.w[1],correct:false}]);rover={progress:0,moving:false,tumbling:false,timer:0,rot:0,ox:0,oy:0,color:['#f97316','#0ea5e9','#22c55e','#8b5cf6'][Math.floor(Math.random()*4)]};for(let i=0;i<3;i++){document.getElementById('sw-'+i).innerText='Path '+(i+1)+'\n'+options[i].text;}choosePath(0);}
+function choosePath(i){if(rover.moving||rover.tumbling||locked)return;selected=i;for(let k=0;k<3;k++)document.getElementById('sw-'+k).classList.toggle('active',k===i);}
+function launchRover(){if(rover.moving||rover.tumbling||locked)return;document.getElementById('btn-dispatch').disabled=true;rover.moving=true;document.getElementById('lbl-feedback').innerText='Rover is checking the rational number path...';document.getElementById('lbl-feedback').style.color='#0284c7';}
+function update(){if(rover.moving){rover.progress+=.016;if(rover.progress>=.88){rover.moving=false;checkAnswer();}}if(rover.tumbling){rover.timer++;rover.rot+=.25;rover.ox+=2;rover.oy=Math.sin(rover.timer*.4)*6;if(rover.timer>=58){rover.tumbling=false;rover.progress=0;rover.rot=0;rover.ox=0;rover.oy=0;rover.timer=0;document.getElementById('btn-dispatch').disabled=false;document.getElementById('lbl-feedback').innerText='Try again. Recheck the rational number rule.';document.getElementById('lbl-feedback').style.color='#dc2626';}}}
+function checkAnswer(){const fb=document.getElementById('lbl-feedback');if(options[selected].correct){document.getElementById('s-correct').play().catch(()=>{});score++;document.getElementById('score').innerText=score;fb.innerText='Correct! '+currentQ.exp;fb.style.color='#16a34a';confetti();locked=true;setTimeout(()=>{qIndex++;if(qIndex>=questions.length)finish();else loadQuestion();},1750)}else{document.getElementById('s-wrong').play().catch(()=>{});fb.innerText='Oops! Wrong rational number path.';fb.style.color='#dc2626';rover.tumbling=true;}}
+function bezier(t,p0,p1,p2,p3){let x=(1-t)**3*p0.x+3*(1-t)**2*t*p1.x+3*(1-t)*t*t*p2.x+t**3*p3.x;let y=(1-t)**3*p0.y+3*(1-t)**2*t*p1.y+3*(1-t)*t*t*p2.y+t**3*p3.y;return{x,y};}
+function render(){ctx.clearRect(0,0,canvas.width,canvas.height);let w=canvas.width,h=canvas.height;let ys=[h*.24,h*.5,h*.76];ctx.strokeStyle='rgba(249,115,22,.16)';ctx.lineWidth=1;for(let x=0;x<w;x+=34){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke()}for(let y=0;y<h;y+=34){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}ctx.fillStyle='#ffedd5';ctx.fillRect(0,h/2-24,55,48);ctx.lineWidth=Math.max(5,w*.018);ctx.lineCap='round';for(let i=0;i<3;i++){ctx.strokeStyle=i===selected?'#f97316':'rgba(148,163,184,.45)';ctx.beginPath();ctx.moveTo(15,h/2);ctx.lineTo(55,h/2);ctx.bezierCurveTo(w*.38,h/2,w*.38,ys[i],w-90,ys[i]);ctx.lineTo(w-8,ys[i]);ctx.stroke();}
+for(let i=0;i<3;i++){ctx.fillStyle=i===selected?'#ffedd5':'#ffffff';ctx.strokeStyle=i===selected?'#ea580c':'#fed7aa';ctx.lineWidth=2;roundRect(ctx,w-104,ys[i]-17,96,34,8,true,true);ctx.fillStyle='#1e293b';ctx.font='bold '+Math.max(10,Math.min(13,w*.03))+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';fitText(options[i]?.text||'',w-56,ys[i],86);}
+let p=bezier(rover.progress,{x:28,y:h/2},{x:w*.38,y:h/2},{x:w*.38,y:ys[selected]},{x:w-58,y:ys[selected]});ctx.save();ctx.translate(p.x+rover.ox,p.y+rover.oy);ctx.rotate(rover.rot);drawRover();ctx.restore();if(rover.tumbling){ctx.fillStyle='rgba(220,38,38,.25)';ctx.beginPath();ctx.arc(p.x+rover.ox,p.y+rover.oy,26,0,Math.PI*2);ctx.fill();}}
+function drawRover(){ctx.fillStyle=rover.color;ctx.beginPath();ctx.arc(0,0,18,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#0f172a';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#ffffff';ctx.font='bold 16px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('p/q',0,1);ctx.fillStyle='#111827';ctx.beginPath();ctx.arc(-11,16,4,0,Math.PI*2);ctx.arc(11,16,4,0,Math.PI*2);ctx.fill();}
+function roundRect(c,x,y,w,h,r,fill,stroke){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();if(fill)c.fill();if(stroke)c.stroke();}
+function fitText(text,x,y,max){let size=parseInt(ctx.font.match(/\d+/)[0]);while(ctx.measureText(text).width>max&&size>8){size--;ctx.font='bold '+size+'px sans-serif'}ctx.fillText(text,x,y)}
+function loop(){update();render();animationId=requestAnimationFrame(loop)}
+function finish(){document.getElementById('s-claps').play().catch(()=>{});document.getElementById('viewport-root').innerHTML='<div class="ins-box" style="margin:auto;text-align:center"><h2 class="ins-title">🏆 Rational Rover Complete!</h2><p class="ins-text">You completed all 10 Rational Numbers challenges.<br><b>Final Stars: '+score+'/10</b></p><button class="btn-submit" onclick="location.reload()">Play Again</button></div>';}
+function confetti(){for(let i=0;i<16;i++){let p=document.createElement('div');p.className='confetti';p.style.left=Math.random()*100+'vw';p.style.background=['#f97316','#0ea5e9','#16a34a','#8b5cf6'][Math.floor(Math.random()*4)];document.body.appendChild(p);setTimeout(()=>p.remove(),1600)}}
+</script>
+</body>
+</html>
 
