@@ -144,7 +144,7 @@ button{
 <script>
 const lanes=[190,310,430];
 
-// Expanded Master Question Repository (Expanded pool of identical concept matches)
+// Verified Math-Correct Question Bank
 const masterQuestionBank = [
   {q:"In the Indian system, 1 crore is equal to:",options:["10,00,000","1,00,00,000","1,00,000"],ans:"1,00,00,000"},
   {q:"In the International system, 1 million is equal to:",options:["1,00,000","10,00,000","1,00,00,000"],ans:"10,00,000"},
@@ -156,9 +156,8 @@ const masterQuestionBank = [
   {q:"Round 78,346 to the nearest thousand.",options:["78,000","79,000","80,000"],ans:"78,000"},
   {q:"What is the Roman numeral for 90?",options:["LXXXX","XC","CX"],ans:"XC"},
   {q:"What is 25,000 + 35,000?",options:["50,000","60,000","70,000"],ans:"60,000"},
-  // Additional concepts added below
   {q:"In the Indian system, 10 lakhs is equal to:",options:["1 Million","10 Million","1 Lakh"],ans:"1 Million"},
-  {q:"What is the place value of 5 in 5,43,210?",options:["50,000","5,000","5,00,000"],ans:"5,00,000"},
+  {q:"What is the place value of 5 in 5,43,210?",options:["50,000","5,00,000","5,000"],ans:"5,00,000"},
   {q:"What is the face value of 9 in 1,92,834?",options:["90,000","9","900"],ans:"9"},
   {q:"Round 12,680 to the nearest thousand.",options:["12,000","13,000","12,700"],ans:"13,000"},
   {q:"What is the Roman numeral for 40?",options:["XL","XXXX","LX"],ans:"XL"},
@@ -189,10 +188,10 @@ window.onload=()=>{
   }, 5000);
 };
 
-function startGame(){
+function startGame()){
   document.getElementById("instructions").style.display="none";
   
-  // Randomizer: Pull 10 random questions out of the larger repository bank
+  // Randomizer choice filter setup
   questions = [...masterQuestionBank].sort(() => Math.random() - 0.5).slice(0, 10);
   
   active=true;
@@ -227,7 +226,7 @@ document.addEventListener("keydown",e=>{
 
 function loadQuestion(){
   clearBoards();
-  chances = 2; // Reset choices room back to 2 per problem round
+  chances = 2; 
   document.getElementById("attempts").textContent = chances;
   locked=false;
 
@@ -282,7 +281,6 @@ function checkAnswer(selected, hitBoard){
     current++;
     setTimeout(loadQuestion,900);
   }else{
-    // Hide the wrong board that was hit so they can attempt the remaining lanes
     if(hitBoard) hitBoard.style.display = "none"; 
     wrongChance("Wrong!");
   }
@@ -295,15 +293,13 @@ function wrongChance(text){
 
   if(chances<=0){
     let item=questions[current];
-    // Out of chances on this question - show message and reveal right answer
     showMsg(`Incorrect! Correct Answer: ${item.ans}`, "red", 2000);
     current++;
     setTimeout(loadQuestion, 2000);
   }else{
-    // First chance wrong, keep going on the same problem
     showMsg(text + " Try lane options remaining!", "orange", 1200);
     setTimeout(() => {
-      locked = false; // unlock to resume running towards remaining boards
+      locked = false; 
     }, 1200);
   }
 }
