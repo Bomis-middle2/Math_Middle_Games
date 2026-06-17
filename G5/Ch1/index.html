@@ -14,9 +14,9 @@ body{margin:0;font-family:Arial,sans-serif;overflow:hidden}
 }
 
 /* 5-second start screen background */
-#loader{background:#ffffff}
+#loader{background:#ffffff; z-index: 60;}
 
-/* Instructions and Game Over backgrounds (Completely logoless) */
+/* Instructions and Game Over backgrounds */
 #instructions, #end{background:linear-gradient(#eaf9ff,#fff)}
 
 .logo{width:170px;margin-bottom:18px}
@@ -157,7 +157,7 @@ const masterQuestionBank = [
   {q:"What is the Roman numeral for 90?",options:["LXXXX","XC","CX"],ans:"XC"},
   {q:"What is 25,000 + 35,000?",options:["50,000","60,000","70,000"],ans:"60,000"},
   {q:"In the Indian system, 10 lakhs is equal to:",options:["1 Million","10 Million","1 Lakh"],ans:"1 Million"},
-  {q:"What is the place value of 5 in 5,43,210?",options:["50,000","5,00,000","5,000"],ans:"5,00,000"},
+  {q:"What is the place value of 5 in 5,43,210?",options:["50,000","5,0,00,000","5,000"],ans:"5,00,000"},
   {q:"What is the face value of 9 in 1,92,834?",options:["90,000","9","900"],ans:"9"},
   {q:"Round 12,680 to the nearest thousand.",options:["12,000","13,000","12,700"],ans:"13,000"},
   {q:"What is the Roman numeral for 40?",options:["XL","XXXX","LX"],ans:"XL"},
@@ -179,11 +179,12 @@ let currentShuffledOptions=[];
 
 const runner=document.getElementById("runner");
 
+// Handles transitions from Loader directly to Instructions cleanly
 window.onload=()=>{
   setTimeout(()=>{
     const loaderElement = document.getElementById("loader");
     if(loaderElement) {
-      loaderElement.remove(); 
+      loaderElement.style.display = "none"; 
     }
     document.getElementById("instructions").style.display="flex";
   }, 5000);
