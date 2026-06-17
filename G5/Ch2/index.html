@@ -2,696 +2,279 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Math Operation Sprint</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Basic Operations Treasure Hunt</title>
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    user-select: none;
-    -webkit-user-select: none;
-}
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #0f172a; 
-    color: #f8fafc;
-    overflow-x: hidden;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-/* 1. 5-Second Splash Loader Viewport Overlays */
-#loader {
-    position: fixed;
-    inset: 0;
-    background: #ffffff !important; /* Forces solid white background */
-    display: flex !important;       /* Overrides any default browser flash hidden states */
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 99999;                 /* Absolute top layout layer priority */
-    padding: 24px;
-    text-align: center;
-}
-
-/* Clean container for the logo asset */
-.logo-wrapper {
-    margin-bottom: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    max-width: 320px;
-    width: 100%;
-}
-.logo-img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-}
-
-/* High-contrast loader box for white background visibility */
-.loading-box {
-    width: 240px;
-    height: 6px;
-    background: #e2e8f0; 
-    border-radius: 3px;
-    overflow: hidden;
-}
-.loading-fill {
-    width: 0%;
-    height: 100%;
-    background: #2563eb; 
-    box-shadow: 0 0 8px rgba(37, 99, 235, 0.4);
-}
-
-/* 2. Simplified Instructions Component UI Card */
-#instruction-screen {
-    position: fixed;
-    inset: 0;
-    background: #0f172a;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 500;
-    padding: 24px;
-    text-align: center;
-}
-.menu-card {
-    background: rgba(30, 41, 59, 0.7);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    padding: 40px 30px;
-    border-radius: 24px;
-    max-width: 540px;
-    width: 100%;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-}
-.menu-card h2 {
-    color: #38bdf8;
-    margin-bottom: 24px;
-    font-size: 1.8rem;
-    letter-spacing: -0.5px;
-}
-.instructions p {
-    font-size: 1.05rem;
-    line-height: 1.6;
-    margin-bottom: 14px;
-    color: #cbd5e1;
-    text-align: left;
-}
-button {
-    border: 0;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #38bdf8, #2563eb);
-    color: white;
-    font-size: 1.15rem;
-    font-weight: bold;
-    padding: 14px 36px;
-    cursor: pointer;
-    box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.3);
-    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-}
-button:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 15px 30px -5px rgba(56, 189, 248, 0.4);
-}
-button:active:not(:disabled) {
-    transform: translateY(0);
-}
-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
-/* 3. Fully Cross-Device Adaptive Layout Components */
-.hidden { display: none !important; }
-
-#game-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 16px;
-}
-
-#hud {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 12px 16px;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #38bdf8;
-}
-
-/* Asphalt Track Layout */
-#track {
-    width: 100%;
-    height: 130px;
-    margin: 15px 0;
-    background: #1e293b;
-    border: 4px solid #334155;
-    border-radius: 20px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 4px 20px rgba(0,0,0,0.6);
-}
-#line {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100%;
-    height: 6px;
-    background: repeating-linear-gradient(
-        to right,
-        #ffffff 0px,
-        #ffffff 30px,
-        transparent 30px,
-        transparent 60px
-    );
-    opacity: 0.4;
-}
-#finish {
-    position: absolute;
-    right: 20px;
-    width: 16px;
-    height: 100%;
-    background: repeating-linear-gradient(
-        to bottom,
-        #ffffff 0px,
-        #ffffff 10px,
-        #000000 10px,
-        #000000 20px
-    );
-    border-left: 2px solid #64748b;
-    border-right: 2px solid #64748b;
-}
-
-/* Neon Car Asset styling */
-#car {
-    width: 70px;
-    height: 36px;
-    background: linear-gradient(90deg, #a855f7, #6b21a8);
-    position: absolute;
-    top: calc(50% - 18px);
-    left: 15px;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
-    transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-}
-#car::before, #car::after {
-    content: "";
-    position: absolute;
-    width: 14px;
-    height: 8px;
-    background: #0f172a;
-    border-radius: 2px;
-}
-#car::before { top: -4px; left: 10px; box-shadow: 0 0 0 2px #334155; }
-#car::after { bottom: -4px; left: 10px; box-shadow: 0 0 0 2px #334155; }
-
-.cockpit {
-    position: absolute;
-    right: 12px;
-    top: 6px;
-    width: 24px;
-    height: 24px;
-    background: #ffffff;
-    border-radius: 4px;
-    opacity: 0.8;
-}
-
-/* Dashboard Engine Styling */
-#questionBox {
-    background: #1e293b;
-    border: 2px solid #334155;
-    border-radius: 20px;
-    padding: 24px;
-    margin: 10px 0;
-    text-align: center;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-#q {
-    font-size: 1.35rem;
-    font-weight: 600;
-    line-height: 1.6;
-    color: #f1f5f9;
-    margin-bottom: 24px;
-    min-height: 60px;
-}
-#options {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-}
-.option-btn {
-    background: #334155;
-    color: #f1f5f9;
-    border: 2px solid transparent;
-    border-radius: 14px;
-    padding: 16px;
-    font-size: 1.2rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s, transform 0.1s;
-}
-.option-btn:hover:not(:disabled) {
-    background: #475569;
-}
-
-/* 5. 2-Chance Correction Status Indicators */
-.reveal-correct {
-    background: #10b981 !important;
-    border-color: #34d399 !important;
-    color: #ffffff !important;
-}
-.reveal-wrong {
-    background: #ef4444 !important;
-    border-color: #f87171 !important;
-    color: #ffffff !important;
-}
-
-#feedback-box {
-    margin-top: 20px;
-    padding: 16px;
-    border-radius: 12px;
-    background: rgba(30, 41, 59, 0.5);
-    border-left: 4px solid #a855f7;
-    color: #cbd5e1;
-    font-size: 1.05rem;
-    line-height: 1.5;
-    text-align: left;
-}
-
-.shake {
-    animation: trackShake 0.4s ease-in-out;
-}
-@keyframes trackShake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    75% { transform: translateX(6px); }
-}
-
-.action-row {
-    height: 70px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 15px;
-}
-
-/* Progress Bar Trackers */
-#progress {
-    width: 100%;
-    height: 8px;
-    background: #334155;
-    border-radius: 9999px;
-    overflow: hidden;
-    margin-bottom: 4px;
-}
-#bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #a855f7, #2563eb);
-    border-radius: 9999px;
-    transition: width 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-/* 4. Creative Conclusion Layout Overlays */
-#result-screen {
-    position: fixed;
-    inset: 0;
-    background: #0f172a;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 600;
-    padding: 24px;
-    text-align: center;
-}
-.creative-pop {
-    font-size: 4.5rem;
-    animation: bouncePop 1.5s infinite alternate cubic-bezier(0.45, 0, 0.55, 1);
-    margin-bottom: 20px;
-}
-@keyframes bouncePop {
-    0% { transform: translateY(0) scale(1); }
-    100% { transform: translateY(-10px) scale(1.08); }
-}
-
-@media (max-width: 640px) {
-    #options { grid-template-columns: 1fr; gap: 12px; }
-    #track { height: 100px; }
-    #car { width: 56px; height: 30px; top: calc(50% - 15px); }
-    .cockpit { width: 18px; height: 18px; top: 6px; right: 8px; }
-    #q { font-size: 1.15rem; }
-    .menu-card { padding: 30px 20px; }
-}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(#8fd3ff,#dff8ff);overflow:hidden;text-align:center}
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;padding:20px}
+/* White background for the first 5 seconds splash screen */
+#loader{background:#ffffff}
+/* Instructions and End screens match original layout styles */
+#instructions, #end{background:linear-gradient(#eaf9ff,#fff)}
+.logo{width:160px;margin-bottom:20px}
+button{border:0;border-radius:14px;background:#0066ff;color:white;font-size:20px;font-weight:bold;padding:13px 28px;cursor:pointer}
+#hud{display:flex;justify-content:space-around;padding:12px;font-size:20px;font-weight:bold;flex-wrap:wrap}
+#questionBox{width:92%;max-width:900px;margin:8px auto;background:white;border:4px solid #004aad;border-radius:18px;padding:16px;font-size:24px;font-weight:bold}
+#gameArea{position:relative;width:1000px;max-width:96vw;height:480px;margin:10px auto;border-radius:20px;overflow:hidden;border:5px solid #333;background:linear-gradient(#74c365 0 70%,#d8c28d 70% 100%)}
+.chest{position:absolute;width:180px;height:170px;cursor:pointer;transition:.25s}
+.chest:hover{transform:scale(1.05)}
+.chestTop{width:180px;height:70px;background:#7b3f00;border:5px solid #3b1d00;border-radius:18px 18px 8px 8px;position:absolute;top:0}
+.chestBody{width:180px;height:110px;background:#a85a10;border:5px solid #3b1d00;border-radius:0 0 18px 18px;position:absolute;top:60px}
+.lock{width:28px;height:40px;background:gold;border:4px solid #5c4200;position:absolute;left:76px;top:75px;border-radius:6px}
+.answerText{position:absolute;width:100%;bottom:-38px;font-size:24px;font-weight:bold;color:#111}
+.open .chestTop{transform:rotate(-28deg);transform-origin:left bottom}
+.coinBurst{position:absolute;font-size:38px;animation:burst 1s ease-out forwards}
+@keyframes burst{0%{transform:translateY(0) scale(.5);opacity:1}100%{transform:translateY(-120px) scale(1.5);opacity:0}}
+.shake{animation:shake .4s}
+@keyframes shake{0%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-10px)}80%{transform:translateX(10px)}100%{transform:translateX(0)}}
+#msg{font-size:30px;font-weight:bold;min-height:40px;margin-top:10px}
 </style>
 </head>
+
 <body>
 
-<div id="loader" style="display: flex !important;">
-    <div class="logo-wrapper">
-        <img src="assets/logo.png" alt="Innovine Logo" class="logo-img">
-    </div>
-    <div class="loading-box">
-        <div id="loading-fill" class="loading-fill"></div>
-    </div>
+<!-- 5-Second White Splash Screen -->
+<div id="loader" class="screen">
+  <img src="assets/logo.png" class="logo">
 </div>
 
-<div id="instruction-screen" class="hidden">
-    <div class="menu-card">
-        <h2>Learning Outcomes Sprint</h2>
-        <div class="instructions">
-            <p>• <b>Addition & Subtraction:</b> Master multi-digit large numbers.</p>
-            <p>• <b>Multiplication & Division:</b> Complex operational scaling equations.</p>
-            <p>• <b>Base-10 Shifts:</b> Division systems by 10, 100, 1000, and 10000.</p>
-            <p>• <b>Word Problems:</b> Real-world applications of all four core operations.</p>
-        </div>
-        <button onclick="startGame()">Start Race</button>
-    </div>
+<!-- Instructions Screen (No Text underneath logo) -->
+<div id="instructions" class="screen" style="display:none">
+  <img src="assets/logo.png" class="logo">
+  <button onclick="startGame()">Start Adventure</button>
 </div>
 
-<div id="game-container" class="hidden">
-    <div id="hud">
-        <span>Sprints: <span id="q-num">1</span>/10</span>
-        <span>Engine Score: <span id="score-display">0</span> XP</span>
-    </div>
-
-    <div id="progress">
-        <div id="bar"></div>
-    </div>
-
-    <div id="track">
-        <div id="line"></div>
-        <div id="finish"></div>
-        <div id="car"><div class="cockpit"></div></div>
-    </div>
-
-    <div id="questionBox">
-        <h3 id="q"></h3>
-        <div id="options"></div>
-        <div id="feedback-box" class="hidden"></div>
-    </div>
-
-    <div class="action-row">
-        <button id="next-btn" class="hidden" onclick="loadNextQuestion()">Next Sprint ➡️</button>
-    </div>
+<!-- Game Over End Screen -->
+<div id="end" class="screen" style="display:none">
+  <img src="assets/logo.png" class="logo">
+  <span id="endTitle" style="display:none"></span>
+  <span id="finalScore" style="display:none"></span>
+  <button onclick="location.reload()">Play Again</button>
 </div>
 
-<div id="result-screen" class="hidden">
-    <div class="menu-card" style="text-align: center;">
-        <div class="creative-pop">⚡🎓🏆</div>
-        <h2 style="color: #38bdf8; margin-bottom: 16px;">Learning Targets Mastered!</h2>
-        <p id="result-msg" style="font-size: 1.15rem; color: #cbd5e1; margin-bottom: 30px; line-height: 1.6;"></p>
-        <button onclick="resetEntireGameWorkflow()">Race Again</button>
-    </div>
+<!-- Game HUD Area -->
+<div id="hud">
+  <div>Score: <span id="score">0</span></div>
+  <div>Chances: <span id="chances">2</span></div>
+  <div>Question: <span id="qno">1</span>/10</div>
 </div>
+
+<div id="questionBox">Find the correct treasure chest!</div>
+<div id="gameArea"><div id="chests"></div></div>
+<div id="msg"></div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
-const playSound = (type) => {
-    const paths = {
-        correct: 'assets/correct.mp3',
-        wrong: 'assets/wrong.mp3',
-        claps: 'assets/freesound_community-claps-44774.mp3'
-    };
-    try {
-        const snd = new Audio(paths[type]);
-        snd.play().catch(() => {});
-    } catch(e) {}
+// Mathematical operation helper pool
+let questions = [];
+let current = 0, score = 0, chances = 2, locked = false;
+const TOTAL_QUESTIONS = 10;
+
+// Generates an unpredictable, localized variation of similar questions every time
+function generateDynamicQuestions() {
+  const pool = [];
+  
+  // 1. Addition Questions (5-digit)
+  for(let i=0; i<2; i++) {
+    let n1 = Math.floor(Math.random() * 50000) + 15000;
+    let n2 = Math.floor(Math.random() * 40000) + 10000;
+    let ans = n1 + n2;
+    pool.push({
+      q: `${n1.toLocaleString()} + ${n2.toLocaleString()} = ?`,
+      options: [ans.toLocaleString(), (ans + 1000).toLocaleString(), (ans - 100).toLocaleString()],
+      ans: ans.toLocaleString()
+    });
+  }
+
+  // 2. Subtraction Questions (5-digit)
+  for(let i=0; i<2; i++) {
+    let n1 = Math.floor(Math.random() * 60000) + 30000;
+    let n2 = Math.floor(Math.random() * 20000) + 10000;
+    let ans = n1 - n2;
+    pool.push({
+      q: `${n1.toLocaleString()} - ${n2.toLocaleString()} = ?`,
+      options: [ans.toLocaleString(), (ans - 1000).toLocaleString(), (ans + 100).toLocaleString()],
+      ans: ans.toLocaleString()
+    });
+  }
+
+  // 3. Multiplication Questions
+  for(let i=0; i<2; i++) {
+    let n1 = Math.floor(Math.random() * 1500) + 1000;
+    let n2 = Math.floor(Math.random() * 5) + 5; // 5 to 9
+    let ans = n1 * n2;
+    pool.push({
+      q: `${n1.toLocaleString()} × ${n2} = ?`,
+      options: [ans.toLocaleString(), (ans - 1000).toLocaleString(), (ans + 630).toLocaleString()],
+      ans: ans.toLocaleString()
+    });
+  }
+
+  // 4. Division Base (Quotient & Remainder variations by 10, 100, 1000)
+  const divConfigs = [10, 100, 1000];
+  divConfigs.forEach(divisor => {
+    let baseNum = Math.floor(Math.random() * 8000) + 500;
+    let qAns = Math.floor(baseNum / divisor).toString();
+    let rAns = (baseNum % divisor).toString();
+    
+    // Distractor elements
+    let fakeQ = (Math.floor(baseNum / divisor) + 2).toString();
+    let fakeR = ((baseNum % divisor) === 0 ? 5 : 0).toString();
+
+    pool.push({
+      q: `Quotient of ${baseNum} ÷ ${divisor}`,
+      options: [qAns, rAns, fakeQ],
+      ans: qAns
+    });
+    pool.push({
+      q: `Remainder of ${baseNum} ÷ ${divisor}`,
+      options: [rAns, qAns, fakeR],
+      ans: rAns
+    });
+  });
+
+  // 5. Place Value Concepts
+  pool.push({
+    q: "If sum exceeds 9, we:",
+    options: ["carry over", "borrow", "divide"],
+    ans: "carry over"
+  });
+  pool.push({
+    q: "If top digit is smaller, we:",
+    options: ["borrow", "carry over", "multiply"],
+    ans: "borrow"
+  });
+
+  // Mix up all elements within our generated pool, then extract exactly 10 items
+  return pool.sort(() => Math.random() - 0.5).slice(0, TOTAL_QUESTIONS);
+}
+
+window.onload = () => {
+  // Set to precisely 5000ms (5 seconds) on a pure white screen
+  setTimeout(() => {
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("instructions").style.display = "flex";
+  }, 5000);
 };
 
-const outcomes = ['large_ops', 'large_mul_div', 'base_10', 'word_problems'];
-let totalQuestionsLimit = 10;
-let currentQuestionIndex = 0;
-let currentQuestionData = null;
-let gameScore = 0;
-let attempts = 0;
-let interactionLocked = false;
-let loaderInterval = null;
-
-// Extracted processing workflow loop so it can be called instantly
-function runSplashLoaderAnimation() {
-    if(loaderInterval) clearInterval(loaderInterval);
-    
-    const loader = document.getElementById('loader');
-    const instructions = document.getElementById('instruction-screen');
-    const fill = document.getElementById('loading-fill');
-    
-    // Explicit override of element visibility states
-    loader.setAttribute("style", "display: flex !important;");
-    instructions.classList.add('hidden');
-    document.getElementById("game-container").classList.add('hidden');
-    document.getElementById("result-screen").classList.add('hidden');
-    
-    let progress = 0;
-    fill.style.width = '0%';
-    const duration = 5000;
-    const intervalTime = 50;
-    const increment = 100 / (duration / intervalTime);
-    
-    loaderInterval = setInterval(() => {
-        progress += increment;
-        fill.style.width = Math.min(progress, 100) + '%';
-        if (progress >= 100) {
-            clearInterval(loaderInterval);
-            loader.setAttribute("style", "display: none !important;");
-            instructions.classList.remove('hidden');
-        }
-    }, intervalTime);
-}
-
-// RUN IMMEDIATELY: Bypasses window load delays to catch hard page refreshes instantly
-runSplashLoaderAnimation();
-
-function resetEntireGameWorkflow() {
-    currentQuestionIndex = 0;
-    gameScore = 0;
-    attempts = 0;
-    interactionLocked = false;
-    
-    document.getElementById('score-display').innerText = '0';
-    document.getElementById('bar').style.width = '0%';
-    document.getElementById('car').style.left = '15px';
-    
-    runSplashLoaderAnimation();
-}
-
 function startGame() {
-    document.getElementById('instruction-screen').classList.add('hidden');
-    document.getElementById('game-container').classList.remove('hidden');
-    generateAndLoadChallenge();
+  document.getElementById("instructions").style.display = "none";
+  questions = generateDynamicQuestions();
+  loadQuestion();
 }
 
-function generateAndLoadChallenge() {
-    interactionLocked = false;
-    attempts = 0;
-    document.getElementById('next-btn').classList.add('hidden');
-    document.getElementById('feedback-box').classList.add('hidden');
-    document.getElementById('q-num').innerText = currentQuestionIndex + 1;
+function loadQuestion() {
+  locked = false;
+  chances = 2;
+  document.getElementById("chances").textContent = chances;
 
-    const chosenOutcome = outcomes[Math.floor(Math.random() * outcomes.length)];
-    currentQuestionData = createOutcomeProblem(chosenOutcome);
+  if(current >= questions.length) { winGame(); return; }
 
-    document.getElementById("q").innerHTML = currentQuestionData.question;
-    
-    let btnContainer = document.getElementById("options");
-    btnContainer.innerHTML = "";
-    
-    currentQuestionData.choices.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.id = `opt-btn-${idx}`;
-        btn.innerText = opt;
-        btn.onclick = () => verifySubmission(opt, idx);
-        btnContainer.appendChild(btn);
+  document.getElementById("qno").textContent = current + 1;
+  document.getElementById("questionBox").textContent = "Q" + (current + 1) + ". " + questions[current].q;
+  document.getElementById("msg").textContent = "";
+  createChests();
+}
+
+function createChests() {
+  const wrap = document.getElementById("chests");
+  wrap.innerHTML = "";
+  const item = questions[current];
+  
+  // Randomizes the unique chest assignments on every question presentation
+  const shuffled = [...item.options].sort(() => Math.random() - 0.5);
+  const positions = [120, 410, 700];
+
+  shuffled.forEach((opt, i) => {
+    const chest = document.createElement("div");
+    chest.className = "chest";
+    chest.style.left = positions[i] + "px";
+    chest.style.top = "180px";
+    chest.dataset.answer = opt;
+    chest.innerHTML = `
+      <div class="chestTop"></div>
+      <div class="chestBody"></div>
+      <div class="lock"></div>
+      <div class="answerText">${opt}</div>
+    `;
+    chest.onclick = () => selectChest(chest, opt);
+    wrap.appendChild(chest);
+  });
+}
+
+function selectChest(chest, selected) {
+  if(locked) return;
+
+  if(selected === questions[current].ans) {
+    locked = true;
+    correctChest(chest);
+  } else {
+    wrongChest(chest);
+  }
+}
+
+function correctChest(chest) {
+  document.getElementById("correctSound").play();
+  score++;
+  document.getElementById("score").textContent = score;
+  document.getElementById("msg").style.color = "green";
+  document.getElementById("msg").textContent = "Correct Treasure Found!";
+  chest.classList.add("open");
+  showCoins(chest);
+  current++;
+  setTimeout(loadQuestion, 1500);
+}
+
+function wrongChest(chest) {
+  document.getElementById("wrongSound").play();
+  chest.classList.add("shake");
+  chances--;
+  document.getElementById("chances").textContent = chances;
+  document.getElementById("msg").style.color = "red";
+
+  if(chances > 0) {
+    document.getElementById("msg").textContent = "Wrong Treasure! Try Again.";
+    setTimeout(() => chest.classList.remove("shake"), 700);
+  } else {
+    locked = true;
+    const correctAnswer = questions[current].ans;
+    document.getElementById("msg").textContent = "Wrong! Correct Answer: " + correctAnswer;
+
+    document.querySelectorAll(".chest").forEach(c => {
+      if(c.dataset.answer === correctAnswer) {
+        c.classList.add("open");
+        showCoins(c);
+      }
     });
+
+    current++;
+    setTimeout(loadQuestion, 2200);
+  }
 }
 
-function createOutcomeProblem(outcome) {
-    let questionText, answer;
-    const isDelta = Math.random() > 0.5;
-
-    switch (outcome) {
-        case 'large_ops':
-            if (isDelta) {
-                let num1 = Math.floor(Math.random() * 400000) + 100000;
-                let num2 = Math.floor(Math.random() * 400000) + 100000;
-                answer = num1 + num2;
-                questionText = `Solve: ${num1.toLocaleString()} + ${num2.toLocaleString()}`;
-            } else {
-                let num1 = Math.floor(Math.random() * 500000) + 400000;
-                let num2 = Math.floor(Math.random() * 300000) + 100000;
-                answer = num1 - num2;
-                questionText = `Solve: ${num1.toLocaleString()} - ${num2.toLocaleString()}`;
-            }
-            break;
-
-        case 'large_mul_div':
-            if (isDelta) {
-                let num1 = Math.floor(Math.random() * 125) + 75;
-                let num2 = Math.floor(Math.random() * 40) + 12;
-                answer = num1 * num2;
-                questionText = `Multiply: ${num1} × ${num2}`;
-            } else {
-                let divisor = Math.floor(Math.random() * 15) + 12;
-                answer = Math.floor(Math.random() * 40) + 25;
-                let dividend = divisor * answer;
-                questionText = `Divide: ${dividend.toLocaleString()} ÷ ${divisor}`;
-            }
-            break;
-
-        case 'base_10':
-            const bases = [10, 100, 1000, 10000];
-            const base = bases[Math.floor(Math.random() * bases.length)];
-            let multiplier = Math.floor(Math.random() * 85) + 15;
-            let baseDividend = multiplier * base;
-            answer = multiplier;
-            questionText = `Evaluate the fast mental quotient: ${baseDividend.toLocaleString()} ÷ ${base.toLocaleString()}`;
-            break;
-
-        case 'word_problems':
-            const problems = [
-                {
-                    q: "A cargo vehicle transports 1,200 crates per trip. If it safely executes 15 consecutive missions, how many total boxes are distributed?",
-                    a: 1200 * 15
-                },
-                {
-                    q: "An industrial factory framework produces 45,000 components. They are packed evenly into batches of 100. How many output packages are created?",
-                    a: 45000 / 100
-                },
-                {
-                    q: "A structural reserve reservoir held 650,500 liters of hydration fluid. Engineering links drained 120,200 liters for pipeline updates. What capacity remains?",
-                    a: 650500 - 120200
-                },
-                {
-                    q: "A modern regional development grid plans to distribute 240,000 tech tokens evenly among 12 primary sectors. How many tokens does each sector receive?",
-                    a: 240000 / 12
-                }
-            ];
-            const picked = problems[Math.floor(Math.random() * problems.length)];
-            questionText = picked.q;
-            answer = picked.a;
-            break;
-    }
-
-    const choicesSet = new Set([answer]);
-    while (choicesSet.size < 4) {
-        let variance = Math.floor(Math.random() * 40) - 20;
-        if (answer > 1000) variance *= 100;
-        
-        if (variance !== 0) {
-            let alternative = answer + variance;
-            if (alternative > 0) choicesSet.add(alternative);
-        }
-    }
-
-    return {
-        question: questionText,
-        correctValue: answer,
-        choices: [...choicesSet].sort(() => Math.random() - 0.5).map(val => val.toLocaleString())
-    };
+function showCoins(chest) {
+  for(let i = 0; i < 12; i++) {
+    const coin = document.createElement("div");
+    coin.className = "coinBurst";
+    coin.innerHTML = "🪙";
+    coin.style.left = (chest.offsetLeft + 60 + Math.random() * 60) + "px";
+    coin.style.top = (chest.offsetTop + 40) + "px";
+    document.getElementById("gameArea").appendChild(coin);
+    setTimeout(() => coin.remove(), 1000);
+  }
 }
 
-function verifySubmission(selectedValue, elementIdx) {
-    if (interactionLocked) return;
-    
-    const fb = document.getElementById('feedback-box');
-    const selectedBtn = document.getElementById(`opt-btn-${elementIdx}`);
-    const targetValue = currentQuestionData.correctValue.toLocaleString();
-
-    if (selectedValue === targetValue) {
-        interactionLocked = true;
-        selectedBtn.classList.add('reveal-correct');
-        
-        playSound('correct');
-        if (attempts === 0) {
-            gameScore += 30;
-            document.getElementById('score-display').innerText = gameScore;
-        }
-        
-        fb.innerHTML = `<b>🚀 Operational Mastery Verified!</b> Calculations match the target curriculum criteria perfectly.`;
-        fb.classList.remove('hidden');
-        
-        updateTrackDisplacement();
-        lockDashboardChoices();
-        document.getElementById('next-btn').classList.remove('hidden');
-    } else {
-        attempts++;
-        playSound('wrong');
-        
-        const trackElement = document.getElementById('track');
-        trackElement.classList.add('shake');
-        setTimeout(() => trackElement.classList.remove('shake'), 400);
-
-        if (attempts < 2) {
-            selectedBtn.classList.add('reveal-wrong');
-            selectedBtn.disabled = true;
-            fb.innerHTML = `<b>Calculation Alert!</b> Misaligned mathematical value. 1 operational calculation check remaining.`;
-            fb.classList.remove('hidden');
-        } else {
-            interactionLocked = true;
-            selectedBtn.classList.add('reveal-wrong');
-            lockDashboardChoices();
-            
-            const buttons = document.querySelectorAll('.option-btn');
-            buttons.forEach(btn => {
-                if (btn.innerText === targetValue) {
-                    btn.classList.add('reveal-correct');
-                }
-            });
-
-            fb.innerHTML = `<b>Systems Synced!</b> The calculated outcome benchmark value is: <b>${targetValue}</b>. Processing next sector setup.`;
-            fb.classList.remove('hidden');
-            
-            updateTrackDisplacement();
-            document.getElementById('next-btn').classList.remove('hidden');
-        }
-    }
-}
-
-function lockDashboardChoices() {
-    const buttons = document.querySelectorAll('.option-btn');
-    buttons.forEach(btn => btn.disabled = true);
-}
-
-function updateTrackDisplacement() {
-    currentQuestionIndex++;
-    let targetPercent = Math.min((currentQuestionIndex / totalQuestionsLimit) * 85, 85);
-    
-    document.getElementById("car").style.left = `calc(${targetPercent}% + 15px)`;
-    document.getElementById("bar").style.width = (currentQuestionIndex / totalQuestionsLimit) * 100 + "%";
-}
-
-function loadNextQuestion() {
-    if (currentQuestionIndex < totalQuestionsLimit) {
-        generateAndLoadChallenge();
-    } else {
-        triggerFinishSummary();
-    }
-}
-
-function triggerFinishSummary() {
-    document.getElementById("game-container").classList.add('hidden');
-    document.getElementById("result-screen").classList.remove('hidden');
-    playSound('claps');
-    
-    let reportText = `Outstanding operations run! You have verified arithmetic accuracy across large numbers, base-10 metrics, and text word problems. Performance score: ${gameScore} XP.`;
-    if (gameScore === 300) {
-        reportText = `Flawless Curriculum Target Execution! 300 XP run complete. All learning objectives checked perfectly on initial calculation sweeps!`;
-    }
-    
-    document.getElementById("result-msg").innerText = reportText;
+function winGame() {
+  document.getElementById("clapSound").play();
+  document.getElementById("endTitle").textContent = "You Win!";
+  document.getElementById("finalScore").textContent = score + " / " + questions.length;
+  document.getElementById("end").style.display = "flex";
 }
 </script>
+
 </body>
 </html>
