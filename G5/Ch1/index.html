@@ -36,7 +36,7 @@ button{
 }
 #question{
   position:absolute;top:55px;left:50%;transform:translateX(-50%);
-  width:88%;background:white;border:3px solid #004aad;border-radius:166px;
+  width:88%;background:white;border:3px solid #004aad;border-radius:16px;
   padding:14px;font-size:23px;font-weight:bold;text-align:center;z-index:10
 }
 #runner{
@@ -189,7 +189,6 @@ window.onload=()=>{
   }, 5000);
 };
 
-// Fixed curly bracket syntax below:
 function startGame(){
   document.getElementById("instructions").style.display="none";
   questions = [...masterQuestionBank].sort(() => Math.random() - 0.5).slice(0, 10);
