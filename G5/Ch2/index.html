@@ -23,10 +23,10 @@ body {
 }
 
 /* 1. 5-Second Splash Loader Viewport Overlays */
-.screen {
+#loader {
     position: fixed;
     inset: 0;
-    background: #0f172a; 
+    background: #ffffff; /* Changed to solid white background */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -36,16 +36,12 @@ body {
     text-align: center;
 }
 
-/* White background wrapper for the logo asset */
+/* Clean container for the logo asset */
 .logo-wrapper {
-    background: #ffffff;
-    padding: 20px 40px;
-    border-radius: 16px;
     margin-bottom: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     max-width: 320px;
     width: 100%;
 }
@@ -55,24 +51,33 @@ body {
     object-fit: contain;
 }
 
+/* High-contrast loader box for white background visibility */
 .loading-box {
     width: 240px;
     height: 6px;
-    background: #334155;
+    background: #e2e8f0; /* Darker track for visibility on white */
     border-radius: 3px;
     overflow: hidden;
 }
 .loading-fill {
     width: 0%;
     height: 100%;
-    background: #38bdf8;
-    box-shadow: 0 0 10px #38bdf8;
+    background: #2563eb; /* High-contrast blue filling bar */
+    box-shadow: 0 0 8px rgba(37, 99, 235, 0.4);
 }
 
 /* 2. Simplified Instructions Component UI Card */
 #instruction-screen {
+    position: fixed;
+    inset: 0;
     background: #0f172a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     z-index: 500;
+    padding: 24px;
+    text-align: center;
 }
 .menu-card {
     background: rgba(30, 41, 59, 0.7);
@@ -321,8 +326,16 @@ button:disabled {
 
 /* 4. Creative Conclusion Layout Overlays */
 #result-screen {
+    position: fixed;
+    inset: 0;
     background: #0f172a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     z-index: 600;
+    padding: 24px;
+    text-align: center;
 }
 .creative-pop {
     font-size: 4.5rem;
@@ -346,7 +359,7 @@ button:disabled {
 </head>
 <body>
 
-<div id="loader" class="screen">
+<div id="loader">
     <div class="logo-wrapper">
         <img src="assets/logo.png" alt="Innovine Logo" class="logo-img">
     </div>
@@ -355,7 +368,7 @@ button:disabled {
     </div>
 </div>
 
-<div id="instruction-screen" class="screen hidden">
+<div id="instruction-screen" class="hidden">
     <div class="menu-card">
         <h2>Learning Outcomes Sprint</h2>
         <div class="instructions">
@@ -395,7 +408,7 @@ button:disabled {
     </div>
 </div>
 
-<div id="result-screen" class="screen hidden">
+<div id="result-screen" class="hidden">
     <div class="menu-card" style="text-align: center;">
         <div class="creative-pop">⚡🎓🏆</div>
         <h2 style="color: #38bdf8; margin-bottom: 16px;">Learning Targets Mastered!</h2>
@@ -425,7 +438,7 @@ let gameScore = 0;
 let attempts = 0;
 let interactionLocked = false;
 
-// Strict 5000ms loop for the loading overlay display
+// Strict 5000ms timer track loop for the white splash screen exit
 window.addEventListener('DOMContentLoaded', () => {
     const fill = document.getElementById('loading-fill');
     let progress = 0;
