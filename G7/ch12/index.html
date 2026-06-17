@@ -1,1 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Symmetry Garden Rescue - Grade 7</title>
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Tahoma,Verdana,sans-serif;margin:0;padding:0;user-select:none;-webkit-user-select:none}
+html,body{width:100%;height:100%;overflow:hidden;color:#1e293b;background:linear-gradient(180deg,#e0f2fe 0%,#fef9c3 48%,#dcfce7 100%);display:flex;justify-content:center;align-items:center}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.45;background:radial-gradient(circle at 15% 15%,rgba(236,72,153,.23),transparent 18%),radial-gradient(circle at 85% 12%,rgba(56,189,248,.27),transparent 19%),linear-gradient(90deg,rgba(34,197,94,.08) 1px,transparent 1px),linear-gradient(rgba(14,165,233,.08) 1px,transparent 1px);background-size:auto,auto,46px 46px,46px 46px}
+#root{width:100%;max-width:900px;height:100%;max-height:760px;display:flex;flex-direction:column;padding:clamp(10px,2vw,16px);gap:clamp(8px,1.4vh,12px);opacity:0;transition:opacity .5s ease;position:relative}
+#splash{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:opacity .5s ease}
+#splash img{width:min(280px,70vw);height:auto}.loadbox{width:190px;height:7px;background:#e5e7eb;border-radius:10px;overflow:hidden;margin-top:18px}.loadfill{width:0%;height:100%;background:linear-gradient(90deg,#ec4899,#22c55e)}
+#intro{position:absolute;inset:0;background:rgba(240,253,244,.97);z-index:5000;display:flex;justify-content:center;align-items:center;padding:20px;text-align:center;border-radius:18px}
+.pop{background:#fff;border:2px solid #ec4899;padding:clamp(18px,4vw,28px);border-radius:22px;box-shadow:0 12px 30px rgba(219,39,119,.18);max-width:540px}.pop h2{font-size:clamp(1.3rem,4vw,1.75rem);color:#db2777;font-weight:900;margin-bottom:12px}.pop p{font-size:clamp(.9rem,2.5vw,1rem);color:#475569;line-height:1.55;margin-bottom:20px}
+.top{display:flex;justify-content:space-between;gap:10px;color:#047857;font-weight:900;font-size:clamp(.88rem,2.4vw,1rem)}
+.grid{display:grid;grid-template-columns:.92fr 1.25fr;gap:12px;min-height:0;flex:1}
+.panel{background:rgba(255,255,255,.9);border:2px solid #86efac;border-radius:20px;padding:clamp(10px,2vw,14px);box-shadow:0 10px 24px rgba(34,197,94,.15)}
+.qpanel{display:flex;flex-direction:column;gap:10px}.logo{height:clamp(28px,5vw,38px);object-fit:contain;align-self:center}
+.taskbox{background:#fdf2f8;border:2px solid #ec4899;border-radius:16px;padding:clamp(10px,2.2vw,14px);text-align:center}.tag{font-size:clamp(.67rem,1.8vw,.8rem);letter-spacing:1.8px;text-transform:uppercase;color:#047857;font-weight:900}.task{font-size:clamp(1rem,3vw,1.32rem);font-weight:900;color:#111827;line-height:1.35;margin-top:6px}.visual{font-size:clamp(2rem,7vw,3.5rem);line-height:1;margin-top:8px}.hint{font-size:clamp(.78rem,2.2vw,.92rem);font-weight:750;color:#475569;text-align:center;line-height:1.35}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:auto}.opt{border:2px solid #bbf7d0;background:#f0fdf4;border-radius:16px;padding:clamp(10px,2vw,14px) 8px;min-height:54px;font-size:clamp(.88rem,2.4vw,1.03rem);font-weight:900;color:#1e293b;cursor:pointer;box-shadow:0 3px 10px rgba(34,197,94,.09);transition:.2s}.opt.selected{background:#dcfce7;border-color:#16a34a;transform:translateY(-1px)}.opt.correct{background:#dcfce7!important;border-color:#16a34a!important}.opt.wrong{background:#fee2e2!important;border-color:#dc2626!important}
+.scene{position:relative;overflow:hidden;min-height:280px;padding:0;border-color:#f9a8d4;background:#fff7fb}canvas{display:block;width:100%;height:100%}
+.status{font-size:clamp(.82rem,2.3vw,.95rem);font-weight:850;text-align:center;color:#475569;min-height:22px;line-height:1.3}
+.btn{width:100%;border:0;border-radius:16px;padding:clamp(13px,2.6vw,16px);background:linear-gradient(135deg,#ec4899,#22c55e);color:#fff;font-size:clamp(.92rem,2.7vw,1.06rem);font-weight:950;letter-spacing:.7px;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 20px rgba(236,72,153,.22)}.btn:disabled{background:#cbd5e1;color:#64748b;box-shadow:none;cursor:not-allowed}
+.confetti{position:fixed;top:-10px;width:10px;height:10px;pointer-events:none;animation:fall 1.4s linear forwards}@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}
+@media(max-width:720px){#root{max-width:480px}.grid{grid-template-columns:1fr;grid-template-rows:auto 1fr}.scene{min-height:260px}.opts{grid-template-columns:1fr 1fr}}
+@media(max-width:390px){#root{padding:8px;gap:8px}.scene{min-height:220px}.opts{gap:7px}.opt{min-height:48px}}
+@media(max-height:650px){#root{max-height:none;gap:7px}.logo{height:26px}.panel{padding:8px}.taskbox{padding:8px}.scene{min-height:190px}.opt{min-height:44px;padding:8px}.btn{padding:11px}}
+@media(orientation:landscape) and (max-height:520px){#root{max-width:900px}.grid{grid-template-columns:.9fr 1.3fr}.scene{min-height:0}.logo{display:none}.hint{font-size:.78rem}.opts{gap:6px}.opt{min-height:40px;padding:7px}.btn{padding:10px}}
+</style>
+</head>
+<body>
+<audio id="s-correct" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="s-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="s-claps" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
 
+<div id="splash">
+  <img src="assets/innovine-logo.png" alt="Innovine Logo">
+  <div class="loadbox"><div id="fill" class="loadfill"></div></div>
+</div>
+
+<div id="root">
+  <div id="intro">
+    <div class="pop">
+      <h2>🦋 Symmetry Garden Rescue</h2>
+      <p>Answer each advanced symmetry challenge. Choose the correct flower and guide the butterfly to restore symmetry in the garden.</p>
+      <button class="btn" onclick="closeIntro()">Start Garden Rescue</button>
+    </div>
+  </div>
+
+  <div class="top">
+    <span>Challenge: <span id="qnum">1</span>/11</span>
+    <span>Flowers: 🌸 <span id="score">0</span></span>
+  </div>
+
+  <div class="grid">
+    <div class="panel qpanel">
+      <img src="assets/innovine-logo.png" class="logo" alt="Innovine Logo">
+      <div class="taskbox">
+        <div class="tag" id="tag">Symmetry Challenge</div>
+        <div class="task" id="task">Loading...</div>
+        <div class="visual" id="visual"></div>
+      </div>
+      <div class="hint" id="hint">Choose the correct flower.</div>
+      <div class="opts">
+        <button class="opt" id="o0" onclick="pick(0)">A</button>
+        <button class="opt" id="o1" onclick="pick(1)">B</button>
+        <button class="opt" id="o2" onclick="pick(2)">C</button>
+        <button class="opt" id="o3" onclick="pick(3)">D</button>
+      </div>
+    </div>
+
+    <div class="panel scene">
+      <canvas id="canvas"></canvas>
+    </div>
+  </div>
+
+  <div class="status" id="status">Select an answer and let the butterfly fly.</div>
+  <button class="btn" id="go" onclick="flyButterfly()">Fly to Flower</button>
+</div>
+
+<script>
+let canvas,ctx,current,chosen=0,choices=[],qIndex=0,score=0,locked=false;
+let butterfly={progress:0,moving:false,fail:false,success:false,timer:0,wing:0,target:0};
+let bloomed=[];
+const qs=[
+{tag:'Regular Polygon',q:'A regular pentagon has:',visual:'⬟',ans:'5 lines of symmetry',w:['3 lines of symmetry','4 lines of symmetry','6 lines of symmetry'],exp:'A regular polygon has as many lines of symmetry as its sides.'},
+{tag:'Rotational Symmetry',q:'What is the order of rotational symmetry of a square?',visual:'□',ans:'4',w:['2','3','8'],exp:'A square matches itself 4 times in one full turn.'},
+{tag:'Rotational Symmetry',q:'A rectangle has rotational symmetry of order:',visual:'▭',ans:'2',w:['1','3','4'],exp:'A rectangle matches itself at 0° and 180°, so order is 2.'},
+{tag:'Regular Polygon',q:'A regular hexagon has:',visual:'⬡',ans:'6 lines of symmetry',w:['4 lines of symmetry','5 lines of symmetry','8 lines of symmetry'],exp:'A regular hexagon has 6 equal sides and 6 lines of symmetry.'},
+{tag:'Reasoning',q:'Which shape has rotational symmetry but no line symmetry?',visual:'▱',ans:'Parallelogram',w:['Rectangle','Rhombus','Square'],exp:'A general parallelogram has rotational symmetry of order 2 but no line symmetry.'},
+{tag:'Rotational Symmetry',q:'The order of rotational symmetry of a regular octagon is:',visual:'⯃',ans:'8',w:['4','6','16'],exp:'A regular octagon matches itself 8 times in a full turn.'},
+{tag:'Letter Symmetry',q:'Which capital letter has rotational symmetry of order 2?',visual:'Z',ans:'Z',w:['A','H','N'],exp:'Z looks the same after a half-turn rotation.'},
+{tag:'Angle of Rotation',q:'A shape matches itself after rotating through 120°. Its rotational symmetry order is:',visual:'△',ans:'3',w:['2','4','6'],exp:'360° ÷ 120° = 3.'},
+{tag:'True Statement',q:'Which statement is TRUE?',visual:'↻',ans:'Some shapes have rotational symmetry but no line symmetry.',w:['Every shape with rotational symmetry has line symmetry.','Every shape with line symmetry has rotational symmetry.','Rotational symmetry and line symmetry are always the same.'],exp:'Some shapes, like a general parallelogram, have rotational symmetry but no line symmetry.'},
+{tag:'Regular Polygon',q:'A regular decagon has:',visual:'⬢',ans:'10 lines of symmetry',w:['5 lines of symmetry','8 lines of symmetry','20 lines of symmetry'],exp:'A regular decagon has 10 sides, so it has 10 lines of symmetry.'},
+{tag:'Final Challenge',q:'A regular polygon has 12 lines of symmetry and rotational symmetry of order 12. The polygon is a:',visual:'✺',ans:'Dodecagon',w:['Decagon','Hexagon','Octagon'],exp:'A regular dodecagon has 12 sides, 12 symmetry lines, and rotational order 12.'}
+];
+
+let p=0;let sp=setInterval(()=>{p+=2;document.getElementById('fill').style.width=p+'%';if(p>=100){clearInterval(sp);let s=document.getElementById('splash');s.style.opacity='0';setTimeout(()=>{s.remove();document.getElementById('root').style.opacity='1';init();},500)}},100);
+
+function init(){canvas=document.getElementById('canvas');ctx=canvas.getContext('2d');resize();window.addEventListener('resize',resize);bloomed=Array(qs.length).fill(false);loadQ();loop();}
+function resize(){let r=canvas.getBoundingClientRect();canvas.width=Math.max(300,Math.floor(r.width));canvas.height=Math.max(200,Math.floor(r.height));}
+function closeIntro(){let m=document.getElementById('intro');if(m)m.remove();}
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function loadQ(){
+ locked=false;current=qs[qIndex];
+ document.getElementById('qnum').innerText=qIndex+1;
+ document.getElementById('tag').innerText=current.tag;
+ document.getElementById('task').innerText=current.q;
+ document.getElementById('visual').innerText=current.visual || '';
+ document.getElementById('status').innerText='Select an answer and let the butterfly fly.';
+ document.getElementById('status').style.color='#475569';
+ document.getElementById('go').disabled=false;
+ choices=shuffle([{text:current.ans,correct:true},...current.w.map(x=>({text:x,correct:false}))]);
+ for(let i=0;i<4;i++){let b=document.getElementById('o'+i);b.className='opt';b.innerText=String.fromCharCode(65+i)+'. '+choices[i].text;}
+ butterfly={progress:0,moving:false,fail:false,success:false,timer:0,wing:0,target:qIndex%4};
+ pick(0);
+}
+function pick(i){if(butterfly.moving||butterfly.fail||locked)return;chosen=i;for(let k=0;k<4;k++)document.getElementById('o'+k).classList.toggle('selected',k===i);}
+function flyButterfly(){
+ if(butterfly.moving||butterfly.fail||locked)return;
+ butterfly.target=chosen;
+ document.getElementById('go').disabled=true;
+ butterfly.moving=true;
+ document.getElementById('status').innerText='Butterfly is flying to the selected flower...';
+ document.getElementById('status').style.color='#0284c7';
+}
+function update(){
+ butterfly.wing+=.18;
+ if(butterfly.moving){butterfly.progress+=.018;if(butterfly.progress>=1){butterfly.progress=1;butterfly.moving=false;check();}}
+ if(butterfly.fail){butterfly.timer++;butterfly.progress=Math.max(0,butterfly.progress-.025);if(butterfly.timer>45){butterfly.fail=false;butterfly.timer=0;butterfly.progress=0;document.getElementById('go').disabled=false;document.getElementById('status').innerText='Try again. Recheck the symmetry property.';document.getElementById('status').style.color='#dc2626';}}
+}
+function check(){
+ let st=document.getElementById('status');
+ if(choices[chosen].correct){
+   document.getElementById('s-correct').play().catch(()=>{});
+   score++;document.getElementById('score').innerText=score;
+   document.getElementById('o'+chosen).classList.add('correct');
+   st.innerText='Correct! '+current.exp;
+   st.style.color='#16a34a';
+   bloomed[qIndex]=true;butterfly.success=true;locked=true;confetti();
+   setTimeout(()=>{qIndex++;if(qIndex>=qs.length)finish();else loadQ();},1900);
+ }else{
+   document.getElementById('s-wrong').play().catch(()=>{});
+   document.getElementById('o'+chosen).classList.add('wrong');
+   st.innerText='Wrong flower! The butterfly is fluttering back.';
+   st.style.color='#dc2626';
+   butterfly.fail=true;
+ }
+}
+function render(){
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ let w=canvas.width,h=canvas.height;
+ let bg=ctx.createLinearGradient(0,0,0,h);bg.addColorStop(0,'#dff6ff');bg.addColorStop(.55,'#fef9c3');bg.addColorStop(1,'#bbf7d0');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+ drawSun(w*.12,h*.13);drawCloud(w*.45,h*.13,1);drawCloud(w*.78,h*.16,.8);
+ let ground=h*.76;ctx.fillStyle='#86efac';ctx.fillRect(0,ground,w,h-ground);
+ drawMirrorAxis(w*.5,ground-170,ground+20);
+ let flowerY=ground-35;
+ let xs=[w*.18,w*.38,w*.62,w*.82];
+ for(let i=0;i<4;i++){
+   let showBloom=(i===chosen && (butterfly.success||bloomed[qIndex])) || bloomed[i];
+   drawFlower(xs[i],flowerY,i===chosen,showBloom,choices[i]?.text||'');
+ }
+ let start={x:w*.5,y:ground-175};
+ let target={x:xs[butterfly.target],y:flowerY-45};
+ let pos=bezier(butterfly.progress,start,{x:start.x,y:start.y-70},{x:target.x,y:target.y-70},target);
+ drawButterfly(pos.x,pos.y,1+Math.sin(butterfly.wing)*.08);
+ if(butterfly.success) drawSparkles(target.x,target.y);
+ if(butterfly.fail) drawWarning(pos.x,pos.y);
+}
+function drawSun(x,y){ctx.fillStyle='#fde047';ctx.beginPath();ctx.arc(x,y,28,0,Math.PI*2);ctx.fill();}
+function drawCloud(x,y,s){ctx.fillStyle='rgba(255,255,255,.9)';ctx.beginPath();ctx.arc(x,y,16*s,0,Math.PI*2);ctx.arc(x+18*s,y-8*s,22*s,0,Math.PI*2);ctx.arc(x+42*s,y,18*s,0,Math.PI*2);ctx.fill();}
+function drawMirrorAxis(x,y1,y2){ctx.strokeStyle='rgba(236,72,153,.65)';ctx.lineWidth=4;ctx.setLineDash([10,8]);ctx.beginPath();ctx.moveTo(x,y1);ctx.lineTo(x,y2);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#db2777';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText('SYMMETRY AXIS',x,y1-10);}
+function drawFlower(x,y,sel,bloom,label){
+ ctx.strokeStyle='#15803d';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(x,y+45);ctx.lineTo(x,y+5);ctx.stroke();
+ ctx.fillStyle=sel?'#fdf2f8':'#fff';ctx.strokeStyle=sel?'#ec4899':'#bbf7d0';ctx.lineWidth=3;roundRect(x-45,y+52,90,32,10,true,true);
+ ctx.fillStyle='#1e293b';ctx.font='bold 11px sans-serif';ctx.textAlign='center';fitText(label,x,y+72,78);
+ let petals=bloom?8:5;let r=bloom?18:12;ctx.fillStyle=bloom?'#f472b6':'#fbcfe8';
+ for(let i=0;i<petals;i++){let a=i*Math.PI*2/petals;ctx.beginPath();ctx.ellipse(x+Math.cos(a)*r,y+Math.sin(a)*r,10,14,a,0,Math.PI*2);ctx.fill();}
+ ctx.fillStyle='#facc15';ctx.beginPath();ctx.arc(x,y,9,0,Math.PI*2);ctx.fill();
+}
+function drawButterfly(x,y,s){
+ ctx.save();ctx.translate(x,y);ctx.scale(s,s);
+ let flap=Math.sin(butterfly.wing)*.5;
+ ctx.fillStyle='#f59e0b';ctx.beginPath();ctx.ellipse(-12,-4,18,12,-.7-flap,0,Math.PI*2);ctx.ellipse(12,-4,18,12,.7+flap,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#ec4899';ctx.beginPath();ctx.ellipse(-10,10,13,9,.7+flap,0,Math.PI*2);ctx.ellipse(10,10,13,9,-.7-flap,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#111827';ctx.beginPath();ctx.ellipse(0,2,4,17,0,0,Math.PI*2);ctx.fill();
+ ctx.strokeStyle='#111827';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-2,-12);ctx.lineTo(-10,-22);ctx.moveTo(2,-12);ctx.lineTo(10,-22);ctx.stroke();
+ ctx.restore();
+}
+function bezier(t,p0,p1,p2,p3){return{x:(1-t)**3*p0.x+3*(1-t)**2*t*p1.x+3*(1-t)*t*t*p2.x+t**3*p3.x,y:(1-t)**3*p0.y+3*(1-t)**2*t*p1.y+3*(1-t)*t*t*p2.y+t**3*p3.y};}
+function roundRect(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();if(fill)ctx.fill();if(stroke)ctx.stroke();}
+function fitText(text,x,y,max){let size=11;ctx.font='bold '+size+'px sans-serif';while(ctx.measureText(text).width>max&&size>7){size--;ctx.font='bold '+size+'px sans-serif'}ctx.fillText(text,x,y);}
+function drawSparkles(x,y){for(let i=0;i<10;i++){let a=(Date.now()/240+i)*.7;ctx.fillStyle=['#facc15','#ec4899','#22c55e'][i%3];ctx.beginPath();ctx.arc(x+Math.cos(a)*34,y-20+Math.sin(a)*28,3,0,Math.PI*2);ctx.fill();}}
+function drawWarning(x,y){ctx.fillStyle='rgba(220,38,38,.25)';ctx.beginPath();ctx.arc(x,y,34,0,Math.PI*2);ctx.fill();ctx.fillStyle='#dc2626';ctx.font='bold 26px sans-serif';ctx.textAlign='center';ctx.fillText('↩',x,y+8);}
+function loop(){update();render();requestAnimationFrame(loop);}
+function finish(){document.getElementById('s-claps').play().catch(()=>{});document.getElementById('root').innerHTML='<div class="pop" style="margin:auto;text-align:center"><h2>🦋🌸 Symmetry Garden Restored!</h2><p>You completed all 11 advanced symmetry challenges.<br><b>Final Flowers Bloomed: '+score+'/11</b></p><button class="btn" onclick="location.reload()">Play Again</button></div>';}
+function confetti(){for(let i=0;i<18;i++){let p=document.createElement('div');p.className='confetti';p.style.left=Math.random()*100+'vw';p.style.background=['#ec4899','#22c55e','#facc15','#0ea5e9'][Math.floor(Math.random()*4)];document.body.appendChild(p);setTimeout(()=>p.remove(),1600);}}
+</script>
+</body>
+</html>
