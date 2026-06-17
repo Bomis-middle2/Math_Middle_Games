@@ -36,7 +36,7 @@ button{
 }
 #question{
   position:absolute;top:55px;left:50%;transform:translateX(-50%);
-  width:88%;background:white;border:3px solid #004aad;border-radius:16px;
+  width:88%;background:white;border:3px solid #004aad;border-radius:166px;
   padding:14px;font-size:23px;font-weight:bold;text-align:center;z-index:10
 }
 #runner{
@@ -175,7 +175,7 @@ const masterQuestionBank = [
 let questions=[];
 let current=0,score=0,chances=2,time=120,lane=1;
 let boards=[],moveTimer,timer,active=false,locked=false;
-let currentShuffledOptions=[]; // Remembers current choices mix layout tracking
+let currentShuffledOptions=[]; 
 
 const runner=document.getElementById("runner");
 
@@ -189,12 +189,13 @@ window.onload=()=>{
   }, 5000);
 };
 
+// Fixed curly bracket syntax below:
 function startGame(){
   document.getElementById("instructions").style.display="none";
   questions = [...masterQuestionBank].sort(() => Math.random() - 0.5).slice(0, 10);
   active=true;
   setRunner();
-  loadQuestion(true); // true means fully fresh question setup logic track
+  loadQuestion(true); 
 
   timer=setInterval(()=>{
     time--;
@@ -296,12 +297,11 @@ function wrongChance(text){
     current++;
     setTimeout(() => loadQuestion(true), 2000);
   }else{
-    // First chance wrong: all options reappear completely from the right hand side track view
     showMsg(text + " Options Reappearing! Try Again!", "orange", 1500);
     setTimeout(() => {
-      lane = 1; // reset player track center point
+      lane = 1; 
       setRunner();
-      loadQuestion(false); // loads the exact same question options layout track again
+      loadQuestion(false); 
     }, 1500);
   }
 }
