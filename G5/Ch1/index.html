@@ -33,25 +33,18 @@ button{border:0;border-radius:14px;background:#0066ff;color:white;font-size:20px
 
 <div id="loader" class="screen">
   <img src="assets/logo.png" class="logo">
-  <h2>Loading Treasure Hunt...</h2>
 </div>
 
 <div id="instructions" class="screen" style="display:none">
   <img src="assets/logo.png" class="logo">
-  <h1>Basic Operations Treasure Hunt</h1>
-  <div class="instructions">
-    <p>Read the maths question carefully.</p>
-    <p>Click the treasure chest with the correct answer.</p>
-    <p>You get <b>2 chances for each question</b>.</p>
-    <p>After 2 wrong attempts, the correct answer will be shown.</p>
-  </div>
   <button onclick="startGame()">Start Adventure</button>
 </div>
 
 <div id="end" class="screen" style="display:none">
   <img src="assets/logo.png" class="logo">
-  <h1 id="endTitle">Game Over!</h1>
-  <h2>Your Score: <span id="finalScore"></span></h2>
+  <!-- Hidden text references used by JavaScript to prevent script breaking -->
+  <span id="endTitle" style="display:none"></span>
+  <span id="finalScore" style="display:none"></span>
   <button onclick="location.reload()">Play Again</button>
 </div>
 
