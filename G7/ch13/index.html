@@ -16,8 +16,8 @@
         body, html {
             width: 100%;
             height: 100%;
-            background-color: #0b0f19;
-            color: #ffffff;
+            background-color: #f0f4f8;
+            color: #1e293b;
             overflow: hidden;
         }
         
@@ -33,25 +33,25 @@
         }
 
         .matrix-panel {
-            background: linear-gradient(145deg, #111a2e, #090d1a);
-            border: 2px solid #38bdf8;
+            background: #ffffff;
+            border: 3px solid #475569;
             border-radius: 20px;
             padding: 35px 20px;
             max-width: 460px;
             width: 100%;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
         }
         .btn-action {
-            background: #38bdf8;
-            color: #0b0f19;
+            background: #475569;
+            color: #ffffff;
             border: none;
             padding: 14px 40px;
             font-size: 1.1rem;
             font-weight: bold;
             border-radius: 30px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(56, 189, 248, 0.4);
+            box-shadow: 0 5px 15px rgba(71, 85, 105, 0.3);
             margin-top: 20px;
             text-transform: uppercase;
         }
@@ -69,21 +69,22 @@
             justify-content: space-between;
             font-weight: bold;
             font-size: 1rem;
-            color: #38bdf8;
+            color: #475569;
             padding: 5px 0;
         }
 
         .mission-panel {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
             border-radius: 14px;
             padding: 12px;
             text-align: center;
             margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
         .mission-tag {
             font-size: 0.75rem;
-            color: #f43f5e;
+            color: #e11d48;
             text-transform: uppercase;
             letter-spacing: 2px;
             font-weight: bold;
@@ -92,478 +93,23 @@
         .mission-text {
             font-size: 1.1rem;
             font-weight: bold;
-            color: #ffffff;
+            color: #1e293b;
             line-height: 1.4;
         }
 
         /* Matrix Projection Canvas */
         .matrix-frame {
             width: 100%;
-            background: #05070f;
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
             border-radius: 16px;
             position: relative;
             flex-grow: 1;
             overflow: hidden;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
         }
         canvas {
             display: block;
             width: 100%;
             height: 100%;
         }
-
-        /* Deck controls */
-        .deck-controls {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            margin-top: 10px;
-            height: 55px;
-        }
-        .deck-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: #ffffff;
-            font-size: 1.3rem;
-            font-weight: bold;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-        }
-        .move-btn { width: 25%; }
-        .fire-btn { width: 45%; background: rgba(56, 189, 248, 0.15); border-color: #38bdf8; color: #38bdf8; }
-        .deck-btn:active { background: #38bdf8; color: #05070f; }
-
-        /* Splash Screen matching image directory rules */
-        #hard-splash {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #ffffff;
-            color: #0c081c;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-            transition: opacity 0.5s ease;
-        }
-    </style>
-</head>
-<body>
-
-    <audio id="s-correct" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="s-wrong" src="assets/wrong.mp3" preload="auto"></audio>
-    <audio id="s-win" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
-
-    <div id="hard-splash">
-        <img src="assets/innovine-logo.png" style="max-width:240px; margin-bottom:24px; object-fit:contain;" onerror="this.style.display='none'; document.getElementById('fb-text').style.display='block';">
-        <h1 id="fb-text" style="display:none; font-size:2.2rem; margin-bottom:15px; letter-spacing:1px; font-weight:bold; color:#ea580c;">INNOVINE</h1>
-        <div style="width:160px; height:6px; background-color:#e2e8f0; border-radius:10px; overflow:hidden;">
-            <div id="loader-progress-fill" style="width:0%; height:100%; background-color:#22c55e;"></div>
-        </div>
-    </div>
-
-    <div id="viewport-root"></div>
-
-    <script>
-        let currentScore = 0;
-        let livesLeft = 3;
-        
-        let canvasElement = null;
-        let canvasContext = null;
-        let animationFrameHandle = null;
-
-        // Energy Catcher Coordinates
-        let shipX = 200;
-        const shipWidth = 60;
-        const shipHeight = 18;
-        let horizontalMovementMode = 0; // -1 = Left, 1 = Right
-
-        // Projection Node Arrays
-        let activeBeamsList = [];
-        let dimensionalShapesList = [];
-        
-        let targetQuestionText = "";
-        let expectedCorrectAnswer = "";
-        let isEngineRunning = false;
-
-        // 5-Second Startup Logic
-        let progressVal = 0;
-        const loaderIntervalMs = 50; 
-        const totalDurationMs = 5000;
-        const stepsCount = totalDurationMs / loaderIntervalMs;
-        const percentagePerStep = 100 / stepsCount;
-
-        const progressTicker = setInterval(() => {
-            progressVal += percentagePerStep;
-            const element = document.getElementById('loader-progress-fill');
-            if (element) element.style.width = Math.min(progressVal, 100) + '%';
-
-            if (progressVal >= 100) {
-                clearInterval(progressTicker);
-                purgeSplashAndBuildMenu();
-            }
-        }, loaderIntervalMs);
-
-        function purgeSplashAndBuildMenu() {
-            const splashMask = document.getElementById('hard-splash');
-            if (splashMask) {
-                splashMask.style.opacity = '0';
-                setTimeout(() => {
-                    if (splashMask.parentNode) splashMask.parentNode.removeChild(splashMask);
-                    renderMenuScreen();
-                }, 500);
-            } else {
-                renderMenuScreen();
-            }
-        }
-
-        function renderMenuScreen() {
-            isEngineRunning = false;
-            if (animationFrameHandle) cancelAnimationFrame(animationFrameHandle);
-            
-            document.getElementById('viewport-root').innerHTML = `
-                <div class="matrix-panel">
-                    <h1 style="color:#38bdf8; font-size:1.7rem; margin-bottom:12px;">SHAPE MATRIX ELEMENT</h1>
-                    <p style="color:#94a3b8; font-size:0.9rem; line-height:1.6; text-align:left; margin-bottom:20px;">
-                        Traverse the dimensional space! Analyze the 3D shape query displayed at the upper dashboard. Navigate your capture platform underneath the accurate target data crystal and project your energy scanning field upward to lock it in!
-                    </p>
-                    <div style="color:#f43f5e; font-size:0.85rem; margin-bottom:20px; font-weight:bold;">
-                        ⌨️ Keyboard Mapping: Slide with Arrow Keys | Spacebar to Fire Scanner
-                    </div>
-                    <button class="btn-action" onclick="initiateGameEngine()">START MATRIX</button>
-                </div>
-            `;
-        }
-
-        function initiateGameEngine() {
-            currentScore = 0;
-            livesLeft = 3;
-            dimensionalShapesList = [];
-            activeBeamsList = [];
-            isEngineRunning = true;
-
-            buildGameLayoutDOM();
-            generateNextShapeQuestion();
-            runCanvasGameLoop();
-            attachSteeringControls();
-        }
-
-        function buildGameLayoutDOM() {
-            document.getElementById('viewport-root').innerHTML = `
-                <div class="game-layout">
-                    <div class="hud-row">
-                        <div>SCORE: <span id="lbl-score">00</span></div>
-                        <div>MATRIX INTEGRITY: <span id="lbl-lives">❤️❤️❤️</span></div>
-                    </div>
-
-                    <div class="mission-panel">
-                        <div class="mission-tag" id="lbl-task-tag">DIMENSIONAL METRIC LOCK</div>
-                        <div class="mission-text" id="lbl-task-text">LOADING CORE DATA...</div>
-                    </div>
-
-                    <div class="matrix-frame">
-                        <canvas id="matrix-canvas" width="440" height="420"></canvas>
-                    </div>
-
-                    <div class="deck-controls">
-                        <div class="deck-btn move-btn" id="btn-left-press">◀</div>
-                        <div class="deck-btn fire-btn" id="btn-fire-press">SCAN MATRIX</div>
-                        <div class="deck-btn move-btn" id="btn-right-press">▶</div>
-                    </div>
-                </div>
-            `;
-
-            canvasElement = document.getElementById('matrix-canvas');
-            canvasContext = canvasElement.getContext('2d');
-            shipX = (canvasElement.width / 2) - (shipWidth / 2);
-        }
-
-        function generateNextShapeQuestion() {
-            // Grade 7 Euler's formulas, cross sections, faces, vertices, edges metrics pool
-            const geometricPool = [
-                { tag: "Faces Count Evaluation", q: "How many Faces are in a Triangular Pyramid?", a: "4 Faces", w: ["5 Faces", "6 Faces", "3 Faces"] },
-                { tag: "Vertices Assessment", q: "Find total Vertices present inside a Triangular Prism", a: "6 Vertices", w: ["5 Vertices", "8 Vertices", "9 Vertices"] },
-                { tag: "Edge Metric Configuration", q: "How many Edges make up a standard Square Pyramid?", a: "8 Edges", w: ["5 Edges", "6 Edges", "12 Edges"] },
-                { tag: "Euler's Matrix Theorem", q: "Cube properties validation: Count total Edges", a: "12 Edges", w: ["6 Edges", "8 Edges", "14 Edges"] },
-                { tag: "Cross-Section Projections", q: "Horizontal slice shape profile of a standing Cylinder", a: "Circle", w: ["Rectangle", "Square", "Oval"] },
-                { tag: "Cross-Section Projections", q: "Vertical slice shape profile of a balanced Cone", a: "Triangle", w: ["Circle", "Square", "Rectangle"] },
-                { tag: "Solid Net Visualisation", q: "A net with 1 Square and 4 Triangles forms a...", a: "Pyramid", w: ["Prism", "Cube", "Cylinder"] },
-                { tag: "Isometric Block Analysis", q: "3x3 block structure base missing corners has how many hidden cubes?", a: "1 Cube", w: ["3 Cubes", "0 Cubes", "5 Cubes"] }
-            ];
-
-            const activeChoice = geometricPool[Math.floor(Math.random() * geometricPool.length)];
-            targetQuestionText = activeChoice.q;
-            expectedCorrectAnswer = activeChoice.a;
-
-            document.getElementById('lbl-task-tag').innerText = activeChoice.tag;
-            document.getElementById('lbl-task-text').innerText = targetQuestionText;
-            
-            spawnShapeTargets(activeChoice.w);
-        }
-
-        function spawnShapeTargets(wrongPool) {
-            dimensionalShapesList = [];
-            const segments = 3;
-            const segmentWidth = canvasElement.width / segments;
-            
-            const winColumn = Math.floor(Math.random() * segments);
-            let incorrectAnswers = [...wrongPool].sort(() => Math.random() - 0.5);
-
-            for (let i = 0; i < segments; i++) {
-                let answerText = "";
-                let correctFlag = false;
-
-                if (i === winColumn) {
-                    answerText = expectedCorrectAnswer;
-                    correctFlag = true;
-                } else {
-                    answerText = incorrectAnswers.pop() || "2 Faces";
-                }
-
-                // Layout parameters for geometric visual nodes
-                dimensionalShapesList.push({
-                    x: (i * segmentWidth) + (segmentWidth / 2),
-                    y: 70 + Math.random() * 30,
-                    label: answerText,
-                    isCorrect: correctFlag,
-                    radius: 30,
-                    rotationTheta: Math.random() * Math.PI,
-                    rotationSpeed: 0.01 + Math.random() * 0.02
-                });
-            }
-        }
-
-        function runCanvasGameLoop() {
-            if (!isEngineRunning) return;
-
-            updateFramePhysics();
-            renderFrameGraphics();
-
-            animationFrameHandle = requestAnimationFrame(runCanvasGameLoop);
-        }
-
-        function updateFramePhysics() {
-            // Smooth horizontal catcher navigation
-            if (horizontalMovementMode === -1 && shipX > 5) shipX -= 6;
-            if (horizontalMovementMode === 1 && shipX < (canvasElement.width - shipWidth - 5)) shipX += 6;
-
-            // Handle scanning beam interactions
-            for (let i = activeBeamsList.length - 1; i >= 0; i--) {
-                let beam = activeBeamsList[i];
-                beam.y -= 12; // Scans vertically at rapid speed
-                
-                if (beam.y < 0) {
-                    activeBeamsList.splice(i, 1);
-                    continue;
-                }
-
-                for (let j = dimensionalShapesList.length - 1; j >= 0; j--) {
-                    let targetNode = dimensionalShapesList[j];
-                    
-                    let dx = beam.x - targetNode.x;
-                    let dy = beam.y - targetNode.y;
-                    let distanceSq = Math.sqrt(dx*dx + dy*dy);
-
-                    if (distanceSq <= targetNode.radius) {
-                        activeBeamsList.splice(i, 1);
-                        
-                        if (targetNode.isCorrect) {
-                            playAudioFile('s-correct');
-                            currentScore += 10;
-                            document.getElementById('lbl-score').innerText = currentScore;
-                            
-                            playAudioFile('s-win');
-                            generateNextShapeQuestion();
-                        } else {
-                            playAudioFile('s-wrong');
-                            deductLifeToken();
-                        }
-                        return;
-                    }
-                }
-            }
-
-            // Update rotation metrics inside objects
-            for (let i = 0; i < dimensionalShapesList.length; i++) {
-                dimensionalShapesList[i].rotationTheta += dimensionalShapesList[i].rotationSpeed;
-            }
-        }
-
-        function deductLifeToken() {
-            livesLeft--;
-            let hearts = "";
-            for (let i = 0; i < livesLeft; i++) hearts += "❤️";
-            if (hearts === "") hearts = "BROKEN";
-            document.getElementById('lbl-lives').innerText = hearts;
-
-            if (livesLeft <= 0) {
-                isEngineRunning = false;
-                renderGameOverScreen();
-            } else {
-                generateNextShapeQuestion();
-            }
-        }
-
-        function triggerHarpoonGrappleSequence() {
-            if (!isEngineRunning || activeBeamsList.length > 0) return;
-            activeBeamsList.push({
-                x: shipX + (shipWidth / 2),
-                y: canvasElement.height - 30
-            });
-        }
-
-        function renderFrameGraphics() {
-            canvasContext.clearRect(0, 0, canvasElement.width, canvasElement.height);
-
-            // Draw Vector Background Scanning Grid
-            canvasContext.strokeStyle = 'rgba(56, 189, 248, 0.05)';
-            canvasContext.lineWidth = 1;
-            for (let g = 20; g < canvasElement.width; g += 40) {
-                canvasContext.beginPath();
-                canvasContext.moveTo(g, 0);
-                canvasContext.lineTo(g, canvasElement.height);
-                canvasContext.stroke();
-            }
-
-            // Draw Upward Diagnostic Scanners
-            for (let i = 0; i < activeBeamsList.length; i++) {
-                let beam = activeBeamsList[i];
-                
-                // Pulsing laser glow line
-                canvasContext.strokeStyle = '#f43f5e';
-                canvasContext.lineWidth = 4;
-                canvasContext.beginPath();
-                canvasContext.moveTo(beam.x, canvasElement.height - 25);
-                canvasContext.lineTo(beam.x, beam.y);
-                canvasContext.stroke();
-
-                // Core burst dot
-                canvasContext.fillStyle = '#ffffff';
-                canvasContext.beginPath();
-                canvasContext.arc(beam.x, beam.y, 6, 0, Math.PI * 2);
-                canvasContext.fill();
-            }
-
-            // Draw Capture Wagon Platform
-            canvasContext.fillStyle = '#1e293b';
-            canvasContext.strokeStyle = '#38bdf8';
-            canvasContext.lineWidth = 2;
-            canvasContext.beginPath();
-            canvasContext.roundRect(shipX, canvasElement.height - 25, shipWidth, shipHeight, 6);
-            canvasContext.fill();
-            canvasContext.stroke();
-
-            // Energy Core center point
-            canvasContext.fillStyle = '#38bdf8';
-            canvasContext.fillRect(shipX + (shipWidth / 2) - 6, canvasElement.height - 31, 12, 6);
-
-            // Draw Animated Solid Geometric Hub Crystals
-            for (let i = 0; i < dimensionalShapesList.length; i++) {
-                let targetNode = dimensionalShapesList[i];
-
-                canvasContext.save();
-                canvasContext.translate(targetNode.x, targetNode.y);
-                canvasContext.rotate(targetNode.rotationTheta);
-
-                // Draw outer holographic wireframe box outline
-                canvasContext.fillStyle = '#0f172a';
-                canvasContext.strokeStyle = targetNode.isCorrect ? '#38bdf8' : '#64748b';
-                canvasContext.lineWidth = 2;
-                
-                canvasContext.beginPath();
-                for (let k = 0; k < 6; k++) {
-                    let angle = (Math.PI / 3) * k;
-                    let hx = Math.cos(angle) * targetNode.radius;
-                    let hy = Math.sin(angle) * targetNode.radius;
-                    if (k === 0) canvasContext.moveTo(hx, hy);
-                    else canvasContext.lineTo(hx, hy);
-                }
-                canvasContext.closePath();
-                canvasContext.fill();
-                canvasContext.stroke();
-
-                // Draw central visual cross wires
-                canvasContext.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-                canvasContext.beginPath();
-                canvasContext.moveTo(-targetNode.radius, 0);
-                canvasContext.lineTo(targetNode.radius, 0);
-                canvasContext.moveTo(0, -targetNode.radius);
-                canvasContext.lineTo(0, targetNode.radius);
-                canvasContext.stroke();
-
-                canvasContext.restore();
-
-                // Render dynamic text metric tracking system flat on canvas front
-                canvasContext.fillStyle = '#ffffff';
-                canvasContext.font = 'bold 11px sans-serif';
-                canvasContext.textAlign = 'center';
-                canvasContext.textBaseline = 'middle';
-                canvasContext.fillText(targetNode.label, targetNode.x, targetNode.y);
-            }
-        }
-
-        function attachSteeringControls() {
-            window.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowLeft') horizontalMovementMode = -1;
-                if (e.key === 'ArrowRight') horizontalMovementMode = 1;
-                if (e.key === ' ' || e.key === 'Spacebar') {
-                    e.preventDefault();
-                    triggerHarpoonGrappleSequence();
-                }
-            });
-            window.addEventListener('keyup', (e) => {
-                if (e.key === 'ArrowLeft' && horizontalMovementMode === -1) horizontalMovementMode = 0;
-                if (e.key === 'ArrowRight' && horizontalMovementMode === 1) horizontalMovementMode = 0;
-            });
-
-            const leftBtn = document.getElementById('btn-left-press');
-            const rightBtn = document.getElementById('btn-right-press');
-            const fireBtn = document.getElementById('btn-fire-press');
-
-            if (leftBtn && rightBtn && fireBtn) {
-                leftBtn.addEventListener('touchstart', (e) => { e.preventDefault(); horizontalMovementMode = -1; });
-                leftBtn.addEventListener('touchend', (e) => { e.preventDefault(); if(horizontalMovementMode === -1) horizontalMovementMode = 0; });
-                
-                rightBtn.addEventListener('touchstart', (e) => { e.preventDefault(); horizontalMovementMode = 1; });
-                rightBtn.addEventListener('touchend', (e) => { e.preventDefault(); if(horizontalMovementMode === 1) horizontalMovementMode = 0; });
-
-                fireBtn.addEventListener('touchstart', (e) => { e.preventDefault(); triggerHarpoonGrappleSequence(); });
-
-                leftBtn.addEventListener('mousedown', () => horizontalMovementMode = -1);
-                leftBtn.addEventListener('mouseup', () => { if(horizontalMovementMode === -1) horizontalMovementMode = 0; });
-                rightBtn.addEventListener('mousedown', () => horizontalMovementMode = 1);
-                rightBtn.addEventListener('mouseup', () => { if(horizontalMovementMode === 1) horizontalMovementMode = 0; });
-                fireBtn.addEventListener('mousedown', () => triggerHarpoonGrappleSequence());
-            }
-        }
-
-        function renderGameOverScreen() {
-            document.getElementById('viewport-root').innerHTML = `
-                <div class="matrix-panel" style="border-color: #f43f5e;">
-                    <h1 style="color:#f43f5e; font-size:1.6rem; margin-bottom:10px;">MATRIX DISRUPTED</h1>
-                    <p style="color:#ffffff; font-size:1rem; margin-bottom:15px;">
-                        Final Analysis Score: <span style="color:#38bdf8; font-weight:bold;">${currentScore} Points</span>
-                    </p>
-                    <p style="color:#94a3b8; font-size:0.85rem; line-height:1.4; margin-bottom:25px;">
-                        Excellent execution! You have successfully configured Euler mappings, mapped complex nets, and computed properties of spatial solid shapes accurately.
-                    </p>
-                    <button class="btn-action" onclick="renderMenuScreen()">RE-ENTER SYSTEM</button>
-                </div>
-            `;
-        }
-
-        function playAudioFile(id) {
-            try {
-                const sound = document.getElementById(id);
-                if (sound) {
-                    sound.currentTime = 0;
-                    sound.play().catch(() => {});
-                }
-            } catch (err) {}
-        }
-    </script>
-</body>
-</html>
