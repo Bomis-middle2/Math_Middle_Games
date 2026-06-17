@@ -34,26 +34,20 @@ button{border:0;border-radius:14px;background:#0066ff;color:white;font-size:20px
 
 <body>
 
-<!-- 5-Second White Splash Screen -->
 <div id="loader" class="screen">
   <img src="assets/logo.png" class="logo">
 </div>
 
-<!-- Instructions Screen (No Text underneath logo) -->
 <div id="instructions" class="screen" style="display:none">
-  <img src="assets/logo.png" class="logo">
   <button onclick="startGame()">Start Adventure</button>
 </div>
 
-<!-- Game Over End Screen -->
 <div id="end" class="screen" style="display:none">
-  <img src="assets/logo.png" class="logo">
   <span id="endTitle" style="display:none"></span>
   <span id="finalScore" style="display:none"></span>
   <button onclick="location.reload()">Play Again</button>
 </div>
 
-<!-- Game HUD Area -->
 <div id="hud">
   <div>Score: <span id="score">0</span></div>
   <div>Chances: <span id="chances">2</span></div>
