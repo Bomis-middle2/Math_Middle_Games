@@ -13,13 +13,30 @@ body{margin:0;font-family:Arial,sans-serif;overflow:hidden}
   z-index:50;padding:20px
 }
 
-/* 5-second start screen background */
+/* 5-second start screen background & dynamic CSS loader */
 #loader{background:#ffffff; z-index: 60;}
+.spinner {
+  width: 70px;
+  height: 70px;
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #0066ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.loader-text {
+  font-size: 24px;
+  color: #0066ff;
+  font-weight: bold;
+}
 
 /* Instructions and Game Over backgrounds */
 #instructions, #end{background:linear-gradient(#eaf9ff,#fff)}
 
-.logo{width:170px;margin-bottom:18px}
 button{
   padding:14px 28px;border:0;border-radius:14px;background:#0066ff;
   color:white;font-size:20px;font-weight:bold;cursor:pointer
@@ -87,7 +104,8 @@ button{
 <body>
 
 <div id="loader" class="screen">
-  <img src="assets/logo.png" class="logo">
+  <div class="spinner"></div>
+  <div class="loader-text">Loading Innovine Solutions Math Game...</div>
 </div>
 
 <div id="instructions" class="screen" style="display:none">
@@ -144,7 +162,6 @@ button{
 <script>
 const lanes=[190,310,430];
 
-// Verified Math-Correct Question Bank
 const masterQuestionBank = [
   {q:"In the Indian system, 1 crore is equal to:",options:["10,00,000","1,00,00,000","1,00,000"],ans:"1,00,00,000"},
   {q:"In the International system, 1 million is equal to:",options:["1,00,000","10,00,000","1,00,00,000"],ans:"10,00,000"},
@@ -157,7 +174,7 @@ const masterQuestionBank = [
   {q:"What is the Roman numeral for 90?",options:["LXXXX","XC","CX"],ans:"XC"},
   {q:"What is 25,000 + 35,000?",options:["50,000","60,000","70,000"],ans:"60,000"},
   {q:"In the Indian system, 10 lakhs is equal to:",options:["1 Million","10 Million","1 Lakh"],ans:"1 Million"},
-  {q:"What is the place value of 5 in 5,43,210?",options:["50,000","5,0,00,000","5,000"],ans:"5,00,000"},
+  {q:"What is the place value of 5 in 5,43,210?",options:["50,000","5,00,000","5,000"],ans:"5,00,000"},
   {q:"What is the face value of 9 in 1,92,834?",options:["90,000","9","900"],ans:"9"},
   {q:"Round 12,680 to the nearest thousand.",options:["12,000","13,000","12,700"],ans:"13,000"},
   {q:"What is the Roman numeral for 40?",options:["XL","XXXX","LX"],ans:"XL"},
@@ -179,7 +196,7 @@ let currentShuffledOptions=[];
 
 const runner=document.getElementById("runner");
 
-// Handles transitions from Loader directly to Instructions cleanly
+// Clean execution loop
 window.onload=()=>{
   setTimeout(()=>{
     const loaderElement = document.getElementById("loader");
