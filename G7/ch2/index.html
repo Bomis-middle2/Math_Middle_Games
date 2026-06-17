@@ -1,1 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Fractions & Decimals Treasure Box Game</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:radial-gradient(circle at top,#201b5a,#0f102d 55%,#08091f);color:#fff;min-height:100vh;overflow-x:hidden}
+.hidden{display:none!important}
+#loader{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;padding:24px}.logo{width:240px;max-width:70vw;object-fit:contain}.loading-box{width:240px;height:7px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-top:25px}.loading-fill{height:100%;width:0;background:#2563eb;border-radius:99px}
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;text-align:center}.menu-card{width:100%;max-width:560px;background:rgba(30,25,82,.82);border:2px solid rgba(255,0,150,.75);border-radius:24px;padding:32px 26px;box-shadow:0 0 28px rgba(255,0,150,.35)}h1,h2{color:#22d3ee;text-shadow:0 0 12px rgba(34,211,238,.6);margin-bottom:16px}.instructions{text-align:left;color:#e2e8f0;font-size:1.05rem;line-height:1.6;margin:18px 0 24px}.instructions p{margin:10px 0}button{border:0;border-radius:15px;background:linear-gradient(135deg,#ec4899,#8b5cf6);color:#fff;font-weight:800;font-size:1.05rem;padding:13px 28px;cursor:pointer;box-shadow:0 10px 22px rgba(236,72,153,.28);transition:.2s}button:hover:not(:disabled){transform:translateY(-2px)}button:disabled{opacity:.65;cursor:not-allowed}
+#game{max-width:960px;margin:0 auto;padding:14px 18px 28px}.hud{display:flex;justify-content:space-between;align-items:center;color:#22d3ee;font-weight:900;font-size:1.1rem;margin-bottom:14px}.progress{height:8px;background:#2b2a5f;border-radius:999px;overflow:hidden;margin-bottom:18px}.bar{height:100%;width:0;background:linear-gradient(90deg,#22d3ee,#ec4899);transition:.45s}
+.question-card{background:rgba(52,28,90,.88);border:2px solid #ff1493;border-radius:20px;padding:22px;margin-bottom:20px;text-align:center;box-shadow:0 0 20px rgba(255,20,147,.25)}#q{font-size:1.35rem;line-height:1.45;color:#fff;min-height:62px;display:flex;align-items:center;justify-content:center}
+.box-area{background:rgba(30,29,75,.9);border:3px solid rgba(129,140,248,.55);border-radius:24px;min-height:350px;padding:28px 26px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;align-items:end;position:relative;overflow:hidden}.box-wrap{text-align:center}.treasure-box{height:130px;position:relative;cursor:pointer;transition:.2s}.treasure-box:hover{transform:translateY(-4px)}.lid{position:absolute;left:7%;top:0;width:86%;height:45%;background:#0f766e;border:4px solid #075e56;border-radius:14px 14px 4px 4px;transform-origin:left bottom;transition:transform .45s cubic-bezier(.2,1.4,.4,1)}.base{position:absolute;left:0;bottom:0;width:100%;height:78%;background:#7c3f18;border:4px solid #4b250d;border-radius:14px}.base:before{content:"";position:absolute;left:0;right:0;top:42%;height:4px;background:#3b1d0a}.lock{position:absolute;left:50%;top:48%;transform:translateX(-50%);width:24px;height:36px;background:#c4a000;border:3px solid #6d5700;border-radius:4px;z-index:3}.open .lid{transform:rotate(-28deg) translate(-8px,-18px)}.correct-box .base{background:#12846f;border-color:#0f6658}.wrong-box .base{background:#8b1f1f;border-color:#5c1111}.opt-label{font-size:1.1rem;font-weight:900;margin-top:12px;text-shadow:2px 2px #000}.feedback{margin-top:18px;background:rgba(255,255,255,.08);border-left:5px solid #ec4899;border-radius:12px;padding:14px 16px;font-size:1.02rem;line-height:1.45;text-align:left}.next-row{height:64px;display:flex;align-items:center;justify-content:center}.pop-star{position:absolute;font-size:28px;animation:floatUp 1s ease-out forwards;pointer-events:none}@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(.8)}100%{opacity:0;transform:translateY(-95px) scale(1.4)}}.shake{animation:shake .35s}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+#result-screen{background:radial-gradient(circle at top,#251760,#08091f)}.trophy{font-size:4.2rem;animation:bounce 1.4s infinite alternate}@keyframes bounce{from{transform:translateY(0) scale(1)}to{transform:translateY(-10px) scale(1.08)}}
+@media(max-width:760px){.box-area{grid-template-columns:repeat(2,1fr);gap:18px;min-height:470px}.treasure-box{height:115px}#q{font-size:1.12rem}.hud{font-size:.98rem}.question-card{padding:18px}.menu-card{padding:26px 18px}}
+</style>
+</head>
+<body>
+<div id="loader">
+  <img src="assets/innovine-logo.png" alt="Innovine Logo" class="logo" />
+  <div class="loading-box"><div id="loading-fill" class="loading-fill"></div></div>
+</div>
+
+<div id="instruction-screen" class="screen hidden">
+  <div class="menu-card">
+    <h1>Fraction & Decimal Box Challenge</h1>
+    <div class="instructions">
+      <p>• Choose the correct box for each Grade 7 question.</p>
+      <p>• Correct answer opens the box with a clap and earns a star.</p>
+      <p>• You get 2 chances for every challenge.</p>
+      <p>• After 2 wrong attempts, the correct box is shown with a short explanation.</p>
+    </div>
+    <button onclick="startGame()">Start Challenge</button>
+  </div>
+</div>
+
+<div id="game" class="hidden">
+  <div class="hud">
+    <span>Challenge: <span id="q-num">1</span>/10</span>
+    <span>Stars: ⭐ <span id="score">0</span></span>
+  </div>
+  <div class="progress"><div id="bar" class="bar"></div></div>
+  <div class="question-card"><h2 id="q"></h2></div>
+  <div id="box-area" class="box-area"></div>
+  <div id="feedback" class="feedback hidden"></div>
+  <div class="next-row"><button id="next-btn" class="hidden" onclick="nextQuestion()">Next Box ➡️</button></div>
+</div>
+
+<div id="result-screen" class="screen hidden">
+  <div class="menu-card">
+    <div class="trophy">🎁🏆✨</div>
+    <h2>Challenge Complete!</h2>
+    <p id="result-msg" style="font-size:1.1rem;line-height:1.6;color:#e2e8f0;margin:18px 0 26px"></p>
+    <button onclick="location.reload()">Play Again</button>
+  </div>
+</div>
+
+<script>
+const audio={
+  correct:new Audio('assets/correct.mp3'),
+  wrong:new Audio('assets/wrong.mp3'),
+  claps:new Audio('assets/freesound_community-claps-44774.mp3')
+};
+
+const questions=[
+ {q:'Which fraction is equivalent to 3/4?',options:['6/12','9/12','12/18','15/25'],ans:'9/12',exp:'3/4 × 3/3 = 9/12, so both fractions have the same value.'},
+ {q:'What is 2/5 + 1/10?',options:['3/15','5/10','1/2','3/10'],ans:'1/2',exp:'2/5 = 4/10. So, 4/10 + 1/10 = 5/10 = 1/2.'},
+ {q:'Which decimal is equal to 7/10?',options:['0.07','0.7','7.0','0.007'],ans:'0.7',exp:'7/10 means seven tenths, which is written as 0.7.'},
+ {q:'Arrange in ascending order: 0.45, 0.5, 0.405',options:['0.405, 0.45, 0.5','0.5, 0.45, 0.405','0.45, 0.405, 0.5','0.405, 0.5, 0.45'],ans:'0.405, 0.45, 0.5',exp:'Compare place values: 0.405 is smallest, then 0.45, then 0.5.'},
+ {q:'What is 1.25 + 2.6?',options:['3.75','3.85','3.95','4.15'],ans:'3.85',exp:'1.25 + 2.60 = 3.85.'},
+ {q:'A ribbon is 3/4 m long. Riya uses 1/4 m. How much ribbon is left?',options:['1/4 m','1/2 m','2/4 m only','1 m'],ans:'1/2 m',exp:'3/4 − 1/4 = 2/4 = 1/2 m.'},
+ {q:'Which is greater?',options:['2/3','0.6','They are equal','0.06'],ans:'2/3',exp:'2/3 is about 0.667, which is greater than 0.6.'},
+ {q:'What is 0.8 × 0.5?',options:['0.04','0.4','4.0','0.13'],ans:'0.4',exp:'8 × 5 = 40. There are two decimal places in total, so the product is 0.40 = 0.4.'},
+ {q:'Which fraction represents 0.25?',options:['1/2','1/4','2/5','3/4'],ans:'1/4',exp:'0.25 = 25/100 = 1/4.'},
+ {q:'A bottle has 1.5 L juice. If 0.75 L is poured out, how much juice remains?',options:['0.25 L','0.5 L','0.75 L','1.25 L'],ans:'0.75 L',exp:'1.50 − 0.75 = 0.75 L.'}
+];
+
+let index=0,stars=0,attempts=0,locked=false;
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function play(type){try{audio[type].currentTime=0;audio[type].play().catch(()=>{})}catch(e){}}
+
+function splash(){let p=0;const fill=document.getElementById('loading-fill');const t=setInterval(()=>{p+=1;fill.style.width=p+'%';if(p>=100){clearInterval(t);document.getElementById('loader').classList.add('hidden');document.getElementById('instruction-screen').classList.remove('hidden')}},50)}
+splash();
+
+function startGame(){document.getElementById('instruction-screen').classList.add('hidden');document.getElementById('game').classList.remove('hidden');loadQuestion()}
+
+function loadQuestion(){
+ locked=false;attempts=0;document.getElementById('next-btn').classList.add('hidden');document.getElementById('feedback').classList.add('hidden');
+ document.getElementById('q-num').innerText=index+1;document.getElementById('bar').style.width=(index/questions.length)*100+'%';
+ const data=questions[index];document.getElementById('q').innerText=data.q;
+ const area=document.getElementById('box-area');area.innerHTML='';
+ shuffle([...data.options]).forEach((opt,i)=>{
+   const wrap=document.createElement('div');wrap.className='box-wrap';
+   wrap.innerHTML=`<div class="treasure-box" id="box-${i}"><div class="lid"></div><div class="base"><div class="lock"></div></div></div><div class="opt-label">${String.fromCharCode(65+i)}) ${opt}</div>`;
+   wrap.onclick=()=>check(opt,i,wrap);
+   area.appendChild(wrap);
+ });
+}
+
+function openBox(i,correct){
+ const box=document.getElementById('box-'+i);box.classList.add('open');box.classList.add(correct?'correct-box':'wrong-box');
+ if(correct){for(let k=0;k<8;k++){const s=document.createElement('div');s.className='pop-star';s.innerText=['⭐','✨','🎉','🌟'][k%4];s.style.left=(18+Math.random()*64)+'%';s.style.top=(35+Math.random()*35)+'%';box.appendChild(s)}}
+}
+
+function check(selected,i,wrap){
+ if(locked)return;const data=questions[index];const fb=document.getElementById('feedback');
+ if(selected===data.ans){
+   locked=true;openBox(i,true);play('claps');stars++;document.getElementById('score').innerText=stars;
+   fb.innerHTML=`<b>🌟 Correct!</b><br>${data.exp}`;fb.classList.remove('hidden');document.getElementById('next-btn').classList.remove('hidden');
+ }else{
+   attempts++;openBox(i,false);play('wrong');wrap.classList.add('shake');setTimeout(()=>wrap.classList.remove('shake'),350);
+   if(attempts<2){fb.innerHTML='<b>Try again!</b><br>Check the fraction/decimal value carefully. 1 chance left.';fb.classList.remove('hidden')}
+   else{
+     locked=true;document.querySelectorAll('.box-wrap').forEach((w,idx)=>{if(w.innerText.includes(data.ans))openBox(idx,true)});
+     fb.innerHTML=`<b>Answer shown:</b> ${data.ans}<br>${data.exp}`;fb.classList.remove('hidden');document.getElementById('next-btn').classList.remove('hidden');
+   }
+ }
+}
+
+function nextQuestion(){index++;document.getElementById('bar').style.width=(index/questions.length)*100+'%';if(index<questions.length)loadQuestion();else finish()}
+function finish(){document.getElementById('game').classList.add('hidden');document.getElementById('result-screen').classList.remove('hidden');play('claps');document.getElementById('result-msg').innerText=`You opened the Fraction & Decimal boxes and earned ${stars} out of ${questions.length} stars!`}
+</script>
+</body>
+</html>
 
