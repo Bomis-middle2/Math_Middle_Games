@@ -1,1 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Power Station Manager - Grade 7 Exponents</title>
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',Tahoma,Verdana,sans-serif;margin:0;padding:0;user-select:none;-webkit-user-select:none}
+html,body{width:100%;height:100%;overflow:hidden;color:#1e293b;background:linear-gradient(180deg,#e0f2fe 0%,#fef9c3 52%,#dcfce7 100%);display:flex;justify-content:center;align-items:center}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.45;background:radial-gradient(circle at 18% 15%,rgba(251,191,36,.35),transparent 18%),radial-gradient(circle at 82% 12%,rgba(56,189,248,.28),transparent 18%),linear-gradient(90deg,rgba(14,165,233,.08) 1px,transparent 1px),linear-gradient(rgba(34,197,94,.08) 1px,transparent 1px);background-size:auto,auto,44px 44px,44px 44px}
+#root{width:100%;max-width:900px;height:100%;max-height:760px;display:flex;flex-direction:column;padding:clamp(10px,2vw,16px);gap:clamp(8px,1.4vh,12px);opacity:0;transition:opacity .5s ease;position:relative}
+#splash{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:opacity .5s ease}
+#splash img{width:min(280px,70vw);height:auto}.loadbox{width:190px;height:7px;background:#e5e7eb;border-radius:10px;overflow:hidden;margin-top:18px}.loadfill{width:0%;height:100%;background:linear-gradient(90deg,#f59e0b,#22c55e)}
+#intro{position:absolute;inset:0;background:rgba(240,249,255,.97);z-index:5000;display:flex;justify-content:center;align-items:center;padding:20px;text-align:center;border-radius:18px}
+.pop{background:#fff;border:2px solid #f59e0b;padding:clamp(18px,4vw,28px);border-radius:22px;box-shadow:0 12px 30px rgba(217,119,6,.18);max-width:540px}.pop h2{font-size:clamp(1.3rem,4vw,1.75rem);color:#ca8a04;font-weight:900;margin-bottom:12px}.pop p{font-size:clamp(.9rem,2.5vw,1rem);color:#475569;line-height:1.55;margin-bottom:20px}
+.top{display:flex;justify-content:space-between;gap:10px;color:#0369a1;font-weight:900;font-size:clamp(.88rem,2.4vw,1rem)}
+.grid{display:grid;grid-template-columns:.92fr 1.25fr;gap:12px;min-height:0;flex:1}
+.panel{background:rgba(255,255,255,.9);border:2px solid #38bdf8;border-radius:20px;padding:clamp(10px,2vw,14px);box-shadow:0 10px 24px rgba(14,165,233,.16)}
+.qpanel{display:flex;flex-direction:column;gap:10px}.logo{height:clamp(28px,5vw,38px);object-fit:contain;align-self:center}
+.taskbox{background:#fff7ed;border:2px solid #f59e0b;border-radius:16px;padding:clamp(10px,2.2vw,14px);text-align:center}.tag{font-size:clamp(.67rem,1.8vw,.8rem);letter-spacing:1.8px;text-transform:uppercase;color:#0284c7;font-weight:900}.task{font-size:clamp(1rem,3vw,1.35rem);font-weight:900;color:#111827;line-height:1.35;margin-top:6px}.hint{font-size:clamp(.78rem,2.2vw,.92rem);font-weight:750;color:#475569;text-align:center;line-height:1.35}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:auto}.opt{border:2px solid #bae6fd;background:#f0f9ff;border-radius:16px;padding:clamp(10px,2vw,14px) 8px;min-height:54px;font-size:clamp(.9rem,2.4vw,1.05rem);font-weight:900;color:#1e293b;cursor:pointer;box-shadow:0 3px 10px rgba(14,165,233,.09);transition:.2s}.opt.selected{background:#dbeafe;border-color:#0284c7;transform:translateY(-1px)}.opt.correct{background:#dcfce7!important;border-color:#16a34a!important}.opt.wrong{background:#fee2e2!important;border-color:#dc2626!important}
+.scene{position:relative;overflow:hidden;min-height:280px;padding:0;border-color:#f59e0b;background:#fffbeb}canvas{display:block;width:100%;height:100%}
+.status{font-size:clamp(.82rem,2.3vw,.95rem);font-weight:850;text-align:center;color:#475569;min-height:22px;line-height:1.3}
+.btn{width:100%;border:0;border-radius:16px;padding:clamp(13px,2.6vw,16px);background:linear-gradient(135deg,#f59e0b,#0ea5e9);color:#fff;font-size:clamp(.92rem,2.7vw,1.06rem);font-weight:950;letter-spacing:.7px;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 20px rgba(245,158,11,.24)}.btn:disabled{background:#cbd5e1;color:#64748b;box-shadow:none;cursor:not-allowed}
+.confetti{position:fixed;top:-10px;width:10px;height:10px;pointer-events:none;animation:fall 1.4s linear forwards}@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}
+@media(max-width:720px){#root{max-width:480px}.grid{grid-template-columns:1fr;grid-template-rows:auto 1fr}.scene{min-height:260px}.opts{grid-template-columns:1fr 1fr}}
+@media(max-width:390px){#root{padding:8px;gap:8px}.scene{min-height:220px}.opts{gap:7px}.opt{min-height:48px}}
+@media(max-height:650px){#root{max-height:none;gap:7px}.logo{height:26px}.panel{padding:8px}.taskbox{padding:8px}.scene{min-height:190px}.opt{min-height:44px;padding:8px}.btn{padding:11px}}
+@media(orientation:landscape) and (max-height:520px){#root{max-width:900px}.grid{grid-template-columns:.9fr 1.3fr}.scene{min-height:0}.logo{display:none}.hint{font-size:.78rem}.opts{gap:6px}.opt{min-height:40px;padding:7px}.btn{padding:10px}}
+</style>
+</head>
+<body>
+<audio id="s-correct" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="s-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="s-claps" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
 
+<div id="splash">
+  <img src="assets/innovine-logo.png" alt="Innovine Logo">
+  <div class="loadbox"><div id="fill" class="loadfill"></div></div>
+</div>
+
+<div id="root">
+  <div id="intro">
+    <div class="pop">
+      <h2>⚡ Power Station Manager</h2>
+      <p>Read each Exponents & Powers challenge. Choose the correct answer, then generate electricity. Correct answers light up the city!</p>
+      <button class="btn" onclick="closeIntro()">Start Power Station</button>
+    </div>
+  </div>
+
+  <div class="top">
+    <span>Challenge: <span id="qnum">1</span>/11</span>
+    <span>Stars: ⭐ <span id="score">0</span></span>
+  </div>
+
+  <div class="grid">
+    <div class="panel qpanel">
+      <img src="assets/innovine-logo.png" class="logo" alt="Innovine Logo">
+      <div class="taskbox">
+        <div class="tag" id="tag">Powers & Exponents</div>
+        <div class="task" id="task">Loading...</div>
+      </div>
+      <div class="hint" id="hint">Choose the correct power output.</div>
+      <div class="opts">
+        <button class="opt" id="o0" onclick="pick(0)">A</button>
+        <button class="opt" id="o1" onclick="pick(1)">B</button>
+        <button class="opt" id="o2" onclick="pick(2)">C</button>
+        <button class="opt" id="o3" onclick="pick(3)">D</button>
+      </div>
+    </div>
+
+    <div class="panel scene">
+      <canvas id="canvas"></canvas>
+    </div>
+  </div>
+
+  <div class="status" id="status">Select an answer and generate power.</div>
+  <button class="btn" id="go" onclick="generatePower()">Generate Power</button>
+</div>
+
+<script>
+let canvas,ctx,current,chosen=0,choices=[],qIndex=0,score=0,locked=false;
+let pulse={progress:0,moving:false,fail:false,success:false,timer:0,target:0};
+let powered=0;
+const qs=[
+{tag:'Base & Exponent',q:'What is the exponent in 7⁴?',ans:'4',w:['7','28','49'],exp:'In 7⁴, 4 tells how many times 7 is multiplied.'},
+{tag:'Base & Exponent',q:'What is the base in 9³?',ans:'9',w:['3','27','81'],exp:'In 9³, 9 is the base.'},
+{tag:'Expanded Form',q:'Which expression represents 2 × 2 × 2 × 2?',ans:'2⁴',w:['2²','2³','4²'],exp:'2 is multiplied 4 times, so it is 2⁴.'},
+{tag:'Powers of 10',q:'Find the value of 10³.',ans:'1000',w:['30','300','10000'],exp:'10³ = 10 × 10 × 10 = 1000.'},
+{tag:'Law of Exponents',q:'Simplify: 2³ × 2²',ans:'2⁵',w:['4⁵','2⁶','4²'],exp:'Same base multiplication: add powers. 2³ × 2² = 2⁵.'},
+{tag:'Law of Exponents',q:'Simplify: 5⁴ ÷ 5²',ans:'5²',w:['5⁸','25²','5⁶'],exp:'Same base division: subtract powers. 5⁴ ÷ 5² = 5².'},
+{tag:'Power of a Power',q:'Simplify: (3²)³',ans:'3⁶',w:['3⁵','9³ only','3⁹'],exp:'Power of a power: multiply powers. (3²)³ = 3⁶.'},
+{tag:'Powers of 10',q:'Which is equal to 10⁵?',ans:'100,000',w:['10,000','1,000,000','50,000'],exp:'10⁵ means 1 followed by 5 zeroes: 100,000.'},
+{tag:'Law of Exponents',q:'Simplify: 4² × 4³',ans:'4⁵',w:['16⁵','4⁶','16³'],exp:'Same base multiplication: 4² × 4³ = 4⁵.'},
+{tag:'Law of Exponents',q:'Simplify: 7⁶ ÷ 7³',ans:'7³',w:['7²','7⁹','49³'],exp:'Same base division: 7⁶ ÷ 7³ = 7³.'},
+{tag:'Final Power-Up',q:'Simplify: (2³)²',ans:'2⁶',w:['2⁵','4³','2⁹'],exp:'Power of a power: (2³)² = 2⁶.'}
+];
+
+let p=0;let sp=setInterval(()=>{p+=2;document.getElementById('fill').style.width=p+'%';if(p>=100){clearInterval(sp);let s=document.getElementById('splash');s.style.opacity='0';setTimeout(()=>{s.remove();document.getElementById('root').style.opacity='1';init();},500)}},100);
+
+function init(){canvas=document.getElementById('canvas');ctx=canvas.getContext('2d');resize();window.addEventListener('resize',resize);loadQ();loop();}
+function resize(){let r=canvas.getBoundingClientRect();canvas.width=Math.max(300,Math.floor(r.width));canvas.height=Math.max(200,Math.floor(r.height));}
+function closeIntro(){let m=document.getElementById('intro');if(m)m.remove();}
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a;}
+function loadQ(){
+ locked=false;current=qs[qIndex];
+ document.getElementById('qnum').innerText=qIndex+1;
+ document.getElementById('tag').innerText=current.tag;
+ document.getElementById('task').innerText=current.q;
+ document.getElementById('status').innerText='Select an answer. Power will move to Tower '+((qIndex%4)+1)+'.';
+ document.getElementById('status').style.color='#475569';
+ document.getElementById('go').disabled=false;
+ choices=shuffle([{text:current.ans,correct:true},...current.w.map(x=>({text:x,correct:false}))]);
+ for(let i=0;i<4;i++){let b=document.getElementById('o'+i);b.className='opt';b.innerText=String.fromCharCode(65+i)+'. '+choices[i].text;}
+ pulse={progress:0,moving:false,fail:false,success:false,timer:0,target:qIndex%4};
+ pick(0);
+}
+function pick(i){if(pulse.moving||pulse.fail||locked)return;chosen=i;for(let k=0;k<4;k++)document.getElementById('o'+k).classList.toggle('selected',k===i);}
+function generatePower(){
+ if(pulse.moving||pulse.fail||locked)return;
+ document.getElementById('go').disabled=true;
+ pulse.moving=true;
+ document.getElementById('status').innerText='Electricity is moving from station to city...';
+ document.getElementById('status').style.color='#0284c7';
+}
+function update(){
+ if(pulse.moving){pulse.progress+=.025;if(pulse.progress>=1){pulse.progress=1;pulse.moving=false;check();}}
+ if(pulse.fail){pulse.timer++;if(pulse.timer>55){pulse.fail=false;pulse.timer=0;pulse.progress=0;document.getElementById('go').disabled=false;document.getElementById('status').innerText='Try again. Apply the exponent law carefully.';document.getElementById('status').style.color='#dc2626';}}
+}
+function check(){
+ let st=document.getElementById('status');
+ if(choices[chosen].correct){
+   document.getElementById('s-correct').play().catch(()=>{});
+   score++;powered=Math.max(powered,score);
+   document.getElementById('score').innerText=score;
+   document.getElementById('o'+chosen).classList.add('correct');
+   st.innerText='Correct! '+current.exp;
+   st.style.color='#16a34a';
+   pulse.success=true;locked=true;confetti();
+   setTimeout(()=>{qIndex++;if(qIndex>=qs.length)finish();else loadQ();},1900);
+ }else{
+   document.getElementById('s-wrong').play().catch(()=>{});
+   document.getElementById('o'+chosen).classList.add('wrong');
+   st.innerText='Fuse blown! Check the exponent rule again.';
+   st.style.color='#dc2626';
+   pulse.fail=true;
+ }
+}
+function render(){
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ let w=canvas.width,h=canvas.height;
+ let bg=ctx.createLinearGradient(0,0,0,h);bg.addColorStop(0,'#dff6ff');bg.addColorStop(.58,'#fef9c3');bg.addColorStop(1,'#bbf7d0');ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+ drawSun(w*.12,h*.13);drawCloud(w*.42,h*.15,1);drawCloud(w*.78,h*.12,.8);
+ let ground=h*.78;ctx.fillStyle='#86efac';ctx.fillRect(0,ground,w,h-ground);
+ drawStation(25,ground-120,120,120);
+ const towers=drawCity(w-220,ground-135,200,135);
+ const target=towers[pulse.target] || towers[0];
+ drawPowerLine(145,ground-80,target.x,target.y);
+ if(pulse.moving||pulse.success) drawPulse(145,ground-80,target.x,target.y,pulse.progress);
+ if(pulse.fail) drawFuse((145+target.x)/2,(ground-80+target.y)/2);
+}
+function drawSun(x,y){ctx.fillStyle='#fde047';ctx.beginPath();ctx.arc(x,y,28,0,Math.PI*2);ctx.fill();}
+function drawCloud(x,y,s){ctx.fillStyle='rgba(255,255,255,.9)';ctx.beginPath();ctx.arc(x,y,16*s,0,Math.PI*2);ctx.arc(x+18*s,y-8*s,22*s,0,Math.PI*2);ctx.arc(x+42*s,y,18*s,0,Math.PI*2);ctx.fill();}
+function drawStation(x,y,w,h){
+ ctx.fillStyle='#fdba74';ctx.fillRect(x,y+30,w,h-30);
+ ctx.fillStyle='#f97316';ctx.beginPath();ctx.moveTo(x-8,y+32);ctx.lineTo(x+w/2,y);ctx.lineTo(x+w+8,y+32);ctx.closePath();ctx.fill();
+ ctx.fillStyle='#7c2d12';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText('POWER',x+w/2,y+55);ctx.fillText('STATION',x+w/2,y+72);
+ ctx.fillStyle='#fde047';ctx.font='bold 28px sans-serif';ctx.fillText('⚡',x+w/2,y+105);
+}
+function drawCity(x,y,w,h){
+ const buildings=[
+  {x:x+5,y:y+60,w:36,h:75,c:'#93c5fd'},
+  {x:x+48,y:y+35,w:42,h:100,c:'#fca5a5'},
+  {x:x+98,y:y+52,w:38,h:83,c:'#c4b5fd'},
+  {x:x+142,y:y+20,w:48,h:115,c:'#86efac'}
+ ];
+ const targets=[];
+ buildings.forEach((b,i)=>{
+   ctx.fillStyle=b.c;ctx.fillRect(b.x,b.y,b.w,b.h);
+   ctx.strokeStyle=(i===pulse.target?'#f59e0b':'#475569');
+   ctx.lineWidth=(i===pulse.target?4:2);
+   ctx.strokeRect(b.x,b.y,b.w,b.h);
+   // Each correct answer lights one more tower in rotation.
+   let isOn = powered > i || score > i || (pulse.success && i===pulse.target);
+   for(let r=0;r<4;r++){
+     for(let c=0;c<2;c++){
+       ctx.fillStyle=isOn?'#fde047':'#e5e7eb';
+       ctx.fillRect(b.x+8+c*15,b.y+12+r*18,8,10);
+     }
+   }
+   if(i===pulse.target){
+     ctx.fillStyle='#f59e0b';
+     ctx.font='bold 18px sans-serif';
+     ctx.textAlign='center';
+     ctx.fillText('⚡',b.x+b.w/2,b.y-7);
+   }
+   targets.push({x:b.x+b.w/2,y:b.y+8});
+ });
+ ctx.fillStyle='#1e293b';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText('CITY GRID',x+w/2,y+10);
+ return targets;
+}
+function drawPowerLine(x1,y1,x2,y2){
+ ctx.strokeStyle='#94a3b8';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(x1,y1);ctx.bezierCurveTo((x1+x2)/2,y1-50,(x1+x2)/2,y2-50,x2,y2);ctx.stroke();
+}
+function drawPulse(x1,y1,x2,y2,t){
+ let cx=(1-t)*(1-t)*(1-t)*x1+3*(1-t)*(1-t)*t*((x1+x2)/2)+3*(1-t)*t*t*((x1+x2)/2)+t*t*t*x2;
+ let cy=(1-t)*(1-t)*(1-t)*y1+3*(1-t)*(1-t)*t*(y1-50)+3*(1-t)*t*t*(y2-50)+t*t*t*y2;
+ ctx.fillStyle='#facc15';ctx.shadowColor='#facc15';ctx.shadowBlur=18;ctx.beginPath();ctx.arc(cx,cy,11,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#fff';ctx.font='bold 16px sans-serif';ctx.textAlign='center';ctx.fillText('⚡',cx,cy+6);
+}
+function drawFuse(x,y){
+ ctx.fillStyle='rgba(220,38,38,.25)';ctx.beginPath();ctx.arc(x,y,34,0,Math.PI*2);ctx.fill();
+ ctx.fillStyle='#dc2626';ctx.font='bold 30px sans-serif';ctx.textAlign='center';ctx.fillText('⚠',x,y+10);
+}
+function loop(){update();render();requestAnimationFrame(loop);}
+function finish(){
+ document.getElementById('s-claps').play().catch(()=>{});
+ document.getElementById('root').innerHTML='<div class="pop" style="margin:auto;text-align:center"><h2>🌆 City Fully Powered!</h2><p>You completed all 11 Exponents & Powers challenges.<br><b>Final Stars: '+score+'/11</b></p><button class="btn" onclick="location.reload()">Play Again</button></div>';
+}
+function confetti(){for(let i=0;i<18;i++){let p=document.createElement('div');p.className='confetti';p.style.left=Math.random()*100+'vw';p.style.background=['#facc15','#0ea5e9','#22c55e','#f97316'][Math.floor(Math.random()*4)];document.body.appendChild(p);setTimeout(()=>p.remove(),1600);}}
+</script>
+</body>
+</html>
