@@ -1,1 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Data Handling Hook Shot - Grade 7</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+html,body{width:100%;height:100%;overflow:hidden;background:#07051a;color:#fff}
+.hidden{display:none!important}
+#splash{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}
+#splash img{width:240px;max-width:65vw;object-fit:contain}
+.loader{width:210px;height:7px;border-radius:999px;background:#e5e7eb;overflow:hidden}.loader span{display:block;height:100%;width:0%;background:#7c3aed;border-radius:999px}
+#app{height:100%;display:flex;align-items:center;justify-content:center;padding:12px;background:radial-gradient(circle at top,#1f1350 0,#09061d 45%,#03020b 100%)}
+.panel{width:100%;max-width:500px;background:linear-gradient(160deg,#171036,#0b0820);border:2px solid #22d3ee;border-radius:24px;padding:28px 22px;text-align:center;box-shadow:0 0 35px rgba(34,211,238,.22)}
+.panel h1{font-size:1.8rem;color:#22d3ee;margin-bottom:12px}.panel p{color:#d8d2ff;line-height:1.55;text-align:left;font-size:1rem;margin:10px 0}.btn{border:0;border-radius:18px;background:linear-gradient(135deg,#22d3ee,#a855f7);color:#fff;padding:14px 34px;font-size:1.1rem;font-weight:800;cursor:pointer;margin-top:18px;box-shadow:0 10px 24px rgba(168,85,247,.3)}
+.game{width:100%;max-width:520px;height:100%;display:flex;flex-direction:column;gap:10px}
+.hud{display:flex;justify-content:space-between;align-items:center;color:#22d3ee;font-weight:900;font-size:1rem;text-shadow:0 0 10px rgba(34,211,238,.45)}
+.progress{height:7px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden}.progress span{display:block;height:100%;width:0%;background:linear-gradient(90deg,#22d3ee,#a855f7);transition:.3s}
+.mission{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:16px;padding:12px 14px;text-align:center}.tag{font-size:.72rem;color:#f472b6;letter-spacing:2px;text-transform:uppercase;font-weight:900;margin-bottom:5px}.qtext{font-size:1.08rem;font-weight:850;line-height:1.35}
+.cave{flex:1;min-height:360px;background:#05030d;border:2px solid rgba(255,255,255,.15);border-radius:20px;overflow:hidden;position:relative;box-shadow:inset 0 0 35px rgba(0,0,0,.65)}
+canvas{width:100%;height:100%;display:block}.controls{height:62px;display:flex;gap:10px}.ctrl{flex:1;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.08);color:#fff;border-radius:15px;font-size:1.5rem;font-weight:900;display:flex;align-items:center;justify-content:center;cursor:pointer}.fire{flex:1.7;color:#22d3ee;border-color:#22d3ee;background:rgba(34,211,238,.1);font-size:1.05rem}.ctrl:active{background:#22d3ee;color:#07051a}
+.toast{position:absolute;left:14px;right:14px;bottom:80px;background:rgba(18,13,47,.95);border-left:5px solid #22d3ee;border-radius:14px;padding:12px 14px;font-size:.92rem;line-height:1.35;box-shadow:0 10px 25px rgba(0,0,0,.4)}
+@media(max-width:520px){#app{padding:8px}.game{max-width:100%}.cave{min-height:330px}.qtext{font-size:1rem}.hud{font-size:.9rem}.controls{height:58px}.panel{padding:24px 18px}}
+</style>
+</head>
+<body>
+<audio id="s-correct" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="s-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="s-clap" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+<div id="splash">
+  <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='assets/logo.png'">
+  <div class="loader"><span id="loadbar"></span></div>
+</div>
+<div id="app"></div>
+
+<script>
+const TOTAL=10;
+let score=0,lives=3,qIndex=0,current=null,running=false;
+let canvas,ctx,wagonX=200,wagonW=56,wagonH=22,move=0,hooks=[],gems=[],anim=null,toastTimer=null;
+
+const questions=[
+ {tag:'Pictograph Reading',q:'Each 🟦 represents 5 students. If Class VII has 🟦🟦🟦🟦, how many students are shown?',a:'20',w:['10','15','25'],e:'4 symbols × 5 students = 20 students.'},
+ {tag:'Bar Graph Reading',q:'A bar graph shows books read: Asha 12, Kabir 18, Meera 15. Who read the maximum books?',a:'Kabir',w:['Asha','Meera','All equal'],e:'18 is the greatest value, so Kabir read the most.'},
+ {tag:'Mean',q:'Find the mean of 6, 8, 10, 12.',a:'9',w:['8','10','12'],e:'Mean = (6+8+10+12) ÷ 4 = 36 ÷ 4 = 9.'},
+ {tag:'Median',q:'Find the median of 4, 7, 9, 12, 15.',a:'9',w:['7','12','15'],e:'The middle value in the ordered data is 9.'},
+ {tag:'Mode',q:'Find the mode of 3, 5, 5, 6, 7, 5, 8.',a:'5',w:['3','6','8'],e:'5 appears the most number of times.'},
+ {tag:'Range',q:'Find the range of 11, 15, 18, 24, 30.',a:'19',w:['18','21','30'],e:'Range = highest − lowest = 30 − 11 = 19.'},
+ {tag:'Double Bar Graph',q:'A double bar graph compares boys and girls in clubs. Boys in Art = 14 and Girls in Art = 18. How many more girls are there?',a:'4',w:['2','14','32'],e:'18 − 14 = 4 more girls.'},
+ {tag:'Probability',q:'A bag has 3 red, 2 blue and 5 green balls. What is the probability of picking a blue ball?',a:'2/10',w:['2/5','3/10','5/10'],e:'Total balls = 10, blue balls = 2, so probability = 2/10.'},
+ {tag:'Pie Chart',q:'In a pie chart, Sports = 90°. What fraction of the whole circle is Sports?',a:'1/4',w:['1/2','1/3','3/4'],e:'90° out of 360° = 90/360 = 1/4.'},
+ {tag:'Data Interpretation',q:'Temperatures for five days are 28°C, 30°C, 31°C, 29°C, 32°C. Which value is the highest?',a:'32°C',w:['28°C','30°C','31°C'],e:'The highest temperature listed is 32°C.'}
+];
+
+function sound(id){try{let s=document.getElementById(id);s.currentTime=0;s.play().catch(()=>{})}catch(e){}}
+(function splash(){let p=0;const fill=document.getElementById('loadbar');const t=setInterval(()=>{p+=1;fill.style.width=p+'%';if(p>=100){clearInterval(t);document.getElementById('splash').classList.add('hidden');menu();}},50)})();
+function menu(){running=false;if(anim)cancelAnimationFrame(anim);document.getElementById('app').innerHTML=`<div class="panel"><h1>Data Hook Quest</h1><p><b>Topic:</b> Data Handling – Grade 7</p><p>Read the data question, move the collector below the correct crystal, and shoot the hook. Correct answers give stars and move you forward.</p><p><b>Controls:</b> Arrow keys / buttons to move. Spacebar or SHOOT HOOK to fire.</p><button class="btn" onclick="start()">Start Hook Quest</button></div>`}
+function start(){score=0;lives=3;qIndex=0;running=true;build();loadQ();loop();bindControls();}
+function build(){document.getElementById('app').innerHTML=`<div class="game"><div class="hud"><div>CHALLENGE: <span id="qno">1</span>/${TOTAL}</div><div>STARS: ⭐ <span id="score">0</span></div><div>LIVES: <span id="lives">❤️❤️❤️</span></div></div><div class="progress"><span id="prog"></span></div><div class="mission"><div class="tag" id="tag">DATA TARGET</div><div class="qtext" id="qtext">Loading...</div></div><div class="cave"><canvas id="gameCanvas" width="480" height="430"></canvas><div id="toast" class="toast hidden"></div></div><div class="controls"><div class="ctrl" id="left">◀</div><div class="ctrl fire" id="fire">SHOOT HOOK</div><div class="ctrl" id="right">▶</div></div></div>`;canvas=document.getElementById('gameCanvas');ctx=canvas.getContext('2d');wagonX=canvas.width/2-wagonW/2;}
+function loadQ(){if(qIndex>=TOTAL){win();return;}current=questions[qIndex];document.getElementById('qno').innerText=qIndex+1;document.getElementById('tag').innerText=current.tag;document.getElementById('qtext').innerText=current.q;document.getElementById('prog').style.width=(qIndex/TOTAL*100)+'%';hooks=[];spawnGems();hideToast();}
+function spawnGems(){gems=[];let opts=[current.a,...current.w].sort(()=>Math.random()-.5);let gap=canvas.width/(opts.length+1);opts.forEach((label,i)=>gems.push({x:gap*(i+1),y:70+Math.random()*55,label,isCorrect:label===current.a,r:34,phase:Math.random()*10}));}
+function loop(){if(!running)return;update();draw();anim=requestAnimationFrame(loop);}
+function update(){if(move===-1&&wagonX>8)wagonX-=6;if(move===1&&wagonX<canvas.width-wagonW-8)wagonX+=6;for(let i=hooks.length-1;i>=0;i--){let h=hooks[i];h.y-=10;if(h.y<0){hooks.splice(i,1);continue;}for(let j=0;j<gems.length;j++){let g=gems[j],gy=g.y+Math.sin(Date.now()*0.004+g.phase)*6;let d=Math.hypot(h.x-g.x,h.y-gy);if(d<g.r){hooks.splice(i,1);answer(g);return;}}}}
+function answer(g){if(g.isCorrect){score++;sound('s-correct');document.getElementById('score').innerText=score;showToast('🌟 Correct! '+current.e);qIndex++;setTimeout(loadQ,1200);}else{lives--;sound('s-wrong');document.getElementById('lives').innerText=lives>0?'❤️'.repeat(lives):'NONE';showToast('Try carefully! Correct answer: '+current.a+'. '+current.e);if(lives<=0){setTimeout(gameOver,1300)}else{setTimeout(loadQ,1300)}}}
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);drawGrid();hooks.forEach(h=>{ctx.strokeStyle='#f472b6';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(wagonX+wagonW/2,canvas.height-35);ctx.lineTo(h.x,h.y);ctx.stroke();ctx.fillStyle='#22d3ee';ctx.fillRect(h.x-4,h.y-7,8,14);});let t=Date.now()*0.004;gems.forEach(g=>{let y=g.y+Math.sin(t+g.phase)*6;ctx.save();ctx.translate(g.x,y);ctx.fillStyle='#1d1645';ctx.strokeStyle='#22d3ee';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,-g.r);ctx.lineTo(g.r,0);ctx.lineTo(0,g.r);ctx.lineTo(-g.r,0);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#fff';ctx.font='bold 14px Segoe UI';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(g.label,0,1);ctx.restore();});ctx.fillStyle='#6d28d9';ctx.fillRect(wagonX,canvas.height-34,wagonW,wagonH);ctx.fillStyle='#22d3ee';ctx.fillRect(wagonX+wagonW/2-5,canvas.height-45,10,12);ctx.fillStyle='#111827';ctx.beginPath();ctx.arc(wagonX+10,canvas.height-10,6,0,Math.PI*2);ctx.arc(wagonX+wagonW-10,canvas.height-10,6,0,Math.PI*2);ctx.fill();}
+function drawGrid(){ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;for(let x=0;x<canvas.width;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,canvas.height);ctx.stroke();}for(let y=0;y<canvas.height;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(canvas.width,y);ctx.stroke();}}
+function fire(){if(!running||hooks.length>0)return;hooks.push({x:wagonX+wagonW/2,y:canvas.height-47});}
+function bindControls(){window.onkeydown=e=>{if(e.key==='ArrowLeft')move=-1;if(e.key==='ArrowRight')move=1;if(e.key===' '){e.preventDefault();fire();}};window.onkeyup=e=>{if(e.key==='ArrowLeft'&&move===-1)move=0;if(e.key==='ArrowRight'&&move===1)move=0;};const L=document.getElementById('left'),R=document.getElementById('right'),F=document.getElementById('fire');['mousedown','touchstart'].forEach(ev=>{L.addEventListener(ev,e=>{e.preventDefault();move=-1});R.addEventListener(ev,e=>{e.preventDefault();move=1});F.addEventListener(ev,e=>{e.preventDefault();fire()});});['mouseup','mouseleave','touchend'].forEach(ev=>{L.addEventListener(ev,e=>{e.preventDefault();if(move===-1)move=0});R.addEventListener(ev,e=>{e.preventDefault();if(move===1)move=0});});}
+function showToast(msg){let el=document.getElementById('toast');el.innerHTML=msg;el.classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(hideToast,1100)}
+function hideToast(){let el=document.getElementById('toast');if(el)el.classList.add('hidden')}
+function win(){running=false;if(anim)cancelAnimationFrame(anim);sound('s-clap');document.getElementById('app').innerHTML=`<div class="panel"><h1>🏆 Data Champion!</h1><p style="text-align:center">You completed the Data Handling Hook Quest.</p><p style="text-align:center"><b>Stars collected:</b> ${score}/${TOTAL}</p><button class="btn" onclick="menu()">Play Again</button></div>`}
+function gameOver(){running=false;if(anim)cancelAnimationFrame(anim);document.getElementById('app').innerHTML=`<div class="panel"><h1>Quest Over</h1><p style="text-align:center">You collected <b>${score}</b> stars.</p><p style="text-align:center">Revise mean, median, mode, range, pictographs, bar graphs and probability.</p><button class="btn" onclick="menu()">Try Again</button></div>`}
+</script>
+</body>
+</html>
 
