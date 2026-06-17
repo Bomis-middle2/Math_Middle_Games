@@ -10,8 +10,12 @@ body{margin:0;font-family:Arial,sans-serif;overflow:hidden}
 .screen{
   position:absolute;inset:0;display:flex;flex-direction:column;
   justify-content:center;align-items:center;text-align:center;
-  background:linear-gradient(#eaf9ff,#fff);z-index:50;padding:20px
+  z-index:50;padding:20px
 }
+/* Dedicated white background for the initial 5s splash screen */
+#loader{background:#ffffff}
+/* Custom blue/white gradient for UI menus */
+#instructions, #end{background:linear-gradient(#eaf9ff,#fff)}
 .logo{width:170px;margin-bottom:18px}
 button{
   padding:14px 28px;border:0;border-radius:14px;background:#0066ff;
@@ -70,6 +74,10 @@ button{
 }
 .ctrl{width:120px;height:58px;border-radius:18px;font-size:24px}
 .instructions{font-size:21px;line-height:1.6;max-width:650px}
+
+/* Appreciation Style Layout Elements */
+#appreciationText{font-size:28px;color:#004aad;margin:10px 0;font-weight:bold}
+#stars{font-size:36px;color:gold;margin-bottom:15px}
 </style>
 </head>
 
@@ -77,11 +85,9 @@ button{
 
 <div id="loader" class="screen">
   <img src="assets/logo.png" class="logo">
-  <h2>Loading Game...</h2>
 </div>
 
 <div id="instructions" class="screen" style="display:none">
-  <img src="assets/logo.png" class="logo">
   <h1>Large Numbers Runner</h1>
   <div class="instructions">
     <p>Read the question at the top.</p>
@@ -121,8 +127,9 @@ button{
 </div>
 
 <div id="end" class="screen" style="display:none">
-  <img src="assets/logo.png" class="logo">
   <h1 id="endTitle">Game Over!</h1>
+  <div id="stars"></div>
+  <div id="appreciationText"></div>
   <h2>Your Score: <span id="finalScore"></span></h2>
   <button onclick="location.reload()">Play Again</button>
 </div>
@@ -153,10 +160,11 @@ let boards=[],moveTimer,timer,active=false,locked=false;
 const runner=document.getElementById("runner");
 
 window.onload=()=>{
+  // Displays the splash screen for exactly 5000 milliseconds (5 seconds)
   setTimeout(()=>{
     document.getElementById("loader").style.display="none";
     document.getElementById("instructions").style.display="flex";
-  },1000);
+  }, 5000);
 };
 
 function startGame(){
@@ -282,7 +290,27 @@ function showMsg(t){
   setTimeout(()=>m.style.display="none",900);
 }
 
-function winGame(){
+// Applies conditional appreciation metrics to the end screen
+function processAppreciation() {
+  const textContainer = document.getElementById("appreciationText");
+  const starContainer = document.getElementById("stars");
+  
+  if (score === 10) {
+    starContainer.innerHTML = "⭐⭐⭐⭐⭐";
+    textContainer.textContent = "Spectacular! Perfect Math Champion! 🏆";
+  } else if (score >= 7) {
+    starContainer.innerHTML = "⭐⭐⭐⭐";
+    textContainer.textContent = "Fantastic Run! Excellent Number Skills! 🌟";
+  } else if (score >= 5) {
+    starContainer.innerHTML = "⭐⭐⭐";
+    textContainer.textContent = "Good Effort! Keep practicing to run faster! 👍";
+  } else {
+    starContainer.innerHTML = "⭐";
+    textContainer.textContent = "Nice try! Don't give up, try another run! 💪";
+  }
+}
+
+function winGame() {
   active=false;
   clearInterval(timer);
   clearInterval(moveTimer);
@@ -290,16 +318,18 @@ function winGame(){
   document.getElementById("clapSound").play();
   document.getElementById("endTitle").textContent="You Win!";
   document.getElementById("finalScore").textContent=score+" / "+questions.length;
+  processAppreciation();
   document.getElementById("end").style.display="flex";
 }
 
-function loseGame(){
+function loseGame() {
   active=false;
   clearInterval(timer);
   clearInterval(moveTimer);
   clearBoards();
-  document.getElementById("endTitle").textContent="You Lose!";
+  document.getElementById("endTitle").textContent="Game Over!";
   document.getElementById("finalScore").textContent=score+" / "+questions.length;
+  processAppreciation();
   document.getElementById("end").style.display="flex";
 }
 </script>
