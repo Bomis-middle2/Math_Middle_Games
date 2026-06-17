@@ -69,7 +69,8 @@ button{
 #msg{
   position:absolute;top:145px;left:50%;transform:translateX(-50%);
   background:white;padding:10px 24px;border-radius:14px;
-  font-size:26px;font-weight:bold;display:none;z-index:20
+  font-size:26px;font-weight:bold;display:none;z-index:20;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.15);
 }
 #controls{
   position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
@@ -97,7 +98,7 @@ button{
     <p>Use <b>↑ Up</b> and <b>↓ Down</b> keys to change lanes.</p>
     <p>On mobile, tap the <b>UP</b> and <b>DOWN</b> buttons.</p>
     <p>Catch the correct answer board.</p>
-    <p>You get only <b>2 chances</b>.</p>
+    <p>You get <b>2 chances per question</b> before the answer reveals!</p>
   </div>
   <button onclick="startGame()">Start Game</button>
 </div>
@@ -105,7 +106,7 @@ button{
 <div id="game">
   <div id="hud">
     <div>Score: <span id="score">0</span></div>
-    <div>Chances: <span id="attempts">2</span></div>
+    <div>Chances Left: <span id="attempts">2</span></div>
     <div>Time: <span id="time">120</span>s</div>
   </div>
 
@@ -143,7 +144,8 @@ button{
 <script>
 const lanes=[190,310,430];
 
-const questions=[
+// Expanded Master Question Repository (Expanded pool of identical concept matches)
+const masterQuestionBank = [
   {q:"In the Indian system, 1 crore is equal to:",options:["10,00,000","1,00,00,000","1,00,000"],ans:"1,00,00,000"},
   {q:"In the International system, 1 million is equal to:",options:["1,00,000","10,00,000","1,00,00,000"],ans:"10,00,000"},
   {q:"What is the place value of 8 in 48,56,210?",options:["8","80,000","8,00,000"],ans:"8,00,000"},
@@ -153,16 +155,31 @@ const questions=[
   {q:"Which is the correct ascending order?",options:["45,012 ; 45,120 ; 45,210","45,210 ; 45,120 ; 45,012","45,120 ; 45,012 ; 45,210"],ans:"45,012 ; 45,120 ; 45,210"},
   {q:"Round 78,346 to the nearest thousand.",options:["78,000","79,000","80,000"],ans:"78,000"},
   {q:"What is the Roman numeral for 90?",options:["LXXXX","XC","CX"],ans:"XC"},
-  {q:"What is 25,000 + 35,000?",options:["50,000","60,000","70,000"],ans:"60,000"}
+  {q:"What is 25,000 + 35,000?",options:["50,000","60,000","70,000"],ans:"60,000"},
+  // Additional concepts added below
+  {q:"In the Indian system, 10 lakhs is equal to:",options:["1 Million","10 Million","1 Lakh"],ans:"1 Million"},
+  {q:"What is the place value of 5 in 5,43,210?",options:["50,000","5,000","5,00,000"],ans:"5,00,000"},
+  {q:"What is the face value of 9 in 1,92,834?",options:["90,000","9","900"],ans:"9"},
+  {q:"Round 12,680 to the nearest thousand.",options:["12,000","13,000","12,700"],ans:"13,000"},
+  {q:"What is the Roman numeral for 40?",options:["XL","XXXX","LX"],ans:"XL"},
+  {q:"Which number is the smallest?",options:["1,02,345","1,03,245","1,01,235"],ans:"1,01,235"},
+  {q:"What is 1,50,000 + 2,50,000?",options:["3,00,000","4,00,000","5,00,000"],ans:"4,00,000"},
+  {q:"In the International system, 10 million is:",options:["1 Crore","10 Lakhs","10 Crores"],ans:"1 Crore"},
+  {q:"Which is the expanded form of 52,304?",options:["50,000 + 2,000 + 300 + 4","5,000 + 200 + 30 + 4","50,000 + 200 + 30 + 4"],ans:"50,000 + 2,000 + 300 + 4"},
+  {q:"What is the place value of 7 in 9,73,142?",options:["7,000","70,000","700"],ans:"70,000"},
+  {q:"Round 8,145 to the nearest hundred.",options:["8,100","8,200","8,000"],ans:"8,100"},
+  {q:"What is the Roman numeral for 60?",options:["XL","LX","LXXXX"],ans:"LX"},
+  {q:"Which is the correct descending order?",options:["90,900 ; 90,090 ; 90,009","90,009 ; 90,090 ; 90,900","90,090 ; 90,900 ; 90,009"],ans:"90,900 ; 90,090 ; 90,009"},
+  {q:"What is 7,00,000 - 3,00,000?",options:["4,00,000","3,00,000","5,00,000"],ans:"4,00,000"}
 ];
 
+let questions=[];
 let current=0,score=0,chances=2,time=120,lane=1;
 let boards=[],moveTimer,timer,active=false,locked=false;
 
 const runner=document.getElementById("runner");
 
 window.onload=()=>{
-  // Displays the logo for exactly 5000ms, then deletes it from the DOM entirely
   setTimeout(()=>{
     const loaderElement = document.getElementById("loader");
     if(loaderElement) {
@@ -174,6 +191,10 @@ window.onload=()=>{
 
 function startGame(){
   document.getElementById("instructions").style.display="none";
+  
+  // Randomizer: Pull 10 random questions out of the larger repository bank
+  questions = [...masterQuestionBank].sort(() => Math.random() - 0.5).slice(0, 10);
+  
   active=true;
   setRunner();
   loadQuestion();
@@ -206,9 +227,11 @@ document.addEventListener("keydown",e=>{
 
 function loadQuestion(){
   clearBoards();
+  chances = 2; // Reset choices room back to 2 per problem round
+  document.getElementById("attempts").textContent = chances;
   locked=false;
 
-  if(current>=questions.length){
+  if(current >= questions.length){
     winGame();
     return;
   }
@@ -238,7 +261,7 @@ function moveBoards(){
 
     if(collision(runner,b)){
       locked=true;
-      checkAnswer(b.dataset.answer);
+      checkAnswer(b.dataset.answer, b);
     }
   });
 
@@ -248,17 +271,19 @@ function moveBoards(){
   }
 }
 
-function checkAnswer(selected){
+function checkAnswer(selected, hitBoard){
   let item=questions[current];
 
   if(selected===item.ans){
     score++;
     document.getElementById("score").textContent=score;
     document.getElementById("correctSound").play();
-    showMsg("Correct!");
+    showMsg("Correct!", "green");
     current++;
     setTimeout(loadQuestion,900);
   }else{
+    // Hide the wrong board that was hit so they can attempt the remaining lanes
+    if(hitBoard) hitBoard.style.display = "none"; 
     wrongChance("Wrong!");
   }
 }
@@ -269,11 +294,17 @@ function wrongChance(text){
   document.getElementById("wrongSound").play();
 
   if(chances<=0){
-    showMsg("You Lose!");
-    setTimeout(loseGame,1000);
+    let item=questions[current];
+    // Out of chances on this question - show message and reveal right answer
+    showMsg(`Incorrect! Correct Answer: ${item.ans}`, "red", 2000);
+    current++;
+    setTimeout(loadQuestion, 2000);
   }else{
-    showMsg(text+" One chance left!");
-    setTimeout(loadQuestion,1000);
+    // First chance wrong, keep going on the same problem
+    showMsg(text + " Try lane options remaining!", "orange", 1200);
+    setTimeout(() => {
+      locked = false; // unlock to resume running towards remaining boards
+    }, 1200);
   }
 }
 
@@ -288,11 +319,12 @@ function clearBoards(){
   boards=[];
 }
 
-function showMsg(t){
+function showMsg(t, color = "black", duration = 900){
   let m=document.getElementById("msg");
   m.textContent=t;
+  m.style.color=color;
   m.style.display="block";
-  setTimeout(()=>m.style.display="none",900);
+  setTimeout(()=>m.style.display="none", duration);
 }
 
 function processAppreciation() {
