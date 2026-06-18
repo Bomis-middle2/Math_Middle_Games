@@ -1,1 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Grade 8 Algebraic Expressions Game</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif;user-select:none;-webkit-user-select:none}html,body{width:100%;height:100%;overflow:hidden;background:linear-gradient(180deg,#f7fbff 0%,#eef9ff 48%,#fff7e6 100%);color:#243042}button{font-family:inherit}#splash{position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;z-index:10000;transition:.55s}#splash img{width:min(310px,72vw);height:auto;animation:logoPulse 1.8s ease-in-out infinite}@keyframes logoPulse{50%{transform:scale(1.04)}}#app{height:100%;width:100%;max-width:980px;margin:auto;display:flex;flex-direction:column;gap:8px;padding:10px;opacity:0;transition:.45s}.screen{height:100%;display:none}.active{display:flex}.center{align-items:center;justify-content:center}.card{width:min(650px,94vw);background:rgba(255,255,255,.92);border:2px solid #9bd8ff;border-radius:24px;box-shadow:0 18px 45px rgba(52,129,173,.16);padding:clamp(20px,4vw,32px);text-align:center}.card h1{font-size:clamp(1.55rem,5vw,2.2rem);color:#1267a8;margin-bottom:8px}.card p{font-size:clamp(.95rem,2.8vw,1.08rem);line-height:1.55;color:#415166;margin:10px auto 18px}.btn{border:0;border-radius:18px;padding:13px 24px;background:linear-gradient(135deg,#22b8ff,#ffb445);color:#112033;font-weight:900;font-size:clamp(.95rem,2.8vw,1.07rem);cursor:pointer;box-shadow:0 9px 0 #d58624,0 18px 26px rgba(255,180,69,.22);transition:.16s}.btn:active{transform:translateY(4px);box-shadow:0 5px 0 #d58624}.top{display:flex;gap:8px;justify-content:space-between;align-items:center;flex-wrap:wrap}.pill{background:#fff;border:2px solid #bde8ff;border-radius:18px;padding:8px 12px;font-size:clamp(.8rem,2.2vw,.98rem);font-weight:900;color:#13537b;box-shadow:0 4px 12px rgba(52,129,173,.09)}#game{flex-direction:column}.gamegrid{flex:1;min-height:0;display:grid;grid-template-columns:1.05fr .95fr;gap:10px}.panel{background:rgba(255,255,255,.88);border:2px solid #bde8ff;border-radius:22px;box-shadow:0 14px 28px rgba(52,129,173,.14);padding:12px;min-height:0}.scene{position:relative;overflow:hidden;background:linear-gradient(#dff5ff,#fff7dc);border-color:#ffd28a;padding:0}.qpanel{display:flex;flex-direction:column;gap:9px}.question{background:#f6fcff;border:2px solid #87d8ff;border-radius:18px;padding:13px;text-align:center;min-height:90px;display:flex;align-items:center;justify-content:center;font-size:clamp(1rem,3.2vw,1.35rem);font-weight:900;line-height:1.35;color:#192b3f}.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}.opt{min-height:54px;border:2px solid #ffd28a;border-radius:16px;background:#fffdf7;color:#273647;font-weight:900;font-size:clamp(.88rem,2.5vw,1.05rem);cursor:pointer;padding:9px;box-shadow:0 4px 12px rgba(205,129,20,.08);transition:.18s}.opt:hover{transform:translateY(-1px)}.opt.selected{border-color:#ff9f1c;background:#fff0cc;box-shadow:0 0 0 3px rgba(255,159,28,.18)}.opt.correct{border-color:#16a34a!important;background:#dcfce7!important}.opt.wrong{border-color:#dc2626!important;background:#fee2e2!important}.feedback{min-height:44px;text-align:center;font-size:clamp(.84rem,2.3vw,.96rem);font-weight:800;line-height:1.35;color:#475569;display:flex;align-items:center;justify-content:center}.submit{width:100%;margin-top:auto}canvas{width:100%;height:100%;display:block}.progress{height:12px;border-radius:30px;background:#e8f6ff;overflow:hidden;border:1px solid #cdefff}.bar{height:100%;width:0;background:linear-gradient(90deg,#22b8ff,#ffb445);transition:.35s}.spark{position:fixed;width:10px;height:10px;top:-12px;border-radius:50%;pointer-events:none;animation:fall 1.5s linear forwards}@keyframes fall{to{transform:translateY(105vh) rotate(520deg);opacity:0}}@media(max-width:760px){#app{padding:8px}.gamegrid{grid-template-columns:1fr;grid-template-rows:.85fr 1.15fr}.opts{grid-template-columns:1fr 1fr}.question{min-height:78px}.panel{padding:10px}}@media(max-width:390px){.top{gap:5px}.pill{padding:6px 8px}.opts{gap:6px}.opt{min-height:48px}.question{font-size:1rem}.feedback{min-height:38px}}@media(max-height:620px){#app{gap:6px;padding:7px}.pill{padding:5px 8px}.panel{padding:8px}.question{min-height:62px;padding:8px}.opt{min-height:42px;padding:7px}.feedback{min-height:30px;font-size:.82rem}.btn{padding:10px 18px}.card{padding:18px}.card p{margin:6px auto 12px}}@media(orientation:landscape) and (max-height:520px){.gamegrid{grid-template-columns:1fr 1fr}.question{min-height:58px}.opt{min-height:39px}.feedback{min-height:28px}.card{width:min(560px,92vw)}}
+</style>
+</head>
+<body>
+<audio id="sndCorrect" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="sndWrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="sndClap" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+<div id="splash"><img src="assets/innovine-logo.png" alt="Innovine Logo"></div>
+<div id="app">
+  <section id="intro" class="screen active center">
+    <div class="card">
+      <h1>Algebra Arcade</h1>
+      <p><b>Grade 8 Mathematics</b><br>Build correct expressions, simplify algebra tiles, and power the arcade machine.</p>
+      <button class="btn" onclick="startGame()">Start Game</button>
+    </div>
+  </section>
+  <section id="game" class="screen">
+    <div class="top">
+      <div class="pill">🎮 Level <span id="level">1</span>/10</div>
+      <div class="pill">⭐ Score <span id="score">0</span></div>
+      <div class="pill">⚡ Power <span id="power">100</span>%</div>
+    </div>
+    <div class="progress"><div id="bar" class="bar"></div></div>
+    <div class="gamegrid">
+      <div class="panel scene"><canvas id="canvas"></canvas></div>
+      <div class="panel qpanel">
+        <div id="question" class="question"></div>
+        <div class="opts">
+          <button class="opt" onclick="choose(0)"></button>
+          <button class="opt" onclick="choose(1)"></button>
+          <button class="opt" onclick="choose(2)"></button>
+          <button class="opt" onclick="choose(3)"></button>
+        </div>
+        <div id="feedback" class="feedback">Choose an answer to power the machine.</div>
+        <button id="submit" class="btn submit" onclick="submitAnswer()">Power Machine</button>
+      </div>
+    </div>
+  </section>
+  <section id="end" class="screen center">
+    <div class="card">
+      <h1>🏆 Arcade Powered!</h1>
+      <p id="resultText"></p>
+      <button class="btn" onclick="location.reload()">Play Again</button>
+    </div>
+  </section>
+</div>
+<script>
+const rawQuestions=[
+{q:'A game token has value x. Riya collects 4 tokens and gets 6 bonus points. Which expression shows her total points?',a:'4x + 6',w:['x + 10','6x + 4','4 + 6x'],e:'4 tokens give 4x points, and 6 bonus points are added.'},
+{q:'A box has 3 red tiles and y blue tiles. There are 5 such boxes. Which expression shows the total number of tiles?',a:'5(y + 3)',w:['5y + 3','y + 15','3(y + 5)'],e:'Each box has y + 3 tiles. For 5 boxes, multiply by 5.'},
+{q:'Simplify the arcade code: 7a + 3a − 2a',a:'8a',w:['12a','8a²','6a'],e:'Add and subtract only the coefficients: 7 + 3 − 2 = 8.'},
+{q:'A robot moves 2m steps forward and then 5 more steps. Which expression represents the total steps?',a:'2m + 5',w:['7m','5m + 2','2(m + 5)'],e:'The robot first moves 2m steps, then 5 steps are added.'},
+{q:'Simplify: 9p − 4 + 2p + 7',a:'11p + 3',w:['11p − 11','7p + 3','11p + 11'],e:'Like terms: 9p + 2p = 11p and −4 + 7 = 3.'},
+{q:'A cinema ticket costs ₹t. Popcorn costs ₹80. Which expression shows the cost for 3 tickets and popcorn?',a:'3t + 80',w:['3(t + 80)','t + 240','80t + 3'],e:'Three tickets cost 3t. Popcorn adds ₹80.'},
+{q:'Find the value of 5x − 3 when x = 4.',a:'17',w:['20','13','23'],e:'5(4) − 3 = 20 − 3 = 17.'},
+{q:'Simplify: 6r + 2s − 3r + 5s',a:'3r + 7s',w:['3r + 3s','9r + 7s','8rs'],e:'Combine like terms: 6r − 3r = 3r and 2s + 5s = 7s.'},
+{q:'A rectangle has length 2x + 1 and breadth x. Which expression gives its perimeter?',a:'6x + 2',w:['3x + 1','2x² + x','4x + 2'],e:'Perimeter = 2(length + breadth) = 2(2x + 1 + x) = 6x + 2.'},
+{q:'A shopkeeper packs n pencils in each bundle. After making 8 bundles, 4 pencils are left. Which expression shows total pencils?',a:'8n + 4',w:['n + 12','4n + 8','8(n + 4)'],e:'8 bundles have 8n pencils, and 4 extra pencils are added.'}
+];
+let questions=[],current=0,score=0,power=100,attempt=0,selected=null,locked=false,opts=[];let c,ctx,anim={belt:0,boxX:-70,scan:0,shake:0,glow:0};
+setTimeout(()=>{document.getElementById('splash').style.opacity='0';setTimeout(()=>{document.getElementById('splash').remove();document.getElementById('app').style.opacity='1'},550)},5000);
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function startGame(){questions=shuffle([...rawQuestions]);show('game');c=document.getElementById('canvas');ctx=c.getContext('2d');resize();addEventListener('resize',resize);loadQuestion();requestAnimationFrame(loop)}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function resize(){let r=c.getBoundingClientRect();c.width=Math.max(300,Math.floor(r.width));c.height=Math.max(210,Math.floor(r.height))}
+function loadQuestion(){attempt=0;selected=null;locked=false;anim.boxX=-70;anim.scan=0;anim.glow=0;document.getElementById('level').textContent=current+1;document.getElementById('score').textContent=score;document.getElementById('power').textContent=power;document.getElementById('bar').style.width=(current*10)+'%';document.getElementById('question').textContent=questions[current].q;document.getElementById('feedback').textContent='Choose an answer to power the machine.';document.getElementById('feedback').style.color='#475569';document.getElementById('submit').disabled=false;opts=shuffle([{t:questions[current].a,ok:true},...questions[current].w.map(x=>({t:x,ok:false}))]);document.querySelectorAll('.opt').forEach((b,i)=>{b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+opts[i].t;b.disabled=false})}
+function choose(i){if(locked)return;selected=i;document.querySelectorAll('.opt').forEach((b,k)=>b.classList.toggle('selected',k===i))}
+function play(id){let s=document.getElementById(id);s.currentTime=0;s.play().catch(()=>{})}
+function submitAnswer(){if(selected===null||locked){document.getElementById('feedback').textContent='Please choose an answer first.';return}locked=true;document.getElementById('submit').disabled=true;anim.boxX=-60;moveBox(()=>check())}
+function moveBox(cb){let target=c.width*.48;let timer=setInterval(()=>{anim.boxX+=12;if(anim.boxX>=target){clearInterval(timer);cb()}},25)}
+function check(){let fb=document.getElementById('feedback'),buttons=document.querySelectorAll('.opt');if(opts[selected].ok){buttons[selected].classList.add('correct');score+=10;anim.scan=34;anim.glow=70;fb.textContent='Correct! '+questions[current].e;fb.style.color='#15803d';play('sndCorrect');setTimeout(()=>play('sndClap'),170);confetti();setTimeout(()=>{current++;if(current>=10)finish();else loadQuestion()},1900)}else{attempt++;buttons[selected].classList.add('wrong');power=Math.max(0,power-10);document.getElementById('power').textContent=power;anim.shake=24;play('sndWrong');if(attempt<2){fb.textContent='Try once more. Read the expression carefully.';fb.style.color='#dc2626';setTimeout(()=>{locked=false;document.getElementById('submit').disabled=false;buttons[selected].classList.remove('selected');selected=null},850)}else{let correctIndex=opts.findIndex(o=>o.ok);buttons[correctIndex].classList.add('correct');fb.textContent='Correct answer: '+opts[correctIndex].t+'. '+questions[current].e;fb.style.color='#15803d';setTimeout(()=>{current++;if(current>=10)finish();else loadQuestion()},2600)}}}
+function finish(){document.getElementById('bar').style.width='100%';show('end');document.getElementById('resultText').innerHTML='Final Score: <b>'+score+'/100</b><br>Power Left: <b>'+power+'%</b><br>You completed all 10 Algebraic Expressions challenges.';play('sndClap')}
+function loop(){draw();requestAnimationFrame(loop)}
+function draw(){if(!ctx)return;let w=c.width,h=c.height;ctx.clearRect(0,0,w,h);ctx.fillStyle='#dff5ff';ctx.fillRect(0,0,w,h);for(let i=0;i<6;i++){ctx.fillStyle='rgba(255,255,255,.75)';ctx.beginPath();ctx.arc((i*130+anim.belt*.4)% (w+80)-40,40+i%2*35,18,0,Math.PI*2);ctx.arc((i*130+20+anim.belt*.4)% (w+80)-40,32+i%2*35,24,0,Math.PI*2);ctx.arc((i*130+45+anim.belt*.4)% (w+80)-40,42+i%2*35,18,0,Math.PI*2);ctx.fill()}anim.belt=(anim.belt+1.8)%80;let floor=h*.73;ctx.fillStyle='#fff1c7';ctx.fillRect(0,floor,w,h-floor);ctx.fillStyle='#8dd3ff';ctx.fillRect(0,floor-35,w,48);for(let x=-80+anim.belt;x<w+80;x+=80){ctx.fillStyle='#2388c8';ctx.fillRect(x,floor-24,50,8);ctx.beginPath();ctx.arc(x+10,floor+10,8,0,Math.PI*2);ctx.arc(x+42,floor+10,8,0,Math.PI*2);ctx.fill()}drawMachine(w*.58,floor-130);drawBox(anim.boxX,floor-80);if(anim.scan>0){anim.scan-=1.5;ctx.fillStyle='rgba(34,197,94,.23)';ctx.fillRect(w*.55,floor-130,22,130)}if(anim.shake>0)anim.shake--;if(anim.glow>0){anim.glow-=1.4;ctx.strokeStyle='rgba(34,197,94,.45)';ctx.lineWidth=8;ctx.beginPath();ctx.arc(w*.62,floor-70,70-anim.glow*.25,0,Math.PI*2);ctx.stroke()}}
+function drawMachine(x,y){let shake=anim.shake?Math.sin(anim.shake)*5:0;x+=shake;ctx.fillStyle='#9bd8ff';round(x,y,120,115,18,true);ctx.strokeStyle='#2286c3';ctx.lineWidth=3;round(x,y,120,115,18,false,true);ctx.fillStyle='#fff';round(x+22,y+20,76,45,12,true);ctx.fillStyle=anim.glow>0?'#22c55e':'#ffb445';ctx.beginPath();ctx.arc(x+60,y+43,18,0,Math.PI*2);ctx.fill();ctx.fillStyle='#243042';ctx.font='bold 18px sans-serif';ctx.textAlign='center';ctx.fillText('x',x+60,y+49);ctx.fillStyle='#ffb445';ctx.fillRect(x+22,y+82,76,16);ctx.fillStyle='#11608a';ctx.font='bold 13px sans-serif';ctx.fillText('ALGEBRA',x+60,y+108)}
+function drawBox(x,y){ctx.fillStyle='#f7b955';round(x,y,84,55,10,true);ctx.strokeStyle='#b86b15';ctx.lineWidth=3;round(x,y,84,55,10,false,true);ctx.fillStyle='#7c3f10';ctx.font='bold 16px sans-serif';ctx.textAlign='center';let label=selected===null?'?':opts[selected].t;fit(label,x+42,y+34,70)}
+function round(x,y,w,h,r,fill,stroke){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();if(fill)ctx.fill();if(stroke)ctx.stroke()}
+function fit(t,x,y,max){let size=16;ctx.font='bold '+size+'px sans-serif';while(ctx.measureText(t).width>max&&size>8){size--;ctx.font='bold '+size+'px sans-serif'}ctx.fillText(t,x,y)}
+function confetti(){for(let i=0;i<20;i++){let d=document.createElement('div');d.className='spark';d.style.left=Math.random()*100+'vw';d.style.background=['#22b8ff','#ffb445','#22c55e','#ff6b6b'][Math.floor(Math.random()*4)];d.style.animationDelay=Math.random()*.25+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),1700)}}
+</script>
+</body>
+</html>
 
