@@ -1,1 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Grade 8 Linear Equations - Equation Factory</title>
+<style>
+  :root{
+    --cream:#fff7e8; --sky:#dff6ff; --ink:#263238; --orange:#ff9f43; --brown:#8b5e34;
+    --green:#38b000; --red:#e63946; --blue:#3a86ff; --purple:#7b2cbf; --card:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:"Trebuchet MS",Arial,sans-serif}
+  html,body{width:100%;height:100%;overflow:hidden;background:linear-gradient(180deg,var(--sky),var(--cream));color:var(--ink)}
+  button{font:inherit;cursor:pointer;border:none;outline:none}
+  .screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:14px;overflow:hidden}
+  .screen.active{display:flex}
+  #splash{background:#fff;z-index:10}
+  #splash img{width:min(330px,72vw);animation:popIn .8s ease both}
+  @keyframes popIn{0%{transform:scale(.7);opacity:0}100%{transform:scale(1);opacity:1}}
+  .panel{width:min(920px,96vw);max-height:94vh;background:rgba(255,255,255,.9);border:4px solid #ffd166;border-radius:28px;box-shadow:0 16px 35px rgba(0,0,0,.14);padding:clamp(16px,3vw,28px);text-align:center;position:relative;overflow:hidden}
+  .title{font-size:clamp(25px,5vw,46px);color:#7b3f00;margin-bottom:8px;text-shadow:1px 2px #ffe8b6}
+  .subtitle{font-size:clamp(16px,2.4vw,22px);line-height:1.4;margin:8px auto 18px;max-width:720px}
+  .simple-info{display:inline-block;text-align:left;font-size:clamp(16px,2.1vw,20px);line-height:1.8;background:#fff3cf;border:3px dashed #f4a261;border-radius:18px;padding:14px 18px;margin:8px 0 20px}
+  .primary{background:linear-gradient(180deg,#ffb703,#fb8500);color:#fff;padding:13px 28px;border-radius:18px;font-weight:900;font-size:clamp(17px,2.5vw,22px);box-shadow:0 6px 0 #b65f00;transition:.15s}
+  .primary:active{transform:translateY(4px);box-shadow:0 2px 0 #b65f00}
+  #game{align-items:stretch;justify-content:center;padding:8px}
+  .game-wrap{width:min(1120px,100%);height:min(720px,100%);display:grid;grid-template-rows:auto 1fr auto;gap:8px}
+  .scorebar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;z-index:3}
+  .score-pill{background:#fff;border:3px solid #ffd166;border-radius:16px;padding:8px;font-weight:900;text-align:center;font-size:clamp(13px,2.3vw,19px);box-shadow:0 5px 0 rgba(0,0,0,.08)}
+  .factory-stage{position:relative;border:4px solid #ffc857;border-radius:26px;background:linear-gradient(180deg,#e7fbff 0%,#fff6dc 55%,#f0c987 56%,#d9a066 100%);overflow:hidden;min-height:220px}
+  .cloud{position:absolute;background:#fff;border-radius:40px;opacity:.8;animation:cloud 18s linear infinite}
+  .c1{width:110px;height:32px;top:20px;left:-120px}.c2{width:80px;height:26px;top:60px;left:-180px;animation-duration:24s}.c3{width:130px;height:34px;top:100px;left:-150px;animation-duration:28s}
+  @keyframes cloud{to{transform:translateX(1250px)}}
+  .machine{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:min(340px,52vw);height:min(190px,29vh);background:linear-gradient(180deg,#9be7ff,#55b8d8);border:5px solid #227c9d;border-radius:25px;box-shadow:inset 0 -12px 0 rgba(0,0,0,.08),0 12px 0 rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;font-size:clamp(42px,8vw,75px)}
+  .machine:before{content:"";position:absolute;top:-28px;left:30px;width:55px;height:30px;background:#227c9d;border-radius:10px 10px 0 0}.machine:after{content:"";position:absolute;top:18px;right:24px;width:22px;height:22px;background:#fff;border-radius:50%;box-shadow:34px 0 #ffd166,68px 0 #ef476f}
+  .machine.good{animation:goodPulse .9s ease}.machine.bad{animation:shake .45s ease}
+  @keyframes goodPulse{50%{filter:drop-shadow(0 0 18px #38b000);transform:translate(-50%,-50%) scale(1.05)}}
+  @keyframes shake{20%{transform:translate(calc(-50% - 8px),-50%)}40%{transform:translate(calc(-50% + 8px),-50%)}60%{transform:translate(calc(-50% - 5px),-50%)}80%{transform:translate(calc(-50% + 5px),-50%)}}
+  .belt{position:absolute;left:0;right:0;bottom:28px;height:70px;background:repeating-linear-gradient(90deg,#4b4b4b 0 42px,#606060 42px 84px);border-top:8px solid #222;border-bottom:8px solid #222;animation:beltMove .8s linear infinite}
+  @keyframes beltMove{to{background-position:84px 0}}
+  .crate{position:absolute;bottom:78px;left:7%;width:82px;height:62px;background:linear-gradient(180deg,#d9903d,#a35d20);border:4px solid #753b12;border-radius:12px;box-shadow:0 8px 0 rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-size:28px;transition:transform .8s ease,left .8s ease}
+  .crate:before{content:"";position:absolute;inset:8px;border:3px dashed rgba(255,255,255,.45);border-radius:6px}
+  .worker{position:absolute;right:6%;bottom:92px;font-size:clamp(48px,9vw,85px);animation:bob 1.4s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-8px)}}
+  .steam{position:absolute;left:50%;top:28%;font-size:42px;opacity:0;transform:translate(-50%,-50%)}
+  .steam.show{animation:steam .75s ease}
+  @keyframes steam{0%{opacity:1;transform:translate(-50%,-10%) scale(.6)}100%{opacity:0;transform:translate(-50%,-80%) scale(1.4)}}
+  .sparkle{position:absolute;pointer-events:none;font-size:26px;animation:spark .8s ease forwards}
+  @keyframes spark{to{transform:translateY(-70px) rotate(80deg);opacity:0}}
+  .qa-card{background:#fff;border:4px solid #ffd166;border-radius:24px;padding:12px;box-shadow:0 8px 0 rgba(0,0,0,.08);z-index:4}
+  .question{font-size:clamp(16px,2.4vw,22px);line-height:1.35;font-weight:900;text-align:center;margin-bottom:10px;min-height:54px;display:flex;align-items:center;justify-content:center}
+  .options{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+  .option{background:#fff8e1;border:3px solid #f6bd60;border-radius:16px;padding:11px 10px;font-weight:900;font-size:clamp(15px,2.2vw,20px);min-height:52px;box-shadow:0 4px 0 #d49a37;transition:.15s;color:#2b2d42}
+  .option:not(:disabled):hover{transform:translateY(-2px)}
+  .option.selected.correct{background:#d8ffd8;border-color:#38b000;color:#146b14}.option.selected.wrong{background:#ffd6d6;border-color:#e63946;color:#9b111e}
+  .option:disabled{cursor:not-allowed}
+  .feedback{margin-top:8px;min-height:36px;font-size:clamp(14px,2vw,18px);font-weight:800;color:#5a3e1b}
+  .next{display:none;margin:8px auto 0;background:#3a86ff;color:#fff;padding:9px 22px;border-radius:14px;font-weight:900;box-shadow:0 4px 0 #174f99}
+  .progress-dots{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin-top:3px}.dot{width:15px;height:15px;border-radius:50%;background:#ffd166;border:2px solid #a66a00}.dot.done{background:#38b000}.dot.current{transform:scale(1.35);background:#3a86ff}
+  .badge{font-size:clamp(70px,15vw,130px);animation:badge .9s ease infinite alternate}@keyframes badge{to{transform:translateY(-8px) rotate(3deg)}}
+  .result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px auto;max-width:720px}.result-box{background:#fff3cf;border:3px solid #f4a261;border-radius:18px;padding:13px;font-size:clamp(16px,2.4vw,22px);font-weight:900}
+  @media(max-width:700px){
+    .screen{padding:6px}.game-wrap{gap:6px;height:100%}.scorebar{grid-template-columns:1fr 1fr 1fr;gap:5px}.score-pill{padding:6px 2px;border-width:2px}.factory-stage{min-height:185px;border-radius:18px}.machine{top:39%;height:120px}.belt{height:55px;bottom:20px}.crate{width:62px;height:48px;bottom:62px}.worker{bottom:73px}.qa-card{padding:9px;border-radius:18px}.question{min-height:60px}.options{gap:7px}.option{padding:9px 5px;min-height:48px}.simple-info{line-height:1.55}.result-grid{grid-template-columns:1fr;gap:7px}
+  }
+  @media(max-height:620px){.factory-stage{min-height:165px}.question{min-height:45px}.option{min-height:42px;padding:7px}.feedback{min-height:28px}.panel{padding:14px}.title{margin-bottom:4px}.subtitle{margin-bottom:8px}.simple-info{margin-bottom:10px}}
+</style>
+</head>
+<body>
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+<section id="splash" class="screen active"><img src="assets/innovine-logo.png" alt="Innovine Logo"></section>
+
+<section id="intro" class="screen">
+  <div class="panel">
+    <h1 class="title">Equation Factory</h1>
+    <p class="subtitle"><b>Grade 8 Mathematics</b><br>Linear Equations in One Variable</p>
+    <div class="simple-info">
+      • Solve each factory problem.<br>
+      • Fix all machines to power the factory.<br>
+      • You get 2 chances per question.
+    </div><br>
+    <button class="primary" onclick="startGame()">Start Factory</button>
+  </div>
+</section>
+
+<section id="game" class="screen">
+  <div class="game-wrap">
+    <div class="scorebar">
+      <div class="score-pill">⚙️ Fixed: <span id="fixed">0</span>/10</div>
+      <div class="score-pill">⭐ Score: <span id="score">0</span></div>
+      <div class="score-pill">🔥 Power: <span id="power">100</span>%</div>
+    </div>
+    <div class="factory-stage" id="stage">
+      <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+      <div class="machine" id="machine">⚖️</div>
+      <div class="steam" id="steam">💨</div>
+      <div class="belt"></div>
+      <div class="crate" id="crate">📦</div>
+      <div class="worker">👷</div>
+    </div>
+    <div class="qa-card">
+      <div class="question" id="questionText"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button id="nextBtn" class="next" onclick="nextQuestion()">Next Machine</button>
+      <div class="progress-dots" id="dots"></div>
+    </div>
+  </div>
+</section>
+
+<section id="result" class="screen">
+  <div class="panel">
+    <div class="badge">🏭</div>
+    <h1 class="title">Factory Powered Successfully!</h1>
+    <div class="result-grid">
+      <div class="result-box">⭐ Score<br><span id="finalScore">0</span></div>
+      <div class="result-box">⚙️ Machines<br><span id="finalFixed">10/10</span></div>
+      <div class="result-box">🎯 Accuracy<br><span id="accuracy">0%</span></div>
+    </div>
+    <button class="primary" onclick="restartGame()">Play Again</button>
+  </div>
+</section>
+
+<script>
+const originalQuestions = [
+ {q:'A pencil box and ₹15 stickers cost ₹75 in total. If the pencil box costs x, which equation shows this?', opts:['x + 15 = 75','x - 15 = 75','15x = 75','x/15 = 75'], ans:'x + 15 = 75', exp:'The total cost is pencil box price plus stickers: x + 15 = 75.'},
+ {q:'Solve: 3x + 6 = 24', opts:['4','5','6','8'], ans:'6', exp:'3x + 6 = 24 ⇒ 3x = 18 ⇒ x = 6.'},
+ {q:'A café sells 4 same sandwiches for ₹180. If one sandwich costs x, which equation is correct?', opts:['4x = 180','x + 4 = 180','x - 4 = 180','x/4 = 180'], ans:'4x = 180', exp:'Four equal sandwiches cost 180, so 4x = 180.'},
+ {q:'Solve: 5x - 7 = 28', opts:['5','6','7','8'], ans:'7', exp:'5x - 7 = 28 ⇒ 5x = 35 ⇒ x = 7.'},
+ {q:'A school bus has x students. After 12 more students enter, there are 47 students. Which equation represents this?', opts:['x + 12 = 47','x - 12 = 47','12x = 47','x/12 = 47'], ans:'x + 12 = 47', exp:'The number increased by 12, so x + 12 = 47.'},
+ {q:'Solve: x/4 + 3 = 11', opts:['24','28','32','36'], ans:'32', exp:'x/4 + 3 = 11 ⇒ x/4 = 8 ⇒ x = 32.'},
+ {q:'Riya had x marbles. She gave away 9 and had 26 left. Which equation shows this?', opts:['x - 9 = 26','x + 9 = 26','9x = 26','x/9 = 26'], ans:'x - 9 = 26', exp:'Giving away 9 means subtracting 9: x - 9 = 26.'},
+ {q:'Solve: 2x + 5 = 17', opts:['4','5','6','7'], ans:'6', exp:'2x + 5 = 17 ⇒ 2x = 12 ⇒ x = 6.'},
+ {q:'Three equal notebooks and a ₹20 pen cost ₹95. If one notebook costs x, which equation is correct?', opts:['3x + 20 = 95','3x - 20 = 95','x + 20 = 95','20x + 3 = 95'], ans:'3x + 20 = 95', exp:'Three notebooks cost 3x and the pen costs 20, so 3x + 20 = 95.'},
+ {q:'Solve: 7x - 10 = 39', opts:['5','6','7','8'], ans:'7', exp:'7x - 10 = 39 ⇒ 7x = 49 ⇒ x = 7.'}
+];
+let questions=[], current=0, score=0, power=100, attempts=0, answered=0, firstTryCorrect=0;
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+setTimeout(()=>show('intro'),5000);
+function startGame(){questions=shuffle(originalQuestions.map(x=>({...x,opts:shuffle([...x.opts])})));current=0;score=0;power=100;answered=0;firstTryCorrect=0;updateScore();show('game');loadQuestion()}
+function updateScore(){$('fixed').textContent=answered;$('score').textContent=score;$('power').textContent=power}
+function renderDots(){let html='';for(let i=0;i<10;i++){html+=`<span class="dot ${i<current?'done':''} ${i===current?'current':''}"></span>`}$('dots').innerHTML=html}
+function loadQuestion(){attempts=0;const item=questions[current];$('questionText').innerHTML=item.q;$('feedback').textContent='';$('nextBtn').style.display='none';$('crate').style.left='7%';$('crate').style.transform='translateX(0)';$('machine').classList.remove('good','bad');renderDots();const optBox=$('options');optBox.innerHTML='';item.opts.forEach(opt=>{const b=document.createElement('button');b.className='option';b.innerHTML=opt;b.onclick=()=>choose(b,opt);optBox.appendChild(b)})}
+function choose(btn,opt){const item=questions[current];const buttons=[...document.querySelectorAll('.option')];if(buttons.some(b=>b.disabled))return;attempts++;btn.classList.add('selected');if(opt===item.ans){btn.classList.add('correct');buttons.forEach(b=>b.disabled=true);score+=10;answered++;if(attempts===1)firstTryCorrect++;play('correctSound');setTimeout(()=>play('clapSound'),220);correctAnim();$('feedback').textContent='Correct! Machine fixed.';$('nextBtn').style.display='inline-block';updateScore()}else{btn.classList.add('wrong');play('wrongSound');wrongAnim();power=Math.max(0,power-10);updateScore();if(attempts<2){$('feedback').textContent='Try once more.';setTimeout(()=>{btn.classList.remove('selected','wrong')},650)}else{buttons.forEach(b=>{b.disabled=true;if(b.innerHTML===item.ans)b.classList.add('selected','correct')});answered++;$('feedback').innerHTML=`Correct answer: <b>${item.ans}</b><br>${item.exp}`;$('nextBtn').style.display='inline-block';updateScore()}}}
+function correctAnim(){const m=$('machine'),crate=$('crate');m.classList.add('good');crate.style.left='72%';crate.style.transform='translateX(0) rotate(3deg)';for(let i=0;i<14;i++){setTimeout(()=>sparkle(),i*45)}setTimeout(()=>m.classList.remove('good'),900)}
+function wrongAnim(){const m=$('machine'),s=$('steam');m.classList.add('bad');s.classList.add('show');setTimeout(()=>{m.classList.remove('bad');s.classList.remove('show')},800)}
+function sparkle(){const st=$('stage');const e=document.createElement('div');e.className='sparkle';e.textContent=['✨','⭐','🔧','⚡'][Math.floor(Math.random()*4)];e.style.left=(35+Math.random()*30)+'%';e.style.top=(28+Math.random()*24)+'%';st.appendChild(e);setTimeout(()=>e.remove(),850)}
+function nextQuestion(){current++;if(current>=10){finish()}else loadQuestion()}
+function finish(){show('result');$('finalScore').textContent=score;$('finalFixed').textContent='10/10';$('accuracy').textContent=Math.round((firstTryCorrect/10)*100)+'%';play('clapSound')}
+function restartGame(){startGame()}
+function play(id){const a=$(id);try{a.currentTime=0;a.play().catch(()=>{})}catch(e){}}
+</script>
+</body>
+</html>
 
