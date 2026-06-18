@@ -1,1 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Quadrilateral Blueprint Rescue</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
+  body{min-height:100vh;overflow:hidden;background:linear-gradient(135deg,#182848,#4b6cb7);color:#fff}
+  .screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:18px}
+  .active{display:flex}
+  .splash{background:radial-gradient(circle,#ffffff 0%,#e8f0ff 38%,#89a8ff 100%)}
+  .logo{width:min(320px,70vw);animation:pulse 1.6s infinite ease-in-out}
+  @keyframes pulse{50%{transform:scale(1.07);filter:drop-shadow(0 0 22px #fff)}}
+  .bg-tools span{position:absolute;font-size:38px;opacity:.16;animation:float 8s infinite linear}
+  .bg-tools span:nth-child(1){left:7%;top:16%}.bg-tools span:nth-child(2){right:12%;top:18%;animation-delay:1s}.bg-tools span:nth-child(3){left:12%;bottom:16%;animation-delay:2s}.bg-tools span:nth-child(4){right:7%;bottom:18%;animation-delay:3s}
+  @keyframes float{50%{transform:translateY(-28px) rotate(12deg)}}
+  .panel{width:min(960px,96vw);background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.32);border-radius:28px;padding:26px;box-shadow:0 24px 60px rgba(0,0,0,.25);backdrop-filter:blur(10px);text-align:center}
+  h1{font-size:clamp(30px,5vw,54px);margin-bottom:12px}.subtitle{font-size:clamp(16px,2.5vw,22px);line-height:1.55;margin:12px auto 22px;max-width:720px}
+  button{border:0;border-radius:18px;padding:14px 24px;font-weight:800;font-size:18px;color:#14213d;background:#ffd166;cursor:pointer;box-shadow:0 8px 0 #c79522;transition:.15s}
+  button:active{transform:translateY(5px);box-shadow:0 3px 0 #c79522}
+  .game{flex-direction:column;gap:12px;justify-content:flex-start;background:linear-gradient(160deg,#0f2027,#203a43,#2c5364)}
+  .scorebar{width:min(1000px,96vw);display:flex;justify-content:space-between;gap:8px;align-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);padding:12px 16px;border-radius:20px;font-weight:800;font-size:clamp(14px,2.5vw,18px)}
+  .blueprint{width:min(1000px,96vw);min-height:250px;background:#123a5a;border:3px dashed #7ee7ff;border-radius:26px;padding:20px;position:relative;box-shadow:inset 0 0 40px rgba(126,231,255,.12)}
+  .blueprint:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(126,231,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(126,231,255,.12) 1px,transparent 1px);background-size:30px 30px;border-radius:23px;pointer-events:none}
+  .scenario{position:relative;z-index:1;font-size:clamp(17px,3vw,25px);line-height:1.5;font-weight:700}.scenario small{display:block;margin-top:8px;color:#b9f7ff;font-weight:600}
+  .dropzone{position:relative;z-index:2;margin:18px auto 0;min-height:82px;width:min(660px,94%);border:3px dashed rgba(255,255,255,.7);border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#dffcff;background:rgba(255,255,255,.08)}
+  .dropzone.hover{background:rgba(255,209,102,.2);border-color:#ffd166}
+  .cards{width:min(1000px,96vw);display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card{min-height:82px;border-radius:20px;background:linear-gradient(145deg,#fff3bd,#ffcc5c);color:#17213d;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;font-weight:900;font-size:clamp(14px,2.4vw,18px);cursor:grab;box-shadow:0 9px 0 #bf8120;user-select:none}.card:active{cursor:grabbing}.card.used{opacity:.25;pointer-events:none}.card.correct{background:linear-gradient(145deg,#bcffcf,#50d890)}.card.wrong{background:linear-gradient(145deg,#ffd0d0,#ff6b6b)}
+  .message{height:42px;font-size:20px;font-weight:900;text-align:center}.sparkle{animation:pop .7s ease}@keyframes pop{50%{transform:scale(1.04);filter:drop-shadow(0 0 20px #fff)}}
+  .final h2{font-size:clamp(32px,6vw,58px)}.badge{font-size:clamp(22px,4vw,34px);margin:18px 0;color:#ffd166;font-weight:900}
+  .confetti{position:absolute;width:10px;height:16px;top:-20px;animation:fall 2.4s linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(420deg)}}
+  @media(max-width:720px){body{overflow:auto}.screen{min-height:100vh}.cards{grid-template-columns:repeat(2,1fr)}.blueprint{min-height:300px}.game{padding-bottom:20px}.card{min-height:74px}.scorebar{flex-wrap:wrap}.panel{padding:20px}}
+</style>
+</head>
+<body>
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<section id="splash" class="screen splash active"><img src="assets/innovine-logo.png" class="logo" alt="Innovine Logo"></section>
+
+<section id="intro" class="screen">
+  <div class="bg-tools"><span>📐</span><span>🏗️</span><span>📏</span><span>🧱</span></div>
+  <div class="panel">
+    <h1>Quadrilateral Blueprint Rescue</h1>
+    <p class="subtitle">Drag the correct evidence card into the blueprint zone. You get two attempts for each challenge. Complete all 10 blueprints to finish the mission.</p>
+    <button onclick="startGame()">Start Rescue</button>
+  </div>
+</section>
+
+<section id="game" class="screen game">
+  <div class="bg-tools"><span>📐</span><span>🏗️</span><span>📏</span><span>🧱</span></div>
+  <div class="scorebar"><div id="scoreTxt">Score: 0/10</div><div id="qTxt">Blueprint: 1/10</div><div id="attemptTxt">Attempts left: 2</div></div>
+  <div class="blueprint" id="blueprint">
+    <div class="scenario" id="scenario"></div>
+    <div class="dropzone" id="dropzone">Drop the correct evidence card here</div>
+  </div>
+  <div class="message" id="message"></div>
+  <div class="cards" id="cards"></div>
+</section>
+
+<section id="final" class="screen final">
+  <div class="bg-tools"><span>⭐</span><span>🏗️</span><span>🎉</span><span>📐</span></div>
+  <div class="panel">
+    <h2>Project Complete!</h2>
+    <p class="subtitle" id="finalScore"></p>
+    <div class="badge" id="badge"></div>
+    <button onclick="restartGame()">Play Again</button>
+  </div>
+</section>
+
+<script>
+const questions=[
+{scenario:'A square metal plate is being used as part of a rectangular frame. Which statement correctly supports this decision?',answer:'Every square is a rectangle',explain:'A square has four right angles and opposite sides equal, so it satisfies rectangle properties.',cards:['Every square is a rectangle','Every rectangle is a square','Every rhombus is a square','Every trapezium is a rectangle']},
+{scenario:'A garden tile has all sides equal and one angle measuring 90°. What must the tile be?',answer:'Square',explain:'All sides equal plus one right angle makes all angles right angles in a rhombus, so it is a square.',cards:['Square','Rhombus only','Kite only','Trapezium']},
+{scenario:'A bridge panel has diagonals that bisect each other and are equal. Which quadrilateral family fits best?',answer:'Rectangle',explain:'A parallelogram with equal diagonals is a rectangle.',cards:['Rectangle','Kite','Trapezium','Irregular quadrilateral']},
+{scenario:'A student claims that all rhombuses are squares. Drag the correct judgement.',answer:'Incorrect',explain:'A rhombus needs all sides equal, but its angles need not be 90°.',cards:['Correct','Incorrect','Always true','Cannot be decided']},
+{scenario:'A banner frame has exactly one pair of opposite sides parallel. Which name is most suitable?',answer:'Trapezium',explain:'A trapezium has exactly one pair of parallel sides.',cards:['Trapezium','Rectangle','Rhombus','Square']},
+{scenario:'A kite-shaped design has diagonals meeting at right angles, and only one diagonal bisects the other. Which shape matches?',answer:'Kite',explain:'In a kite, diagonals are perpendicular and one diagonal bisects the other.',cards:['Kite','Rectangle','Parallelogram','Trapezium']},
+{scenario:'A floor pattern has opposite angles equal and opposite sides equal. Which conclusion is definitely true?',answer:'Parallelogram',explain:'Both pairs of opposite sides equal is a property of a parallelogram.',cards:['Parallelogram','Kite','Trapezium','Only square']},
+{scenario:'A rhombus-shaped logo has diagonals that are perpendicular. Which extra statement is also true for its diagonals?',answer:'They bisect each other',explain:'The diagonals of a rhombus bisect each other at right angles.',cards:['They bisect each other','They are always equal','Only one diagonal exists','They never intersect']},
+{scenario:'A notice board has four right angles and diagonals of equal length. Which classification is strongest from the given cards?',answer:'Rectangle',explain:'Four right angles and equal diagonals indicate a rectangle.',cards:['Rectangle','Kite','Trapezium','Rhombus only']},
+{scenario:'A quadrilateral has all sides equal, diagonals perpendicular, diagonals bisect each other, but angles are not all equal. What is it?',answer:'Rhombus',explain:'It is a rhombus, not a square, because all angles are not equal.',cards:['Rhombus','Square','Rectangle','Trapezium']}
+];
+let order=[],idx=0,score=0,attempts=2,locked=false;
+const screens={splash:document.getElementById('splash'),intro:document.getElementById('intro'),game:document.getElementById('game'),final:document.getElementById('final')};
+const $=id=>document.getElementById(id);
+function show(name){Object.values(screens).forEach(s=>s.classList.remove('active'));screens[name].classList.add('active')}
+setTimeout(()=>show('intro'),5000);
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function startGame(){order=shuffle([...Array(questions.length).keys()]);idx=0;score=0;show('game');loadQ()}
+function loadQ(){locked=false;attempts=2;let q=questions[order[idx]];$('scoreTxt').textContent=`Score: ${score}/10`;$('qTxt').textContent=`Blueprint: ${idx+1}/10`;$('attemptTxt').textContent='Attempts left: 2';$('message').textContent='';$('scenario').innerHTML=q.scenario+'<small>Drag the best evidence card.</small>';$('dropzone').textContent='Drop the correct evidence card here';$('dropzone').className='dropzone';$('cards').innerHTML='';shuffle(q.cards).forEach(txt=>{let c=document.createElement('div');c.className='card';c.textContent=txt;c.draggable=true;c.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',txt));c.addEventListener('click',()=>check(txt,c));$('cards').appendChild(c)});}
+$('dropzone').addEventListener('dragover',e=>{e.preventDefault();$('dropzone').classList.add('hover')});
+$('dropzone').addEventListener('dragleave',()=>$('dropzone').classList.remove('hover'));
+$('dropzone').addEventListener('drop',e=>{e.preventDefault();$('dropzone').classList.remove('hover');let txt=e.dataTransfer.getData('text/plain');let card=[...document.querySelectorAll('.card')].find(x=>x.textContent===txt);check(txt,card)});
+function play(id){let a=$(id);a.currentTime=0;a.play().catch(()=>{})}
+function check(txt,card){if(locked)return;let q=questions[order[idx]];if(txt===q.answer){locked=true;card.classList.add('correct');$('dropzone').textContent=txt;$('blueprint').classList.add('sparkle');score++;play('correctSound');setTimeout(()=>play('clapSound'),250);$('message').textContent='Blueprint rescued!';confetti();setTimeout(nextQ,1500)}else{attempts--;card.classList.add('wrong');play('wrongSound');$('attemptTxt').textContent=`Attempts left: ${attempts}`;if(attempts>0){$('message').textContent='Try again';setTimeout(()=>card.classList.remove('wrong'),700)}else{locked=true;$('message').textContent=`Correct answer: ${q.answer}. ${q.explain}`;[...document.querySelectorAll('.card')].forEach(c=>{if(c.textContent===q.answer)c.classList.add('correct')});setTimeout(nextQ,2800)}}}
+function nextQ(){$('blueprint').classList.remove('sparkle');idx++;idx<questions.length?loadQ():finish()}
+function finish(){show('final');$('finalScore').textContent=`Final Score: ${score} / 10`;let badge=score>=9?'Master Architect':score>=7?'Skilled Designer':score>=5?'Junior Builder':'Apprentice Builder';$('badge').textContent=badge;play('clapSound');confetti(80)}
+function restartGame(){startGame()}
+function confetti(n=35){for(let i=0;i<n;i++){let d=document.createElement('div');d.className='confetti';d.style.left=Math.random()*100+'vw';d.style.background=['#ffd166','#06d6a0','#4cc9f0','#f72585'][Math.floor(Math.random()*4)];d.style.animationDelay=Math.random()*0.6+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3000)}}
+</script>
+</body>
+</html>
 
