@@ -1,1 +1,79 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Power Grid City - Grade 8 Exponents and Powers</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Verdana,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{width:100%;height:100%;overflow:hidden;background:linear-gradient(180deg,#e0f7ff 0%,#fff7d6 58%,#e8ffe9 100%);color:#18324a}
+body:before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 12% 15%,rgba(255,213,79,.45),transparent 16%),radial-gradient(circle at 88% 18%,rgba(80,200,255,.35),transparent 18%),linear-gradient(90deg,rgba(59,130,246,.06) 1px,transparent 1px),linear-gradient(rgba(59,130,246,.05) 1px,transparent 1px);background-size:auto,auto,44px 44px,44px 44px;pointer-events:none}
+#splash{position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;z-index:10000;transition:.5s opacity}#splash img{width:min(300px,72vw);height:auto}.loader{position:absolute;bottom:20%;width:190px;height:7px;background:#e5e7eb;border-radius:10px;overflow:hidden}.loadfill{width:0;height:100%;background:linear-gradient(90deg,#38bdf8,#facc15,#22c55e)}
+#app{opacity:0;transition:.45s opacity;width:100%;height:100%;max-width:980px;max-height:760px;margin:auto;display:flex;flex-direction:column;gap:clamp(7px,1.2vh,11px);padding:clamp(9px,1.8vw,15px);position:relative}
+#intro{position:absolute;inset:0;z-index:1000;background:rgba(238,249,255,.96);display:flex;align-items:center;justify-content:center;padding:18px}.card{background:rgba(255,255,255,.94);border:2px solid #60a5fa;border-radius:24px;box-shadow:0 14px 32px rgba(37,99,235,.18);padding:clamp(18px,4vw,30px);text-align:center;max-width:540px}.card h1{font-size:clamp(1.45rem,4.6vw,2.05rem);color:#0f75bc;margin-bottom:12px;font-weight:950}.card p{font-size:clamp(.92rem,2.4vw,1.03rem);line-height:1.55;color:#334155;margin-bottom:18px}.brief{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0 18px}.brief div{background:#f8fbff;border:1.8px solid #bfdbfe;border-radius:14px;padding:10px;font-weight:850;text-align:left;color:#24445e}
+.btn{border:0;border-radius:16px;padding:clamp(12px,2.4vw,15px) 18px;background:linear-gradient(135deg,#1ca3ec,#22c55e);box-shadow:0 9px 18px rgba(14,165,233,.25);color:#fff;font-weight:950;font-size:clamp(.92rem,2.5vw,1.04rem);cursor:pointer}.btn:disabled{background:#cbd5e1;color:#64748b;box-shadow:none;cursor:not-allowed}
+.scorebar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.scorebar div{background:rgba(255,255,255,.88);border:2px solid #a7d8ff;border-radius:16px;padding:9px 8px;text-align:center;font-weight:950;color:#075985;font-size:clamp(.78rem,2vw,.96rem);box-shadow:0 5px 13px rgba(14,165,233,.1)}
+.main{display:grid;grid-template-columns:1fr 1.05fr;gap:10px;min-height:0;flex:1}.panel{background:rgba(255,255,255,.86);border:2px solid #bae6fd;border-radius:20px;box-shadow:0 10px 22px rgba(14,165,233,.13);padding:clamp(9px,1.8vw,13px)}.questionPanel{display:flex;flex-direction:column;gap:9px;min-height:0}.topic{font-weight:950;color:#0f75bc;text-align:center;font-size:clamp(1rem,2.7vw,1.2rem)}.qbox{background:#f0fbff;border:2px solid #7dd3fc;border-radius:17px;padding:clamp(11px,2vw,15px);min-height:112px;display:flex;align-items:center;justify-content:center;text-align:center}.qtext{font-size:clamp(1rem,2.7vw,1.28rem);font-weight:900;line-height:1.35;color:#172554}.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto}.opt{border:2px solid #c7e9ff;background:#fff;border-radius:15px;min-height:52px;padding:9px;font-weight:950;font-size:clamp(.88rem,2.25vw,1.03rem);color:#1e293b;cursor:pointer;transition:.18s;box-shadow:0 4px 10px rgba(14,165,233,.08)}.opt.selected{border-color:#0284c7;background:#e0f2fe;transform:translateY(-1px)}.opt.correct{background:#dcfce7!important;border-color:#16a34a!important}.opt.wrong{background:#fee2e2!important;border-color:#ef4444!important}.status{min-height:38px;text-align:center;display:flex;align-items:center;justify-content:center;font-weight:850;color:#475569;line-height:1.3;font-size:clamp(.82rem,2.1vw,.95rem)}
+.city{position:relative;overflow:hidden;padding:0;background:linear-gradient(180deg,#dff5ff 0%,#fff7dd 62%,#c7f9d4 100%);min-height:280px}canvas{display:block;width:100%;height:100%}.nextrow{display:grid;grid-template-columns:1fr;gap:8px}.confetti{position:fixed;top:-12px;width:9px;height:12px;pointer-events:none;z-index:9000;animation:fall 1.45s linear forwards}@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}.zap{animation:zap .45s ease}@keyframes zap{0%,100%{filter:none}50%{filter:drop-shadow(0 0 16px #facc15) brightness(1.3)}}
+@media(max-width:760px){#app{max-width:520px}.main{grid-template-columns:1fr;grid-template-rows:auto 1fr}.city{min-height:255px}.scorebar{gap:6px}.scorebar div{padding:8px 5px}.qbox{min-height:96px}.opts{gap:7px}}
+@media(max-width:390px){#app{padding:7px;gap:6px}.opt{min-height:46px;padding:7px}.city{min-height:220px}.status{min-height:32px}.card{padding:16px}.brief div{padding:8px}}
+@media(max-height:650px){#app{gap:6px;padding:7px}.scorebar div{padding:6px}.panel{padding:7px}.qbox{min-height:76px;padding:8px}.opt{min-height:42px;padding:7px}.city{min-height:185px}.status{min-height:28px}.topic{font-size:.95rem}.btn{padding:10px}}
+@media(orientation:landscape) and (max-height:540px){#app{max-width:980px}.main{grid-template-columns:1fr 1.05fr}.city{min-height:0}.qtext{font-size:.98rem}.opts{gap:6px}.opt{min-height:39px}.status{font-size:.78rem}.card{padding:16px}.card p{margin-bottom:10px}.brief{display:none}}
+</style>
+</head>
+<body>
+<audio id="sndCorrect" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="sndWrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="sndClaps" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+<div id="splash"><img src="assets/innovine-logo.png" alt="Innovine Logo"><div class="loader"><div class="loadfill" id="loadfill"></div></div></div>
+<div id="app">
+  <div id="intro"><div class="card"><h1>⚡ Power Grid City</h1><p>Restore power to the city by solving Exponents and Powers challenges.</p><div class="brief"><div>🏙️ Light up all city buildings.</div><div>⚡ Choose the correct power cell.</div><div>✌️ You get 2 chances for each challenge.</div></div><button class="btn" onclick="startGame()">Start Power Mission</button></div></div>
+  <div class="scorebar"><div>⚡ Powered: <span id="done">0</span>/10</div><div>⭐ Score: <span id="score">0</span></div><div>🔋 Energy: <span id="energy">0</span>%</div></div>
+  <div class="main">
+    <div class="panel questionPanel">
+      <div class="topic">Grade 8 • Exponents and Powers</div>
+      <div class="qbox"><div class="qtext" id="question">Loading...</div></div>
+      <div class="opts"><button class="opt" id="o0" onclick="choose(0)"></button><button class="opt" id="o1" onclick="choose(1)"></button><button class="opt" id="o2" onclick="choose(2)"></button><button class="opt" id="o3" onclick="choose(3)"></button></div>
+      <div class="status" id="status">Choose a power cell.</div>
+      <div class="nextrow"><button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>Next Building</button></div>
+    </div>
+    <div class="panel city"><canvas id="cityCanvas"></canvas></div>
+  </div>
+</div>
+<script>
+const questions=[
+{q:'A data server stores information in groups that double every hour. After 5 hours, which expression represents the total growth?',a:'2⁵',w:['5²','2 + 5','2 × 5'],e:'Doubling means base 2. For 5 hours, the expression is 2⁵.'},
+{q:'A security system generates 2⁴ access codes. How many codes are generated?',a:'16',w:['8','32','64'],e:'2⁴ = 2 × 2 × 2 × 2 = 16.'},
+{q:'A digital billboard contains 10⁶ pixels. Which number is represented?',a:'1,000,000',w:['10,000','100,000','10,000,000'],e:'10⁶ means 1 followed by 6 zeros, so it is 1,000,000.'},
+{q:'A scientist writes 0.00000045 in standard form. Which is correct?',a:'4.5 × 10⁻⁷',w:['4.5 × 10⁻⁶','4.5 × 10⁷','45 × 10⁻⁶'],e:'The decimal moves 7 places to make 4.5, so 0.00000045 = 4.5 × 10⁻⁷.'},
+{q:'A battery multiplies its charge by 3 each cycle. After 4 cycles, which expression shows the charge?',a:'3⁴',w:['4³','3 × 4','3 + 4'],e:'Repeated multiplication by 3 for 4 cycles is written as 3⁴.'},
+{q:'A memory chip has 5³ storage blocks. How many blocks are there?',a:'125',w:['15','25','625'],e:'5³ = 5 × 5 × 5 = 125.'},
+{q:'A city sensor records 7.2 × 10⁵ signals in a day. Which ordinary number is this?',a:'720,000',w:['72,000','7,200,000','0.000072'],e:'10⁵ moves the decimal 5 places to the right: 720,000.'},
+{q:'A power cell has 6² units of energy. Another cell has 2³ units. What is the total energy?',a:'44',w:['14','36','64'],e:'6² = 36 and 2³ = 8. Total = 36 + 8 = 44.'},
+{q:'A repair drone divides 10⁴ tools equally among 10² stations. How many tools does each station get?',a:'100',w:['10','1,000','10,000'],e:'10⁴ ÷ 10² = 10² = 100.'},
+{q:'A microchip measures 3 × 10⁻⁴ metres. Which decimal represents this length?',a:'0.0003',w:['0.003','0.03','30000'],e:'10⁻⁴ means move the decimal 4 places left: 3 × 10⁻⁴ = 0.0003.'}
+];
+let qs=[],idx=0,score=0,attempts=0,selected=null,locked=false,opts=[];let canvas,ctx;let lit=Array(10).fill(false),pulse=0,flash=-1,shake=0;
+const $=id=>document.getElementById(id);function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+let load=0;let t=setInterval(()=>{load+=2;$('loadfill').style.width=load+'%';if(load>=100){clearInterval(t);$('splash').style.opacity='0';setTimeout(()=>{$('splash').remove();$('app').style.opacity='1';setup();},500)}},100);
+function setup(){canvas=$('cityCanvas');ctx=canvas.getContext('2d');resize();window.addEventListener('resize',resize);qs=shuffle([...questions]);drawLoop();loadQuestion()}
+function startGame(){$('intro').remove()}
+function resize(){let r=canvas.getBoundingClientRect();canvas.width=Math.max(300,Math.floor(r.width));canvas.height=Math.max(200,Math.floor(r.height))}
+function loadQuestion(){attempts=0;selected=null;locked=false;flash=-1;shake=0;$('nextBtn').disabled=true;$('question').textContent=qs[idx].q;$('status').textContent='Choose a power cell.';$('status').style.color='#475569';opts=shuffle([{text:qs[idx].a,ok:true},...qs[idx].w.map(x=>({text:x,ok:false}))]);for(let i=0;i<4;i++){let b=$('o'+i);b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+opts[i].text;b.disabled=false}}
+function choose(i){if(locked)return;selected=i;for(let k=0;k<4;k++)$('o'+k).classList.toggle('selected',k===i);checkAnswer(i)}
+function checkAnswer(i){attempts++;if(opts[i].ok){locked=true;score+=10;lit[idx]=true;flash=idx;play('sndCorrect');setTimeout(()=>play('sndClaps'),200);$('score').textContent=score;$('done').textContent=idx+1;$('energy').textContent=Math.round(((idx+1)/10)*100);$('o'+i).classList.add('correct');$('status').textContent='Correct! '+qs[idx].e;$('status').style.color='#15803d';$('nextBtn').disabled=false;confetti()}else{play('sndWrong');shake=18;$('o'+i).classList.add('wrong');if(attempts>=2){locked=true;for(let k=0;k<4;k++)if(opts[k].ok)$('o'+k).classList.add('correct');$('status').textContent='Correct answer: '+qs[idx].a+'. '+qs[idx].e;$('status').style.color='#b45309';$('nextBtn').disabled=false}else{$('status').textContent='Try once more. Read the power rule carefully.';$('status').style.color='#dc2626'}}}
+function nextQuestion(){idx++;if(idx>=10)finish();else loadQuestion()}
+function play(id){let a=$(id);if(a){a.currentTime=0;a.play().catch(()=>{})}}
+function finish(){play('sndClaps');$('app').innerHTML='<div class="card" style="margin:auto"><h1>🏙️ City Restored!</h1><p>The Power Grid City is glowing again.</p><p><b>Final Score: '+score+'/100</b><br><b>Buildings Powered: '+lit.filter(Boolean).length+'/10</b><br><b>Accuracy: '+Math.round(score/100*100)+'%</b></p><button class="btn" onclick="location.reload()">Play Again</button></div>'}
+function confetti(){for(let i=0;i<22;i++){let d=document.createElement('div');d.className='confetti';d.style.left=Math.random()*100+'vw';d.style.background=['#38bdf8','#facc15','#22c55e','#fb7185'][Math.floor(Math.random()*4)];d.style.animationDelay=(Math.random()*0.2)+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),1600)}}
+function drawLoop(){pulse+=0.04;if(shake>0)shake--;render();requestAnimationFrame(drawLoop)}
+function render(){let w=canvas.width,h=canvas.height;ctx.clearRect(0,0,w,h);let sx=shake?Math.sin(shake)*4:0;ctx.save();ctx.translate(sx,0);let sky=ctx.createLinearGradient(0,0,0,h);sky.addColorStop(0,'#dbeafe');sky.addColorStop(.65,'#fff7ed');sky.addColorStop(1,'#dcfce7');ctx.fillStyle=sky;ctx.fillRect(-10,0,w+20,h);particles(w,h);let ground=h*.78;ctx.fillStyle='#bbf7d0';ctx.fillRect(-10,ground,w+20,h-ground);ctx.fillStyle='#7dd3fc';ctx.fillRect(-10,ground-8,w+20,8);drawCables(w,ground);let bw=w/10;for(let i=0;i<10;i++){let x=i*bw+bw*.12;let bh=(.22+((i*37)%29)/100)*h;let y=ground-bh;drawBuilding(x,y,bw*.76,bh,i,lit[i])}if(flash>=0)lightning(flash,w/10,ground);core(w*.5,ground-52);ctx.restore()}
+function particles(w,h){for(let i=0;i<28;i++){let x=(i*73 + Date.now()/70)%(w+80)-40;let y=30+((i*47)%Math.max(60,h*.48));ctx.fillStyle=i%2?'rgba(250,204,21,.45)':'rgba(14,165,233,.35)';ctx.beginPath();ctx.arc(x,y,2+(i%3),0,Math.PI*2);ctx.fill()}}
+function drawCables(w,g){ctx.strokeStyle='#64748b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,g-34);for(let x=0;x<=w;x+=60)ctx.lineTo(x,g-34+Math.sin(x/35+pulse)*5);ctx.stroke()}
+function drawBuilding(x,y,bw,bh,i,on){ctx.fillStyle=on?'#1e3a8a':'#334155';ctx.fillRect(x,y,bw,bh);ctx.fillStyle=on?'#fde68a':'#64748b';let cols=3,rows=Math.max(2,Math.floor(bh/28));for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){if(on || (r+c+i)%3==0){ctx.globalAlpha=on?.95:.28;ctx.fillRect(x+8+c*(bw-18)/3,y+12+r*24,Math.max(5,(bw-28)/3),10)}}ctx.globalAlpha=1;ctx.fillStyle=on?'#facc15':'#0f172a';ctx.beginPath();ctx.arc(x+bw/2,y-8,7+Math.sin(pulse*2+i)*1.5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText(i+1,x+bw/2,y+bh-8)}
+function lightning(i,bw,g){let x=i*bw+bw*.5;ctx.strokeStyle='#facc15';ctx.lineWidth=5;ctx.shadowColor='#facc15';ctx.shadowBlur=18;ctx.beginPath();ctx.moveTo(x,15);ctx.lineTo(x-15,g*.28);ctx.lineTo(x+10,g*.28);ctx.lineTo(x-8,g*.52);ctx.lineTo(x+18,g*.52);ctx.lineTo(x,g-80);ctx.stroke();ctx.shadowBlur=0;if(Math.sin(pulse*8)>0.7)flash=-1}
+function core(x,y){ctx.save();ctx.translate(x,y);ctx.rotate(pulse);ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(0,0,22,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fef08a';ctx.beginPath();ctx.arc(0,0,12+Math.sin(pulse*3)*2,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(14,165,233,.6)';ctx.lineWidth=4;ctx.strokeRect(-32,-32,64,64);ctx.restore()}
+</script>
+</body>
+</html>
