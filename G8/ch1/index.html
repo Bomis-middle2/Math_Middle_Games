@@ -1,1 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Rational Numbers Café Rush</title>
+<style>
+  :root{
+    --cream:#fff7e8; --card:#fffaf0; --brown:#6b3f22; --coffee:#9b653d;
+    --accent:#ffb84d; --mint:#7bdcb5; --rose:#ff8aa0; --ink:#2f231d;
+    --good:#1fa463; --bad:#d94141; --shadow:0 12px 28px rgba(93,55,30,.18);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;width:100%;min-height:100%;font-family:Arial, Helvetica, sans-serif;color:var(--ink);background:linear-gradient(180deg,#fff3da,#fffaf2);overflow-x:hidden}
+  body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:10px}
+  .app{width:min(1080px,100%);height:min(720px,calc(100vh - 20px));min-height:560px;background:linear-gradient(180deg,#fffdf7,#ffe9c6);border:4px solid #f0c17b;border-radius:28px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:18px}.screen.active{display:flex}
+  #splash{background:#fff;z-index:5}.logo{max-width:min(360px,72vw);max-height:45vh;object-fit:contain;animation:pop .9s ease both}
+  @keyframes pop{from{transform:scale(.82);opacity:.2}to{transform:scale(1);opacity:1}}
+  .bg-deco span{position:absolute;font-size:clamp(22px,4vw,42px);opacity:.22;animation:float 4s ease-in-out infinite}.d1{left:7%;top:12%}.d2{right:8%;top:16%;animation-delay:.6s}.d3{left:12%;bottom:14%;animation-delay:1.1s}.d4{right:14%;bottom:12%;animation-delay:1.7s}.d5{left:48%;top:7%;animation-delay:2.3s}
+  @keyframes float{50%{transform:translateY(-12px) rotate(5deg)}}
+  .panel{width:min(760px,94%);background:rgba(255,250,240,.94);border:3px solid #f4cf94;border-radius:24px;box-shadow:var(--shadow);padding:clamp(16px,3vw,26px);text-align:center;position:relative;z-index:2}
+  h1{font-size:clamp(28px,5vw,52px);line-height:1.03;margin:0 0 10px;color:var(--brown)}
+  h2{font-size:clamp(22px,3.4vw,34px);margin:0 0 8px;color:var(--brown)}
+  p{font-size:clamp(15px,2vw,19px);line-height:1.35;margin:8px 0}.btn{border:0;border-radius:18px;padding:13px 24px;background:linear-gradient(180deg,#ffcf72,#ffad32);color:#3b230d;font-size:clamp(16px,2.2vw,20px);font-weight:800;cursor:pointer;box-shadow:0 7px 0 #c4791b,0 12px 20px rgba(0,0,0,.15);transition:.15s}.btn:active{transform:translateY(5px);box-shadow:0 2px 0 #c4791b}.btn.secondary{background:linear-gradient(180deg,#bff4df,#72ddb4);box-shadow:0 7px 0 #2f9e72}
+  .game{position:absolute;inset:0;display:none;padding:10px;grid-template-rows:auto 1fr auto;gap:8px}.game.active{display:grid}
+  .topbar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;z-index:2}.stat{background:#fffaf2;border:2px solid #f0c17b;border-radius:18px;padding:8px 10px;font-weight:800;text-align:center;font-size:clamp(13px,2vw,18px);box-shadow:0 5px 12px rgba(115,78,38,.11)}
+  .stage{display:grid;grid-template-columns:1fr minmax(300px,1.25fr);gap:10px;min-height:0;z-index:2}.cafe{background:rgba(255,255,255,.62);border:2px dashed #e4b56d;border-radius:24px;position:relative;overflow:hidden;min-height:0}.awning{height:48px;background:repeating-linear-gradient(90deg,#ff8aa0 0 44px,#fff5e5 44px 88px);border-bottom:4px solid #8b4e2e}.counter{position:absolute;left:5%;right:5%;bottom:10%;height:28%;border-radius:18px;background:linear-gradient(180deg,#b97945,#7b421f);box-shadow:inset 0 12px rgba(255,255,255,.18)}.cup{position:absolute;left:50%;bottom:29%;transform:translateX(-50%);font-size:clamp(62px,11vw,118px);transition:.3s}.customer{position:absolute;left:9%;bottom:34%;font-size:clamp(58px,10vw,100px);transition:.35s}.jar{position:absolute;right:10%;bottom:35%;font-size:clamp(42px,7vw,70px)}.menu{position:absolute;right:7%;top:70px;background:#5b3929;color:#fff8dc;border-radius:12px;padding:10px 13px;font-weight:800;font-size:clamp(12px,1.8vw,16px);transform:rotate(2deg)}.serve .cup{animation:serve .7s ease}.spill .cup{animation:shake .45s ease}.coin{position:absolute;left:55%;bottom:44%;font-size:32px;opacity:0}.serve .coin{animation:coinFly .8s ease forwards}@keyframes serve{50%{transform:translateX(-50%) scale(1.2) rotate(-5deg)}}@keyframes shake{20%,60%{transform:translateX(-58%) rotate(-8deg)}40%,80%{transform:translateX(-42%) rotate(8deg)}}@keyframes coinFly{0%{opacity:1;transform:translate(0,0)}100%{opacity:0;transform:translate(120px,-150px)}}
+  .card{background:#fffaf2;border:3px solid #f0c17b;border-radius:24px;box-shadow:var(--shadow);padding:clamp(12px,2vw,18px);display:flex;flex-direction:column;min-height:0}.order-title{font-weight:900;color:#7d4726;font-size:clamp(17px,2.5vw,24px);margin-bottom:6px}.question{font-size:clamp(16px,2.25vw,22px);line-height:1.35;margin:2px 0 10px;min-height:58px}.options{display:grid;grid-template-columns:1fr 1fr;gap:8px}.option{border:2px solid #e3bd82;background:#fff;border-radius:16px;padding:11px 10px;font-size:clamp(15px,2vw,19px);font-weight:800;cursor:pointer;transition:.15s;min-height:50px}.option:hover{transform:translateY(-2px);box-shadow:0 7px 12px rgba(108,68,31,.13)}.option.correct{background:#dff8e9;border-color:var(--good);color:#0d6439}.option.wrong{background:#ffe0e0;border-color:var(--bad);color:#9a1f1f}.option:disabled{cursor:not-allowed}.feedback{margin-top:9px;min-height:46px;font-size:clamp(14px,1.9vw,17px);font-weight:700}.feedback.good{color:var(--good)}.feedback.bad{color:var(--bad)}.nextrow{display:flex;justify-content:flex-end;margin-top:auto}.progress{display:flex;gap:5px;justify-content:center;align-items:center;z-index:2}.dot{width:clamp(18px,3vw,28px);height:clamp(18px,3vw,28px);border-radius:50%;background:#fff;border:2px solid #d69a4e;display:grid;place-items:center;font-size:13px}.dot.done{background:#7bdcb5}.dot.current{background:#ffcf72;transform:scale(1.16)}
+  .sprinkle{position:absolute;pointer-events:none;font-size:22px;animation:sprinkle .8s ease forwards;z-index:4}@keyframes sprinkle{0%{opacity:1;transform:translateY(0) scale(.8)}100%{opacity:0;transform:translateY(-80px) scale(1.3)}}
+  .badge{display:inline-block;background:#fff;border:2px solid #f0c17b;border-radius:18px;padding:10px 16px;margin:6px;font-weight:900}.compact-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:left;margin:12px auto;max-width:610px}.compact-list div{background:#fff;border:2px solid #f4cf94;border-radius:14px;padding:10px;font-weight:700}
+  @media (max-width:760px){body{padding:6px}.app{height:calc(100vh - 12px);min-height:520px;border-radius:18px}.screen{padding:10px}.game{padding:7px;gap:6px}.topbar{gap:5px}.stat{padding:7px 4px;border-radius:13px}.stage{grid-template-columns:1fr;grid-template-rows:34% 1fr;gap:6px}.awning{height:30px}.menu{display:none}.counter{height:22%;bottom:4%}.cup{bottom:22%}.customer{left:7%;bottom:25%}.jar{right:8%;bottom:26%}.card{padding:10px;border-radius:18px}.question{min-height:42px}.options{gap:6px}.option{padding:9px 7px;min-height:43px}.feedback{min-height:38px}.progress{gap:3px}.compact-list{grid-template-columns:1fr;gap:6px;margin:8px auto}.btn{padding:11px 18px}}
+  @media (max-height:620px) and (min-width:761px){.app{min-height:0}.stage{grid-template-columns:.9fr 1.1fr}.question{min-height:40px}.option{min-height:42px;padding:8px}.feedback{min-height:34px}.awning{height:36px}.customer{font-size:70px}.cup{font-size:82px}.jar{font-size:54px}.panel{padding:16px}.compact-list{margin:8px auto}.progress .dot{width:20px;height:20px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="bg-deco"><span class="d1">☕</span><span class="d2">🍪</span><span class="d3">🧁</span><span class="d4">🥤</span><span class="d5">🍩</span></div>
+
+  <section class="screen active" id="splash"><img class="logo" src="assets/innovine-logo.png" alt="Innovine Logo"></section>
+
+  <section class="screen" id="intro">
+    <div class="panel">
+      <h1>Rational Numbers Café Rush</h1>
+      <p>Welcome to the café! Complete customer orders by solving rational-number challenges involving recipes, bills, temperature, discounts and balances.</p>
+      <div class="compact-list">
+        <div>☕ Complete 10 orders</div><div>✌️ Two attempts only</div><div>💡 Answer is shown after second wrong try</div><div>🏆 Earn coins and open the café</div>
+      </div>
+      <button class="btn" id="startBtn">Start Café Rush</button>
+    </div>
+  </section>
+
+  <main class="game" id="game">
+    <div class="topbar">
+      <div class="stat">☕ Orders: <span id="orderCount">0</span>/10</div>
+      <div class="stat">⭐ Score: <span id="score">0</span></div>
+      <div class="stat">💰 Coins: <span id="coins">100</span></div>
+    </div>
+    <div class="stage">
+      <div class="cafe" id="cafeScene">
+        <div class="awning"></div><div class="menu">TODAY'S MENU<br>Fractions • Decimals<br>Profit • Loss</div>
+        <div class="customer" id="customer">😊</div><div class="jar">🍯</div><div class="cup">🥤</div><div class="counter"></div><div class="coin">🪙</div>
+      </div>
+      <div class="card">
+        <div class="order-title" id="orderTitle">Customer Order</div>
+        <div class="question" id="question"></div>
+        <div class="options" id="options"></div>
+        <div class="feedback" id="feedback"></div>
+        <div class="nextrow"><button class="btn secondary" id="nextBtn" style="display:none">Next Order</button></div>
+      </div>
+    </div>
+    <div class="progress" id="progress"></div>
+  </main>
+
+  <section class="screen" id="final">
+    <div class="panel">
+      <h1>🎉 Café Opened Successfully!</h1>
+      <p>You completed the Rational Numbers Café Rush.</p>
+      <div><span class="badge">⭐ Score: <span id="finalScore"></span></span><span class="badge">☕ Orders: <span id="finalOrders"></span>/10</span><span class="badge">🎯 Accuracy: <span id="accuracy"></span>%</span></div>
+      <p id="finalMsg" style="font-weight:900;color:#6b3f22"></p>
+      <button class="btn" onclick="location.reload()">Play Again</button>
+    </div>
+  </section>
+</div>
+<audio id="correctAudio" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongAudio" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapAudio" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+<script>
+const rawQuestions=[
+{q:'A smoothie needs 3/4 cup of milk. The customer asks for 1/8 cup extra. How much milk is needed in total?',opts:['7/8 cup','5/8 cup','4/12 cup','2/8 cup'],ans:'7/8 cup',ex:'3/4 + 1/8 = 6/8 + 1/8 = 7/8 cup.'},
+{q:'A café wallet has ₹5/6 profit. A refund of ₹7/12 is given. What is the new balance?',opts:['₹1/4','₹3/4','₹2/3','₹5/18'],ans:'₹1/4',ex:'5/6 - 7/12 = 10/12 - 7/12 = 3/12 = 1/4.'},
+{q:'The freezer temperature was −2½°C. It increased by 3¾°C. What is the new temperature?',opts:['1¼°C','−1¼°C','6¼°C','5¼°C'],ans:'1¼°C',ex:'−2½ + 3¾ = −10/4 + 15/4 = 5/4 = 1¼°C.'},
+{q:'A cookie tray lost 4/5 of a row during packing. Then 3/10 of a row was added back. What is the net change?',opts:['−1/2 row','+1/2 row','−11/10 row','+11/10 row'],ans:'−1/2 row',ex:'−4/5 + 3/10 = −8/10 + 3/10 = −5/10 = −1/2.'},
+{q:'A juice jar had 4½ litres. The café used 1¾ litres and then 5/4 litres. How much juice remains?',opts:['1½ litres','1¼ litres','2 litres','3/2 litre'],ans:'1½ litres',ex:'4½ − 1¾ − 5/4 = 18/4 − 7/4 − 5/4 = 6/4 = 1½.'},
+{q:'A discount card gives −3/4 of a coin, another bonus gives +5/8 of a coin, and a tip gives +1/2 coin. What is the total change?',opts:['3/8 coin','−3/8 coin','1/8 coin','7/8 coin'],ans:'3/8 coin',ex:'−3/4 + 5/8 + 1/2 = −6/8 + 5/8 + 4/8 = 3/8.'},
+{q:'A recipe uses 2/3 cup cocoa and 5/6 cup flour. The chef removes 3/4 cup mixture. What is left?',opts:['3/4 cup','5/4 cups','7/4 cups','11/12 cup'],ans:'3/4 cup',ex:'2/3 + 5/6 − 3/4 = 8/12 + 10/12 − 9/12 = 9/12 = 3/4.'},
+{q:'A café score starts at −3/2 because of delayed orders. After fast service, it gains 7/4 points. What is the final score?',opts:['1/4','−1/4','5/4','13/4'],ans:'1/4',ex:'−3/2 + 7/4 = −6/4 + 7/4 = 1/4.'},
+{q:'Four ingredient ratings are −3/4, −5/8, 1/2 and −7/8. Which rating is greatest?',opts:['1/2','−5/8','−3/4','−7/8'],ans:'1/2',ex:'A positive rational number is greater than all the negative rational numbers listed.'},
+{q:'The oxygen chiller changes by −1/3, then +5/6, then −1/2. What is the overall change?',opts:['0','1/6','−1/6','1/3'],ans:'0',ex:'−1/3 + 5/6 − 1/2 = −2/6 + 5/6 − 3/6 = 0.'}
+];
+let questions=[],idx=0,score=0,coins=100,attempts=0,locked=false,totalAttempts=0,correctCount=0;
+const $=id=>document.getElementById(id);
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('game').classList.remove('active'); if(id==='game')$('game').classList.add('active');else $(id).classList.add('active')}
+setTimeout(()=>show('intro'),5000);
+$('startBtn').onclick=startGame;$('nextBtn').onclick=nextQuestion;
+function startGame(){questions=shuffle(rawQuestions).map(q=>({...q,opts:shuffle(q.opts)}));idx=0;score=0;coins=100;correctCount=0;totalAttempts=0;renderProgress();show('game');loadQ()}
+function renderProgress(){let html='';for(let i=0;i<10;i++)html+=`<div class="dot ${i<idx?'done':i===idx?'current':''}">${i<idx?'✓':''}</div>`;$('progress').innerHTML=html}
+function loadQ(){locked=false;attempts=0;$('nextBtn').style.display='none';$('feedback').className='feedback';$('feedback').textContent='';$('orderCount').textContent=idx;$('score').textContent=score;$('coins').textContent=coins;renderProgress();const q=questions[idx];$('orderTitle').textContent=['Smoothie Order','Billing Counter','Freezer Check','Cookie Tray','Juice Station','Discount Desk','Recipe Mixer','Service Score','Ingredient Rating','Chiller Log'][idx]||'Customer Order';$('question').textContent=q.q;$('options').innerHTML='';q.opts.forEach(o=>{const b=document.createElement('button');b.className='option';b.textContent=o;b.onclick=()=>choose(b,o);$('options').appendChild(b)});$('customer').textContent=['😊','🙂','😄','🤓','👧','👦','👩','🧑','👨','😋'][idx%10];}
+function play(a){try{a.currentTime=0;a.play()}catch(e){}}
+function choose(btn,val){if(locked)return;attempts++;totalAttempts++;const q=questions[idx];if(val===q.ans){locked=true;correctCount++;score+=10;coins+=10;btn.classList.add('correct');$('feedback').className='feedback good';$('feedback').textContent='Correct! Order served successfully.';play($('correctAudio'));setTimeout(()=>play($('clapAudio')),160);serveAnim();sprinkles();disableOptions();setTimeout(nextQuestion,1050)}else{btn.classList.add('wrong');btn.disabled=true;coins=Math.max(0,coins-5);$('coins').textContent=coins;play($('wrongAudio'));spillAnim();if(attempts<2){$('feedback').className='feedback bad';$('feedback').textContent='Try once more. Think carefully about signs and common denominators.'}else{locked=true;$('feedback').className='feedback bad';$('feedback').innerHTML=`Correct answer: <b>${q.ans}</b><br>${q.ex}`;disableOptions(q.ans);$('nextBtn').style.display='inline-block'}}}
+function disableOptions(ans){document.querySelectorAll('.option').forEach(b=>{b.disabled=true;if(ans&&b.textContent===ans)b.classList.add('correct')})}
+function nextQuestion(){idx++;if(idx>=questions.length)return finalScreen();loadQ()}
+function serveAnim(){const c=$('cafeScene');c.classList.remove('spill');void c.offsetWidth;c.classList.add('serve');setTimeout(()=>c.classList.remove('serve'),850)}
+function spillAnim(){const c=$('cafeScene');c.classList.remove('serve');void c.offsetWidth;c.classList.add('spill');setTimeout(()=>c.classList.remove('spill'),500)}
+function sprinkles(){const icons=['✨','🎉','🍪','🪙','⭐'];for(let i=0;i<12;i++){let s=document.createElement('span');s.className='sprinkle';s.textContent=icons[Math.floor(Math.random()*icons.length)];s.style.left=(35+Math.random()*35)+'%';s.style.top=(45+Math.random()*25)+'%';s.style.animationDelay=(Math.random()*.2)+'s';$('app').appendChild(s);setTimeout(()=>s.remove(),900)}}
+function finalScreen(){show('final');$('finalScore').textContent=score;$('finalOrders').textContent=correctCount;$('accuracy').textContent=Math.round((correctCount/questions.length)*100);$('finalMsg').textContent=correctCount>=8?'Café Master Badge Earned!':'Good effort! Replay to earn the Café Master Badge.';play($('clapAudio'))}
+</script>
+</body>
+</html>
 
