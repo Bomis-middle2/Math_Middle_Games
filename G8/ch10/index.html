@@ -1,1 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Square Power Grid | Grade 8</title>
+<style>
+:root{
+  --navy:#10233f;--ink:#13263d;--blue:#1688ff;--cyan:#12d6ff;--lime:#46d369;--orange:#ffb238;--red:#ef476f;
+  --panel:#ffffff;--soft:#eef7ff;--line:#c9e1ff;--shadow:0 18px 55px rgba(17,54,96,.18);
+}
+*{box-sizing:border-box}html,body{margin:0;height:100%;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);overflow:hidden;background:linear-gradient(135deg,#dff3ff 0%,#f7fbff 48%,#fff1d8 100%)}
+button{font-family:inherit;border:0;cursor:pointer}.hidden{display:none!important}.screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:16px}.screen.active{display:flex}
+/* Splash */
+#splash{z-index:20;background:radial-gradient(circle at 50% 42%,#fff 0 20%,#edf7ff 48%,#d7eeff 100%)}.logoBox{width:min(360px,78vw);height:min(240px,45vh);display:grid;place-items:center;background:#ffffffd9;border-radius:34px;box-shadow:0 28px 80px #37618d33;animation:float 2s ease-in-out infinite}.logoBox img{max-width:78%;max-height:72%;object-fit:contain;animation:glow 1.4s ease-in-out infinite}@keyframes float{50%{transform:translateY(-12px)}}@keyframes glow{50%{filter:drop-shadow(0 0 22px #ff80d7);transform:scale(1.04)}}
+/* Animated background */
+.bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}.wire{position:absolute;height:4px;background:linear-gradient(90deg,transparent,#8ecbff,transparent);opacity:.5;animation:wire 5s linear infinite}.w1{top:16%;left:-20%;width:65%;animation-delay:0s}.w2{top:78%;right:-25%;width:70%;animation-delay:1.5s}.w3{top:47%;left:-35%;width:85%;animation-delay:3s}@keyframes wire{to{transform:translateX(140vw)}}.orb{position:absolute;border-radius:50%;filter:blur(.2px);opacity:.22;animation:drift 7s ease-in-out infinite}.o1{width:160px;height:160px;background:#1688ff;left:6%;top:12%}.o2{width:120px;height:120px;background:#ffb238;right:9%;top:10%;animation-delay:1s}.o3{width:210px;height:210px;background:#12d6ff;right:18%;bottom:-80px;animation-delay:2s}@keyframes drift{50%{transform:translate(20px,-22px) scale(1.06)}}.numFloat{position:absolute;font-weight:1000;color:#22446618;font-size:42px;animation:spin 14s linear infinite}.nf1{left:12%;bottom:16%}.nf2{right:16%;bottom:34%;animation-duration:17s}.nf3{left:48%;top:8%;animation-duration:20s}@keyframes spin{to{transform:rotate(360deg)}}
+/* Intro */
+.panel{position:relative;width:min(1080px,96vw);max-height:96vh;background:#ffffffea;border:1px solid #d7e8ff;border-radius:32px;box-shadow:var(--shadow);padding:24px;overflow:auto}.introGrid{display:grid;grid-template-columns:1fr 330px;gap:22px;align-items:center}.title{font-size:clamp(32px,5vw,58px);line-height:.98;margin:0 0 12px;font-weight:1000;color:var(--navy)}.sub{font-size:clamp(16px,2vw,20px);line-height:1.45;color:#294764;font-weight:650}.start{margin-top:16px;background:linear-gradient(135deg,#1167e8,#16c6ff);color:#fff;font-weight:1000;font-size:18px;border-radius:18px;padding:15px 26px;box-shadow:0 14px 30px #1688ff44}.powerTower{height:310px;border-radius:28px;background:linear-gradient(180deg,#dbf5ff,#fff5d9);position:relative;overflow:hidden;border:2px solid #d7e8ff}.tower{position:absolute;left:116px;bottom:20px;width:92px;height:220px;clip-path:polygon(45% 0,55% 0,100% 100%,82% 100%,58% 22%,42% 22%,18% 100%,0 100%);background:#244968;animation:pulseTower 2s infinite}.bolt{position:absolute;font-size:68px;left:132px;top:55px;animation:bolt 1s infinite alternate}.battery{position:absolute;right:28px;bottom:34px;width:92px;height:50px;border:5px solid #244968;border-radius:12px}.battery:after{content:"";position:absolute;right:-14px;top:13px;width:10px;height:18px;background:#244968;border-radius:0 5px 5px 0}.charge{height:100%;width:72%;background:linear-gradient(90deg,#46d369,#12d6ff);animation:charge 1.7s infinite;border-radius:6px}@keyframes bolt{to{transform:scale(1.16) rotate(8deg);filter:drop-shadow(0 0 14px #ffbd2e)}}@keyframes charge{50%{width:35%}}@keyframes pulseTower{50%{filter:drop-shadow(0 0 20px #12d6ff)}}
+/* Game */
+#game{align-items:stretch;padding:10px}.gameWrap{width:min(1180px,99vw);height:calc(100vh - 20px);display:flex;flex-direction:column;gap:10px;position:relative}.topbar{display:flex;gap:10px;align-items:center;justify-content:space-between;background:#ffffffee;border:1px solid #d5e8ff;border-radius:20px;padding:10px 14px;box-shadow:0 10px 28px #12345a18}.badge{font-weight:1000;background:#eaf5ff;border:1px solid #cae4ff;border-radius:999px;padding:10px 14px;color:#153b61}.progress{height:14px;flex:1;min-width:90px;border-radius:999px;background:#dcecff;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,#46d369,#12d6ff,#1688ff);transition:.35s}.stage{flex:1;display:grid;grid-template-columns:1.08fr .92fr;gap:12px;min-height:0}.question,.answer{background:#fffffff2;border:1px solid #d5e8ff;border-radius:28px;box-shadow:0 12px 36px #12345a17;padding:18px;position:relative;overflow:hidden}.question:before{content:"";position:absolute;inset:0;background-image:linear-gradient(#d7e8ff55 1px,transparent 1px),linear-gradient(90deg,#d7e8ff55 1px,transparent 1px);background-size:28px 28px;opacity:.45;pointer-events:none}.qContent{position:relative;z-index:1}.scenario{font-size:clamp(22px,3vw,34px);line-height:1.13;margin:0 0 12px;font-weight:1000;color:#08203b;background:#ffffffd9;border-radius:18px;padding:10px 12px}.details{font-size:clamp(18px,2.2vw,25px);line-height:1.35;color:#0f2f4e;font-weight:850;background:#f3f9ff;border:2px solid #cfe5ff;border-radius:18px;padding:13px 14px}.visual{height:190px;margin-top:14px;border-radius:24px;background:linear-gradient(135deg,#dff6ff,#fff3d2);border:3px solid #bee0ff;display:grid;place-items:center;position:relative;overflow:hidden}.sceneIcon{font-size:86px;animation:bob 1.8s ease-in-out infinite;filter:drop-shadow(0 12px 10px #19435b22)}@keyframes bob{50%{transform:translateY(-12px) scale(1.06)}}.spark{position:absolute;font-weight:1000;color:#1c4f8033;font-size:34px;animation:float 3s infinite}.sp1{left:10%;top:18%}.sp2{right:10%;bottom:14%;animation-delay:.6s}.sp3{left:55%;bottom:24%;animation-delay:1.1s}.dropTitle{font-size:22px;font-weight:1000;color:#10233f;margin-bottom:10px}.scanner{min-height:96px;border:4px dashed #8fc8ff;border-radius:24px;background:linear-gradient(180deg,#f3faff,#e8f5ff);display:flex;align-items:center;justify-content:center;text-align:center;padding:13px;font-size:18px;font-weight:950;color:#315a7e;transition:.22s}.scanner.over{transform:scale(1.02);border-color:#1688ff;box-shadow:0 0 0 8px #1688ff16}.chips{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-top:13px}.chip{min-height:70px;border-radius:20px;background:linear-gradient(135deg,#ffffff,#edf8ff);border:2px solid #cfe5ff;box-shadow:0 9px 18px #12345a14;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;font-size:clamp(16px,1.8vw,20px);font-weight:1000;color:#10233f;user-select:none;touch-action:none;transition:.16s}.chip:hover{transform:translateY(-2px)}.chip.dragging{opacity:.65;transform:scale(.96)}.chip.chosen{outline:4px solid #ffb238}.feedback{min-height:58px;margin-top:11px;border-radius:18px;background:#f5faff;border:1px solid #d5e8ff;padding:11px 13px;font-size:16px;font-weight:900;color:#294764;display:flex;align-items:center}.feedback.good{background:#e9fff1;color:#087042;border-color:#b9f0c7}.feedback.bad{background:#fff0f4;color:#a51f42;border-color:#ffd0dc}.feedback.reveal{background:#fff8de;color:#795300;border-color:#ffe2a3}.next{width:100%;margin-top:11px;padding:14px;border-radius:17px;background:linear-gradient(135deg,#10233f,#1976d2);color:#fff;font-size:17px;font-weight:1000}.burst{position:absolute;inset:0;display:none;place-items:center;z-index:5;pointer-events:none;font-size:100px;animation:burst .75s ease-out}.burst.show{display:grid}@keyframes burst{0%{opacity:0;transform:scale(.2)}45%{opacity:1}100%{opacity:0;transform:scale(1.55)}}.shake{animation:shake .32s}@keyframes shake{25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
+/* Result */
+#result .panel{text-align:center}.medal{font-size:92px;animation:bob 2s infinite}.big{font-size:clamp(48px,8vw,86px);font-weight:1000;margin:8px;color:#10233f}.play{padding:15px 28px;border-radius:18px;background:linear-gradient(135deg,#1167e8,#12d6ff);color:#fff;font-size:18px;font-weight:1000}.confetti{position:fixed;inset:0;overflow:hidden;pointer-events:none}.piece{position:absolute;top:-20px;width:10px;height:16px;background:#ffb238;animation:fall 2.6s linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(520deg);opacity:.8}}
+@media(max-width:820px){body{overflow:auto}.screen{position:relative;min-height:100vh}.introGrid{grid-template-columns:1fr}.powerTower{height:220px}.stage{grid-template-columns:1fr}.gameWrap{height:auto;min-height:100vh}.chips{grid-template-columns:1fr}.visual{height:145px}.scenario{font-size:22px}.details{font-size:18px}.topbar{flex-wrap:wrap}.panel{max-height:none}}
+</style>
+</head>
+<body>
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+<section id="splash" class="screen active"><div class="logoBox"><img src="assets/innovine-logo.png" alt="Innovine Logo"></div></section>
+
+<section id="intro" class="screen">
+  <div class="bg"><div class="wire w1"></div><div class="wire w2"></div><div class="wire w3"></div><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div><div class="numFloat nf1">√144</div><div class="numFloat nf2">23²</div><div class="numFloat nf3">√784</div></div>
+  <div class="panel introGrid">
+    <div>
+      <h1 class="title">Square Power Grid</h1>
+      <p class="sub">Charge each city station by dragging the correct energy chip into the scanner. Solve squares, square roots, perfect squares, area, and perimeter challenges. Each station gives two attempts.</p>
+      <button class="start" onclick="startGame()">Start Power Grid</button>
+    </div>
+    <div class="powerTower"><div class="bolt">⚡</div><div class="tower"></div><div class="battery"><div class="charge"></div></div></div>
+  </div>
+</section>
+
+<section id="game" class="screen">
+  <div class="bg"><div class="wire w1"></div><div class="wire w2"></div><div class="wire w3"></div><div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div></div>
+  <div class="gameWrap">
+    <div class="topbar"><div class="badge" id="scoreBadge">Score: 0/10</div><div class="progress"><div class="bar" id="bar"></div></div><div class="badge" id="missionBadge">Station 1/10</div></div>
+    <div class="stage">
+      <div class="question"><div class="burst" id="burst">⚡</div><div class="qContent"><p class="scenario" id="scenario"></p><div class="details" id="details"></div><div class="visual"><div class="sceneIcon" id="sceneIcon"></div><span class="spark sp1" id="sp1"></span><span class="spark sp2" id="sp2"></span><span class="spark sp3" id="sp3"></span></div></div></div>
+      <div class="answer"><div class="dropTitle">Drag the correct energy chip</div><div class="scanner" id="scanner">Drop chip here</div><div class="chips" id="chips"></div><div class="feedback" id="feedback">No chip is selected. Read the station problem and choose carefully.</div><button class="next hidden" id="nextBtn" onclick="nextQuestion()">Next Station</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="result" class="screen">
+  <div class="bg"><div class="wire w1"></div><div class="wire w2"></div><div class="orb o1"></div><div class="orb o2"></div><div class="numFloat nf1">✓</div></div>
+  <div class="panel"><div class="medal">🏆</div><h1 class="title">Power Grid Complete!</h1><div class="big" id="finalScore">0/10</div><p class="sub" id="rankText"></p><button class="play" onclick="restartGame()">Play Again</button></div><div class="confetti" id="confetti"></div>
+</section>
+
+<script>
+const questions=[
+ {icon:'🏙️',s:'A city square has an area of 196 m².',d:'Find the side length needed to build the boundary lights.',answer:'14 m',options:['12 m','14 m','16 m','98 m'],ex:'Side length = √196 = 14 m.',nums:['196','√196','14²']},
+ {icon:'⚽',s:'A sports court is a square with side 23 m.',d:'Find the area that must be painted.',answer:'529 m²',options:['46 m²','529 m²','169 m²','576 m²'],ex:'Area = side² = 23² = 529 m².',nums:['23²','529','area']},
+ {icon:'🧩',s:'A puzzle board has 625 equal small squares arranged as one large square.',d:'How many small squares are there along each side?',answer:'25',options:['15','20','25','35'],ex:'√625 = 25.',nums:['625','√625','25²']},
+ {icon:'🎮',s:'A game map has 324 tiles arranged in a square grid.',d:'Find the number of tiles along one edge.',answer:'18',options:['16','18','22','24'],ex:'√324 = 18.',nums:['324','18²','grid']},
+ {icon:'🏬',s:'A mall uses square floor panels of side 32 cm.',d:'Find the area of one panel in cm².',answer:'1024 cm²',options:['924 cm²','1024 cm²','1064 cm²','2048 cm²'],ex:'32² = 1024.',nums:['32²','1024','panel']},
+ {icon:'🚦',s:'A traffic display flashes the number 9801.',d:'Choose the square root that matches this display.',answer:'99',options:['89','97','99','101'],ex:'99² = 9801, so √9801 = 99.',nums:['9801','99²','√']},
+ {icon:'🌳',s:'A square garden has an area between 400 m² and 500 m².',d:'Which side length gives a perfect-square area in this range?',answer:'21 m',options:['19 m','21 m','24 m','26 m'],ex:'21² = 441, and 441 lies between 400 and 500.',nums:['400','441','500']},
+ {icon:'📦',s:'A square packing tray has 144 slots.',d:'A new tray has side length 3 more than this tray. Find the new side length.',answer:'15 slots',options:['12 slots','15 slots','18 slots','147 slots'],ex:'√144 = 12, and 12 + 3 = 15.',nums:['144','√144','+3']},
+ {icon:'🛣️',s:'A square parking zone has area 784 m².',d:'Find the total length of fencing needed around it.',answer:'112 m',options:['28 m','56 m','112 m','196 m'],ex:'Side = √784 = 28 m. Perimeter = 4 × 28 = 112 m.',nums:['784','28','4s']},
+ {icon:'🔭',s:'A science model uses a square number between 2500 and 2600.',d:'Which number has its square in this range?',answer:'50',options:['48','49','50','51'],ex:'50² = 2500. The other nearby square 51² = 2601, which is beyond 2600.',nums:['2500','2600','50²']}
+];
+let order=[],current=0,score=0,attempts=0,locked=false,selected=null;
+const $=id=>document.getElementById(id);
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
+setTimeout(()=>show('intro'),5000);
+function play(id){const a=$(id); if(!a)return; a.currentTime=0; a.play().catch(()=>{});}
+function startGame(){order=shuffle([...questions]);current=0;score=0;attempts=0;locked=false;show('game');loadQuestion()}
+function loadQuestion(){locked=false;attempts=0;selected=null;const q=order[current];$('scenario').textContent=q.s;$('details').textContent=q.d;$('sceneIcon').textContent=q.icon;$('sp1').textContent=q.nums[0];$('sp2').textContent=q.nums[1];$('sp3').textContent=q.nums[2];$('scoreBadge').textContent=`Score: ${score}/10`;$('missionBadge').textContent=`Station ${current+1}/10`;$('bar').style.width=`${current*10}%`;$('scanner').textContent='Drop chip here';$('scanner').classList.remove('over');$('feedback').className='feedback';$('feedback').textContent='No chip is selected. Read the station problem and choose carefully.';$('nextBtn').classList.add('hidden');$('chips').innerHTML='';shuffle([...q.options]).forEach(opt=>{const c=document.createElement('div');c.className='chip';c.textContent=opt;c.draggable=true;c.addEventListener('dragstart',e=>{if(locked){e.preventDefault();return} selected=opt;c.classList.add('dragging');e.dataTransfer.setData('text/plain',opt)});c.addEventListener('dragend',()=>c.classList.remove('dragging'));c.addEventListener('click',()=>{if(!locked)submit(opt,c)});$('chips').appendChild(c)})}
+$('scanner').addEventListener('dragover',e=>{e.preventDefault();if(!locked)$('scanner').classList.add('over')});
+$('scanner').addEventListener('dragleave',()=>$('scanner').classList.remove('over'));
+$('scanner').addEventListener('drop',e=>{e.preventDefault();$('scanner').classList.remove('over');if(locked)return;const opt=e.dataTransfer.getData('text/plain')||selected;const chip=[...document.querySelectorAll('.chip')].find(x=>x.textContent===opt);submit(opt,chip)});
+function submit(opt,chip){if(locked)return;document.querySelectorAll('.chip').forEach(c=>c.classList.remove('chosen'));if(chip)chip.classList.add('chosen');$('scanner').textContent=opt;const q=order[current];if(opt===q.answer){locked=true;score++;$('scoreBadge').textContent=`Score: ${score}/10`;$('feedback').className='feedback good';$('feedback').textContent='Correct! Station powered successfully.';$('burst').classList.add('show');setTimeout(()=>$('burst').classList.remove('show'),750);play('correctSound');setTimeout(()=>play('clapSound'),180);$('nextBtn').classList.remove('hidden')}else{attempts++;play('wrongSound');$('scanner').classList.add('shake');setTimeout(()=>$('scanner').classList.remove('shake'),350);if(attempts<2){$('feedback').className='feedback bad';$('feedback').textContent='Not correct. Try one more time.'}else{locked=true;$('feedback').className='feedback reveal';$('feedback').textContent=`Correct chip: ${q.answer}. ${q.ex}`;$('nextBtn').classList.remove('hidden')}}}
+function nextQuestion(){current++;if(current>=order.length){finish()}else{loadQuestion()}}
+function finish(){show('result');$('finalScore').textContent=`${score}/10`;$('rankText').textContent=score>=9?'Power Grid Master':score>=7?'Strong Square Solver':score>=5?'Good Grid Builder':'Keep practising squares and square roots';$('bar').style.width='100%';confetti()}
+function confetti(){const box=$('confetti');box.innerHTML='';for(let i=0;i<70;i++){const p=document.createElement('div');p.className='piece';p.style.left=Math.random()*100+'%';p.style.background=['#ffb238','#12d6ff','#46d369','#1688ff','#ef476f'][i%5];p.style.animationDelay=Math.random()*1.2+'s';p.style.transform=`rotate(${Math.random()*180}deg)`;box.appendChild(p)}setTimeout(()=>box.innerHTML='',3500)}
+function restartGame(){startGame()}
+</script>
+</body>
+</html>
 
