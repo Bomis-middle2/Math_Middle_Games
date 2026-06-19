@@ -27,6 +27,32 @@ button{font:inherit;border:0;cursor:pointer;touch-action:manipulation;color:inhe
 @media(max-width:390px){.arena{min-height:510px}.qtext{font-size:16px}.dataText{font-size:13px}.optionsArea{top:220px}.routeBtn{width:64px;height:38px;font-size:10px}}
 @media(max-height:620px) and (orientation:portrait){.arena{min-height:430px}.questionCard{padding:8px}.qtext{font-size:15px;line-height:1.12}.dataText{font-size:12px;padding:5px 7px}.optionsArea{top:162px;height:165px}.crystal{width:88px;height:52px;font-size:15px}.hookBase{bottom:16px;width:105px;height:58px}.launcher{width:38px;height:38px}.routeBtn{height:32px;width:60px}.arrowLine{bottom:74px}.hookTip{bottom:72px}.feedback{bottom:80px;font-size:13px}.nodes{display:none}}
 @media(orientation:landscape) and (max-height:520px){.topbar{height:42px;padding:2px}.chip{font-size:11px;padding:5px 8px}.arena{height:calc(100svh - 48px);min-height:0;border-radius:18px}.questionCard{top:6px;width:86%;padding:7px 10px;border-radius:16px}.mission{font-size:9px}.qtext{font-size:clamp(14px,2.4vw,20px);line-height:1.12;margin-top:2px}.dataText{font-size:clamp(11px,1.9vw,15px);padding:4px 7px;margin-top:3px}.optionsArea{top:122px;height:126px}.crystal{width:108px;height:54px;font-size:16px;border-radius:15px;border-width:2px}.hookBase{bottom:10px;width:108px;height:56px;border-radius:18px 18px 26px 26px}.launcher{width:38px;height:38px;border-width:4px}.launcher:after{font-size:23px}.routeBtn{bottom:2px;width:68px;height:33px;font-size:10px;border-width:2px}.r1{left:12%}.r3{right:12%}.arrowLine{bottom:68px;width:5px}.hookTip{bottom:66px;width:23px;height:23px;border-width:4px}.feedback{bottom:74px;min-width:200px;font-size:13px;padding:7px 9px}.nodes,.dataTower,.cloud{display:none}}
+
+/* Responsive fix: compact mobile arena with closer hook and answer crystals */
+@media(max-width:760px){
+  html,body{overflow:auto;background:linear-gradient(180deg,#eaf8ff,#f7fdff)}
+  .game{padding:6px;height:auto;min-height:100svh;overflow:auto}
+  .topbar{position:sticky;top:0;z-index:30;background:#eaf8ffee;border-radius:0 0 16px 16px;margin:-6px -6px 4px;padding:6px 4px;min-height:42px}
+  .arena{height:auto;min-height:calc(100svh - 54px);display:grid;grid-template-rows:auto 1fr auto auto;gap:8px;padding:8px 8px 76px;overflow:hidden}
+  .questionCard{position:relative;left:auto;top:auto;transform:none;width:100%;padding:9px 8px;margin:0;grid-row:1;box-shadow:0 6px 14px rgba(69,132,170,.12)}
+  .optionsArea{position:relative;top:auto;height:190px;width:100%;grid-row:2;margin-top:0}
+  .crystal{width:clamp(92px,28vw,118px);height:clamp(56px,16vw,70px)}
+  .hookBase{bottom:52px;width:116px;height:62px}
+  .launcher{width:42px;height:42px}.launcher:after{font-size:25px}
+  .routeBtn{bottom:8px;width:28%;max-width:92px;height:39px;font-size:11px;z-index:22}
+  .r1{left:5%}.r2{left:50%;transform:translateX(-50%)}.r3{right:5%}
+  .arrowLine{bottom:114px}.hookTip{bottom:112px}
+  .feedback{bottom:121px;font-size:14px;min-width:210px;max-width:92%;padding:8px 10px;z-index:24}
+  .nodes{left:50%;transform:translateX(-50%);bottom:50px;gap:3px;opacity:.9}.node{width:15px;height:15px}
+  .cloud,.dataTower{display:none!important}
+}
+@media(max-width:430px){
+  .arena{padding-bottom:72px}.qtext{font-size:15.5px}.dataText{font-size:12.8px}.optionsArea{height:174px}.hookBase{bottom:48px}.routeBtn{height:36px}.arrowLine{bottom:108px}.hookTip{bottom:106px}.feedback{bottom:114px}
+}
+@media(max-height:620px) and (orientation:portrait){
+  .arena{min-height:calc(100svh - 48px);padding-bottom:62px}.questionCard{padding:7px}.qtext{font-size:14.5px}.dataText{font-size:12px}.optionsArea{height:145px}.crystal{width:86px;height:48px;font-size:14px}.hookBase{bottom:42px;width:96px;height:52px}.routeBtn{bottom:5px;height:31px}.arrowLine{bottom:94px}.hookTip{bottom:92px}.feedback{bottom:98px;font-size:12.5px}.nodes{display:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -34,8 +60,8 @@ button{font:inherit;border:0;cursor:pointer;touch-action:manipulation;color:inhe
 <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 <audio id="clapSound" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
 <section id="splash" class="screen splash active"><div class="logoBox"><img src="assets/innovine-logo.png" alt="Innovine logo"></div></section>
-<section id="intro" class="screen floatBg"><div class="panel"><h1 class="title">Data Crystal Hook Challenge</h1><p class="sub">Aim the hook at the correct crystal. Use mean, median, mode, probability and percentage reasoning to activate the Data Control Centre.</p><p class="sub"><b>Two attempts</b> are given for each mission. No hints appear with the question.</p><button class="startBtn" onclick="startGame()">Start Challenge</button></div></section>
-<main id="game" class="game"><div class="topbar"><div class="chip" id="scoreChip">Score: 0/10</div><div class="chip" id="qChip">Mission: 1/10</div><div class="chip" id="attemptChip">Attempts: 2</div></div><div class="arena" id="arena"><div class="cloud c1"></div><div class="cloud c2"></div><div class="questionCard"><div class="mission">Data Mission</div><div id="qText" class="qtext"></div><div id="dataText" class="dataText"></div></div><div class="optionsArea" id="optionsArea"></div><div id="arrowLine" class="arrowLine"></div><div id="hookTip" class="hookTip"></div><div class="hookBase"><div class="launcher"></div></div><button class="routeBtn r1" onclick="shoot(0)">LEFT</button><button class="routeBtn r2" onclick="shoot(1)">UP</button><button class="routeBtn r3" onclick="shoot(2)">RIGHT</button><div id="feedback" class="feedback"></div><div class="nodes" id="nodes"></div><div class="dataTower" id="tower"><div class="towerBox b1"></div><div class="towerBox b2"></div><div class="towerBox b3"></div><div class="towerBox b4"></div></div></div></main>
+<section id="intro" class="screen floatBg"><div class="panel"><h1 class="title">Data Hook Challenge</h1><p class="sub">Tap the correct route to send the hook toward the answer. Use mean, median, mode, probability and percentage reasoning to activate the Data Control Centre.</p><p class="sub"><b>Two attempts</b> are given for each mission. No hints appear with the question.</p><button class="startBtn" onclick="startGame()">Start Challenge</button></div></section>
+<main id="game" class="game"><div class="topbar"><div class="chip" id="scoreChip">Score: 0/10</div><div class="chip" id="qChip">Mission: 1/10</div><div class="chip" id="attemptChip">Attempts: 2</div></div><div class="arena" id="arena"><div class="cloud c1"></div><div class="cloud c2"></div><div class="questionCard"><div class="mission">Data Mission</div><div id="qText" class="qtext"></div><div id="dataText" class="dataText"></div></div><div class="optionsArea" id="optionsArea"></div><div id="arrowLine" class="arrowLine"></div><div id="hookTip" class="hookTip"></div><div class="hookBase"><div class="launcher"></div></div><button class="routeBtn r1" onclick="shoot(0)">LEFT</button><button class="routeBtn r2" onclick="shoot(1)">TOP</button><button class="routeBtn r3" onclick="shoot(2)">RIGHT</button><div id="feedback" class="feedback"></div><div class="nodes" id="nodes"></div><div class="dataTower" id="tower"><div class="towerBox b1"></div><div class="towerBox b2"></div><div class="towerBox b3"></div><div class="towerBox b4"></div></div></div></main>
 <section id="result" class="screen result floatBg"><div class="panel"><h1 class="title">Data Control Centre Activated</h1><div class="finalGrid"><div class="miniServer"></div><div class="miniServer"></div><div class="miniServer"></div><div class="miniServer"></div><div class="miniServer"></div></div><p class="sub" id="finalScore"></p><div class="rank" id="rank"></div><button class="againBtn" onclick="restartGame()">Play Again</button></div></section>
 <script>
 const questions=[
@@ -50,16 +76,16 @@ const questions=[
  {q:'The mean of 10, 20, x, 30 and 40 is 24. Find x.',d:'Mean = 24',opts:['15','20','25'],ans:'20'},
  {q:'A club has 240 students. If 40% chose cricket, how many students chose cricket?',d:'Total = 240, Cricket = 40%',opts:['84','96','120'],ans:'96'}
 ];
-let idx=0,score=0,attempts=2,locked=false,current=[];
+let idx=0,score=0,attempts=2,locked=false,current=[],revealed=false;
 const $=id=>document.getElementById(id);
 setTimeout(()=>{$('splash').classList.remove('active');$('intro').classList.add('active')},5000);
 function startGame(){$('intro').classList.remove('active');$('game').classList.add('active');buildNodes();loadQ()}
 function buildNodes(){$('nodes').innerHTML='';for(let i=0;i<10;i++){let n=document.createElement('div');n.className='node';$('nodes').appendChild(n)}}
 function shuffle(a){return[...a].sort(()=>Math.random()-.5)}
-function loadQ(){locked=false;attempts=2;const q=questions[idx];current=shuffle(q.opts);$('qText').textContent=q.q;$('dataText').textContent=q.d;$('scoreChip').textContent=`Score: ${score}/10`;$('qChip').textContent=`Mission: ${idx+1}/10`;$('attemptChip').textContent=`Attempts: ${attempts}`;$('feedback').classList.remove('show');resetHook();renderOptions()}
-function renderOptions(){const area=$('optionsArea');area.innerHTML='';const small=matchMedia('(max-width:760px)').matches;const tiny=matchMedia('(max-height:620px) and (orientation:portrait)').matches;const shortLand=matchMedia('(orientation:landscape) and (max-height:520px)').matches;let pos=[['13%','62%'],['50%','16%'],['87%','62%']];if(small)pos=[['16%','57%'],['50%','18%'],['84%','57%']];if(tiny)pos=[['17%','55%'],['50%','16%'],['83%','55%']];if(shortLand)pos=[['18%','58%'],['50%','20%'],['82%','58%']];current.forEach((txt,i)=>{let c=document.createElement('div');c.className='crystal';c.dataset.val=txt;c.textContent=txt;c.style.left=pos[i][0];c.style.top=pos[i][1];c.style.transform='translate(-50%,-50%)';area.appendChild(c)})}
-function shoot(i){if(locked)return;locked=true;const small=matchMedia('(max-width:760px)').matches;const tiny=matchMedia('(max-height:620px) and (orientation:portrait)').matches;const shortLand=matchMedia('(orientation:landscape) and (max-height:520px)').matches;let up=240,side=218;if(small){up=184;side=160}if(tiny){up=138;side=126}if(shortLand){up=116;side=104}const line=$('arrowLine'),tip=$('hookTip');line.className='arrowLine shot'+(i+1);tip.className='hookTip shot'+(i+1);line.style.height=(i===1?up:side)+'px';tip.style.opacity=1;setTimeout(()=>check(i),430)}
-function check(i){const val=current[i],q=questions[idx],crystals=[...document.querySelectorAll('.crystal')],chosen=crystals[i];if(val===q.ans){chosen.classList.add('hit');score++;activateNode();play('correctSound');setTimeout(()=>play('clapSound'),230);burst(chosen);showMsg('Correct! Data node activated.');setTimeout(nextQ,1250)}else{attempts--;chosen.classList.add('wrong','disabled');play('wrongSound');if(attempts>0){$('attemptChip').textContent=`Attempts: ${attempts}`;showMsg('Try again.');setTimeout(()=>{resetHook();locked=false},780)}else{const ci=current.indexOf(q.ans);crystals[ci].classList.add('hit');showMsg('Answer: '+q.ans);setTimeout(nextQ,1450)}}}
+function loadQ(){locked=false;revealed=false;attempts=2;const q=questions[idx];current=shuffle(q.opts);$('qText').textContent=q.q;$('dataText').textContent=q.d;$('scoreChip').textContent=`Score: ${score}/10`;$('qChip').textContent=`Mission: ${idx+1}/10`;$('attemptChip').textContent=`Attempts: ${attempts}`;$('feedback').classList.remove('show');resetHook();renderOptions()}
+function renderOptions(){const area=$('optionsArea');area.innerHTML='';const small=matchMedia('(max-width:760px)').matches;const tiny=matchMedia('(max-height:620px) and (orientation:portrait)').matches;const shortLand=matchMedia('(orientation:landscape) and (max-height:520px)').matches;let pos=[['13%','62%'],['50%','16%'],['87%','62%']];if(small)pos=[['17%','62%'],['50%','24%'],['83%','62%']];if(tiny)pos=[['18%','62%'],['50%','24%'],['82%','62%']];if(shortLand)pos=[['18%','58%'],['50%','20%'],['82%','58%']];current.forEach((txt,i)=>{let c=document.createElement('div');c.className='crystal';c.dataset.val=txt;c.textContent=txt;c.style.left=pos[i][0];c.style.top=pos[i][1];c.style.transform='translate(-50%,-50%)';area.appendChild(c)})}
+function shoot(i){if(locked)return;locked=true;const small=matchMedia('(max-width:760px)').matches;const tiny=matchMedia('(max-height:620px) and (orientation:portrait)').matches;const shortLand=matchMedia('(orientation:landscape) and (max-height:520px)').matches;let up=205,side=185;if(small){up=132;side=118}if(tiny){up=106;side=92}if(shortLand){up=116;side=104}const line=$('arrowLine'),tip=$('hookTip');line.className='arrowLine shot'+(i+1);tip.className='hookTip shot'+(i+1);line.style.height=(i===1?up:side)+'px';tip.style.opacity=1;setTimeout(()=>check(i),430)}
+function check(i){const val=current[i],q=questions[idx],crystals=[...document.querySelectorAll('.crystal')],chosen=crystals[i];if(val===q.ans){chosen.classList.add('hit');score++;activateNode();play('correctSound');setTimeout(()=>play('clapSound'),230);burst(chosen);showMsg('Correct! Data node activated.');setTimeout(nextQ,1250)}else{attempts--;chosen.classList.add('wrong','disabled');play('wrongSound');if(attempts>0){$('attemptChip').textContent=`Attempts: ${attempts}`;showMsg('Try again.');setTimeout(()=>{resetHook();locked=false},780)}else{revealed=true;locked=true;$('attemptChip').textContent='Attempts: 0';const ci=current.indexOf(q.ans);crystals[ci].classList.add('hit');showMsg('Correct answer: '+q.ans);setTimeout(nextQ,1800)}}}
 function resetHook(){$('arrowLine').style.height='0px';$('hookTip').style.opacity=0;$('arrowLine').className='arrowLine';$('hookTip').className='hookTip'}
 function showMsg(t){const f=$('feedback');f.textContent=t;f.classList.add('show')}
 function activateNode(){const nodes=[...document.querySelectorAll('.node')];if(nodes[idx])nodes[idx].classList.add('on');const boxes=[...document.querySelectorAll('.towerBox')];boxes[Math.min(3,Math.floor(idx/3))].classList.add('on')}
@@ -68,7 +94,7 @@ function nextQ(){idx++;if(idx>=questions.length)endGame();else loadQ()}
 function endGame(){$('game').classList.remove('active');$('result').classList.add('active');$('finalScore').textContent=`Final Score: ${score} / 10`;$('rank').textContent=score>=9?'Master Statistician':score>=7?'Data Analyst':score>=5?'Research Assistant':'Data Explorer';play('clapSound')}
 function restartGame(){idx=0;score=0;attempts=2;$('result').classList.remove('active');$('game').classList.add('active');buildNodes();loadQ()}
 function play(id){const a=$(id);if(!a)return;a.currentTime=0;a.play().catch(()=>{})}
-window.addEventListener('resize',()=>{if($('game').classList.contains('active')){resetHook();renderOptions();locked=false}});
+window.addEventListener('resize',()=>{if($('game').classList.contains('active')){resetHook();renderOptions();if(!revealed && attempts>0) locked=false;}});
 </script>
 </body>
 </html>
