@@ -125,17 +125,17 @@
 
 <script>
 const originalQuestions = [
- {q:'A pencil box and ₹15 stickers cost ₹75 in total. If the pencil box costs x, which equation shows this?', opts:['x + 15 = 75','x - 15 = 75','15x = 75','x/15 = 75'], ans:'x + 15 = 75', exp:'The total cost is pencil box price plus stickers: x + 15 = 75.'},
+ {q:'A pencil box costs ₹x. If stickers worth ₹15 are added, the total bill becomes ₹75. Which equation represents this situation?', opts:['x + 15 = 75','x - 15 = 75','15x = 75','x/15 = 75'], ans:'x + 15 = 75', exp:'The total cost is the sum of the pencil box price and the sticker cost, so x + 15 = 75.'},
  {q:'Solve: 3x + 6 = 24', opts:['4','5','6','8'], ans:'6', exp:'3x + 6 = 24 ⇒ 3x = 18 ⇒ x = 6.'},
- {q:'A café sells 4 same sandwiches for ₹180. If one sandwich costs x, which equation is correct?', opts:['4x = 180','x + 4 = 180','x - 4 = 180','x/4 = 180'], ans:'4x = 180', exp:'Four equal sandwiches cost 180, so 4x = 180.'},
+ {q:'A café sells 4 identical sandwiches for ₹180. If one sandwich costs ₹x, which equation represents the situation?', opts:['4x = 180','x + 4 = 180','x - 4 = 180','x/4 = 180'], ans:'4x = 180', exp:'Since each sandwich costs x and there are 4 sandwiches, the total cost is 4x = 180.'},
  {q:'Solve: 5x - 7 = 28', opts:['5','6','7','8'], ans:'7', exp:'5x - 7 = 28 ⇒ 5x = 35 ⇒ x = 7.'},
- {q:'A school bus has x students. After 12 more students enter, there are 47 students. Which equation represents this?', opts:['x + 12 = 47','x - 12 = 47','12x = 47','x/12 = 47'], ans:'x + 12 = 47', exp:'The number increased by 12, so x + 12 = 47.'},
+ {q:'A school bus initially has x students. After 12 more students board the bus, there are 47 students in all. Which equation represents this situation?', opts:['x + 12 = 47','x - 12 = 47','12x = 47','x/12 = 47'], ans:'x + 12 = 47', exp:'Twelve students joined the bus, so 12 is added to the original number of students: x + 12 = 47.'},
  {q:'Solve: x/4 + 3 = 11', opts:['24','28','32','36'], ans:'32', exp:'x/4 + 3 = 11 ⇒ x/4 = 8 ⇒ x = 32.'},
- {q:'Riya had x marbles. She gave away 9 and had 26 left. Which equation shows this?', opts:['x - 9 = 26','x + 9 = 26','9x = 26','x/9 = 26'], ans:'x - 9 = 26', exp:'Giving away 9 means subtracting 9: x - 9 = 26.'},
+ {q:'Riya had x marbles. After giving away 9 marbles, she was left with 26 marbles. Which equation represents this situation?', opts:['x - 9 = 26','x + 9 = 26','9x = 26','x/9 = 26'], ans:'x - 9 = 26', exp:'Since 9 marbles were given away, subtract 9 from the original number of marbles: x - 9 = 26.'},
  {q:'Solve: 2x + 5 = 17', opts:['4','5','6','7'], ans:'6', exp:'2x + 5 = 17 ⇒ 2x = 12 ⇒ x = 6.'},
- {q:'Three equal notebooks and a ₹20 pen cost ₹95. If one notebook costs x, which equation is correct?', opts:['3x + 20 = 95','3x - 20 = 95','x + 20 = 95','20x + 3 = 95'], ans:'3x + 20 = 95', exp:'Three notebooks cost 3x and the pen costs 20, so 3x + 20 = 95.'},
+ {q:'Three identical notebooks and a pen costing ₹20 together cost ₹95. If one notebook costs ₹x, which equation represents this situation?', opts:['3x + 20 = 95','3x - 20 = 95','x + 20 = 95','20x + 3 = 95'], ans:'3x + 20 = 95', exp:'The cost of three notebooks is 3x. Adding the ₹20 pen gives a total cost of ₹95, so 3x + 20 = 95.'},
  {q:'Solve: 7x - 10 = 39', opts:['5','6','7','8'], ans:'7', exp:'7x - 10 = 39 ⇒ 7x = 49 ⇒ x = 7.'}
-];
+]
 let questions=[], current=0, score=0, power=100, attempts=0, answered=0, firstTryCorrect=0;
 const $=id=>document.getElementById(id);
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active')}
@@ -156,4 +156,3 @@ function play(id){const a=$(id);try{a.currentTime=0;a.play().catch(()=>{})}catch
 </script>
 </body>
 </html>
-
