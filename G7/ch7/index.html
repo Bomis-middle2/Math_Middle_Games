@@ -17,9 +17,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;ba
 .ins-text{font-size:clamp(.88rem,3.6vw,1rem);color:#475569;line-height:1.55;margin-bottom:20px;text-align:left}
 .top-row{display:flex;justify-content:space-between;align-items:center;color:#1d4ed8;font-weight:900;font-size:clamp(.82rem,3.2vw,.98rem)}
 .header-card{background:rgba(255,255,255,.9);border:2px solid #60a5fa;border-radius:18px;padding:clamp(10px,2.4vw,14px);box-shadow:0 10px 24px rgba(37,99,235,.14);text-align:center}
-.logo{height:clamp(28px,7vw,40px);object-fit:contain;margin-bottom:6px}
 .ticker{background:#eff6ff;border:2px solid #2563eb;border-radius:13px;padding:clamp(10px,2.3vw,13px)}
-.ticker-title{font-size:clamp(.68rem,2.5vw,.78rem);color:#d97706;text-transform:uppercase;letter-spacing:1.4px;font-weight:900}
 .ticker-problem{font-size:clamp(.9rem,3.6vw,1.08rem);font-weight:750;color:#1e293b;margin-top:6px;line-height:1.35}
 .shop-frame{flex:1;min-height:210px;background:rgba(255,255,255,.76);border:2px solid #f59e0b;border-radius:18px;position:relative;overflow:hidden;box-shadow:inset 0 0 20px rgba(251,191,36,.13)}
 canvas{display:block;width:100%;height:100%}
@@ -73,16 +71,16 @@ canvas{display:block;width:100%;height:100%}
   </div>
 
   <div class="header-card">
-    <img src="assets/innovine-logo.png" class="logo" alt="Innovine Logo">
+    
     <div class="ticker">
-      <div class="ticker-title">Comparing Quantities Mission</div>
+      
       <div class="ticker-problem" id="lbl-task">Loading...</div>
     </div>
   </div>
 
   <div class="shop-frame"><canvas id="game-canvas"></canvas></div>
 
-  <div class="status" id="status">Choose an answer and dispatch.</div>
+  <div class="status" id="status"></div>
 
   <div class="options">
     <button class="opt" id="opt-0" onclick="selectOption(0)">A.) Loading...</button>
@@ -95,7 +93,7 @@ canvas{display:block;width:100%;height:100%}
 </div>
 
 <script>
-let canvas,ctx,currentQ,chosen=0,answers=[],qIndex=0,score=0,locked=false;
+let canvas,ctx,currentQ,chosen=0,answers=[],qIndex=0,score=0,locked=false,attempts=0;
 let cart={progress:0,moving:false,crash:false,rot:0,ox:0,oy:0,timer:0};
 const questions=[
 {q:'A shirt costs ₹800. It is sold at a 25% discount. What is the discount amount?',ans:'₹200',w:['₹100','₹250','₹600'],exp:'25% of 800 = 200.'},
@@ -121,10 +119,10 @@ function resize(){const r=canvas.getBoundingClientRect();canvas.width=Math.max(2
 function dismissInstructions(){const m=document.getElementById('instruction-modal'); if(m) m.remove();}
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function loadQuestion(){
- locked=false;currentQ=questions[qIndex];
+ locked=false;attempts=0;currentQ=questions[qIndex];
  document.getElementById('q-num').innerText=qIndex+1;
  document.getElementById('lbl-task').innerText=currentQ.q;
- document.getElementById('status').innerText='Choose an answer and dispatch.';
+ document.getElementById('status').innerText='';
  document.getElementById('status').style.color='#475569';
  document.getElementById('btn-launch').disabled=false;
  answers=shuffle([{t:currentQ.ans,c:true},...currentQ.w.map(x=>({t:x,c:false}))]);
@@ -133,7 +131,7 @@ function loadQuestion(){
  selectOption(0);
 }
 function selectOption(i){if(cart.moving||cart.crash||locked)return;chosen=i;for(let k=0;k<4;k++)document.getElementById('opt-'+k).classList.toggle('selected',k===i)}
-function launchCart(){if(cart.moving||cart.crash||locked)return;document.getElementById('btn-launch').disabled=true;cart.moving=true;document.getElementById('status').innerText='Cart is moving to the billing counter...';document.getElementById('status').style.color='#2563eb'}
+function launchCart(){if(cart.moving||cart.crash||locked)return;document.getElementById('btn-launch').disabled=true;cart.moving=true;document.getElementById('status').innerText='';document.getElementById('status').style.color='#2563eb'}
 function update(){
  if(cart.moving){cart.progress+=.018;if(cart.progress>=1){cart.progress=1;cart.moving=false;checkAnswer();}}
  if(cart.crash){cart.timer++;cart.rot+=.2;cart.ox+=1.3;cart.oy=Math.sin(cart.timer*.45)*7;if(cart.timer>55){cart.crash=false;cart.progress=0;cart.rot=0;cart.ox=0;cart.oy=0;cart.timer=0;document.getElementById('btn-launch').disabled=false;document.getElementById('status').innerText='Try again. Recheck percentage or profit/loss.';document.getElementById('status').style.color='#dc2626';}}
@@ -148,10 +146,21 @@ function checkAnswer(){
   confetti(); locked=true;
   setTimeout(()=>{qIndex++; if(qIndex>=questions.length)finish(); else loadQuestion();},1800);
  } else {
+  attempts++;
   document.getElementById('s-wrong').play().catch(()=>{});
   document.getElementById('opt-'+chosen).classList.add('wrong');
-  st.innerText='Oops! Wrong billing value. The cart needs recalculation.';
-  st.style.color='#dc2626'; cart.crash=true;
+  if(attempts < 2){
+   st.innerText='Try again.';
+   st.style.color='#dc2626';
+   cart.crash=true;
+  }else{
+   const correctIndex=answers.findIndex(a=>a.c);
+   document.getElementById('opt-'+correctIndex).classList.add('correct');
+   st.innerText='Correct Answer: '+answers[correctIndex].t+' | '+currentQ.exp;
+   st.style.color='#16a34a';
+   locked=true;
+   setTimeout(()=>{qIndex++; if(qIndex>=questions.length)finish(); else loadQuestion();},2500);
+  }
  }
 }
 function finish(){
