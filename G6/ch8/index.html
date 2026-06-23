@@ -3,43 +3,146 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grade 6 Quadrilateral Bridge Builder</title>
+<title>Grade 6 Ratio and Proportion Recipe Game</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(#78d8ff 0%,#d9fbff 35%,#72c56b 36%,#23733d 100%);min-height:100vh;color:#17304a;overflow-x:hidden}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  min-height:100vh;
+  color:#17304a;
+  background:linear-gradient(#46304b,#76506b 42%,#c98256 43%,#e3a66b);
+  overflow-x:hidden;
+}
 button{font-family:inherit;cursor:pointer;border:0}
-.screen{display:none;min-height:100vh;padding:16px}.active{display:flex}
-#splash{justify-content:center;align-items:center;flex-direction:column;background:linear-gradient(#ecfbff,#fff,#e5ffd9)}
-#splash img{max-width:420px;width:75vw}.timer{margin-top:20px;background:#123b66;color:white;padding:12px 24px;border-radius:20px;font-weight:bold;box-shadow:0 10px 24px #0004}
+.screen{display:none;min-height:100vh;padding:16px}
+.active{display:flex}
+#splash{
+  justify-content:center;align-items:center;flex-direction:column;
+  background:linear-gradient(#ecfbff,#fff,#e5ffd9);
+}
+#splash img{max-width:420px;width:75vw}
+.timer{
+  margin-top:20px;background:#123b66;color:white;padding:12px 24px;
+  border-radius:20px;font-weight:bold;box-shadow:0 10px 24px #0004;
+}
 #intro,#result{justify-content:center;align-items:center}
-.card{width:min(850px,94vw);background:#fff1cb;border:5px solid white;color:#123b66;border-radius:28px;padding:28px;text-align:center;box-shadow:0 12px 28px #0004}
-h1{font-size:clamp(32px,6vw,56px);margin:0 0 12px}.rules{text-align:left;margin:20px auto;max-width:650px;counter-reset:step;display:grid;gap:10px}
-.rule{background:white;border-radius:15px;padding:14px;font-size:clamp(16px,2.5vw,20px);font-weight:bold}.rule:before{counter-increment:step;content:counter(step) ". ";color:#0072bc;margin-right:8px}
-.play,.next,.restart{background:linear-gradient(#50dc65,#149a3c);color:white;font-size:22px;font-weight:bold;padding:14px 30px;border-radius:30px;box-shadow:0 7px 0 #0b6a2b}
-#game{flex-direction:column;gap:10px;background:radial-gradient(circle at 80% 12%,#fff 0 5%,transparent 6%),linear-gradient(#78d8ff 0%,#c5f7ff 34%,#0c83bc 35%,#0c5b84 100%)}
-.top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:min(1120px,97vw);margin:auto;font-weight:bold}
-.box{background:#573212;color:white;padding:10px;border-radius:14px;text-align:center;border:3px solid #c8893f;box-shadow:0 7px 18px #0004}
-.scene{width:min(1120px,97vw);margin:auto;min-height:690px;position:relative;overflow:hidden;border-radius:28px;border:4px solid #ffffff70;box-shadow:0 12px 28px #0005;background:linear-gradient(#79dcff 0%,#caf7ff 28%,#1687bf 29%,#075174 100%)}
-.hill{position:absolute;bottom:235px;width:360px;height:180px;background:#4fb24d;border-radius:50% 50% 0 0;z-index:1}.h1{left:-80px}.h2{right:-80px}
-.title{position:absolute;top:14px;left:50%;transform:translateX(-50%);background:#6b3a17;color:white;border:5px solid #c8893f;border-radius:18px;padding:10px 34px;font-size:clamp(23px,4vw,42px);font-weight:bold;z-index:8;box-shadow:0 8px 18px #0004}
-.qcard{position:absolute;top:88px;left:50%;transform:translateX(-50%);z-index:7;width:min(790px,92vw);background:#fff1cb;border:5px solid #8a4f20;border-radius:24px;padding:18px;text-align:center;box-shadow:0 8px 18px #0004}
-.qtext{font-size:clamp(20px,3vw,32px);font-weight:bold;min-height:72px;display:flex;align-items:center;justify-content:center}
-.bridge{position:absolute;left:8%;right:8%;top:310px;height:120px;z-index:5}
-.road{position:absolute;left:0;right:0;top:44px;height:42px;background:#7b5a35;border:6px solid #49311a;border-radius:999px}
-.road:after{content:"";position:absolute;left:4%;right:4%;top:50%;height:6px;transform:translateY(-50%);background:repeating-linear-gradient(90deg,#fff 0 25px,transparent 25px 45px);opacity:.8}
-.post{position:absolute;top:13px;width:58px;height:58px;border-radius:50%;background:#ffd75b;border:5px solid white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:28px;color:#633;box-shadow:0 6px 14px #0004}
-.p1{left:8%}.p2{left:28%}.p3{left:48%}.p4{left:68%}.p5{left:88%}
-.truck{position:absolute;left:3%;top:350px;font-size:62px;z-index:8;transition:left .75s ease}.vehicle{display:inline-block;transform:scaleX(-1)}
-.answerBoard{position:absolute;left:50%;bottom:42px;transform:translateX(-50%);width:min(900px,94vw);background:#8a4f20;border-radius:18px;padding:14px;z-index:8;box-shadow:0 8px 18px #0005}
-.answerTitle{color:#ffd75b;font-weight:bold;text-align:center;font-size:clamp(15px,2.5vw,21px);margin-bottom:10px}
+.card{
+  width:min(850px,94vw);background:#fff1cb;border:5px solid white;color:#123b66;
+  border-radius:28px;padding:28px;text-align:center;box-shadow:0 12px 28px #0004;
+}
+h1{font-size:clamp(32px,6vw,56px);margin:0 0 12px}
+.rules{text-align:left;margin:20px auto;max-width:650px;counter-reset:step;display:grid;gap:10px}
+.rule{background:white;border-radius:15px;padding:14px;font-size:clamp(16px,2.5vw,20px);font-weight:bold}
+.rule:before{counter-increment:step;content:counter(step) ". ";color:#0072bc;margin-right:8px}
+.play,.next,.restart{
+  background:linear-gradient(#50dc65,#149a3c);color:white;font-size:22px;font-weight:bold;
+  padding:14px 30px;border-radius:30px;box-shadow:0 7px 0 #0b6a2b;
+}
+#game{
+  flex-direction:column;gap:10px;
+  background:
+    radial-gradient(circle at 10% 12%,rgba(255,255,255,.18),transparent 12%),
+    linear-gradient(#49334e 0%,#674562 38%,#b36b45 39%,#df9f64 100%);
+}
+.top{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;
+  width:min(1120px,97vw);margin:auto;font-weight:bold;
+}
+.box{
+  background:#5a3416;color:white;padding:10px;border-radius:14px;text-align:center;
+  border:3px solid #c8893f;box-shadow:0 7px 18px #0004;
+}
+.kitchen{
+  width:min(1120px,97vw);margin:auto;min-height:690px;position:relative;overflow:hidden;
+  border-radius:28px;border:4px solid rgba(255,255,255,.35);box-shadow:0 12px 28px #0005;
+  background:
+    linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px),
+    linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),
+    linear-gradient(#35536a 0%,#3b5c72 43%,#9d5b33 44%,#d7904f 100%);
+  background-size:70px 70px,70px 70px,100% 100%;
+}
+.shelf{
+  position:absolute;left:3%;right:3%;top:90px;height:20px;background:#7a431d;border-radius:20px;box-shadow:0 8px 15px #0004;
+}
+.bottle{position:absolute;top:32px;width:34px;height:58px;border-radius:14px 14px 6px 6px;background:#d96168}
+.b1{left:8%}.b2{left:13%;background:#f7c65b}.b3{right:11%;background:#54c7c2}.b4{right:17%;background:#ab6ee8}
+.title{
+  position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  background:#6b3a17;color:white;border:5px solid #c8893f;border-radius:18px;
+  padding:10px 34px;font-size:clamp(23px,4vw,42px);font-weight:bold;z-index:8;box-shadow:0 8px 18px #0004;
+}
+.qcard{
+  position:absolute;top:122px;left:50%;transform:translateX(-50%);z-index:7;
+  width:min(850px,92vw);background:#fff1cb;border:5px solid #8a4f20;border-radius:24px;
+  padding:18px;text-align:center;box-shadow:0 8px 18px #0004;
+}
+.qtext{font-size:clamp(19px,3vw,30px);font-weight:bold;line-height:1.35}
+.recipeStrip{
+  display:flex;justify-content:center;align-items:center;gap:14px;margin-top:12px;flex-wrap:wrap;
+}
+.ingredient{
+  background:white;border-radius:16px;padding:10px 16px;font-weight:bold;min-width:110px;
+  box-shadow:0 4px 8px #0002;border:3px solid #f2c57a;
+}
+.ratioBadge{
+  background:#30a6a2;color:white;border-radius:16px;padding:10px 18px;font-weight:bold;font-size:clamp(18px,3vw,28px);
+}
+.counter{
+  position:absolute;left:0;right:0;bottom:0;height:260px;background:#a86a36;border-top:12px solid #6f3d19;
+}
+.jarZone{
+  position:absolute;top:300px;left:50%;transform:translateX(-50%);
+  width:min(780px,92vw);height:200px;display:flex;align-items:end;justify-content:center;gap:18px;z-index:6;
+}
+.jar{
+  position:relative;width:110px;height:160px;border:7px solid rgba(255,255,255,.85);border-top-width:12px;border-radius:22px 22px 30px 30px;
+  background:rgba(255,255,255,.28);box-shadow:inset 0 0 18px rgba(255,255,255,.45),0 8px 18px #0004;overflow:hidden;
+}
+.jarFill{
+  position:absolute;bottom:0;left:0;right:0;height:0%;background:linear-gradient(#ffe08a,#ff9f1c);
+  transition:height .8s ease;
+}
+.jarLabel{
+  position:absolute;left:50%;bottom:8px;transform:translateX(-50%);z-index:2;
+  background:rgba(255,255,255,.85);border-radius:10px;padding:5px 9px;font-weight:bold;color:#7a1946;
+}
+.bigJar{width:135px;height:190px;filter:drop-shadow(0 0 14px #ffd75b)}
+.feedbackJar{
+  position:absolute;right:6%;top:312px;text-align:center;color:white;font-weight:bold;z-index:7;
+}
+.feedbackJar .jar{margin:auto}
+.board{
+  position:absolute;left:50%;bottom:38px;transform:translateX(-50%);
+  width:min(850px,94vw);background:#8a4f20;border-radius:18px;padding:14px;z-index:8;box-shadow:0 8px 18px #0005;
+}
+.boardTitle{color:#ffd75b;font-weight:bold;text-align:center;font-size:clamp(15px,2.5vw,21px);margin-bottom:10px}
 .options{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.opt{min-height:118px;border-radius:16px;background:#fff1cb;color:#123b66;border:4px solid transparent;font-size:clamp(15px,2.2vw,19px);font-weight:bold;box-shadow:0 6px 0 #0004;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
-.opt:active{transform:translateY(4px);box-shadow:0 2px 0 #0004}.opt.chosen{border-color:#ffe100;background:#fff5a8}.opt.correct{border-color:#15bd51;background:#caffd9}.opt.wrong{border-color:#e74c3c;background:#ffd4cd;animation:shake .25s}
-.shape{width:70px;height:48px;background:#ddd;border:3px solid #111}.square{width:54px;height:54px;background:#ffd325}.rectangle{width:78px;height:42px;background:#ff5a9d}.parallelogram{background:#287ee6;transform:skew(-18deg)}.trapezium{background:#6ccd2c;clip-path:polygon(20% 0,80% 0,100% 100%,0 100%)}.rhombus{width:56px;height:56px;background:#ff8c1a;transform:rotate(45deg)}
-.msg{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:min(720px,88vw);min-height:34px;background:#2b211c;color:white;border-radius:14px;padding:8px 12px;text-align:center;font-weight:bold;z-index:10}
-.next{display:none;position:absolute;right:28px;bottom:42px;z-index:11}.finalScore{font-size:64px;font-weight:bold;color:#7b3fd1}.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:20}.piece{position:absolute;top:-20px;width:12px;height:18px;animation:fall 1.5s linear forwards}
-@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}@keyframes fall{to{transform:translateY(110vh) rotate(500deg)}}
-@media(max-width:820px){.top{grid-template-columns:1fr 1fr}.top .box:nth-child(2){grid-column:1/3;order:-1}.scene{min-height:820px}.qcard{top:82px}.bridge{top:300px}.truck{top:360px;font-size:48px}.answerBoard{bottom:62px}.options{grid-template-columns:repeat(2,1fr)}.opt{min-height:92px}.next{bottom:8px;right:12px;padding:10px 18px}.msg{bottom:8px;left:40%;width:65vw}}
+.opt{
+  min-height:74px;border-radius:16px;background:#fff1cb;color:#123b66;border:4px solid transparent;
+  font-size:clamp(24px,4vw,38px);font-weight:bold;box-shadow:0 6px 0 #0004;
+}
+.opt:active{transform:translateY(4px);box-shadow:0 2px 0 #0004}
+.opt.chosen{border-color:#ffe100;background:#fff5a8}
+.opt.correct{border-color:#15bd51;background:#caffd9}
+.opt.wrong{border-color:#e74c3c;background:#ffd4cd;animation:shake .25s}
+.msg{
+  position:absolute;left:50%;bottom:2px;transform:translateX(-50%);
+  width:min(720px,88vw);min-height:34px;background:#2b211c;color:white;border-radius:14px;
+  padding:8px 12px;text-align:center;font-weight:bold;z-index:10;
+}
+.next{display:none;position:absolute;right:28px;bottom:38px;z-index:11}
+.finalScore{font-size:64px;font-weight:bold;color:#7b3fd1}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:20}
+.piece{position:absolute;top:-20px;width:12px;height:18px;animation:fall 1.5s linear forwards}
+@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+@keyframes fall{to{transform:translateY(110vh) rotate(500deg)}}
+@media(max-width:820px){
+  .top{grid-template-columns:1fr 1fr}.top .box:nth-child(2){grid-column:1/3;order:-1}
+  .kitchen{min-height:830px}.qcard{top:108px}.jarZone{top:360px;height:160px;gap:10px}.jar{width:72px;height:118px}.bigJar{width:95px;height:145px}
+  .feedbackJar{right:4%;top:360px}.board{bottom:64px}.options{grid-template-columns:repeat(2,1fr)}.opt{min-height:64px}
+  .next{bottom:8px;right:12px;padding:10px 18px}.msg{bottom:8px;left:39%;width:64vw}
+}
 </style>
 </head>
 <body>
@@ -54,14 +157,14 @@ h1{font-size:clamp(32px,6vw,56px);margin:0 0 12px}.rules{text-align:left;margin:
 
 <section id="intro" class="screen">
   <div class="card">
-    <h1>Quadrilateral Bridge Builder</h1>
-    <p><b>Help the truck cross the bridge by choosing the correct quadrilateral.</b></p>
+    <h1>Recipe Ratio Lab</h1>
+    <p><b>Keep the recipe in proportion and fill the magic jar.</b></p>
     <div class="rules">
-      <div class="rule">Read the clue carefully.</div>
-      <div class="rule">Tap the correct shape card.</div>
+      <div class="rule">Read the recipe ratio carefully.</div>
+      <div class="rule">Tap the correct number tile.</div>
       <div class="rule">You have 2 attempts for each challenge.</div>
-      <div class="rule">The truck moves ahead after every correct answer.</div>
-      <div class="rule">Complete all 10 challenges to finish the bridge.</div>
+      <div class="rule">The jar fills after every correct answer.</div>
+      <div class="rule">Complete all 10 recipes to finish the game.</div>
     </div>
     <button class="play" onclick="startGame()">LET’S PLAY</button>
   </div>
@@ -70,28 +173,43 @@ h1{font-size:clamp(32px,6vw,56px);margin:0 0 12px}.rules{text-align:left;margin:
 <section id="game" class="screen">
   <div class="top">
     <div class="box">Score: <span id="score">0</span> ⭐</div>
-    <div class="box">Bridge: <span id="adv">1</span>/10</div>
+    <div class="box">Recipe: <span id="adv">1</span>/10</div>
     <div class="box">Attempts: <span id="hearts">❤️❤️</span></div>
   </div>
-  <main class="scene">
-    <div class="hill h1"></div><div class="hill h2"></div>
-    <div class="title">BRIDGE BUILDER</div>
-    <section class="qcard"><div class="qtext" id="qtext"></div></section>
-    <section class="bridge"><div class="road"></div><div class="post p1">1</div><div class="post p2">2</div><div class="post p3">3</div><div class="post p4">4</div><div class="post p5">5</div></section>
-    <div class="truck" id="truck"><span class="vehicle">🚚</span></div>
-    <section class="answerBoard">
-      <div class="answerTitle">TAP THE CORRECT SHAPE CARD</div>
+
+  <main class="kitchen">
+    <div class="shelf"></div><div class="bottle b1"></div><div class="bottle b2"></div><div class="bottle b3"></div><div class="bottle b4"></div>
+    <div class="title">RECIPE RATIO LAB</div>
+
+    <section class="qcard">
+      <div class="qtext" id="qtext"></div>
+      <div class="recipeStrip">
+        <div class="ingredient" id="ingA">Flour</div>
+        <div class="ratioBadge" id="ratioText">2 : 3</div>
+        <div class="ingredient" id="ingB">Sugar</div>
+      </div>
+    </section>
+
+    <section class="jarZone">
+      <div class="jar"><div class="jarFill smallFill" style="height:55%"></div><div class="jarLabel" id="jarA">Given</div></div>
+      <div class="jar bigJar"><div class="jarFill" id="mainFill"></div><div class="jarLabel" id="jarB">Answer</div></div>
+      <div class="jar"><div class="jarFill smallFill" style="height:35%"></div><div class="jarLabel">Mix</div></div>
+    </section>
+
+    <section class="board">
+      <div class="boardTitle">TAP THE CORRECT NUMBER TILE</div>
       <div class="options" id="options"></div>
     </section>
-    <div class="msg" id="msg">Tap the correct shape card.</div>
+
+    <div class="msg" id="msg">Tap the correct number tile.</div>
     <button class="next" id="nextBtn" onclick="nextQuestion()">NEXT ➜</button>
   </main>
 </section>
 
 <section id="result" class="screen">
   <div class="card">
-    <h1>Bridge Complete!</h1>
-    <p>You completed all 10 quadrilateral challenges.</p>
+    <h1>Recipe Complete!</h1>
+    <p>You solved all 10 ratio and proportion challenges.</p>
     <div class="finalScore" id="finalScore">0</div>
     <div style="font-size:50px" id="stars">⭐⭐⭐</div>
     <button class="restart" onclick="startGame()">PLAY AGAIN</button>
@@ -100,31 +218,24 @@ h1{font-size:clamp(32px,6vw,56px);margin:0 0 12px}.rules{text-align:left;margin:
 <div class="confetti" id="confetti"></div>
 
 <script>
-const cards={
-  Square:{cls:"square"},
-  Rectangle:{cls:"rectangle"},
-  Parallelogram:{cls:"parallelogram"},
-  Trapezium:{cls:"trapezium"},
-  Rhombus:{cls:"rhombus"}
-};
-
 const questions=[
-{text:"Which quadrilateral has four equal sides and four right angles?",answer:"Square",explain:"A square has four equal sides and four right angles."},
-{text:"Which quadrilateral has opposite sides equal and four right angles?",answer:"Rectangle",explain:"A rectangle has opposite sides equal and four right angles."},
-{text:"Which quadrilateral has two pairs of parallel sides, but right angles are not required?",answer:"Parallelogram",explain:"A parallelogram has two pairs of parallel sides."},
-{text:"Which quadrilateral has exactly one pair of parallel sides?",answer:"Trapezium",explain:"A trapezium has exactly one pair of parallel sides."},
-{text:"Which quadrilateral has four equal sides, but right angles are not necessary?",answer:"Rhombus",explain:"A rhombus has four equal sides."},
-{text:"A square sheet is folded into a diamond-like shape with all sides equal. Which quadrilateral does it look like?",answer:"Rhombus",explain:"A rhombus is a quadrilateral with all four sides equal."},
-{text:"A door is shaped like a quadrilateral with opposite sides equal and each angle 90°. Which shape is it?",answer:"Rectangle",explain:"A rectangle has opposite sides equal and all angles 90°."},
-{text:"A slanting tile has both pairs of opposite sides parallel. Which shape is it?",answer:"Parallelogram",explain:"A parallelogram has both pairs of opposite sides parallel."},
-{text:"A bridge support has only its top and bottom sides parallel. Which shape is it?",answer:"Trapezium",explain:"A trapezium has one pair of parallel sides."},
-{text:"Which quadrilateral is a special rectangle with all sides equal?",answer:"Square",explain:"A square is a rectangle with all sides equal."}
+{text:"Flour and sugar are in the ratio 2 : 3. If flour is 4 cups, how many cups of sugar are needed?", a:"Flour", b:"Sugar", givenLabel:"Flour", ratio:"2 : 3", answer:"6", opts:["4","6","8","9","12"], explain:"2 parts become 4 cups, so 1 part = 2 cups. Sugar = 3 parts = 6 cups."},
+{text:"Milk and cocoa are in the ratio 5 : 1. If cocoa is 3 cups, how many cups of milk are needed?", a:"Milk", b:"Cocoa", givenLabel:"Cocoa", ratio:"5 : 1", answer:"15", opts:["5","10","12","15","18"], explain:"1 part is 3 cups. Milk = 5 parts = 15 cups."},
+{text:"Rice and water are in the ratio 1 : 2. If water is 10 cups, how many cups of rice are needed?", a:"Rice", b:"Water", givenLabel:"Water", ratio:"1 : 2", answer:"5", opts:["4","5","6","8","10"], explain:"Water has 2 parts. 2 parts = 10 cups, so 1 part = 5 cups."},
+{text:"Lemon juice and water are in the ratio 1 : 4. If lemon juice is 3 cups, how many cups of water are needed?", a:"Lemon", b:"Water", givenLabel:"Lemon", ratio:"1 : 4", answer:"12", opts:["8","10","12","15","18"], explain:"1 part is 3 cups. Water = 4 parts = 12 cups."},
+{text:"Honey and oats are in the ratio 2 : 5. If oats are 20 spoons, how many spoons of honey are needed?", a:"Honey", b:"Oats", givenLabel:"Oats", ratio:"2 : 5", answer:"8", opts:["6","8","10","12","15"], explain:"5 parts = 20 spoons, so 1 part = 4. Honey = 2 parts = 8 spoons."},
+{text:"Tomato and onion are in the ratio 3 : 2. If onion is 8 pieces, how many tomato pieces are needed?", a:"Tomato", b:"Onion", givenLabel:"Onion", ratio:"3 : 2", answer:"12", opts:["6","9","10","12","16"], explain:"2 parts = 8 pieces, so 1 part = 4. Tomato = 3 parts = 12 pieces."},
+{text:"Blueberries and strawberries are in the ratio 2 : 7. If blueberries are 6 cups, how many cups of strawberries are needed?", a:"Blueberry", b:"Strawberry", givenLabel:"Blueberry", ratio:"2 : 7", answer:"21", opts:["14","18","21","24","28"], explain:"2 parts = 6 cups, so 1 part = 3. Strawberries = 7 parts = 21 cups."},
+{text:"Curd and fruit are in the ratio 3 : 4. If fruit is 16 spoons, how many spoons of curd are needed?", a:"Curd", b:"Fruit", givenLabel:"Fruit", ratio:"3 : 4", answer:"12", opts:["8","10","12","14","16"], explain:"4 parts = 16 spoons, so 1 part = 4. Curd = 3 parts = 12 spoons."},
+{text:"Oil and vinegar are in the ratio 1 : 3. If vinegar is 18 spoons, how many spoons of oil are needed?", a:"Oil", b:"Vinegar", givenLabel:"Vinegar", ratio:"1 : 3", answer:"6", opts:["3","5","6","9","12"], explain:"3 parts = 18 spoons, so 1 part = 6. Oil = 6 spoons."},
+{text:"Cheese and sauce are in the ratio 4 : 1. If sauce is 5 spoons, how many spoons of cheese are needed?", a:"Cheese", b:"Sauce", givenLabel:"Sauce", ratio:"4 : 1", answer:"20", opts:["10","15","18","20","25"], explain:"1 part is 5 spoons. Cheese = 4 parts = 20 spoons."}
 ];
 
 let order=[],current=0,score=0,attempts=0,locked=false;
 function $(id){return document.getElementById(id)}
 function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active")}
 let c=5;let splash=setInterval(()=>{c--;$("count").textContent=c;if(c<=0){clearInterval(splash);show("intro")}},1000);
+
 function sound(id){const a=$(id);a.currentTime=0;a.play().catch(()=>{})}
 function startGame(){
   ["correctSound","wrongSound","clapSound"].forEach(id=>{const a=$(id);a.volume=.75;a.play().then(()=>{a.pause();a.currentTime=0}).catch(()=>{})});
@@ -133,35 +244,34 @@ function startGame(){
 function loadQuestion(){
   locked=false;attempts=0;const q=order[current];
   $("score").textContent=score;$("adv").textContent=current+1;$("hearts").textContent="❤️❤️";
-  $("qtext").textContent=q.text;$("msg").textContent="Tap the correct shape card.";$("nextBtn").style.display="none";
-  positionTruck(current);makeOptions(q)
+  $("qtext").textContent=q.text;$("ingA").textContent=q.a;$("ingB").textContent=q.b;$("ratioText").textContent=q.ratio;
+  $("jarA").textContent=q.givenLabel;$("jarB").textContent="?";$("mainFill").style.height=(current*10)+"%";
+  $("msg").textContent="Tap the correct number tile.";$("nextBtn").style.display="none";makeOptions(q)
 }
-function shapeHTML(name){return `<div class="shape ${cards[name].cls}"></div><div>${name}</div>`}
 function makeOptions(q){
   const box=$("options");box.innerHTML="";
-  Object.keys(cards).sort(()=>Math.random()-.5).forEach(name=>{
-    const b=document.createElement("button");b.className="opt";b.innerHTML=shapeHTML(name);b.onclick=()=>choose(b,name);box.appendChild(b)
+  [...q.opts].sort(()=>Math.random()-.5).forEach(opt=>{
+    const b=document.createElement("button");b.className="opt";b.textContent=opt;b.onclick=()=>choose(b,opt);box.appendChild(b)
   })
 }
-function positionTruck(pos){$("truck").style.left=Math.min(84,3+pos*8.4)+"%"}
-function choose(btn,name){
+function choose(btn,val){
   if(locked)return;
   document.querySelectorAll(".opt").forEach(t=>t.classList.remove("chosen","wrong","correct"));
   btn.classList.add("chosen");const q=order[current];
-  if(name===q.answer){
+  if(val===q.answer){
     locked=true;btn.classList.add("correct");score+=attempts===0?100:60;$("score").textContent=score;
-    $("msg").textContent="Correct! "+q.explain;moveTruck();sound("correctSound");sound("clapSound");confetti();$("nextBtn").style.display="block"
+    $("jarB").textContent=q.answer;$("mainFill").style.height=Math.min(100,(current+1)*10)+"%";
+    $("msg").textContent="Correct! "+q.explain;sound("correctSound");sound("clapSound");confetti();$("nextBtn").style.display="block"
   }else{
-    attempts++;btn.classList.add("wrong");$("truck").style.animation="shake .25s";setTimeout(()=>$("truck").style.animation="",300);sound("wrongSound");
-    $("hearts").textContent=attempts===1?"❤️🤎":"🤎🤎";
+    attempts++;btn.classList.add("wrong");sound("wrongSound");$("hearts").textContent=attempts===1?"❤️🤎":"🤎🤎";
     if(attempts>=2){
-      locked=true;$("msg").textContent="Correct answer: "+q.answer+". "+q.explain;
-      document.querySelectorAll(".opt").forEach(t=>{if(t.textContent.trim()===q.answer)t.classList.add("correct")});
+      locked=true;$("jarB").textContent=q.answer;$("mainFill").style.height=Math.min(100,(current+1)*10)+"%";
+      $("msg").textContent="Correct answer: "+q.answer+". "+q.explain;
+      document.querySelectorAll(".opt").forEach(t=>{if(t.textContent===q.answer)t.classList.add("correct")});
       $("nextBtn").style.display="block"
     }else{$("msg").textContent="Not quite. Try one more time."}
   }
 }
-function moveTruck(){$("truck").style.left=Math.min(88,3+(current+1)*8.4)+"%"}
 function nextQuestion(){current++;if(current>=10){endGame()}else loadQuestion()}
 function endGame(){$("finalScore").textContent=score;$("stars").textContent=score>=850?"⭐⭐⭐":score>=650?"⭐⭐":"⭐";confetti(70);show("result")}
 function confetti(n=30){
