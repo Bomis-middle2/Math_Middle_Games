@@ -206,7 +206,7 @@ const questions = [
   {kind:"sub", text:"A chocolate bar had 7/10 left. Aman ate 4/10. How much remains?", show:["7/10","−","4/10"], an:3, ad:10, opts:["3/10","4/10","11/10","3/20"], rows:2, cols:5, explain:"Subtract the numerators: 7 − 4 = 3. The denominator remains 10."},
 
   {kind:"mul", text:"A recipe uses 1/3 cup flour. It is made 2 times. How much flour is used?", show:["2","×","1/3"], an:2, ad:3, opts:["2/3","1/6","3/3","2/6"], rows:1, cols:3, explain:"2 × 1/3 means 1/3 + 1/3 = 2/3."},
-  {kind:"mul", text:"Each small box uses 2/5 metre ribbon. How much is needed for 3 boxes?", show:["3","×","2/5"], an:6, ad:5, opts:["6/5","5/6","3/10","2/15"], rows:2, cols:3, explain:"Multiply the whole number with the numerator: 3 × 2 = 6, denominator 5."},
+  {kind:"mul", text:"Each small box uses 3/4 metre ribbon. How much is needed for 2 boxes?", show:["2","×","3/4"], an:6, ad:4, cells:8, opts:["6/4","3/8","2/7","3/10"], rows:2, cols:4, explain:"Multiply the whole number with the numerator: 2 × 3 = 6, denominator stays 4."},
 
   {kind:"div", text:"Half a cake is shared equally between 2 children. What does each child get?", show:["1/2","÷","2"], an:1, ad:4, opts:["1/4","2/4","1/2","2/2"], rows:2, cols:2, explain:"Sharing 1/2 into 2 equal parts gives 1/4 each."},
   {kind:"div", text:"Three-fourths litre juice is poured equally into 3 glasses. How much is in each glass?", show:["3/4","÷","3"], an:1, ad:4, opts:["1/4","3/12","3/4","1/12"], rows:2, cols:2, explain:"3/4 divided by 3 gives 1/4 in each glass."}
@@ -259,7 +259,8 @@ function loadQuestion(){
 function buildGrid(q,filled){
   const grid=$("fractionGrid"); grid.innerHTML="";
   grid.style.setProperty("--cols",q.cols); grid.style.setProperty("--rows",q.rows);
-  for(let i=0;i<q.ad;i++){
+  const totalCells = q.cells || q.ad;
+  for(let i=0;i<totalCells;i++){
     const c=document.createElement("div");
     c.className="cell"+(i<filled?" on":"");
     grid.appendChild(c);
