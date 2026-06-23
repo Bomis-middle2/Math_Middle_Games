@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Geometry Quest: Defuse Protocol</title>
+    <title>Geometry Blueprint Studio</title>
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Courier New', Courier, monospace, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             margin: 0;
             padding: 0;
             user-select: none;
@@ -17,8 +17,8 @@
         body, html {
             width: 100%;
             height: 100%;
-            background-color: #0b0f19;
-            color: #00ff66;
+            background-color: #0a192f;
+            color: #e2e8f0;
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -33,10 +33,10 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
-            box-shadow: 0 0 30px rgba(0, 255, 102, 0.2);
+            background: #0f172a;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
             overflow: hidden;
-            border: 2px solid #1e293b;
+            border: 2px solid #334155;
         }
 
         /* --- STAGE 1: BRANDING-ONLY LOGO SCREEN (5 SECONDS STRICT) --- */
@@ -61,41 +61,40 @@
             top: 0; left: 0; width: 100%; height: 100%;
             display: flex;
             flex-direction: column;
-            padding: 24px;
+            padding: 20px;
             gap: 16px;
             z-index: 10;
         }
 
-        .tactical-panel {
-            background: rgba(15, 23, 42, 0.95);
-            border: 2px solid #00ff66;
-            border-radius: 16px;
+        .blueprint-panel {
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid #0ea5e9;
+            border-radius: 20px;
             padding: 24px;
-            box-shadow: 0 0 20px rgba(0, 255, 102, 0.1);
+            box-shadow: 0 8px 32px rgba(14, 165, 233, 0.15);
         }
 
         .header-panel {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #1e293b;
-            color: #00ff66;
+            background: #0c4a6e;
+            color: #0ea5e9;
             padding: 12px 16px;
-            border-radius: 8px;
-            border: 1px solid #334155;
+            border-radius: 12px;
+            border: 1px solid #0ea5e9;
         }
-        .header-title { font-weight: 900; font-size: 0.85rem; letter-spacing: 1px; color: #f97316; }
-        .header-score { font-weight: 900; font-size: 0.9rem; background: #020617; padding: 4px 12px; border-radius: 4px; border: 1px solid #00ff66; }
+        .header-title { font-weight: 800; font-size: 0.9rem; letter-spacing: 0.5px; text-transform: uppercase; }
+        .header-score { font-weight: 800; font-size: 0.9rem; background: #0369a1; color: #fff; padding: 4px 12px; border-radius: 8px; }
 
         .instruction-text {
-            font-size: 0.9rem;
-            line-height: 1.5;
+            font-size: 0.95rem;
+            line-height: 1.6;
             color: #94a3b8;
             margin-bottom: 20px;
         }
-        .instruction-text ul { margin-left: 14px; margin-top: 8px; list-style-type: square; }
-        .instruction-text li { margin-bottom: 10px; font-weight: bold; color: #cbd5e1; }
-        .highlight-text { color: #00ff66; }
+        .instruction-text ul { margin-left: 18px; margin-top: 8px; }
+        .instruction-text li { margin-bottom: 8px; font-weight: 600; color: #38bdf8; }
 
         .workspace-area {
             flex-grow: 1;
@@ -104,154 +103,141 @@
             justify-content: space-between;
             align-items: center;
             gap: 12px;
+            background-image: radial-gradient(#1e293b 1px, transparent 1px);
+            background-size: 16px 16px;
         }
 
         .question-box {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 700;
-            color: #00ff66;
-            background: #020617;
+            color: #f1f5f9;
+            background: #0f172a;
             padding: 14px;
-            border-radius: 8px;
+            border-radius: 12px;
             border: 1px solid #334155;
             width: 100%;
             text-align: center;
-            min-height: 80px;
+            min-height: 70px;
             display: flex;
             align-items: center;
             justify-content: center;
-            line-height: 1.4;
-            box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.05);
         }
 
-        /* --- THE GRAPHICS SENSOR RENDER --- */
-        .geometry-canvas-area {
+        /* --- THE ARCHITECT BLUEPRINT GRID DROPZONE --- */
+        .blueprint-dropzone {
             width: 100%;
-            height: 160px;
-            background: #020617;
-            border-radius: 8px;
-            border: 1px dashed #00ff66;
+            height: 170px;
+            background: #024e75;
+            border-radius: 14px;
+            border: 2px dashed #38bdf8;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
+            box-shadow: inset 0 4px 20px rgba(0,0,0,0.4);
         }
 
-        /* --- DEFUSAL BYPASS MECHANISM (NO PLACE VALUES) --- */
-        .defuse-dial-chassis {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            background: #0f172a;
-            padding: 16px;
+        .target-slot {
+            width: 90px;
+            height: 90px;
+            border: 2px dashed #f59e0b;
             border-radius: 12px;
-            border: 2px solid #334155;
-            width: 100%;
+            background: rgba(245, 158, 11, 0.1);
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #f59e0b;
+            text-transform: uppercase;
         }
 
-        .dial-column {
+        /* --- INTERACTIVE DRAGGABLE PARTS TRAY --- */
+        .parts-tray {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .draggable-part {
+            width: 85px;
+            height: 85px;
+            background: #1e293b;
+            border: 2px solid #38bdf8;
+            border-radius: 12px;
+            cursor: grab;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .dial-spinner {
-            width: 48px;
-            height: 30px;
-            background: #1e293b;
-            color: #f97316;
-            border: 1px solid #475569;
-            border-radius: 4px;
-            font-size: 1.1rem;
-            font-weight: 900;
-            cursor: pointer;
-            display: flex;
             justify-content: center;
             align-items: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #38bdf8;
+            touch-action: none;
+            transition: transform 0.2s, background 0.2s;
         }
-        .dial-spinner:active { 
-            background: #f97316;
-            color: #020617;
+        .draggable-part:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+            background: #0c4a6e;
         }
 
-        .dial-screen {
-            width: 52px;
-            height: 56px;
-            background: #020617;
-            border: 2px solid #00ff66;
-            color: #00ff66;
-            border-radius: 6px;
-            font-size: 2.2rem;
-            font-weight: 900;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
+        .part-svg-preview {
+            width: 50px;
+            height: 50px;
+            pointer-events: none;
         }
 
         .chance-counter-tray {
             display: flex;
-            gap: 14px;
+            gap: 10px;
             justify-content: center;
         }
         .chance-dot {
-            width: 14px;
-            height: 14px;
-            border-radius: 2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
             background: #ef4444;
-            border: 1px solid #fecaca;
-            box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
-            transition: all 0.2s;
+            box-shadow: 0 0 6px #ef4444;
+            transition: all 0.3s ease;
         }
         .chance-dot.used {
-            background: #334155;
-            border-color: #475569;
+            background: #475569;
             box-shadow: none;
         }
 
         .action-btn {
-            background: #1e293b;
-            color: #94a3b8;
-            border: 1px solid #475569;
-            border-bottom: 4px solid #0f172a;
+            background: #0ea5e9;
+            color: #ffffff;
+            border: none;
+            border-bottom: 4px solid #0284c7;
             padding: 14px;
             font-size: 1rem;
-            font-weight: 900;
-            border-radius: 8px;
+            font-weight: 800;
+            border-radius: 12px;
             cursor: pointer;
             width: 100%;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
         .action-btn:active {
             transform: translateY(2px);
-            border-bottom-width: 1px;
-        }
-        .action-btn.submit-lever {
-            background: #f97316;
-            color: #020617;
-            border-color: #ff9d5c;
-            border-bottom: 4px solid #c2410c;
-            box-shadow: 0 0 15px rgba(249, 115, 22, 0.2);
+            border-bottom-width: 2px;
         }
 
         .status-banner {
             text-align: center;
             font-weight: 700;
             font-size: 0.85rem;
-            min-height: 24px;
+            min-height: 20px;
             color: #64748b;
-            letter-spacing: 0.5px;
-        }
-
-        @keyframes panelAlert {
-            0%, 100% { border-color: #00ff66; }
-            50% { border-color: #f97316; }
-        }
-        .alert-flash {
-            animation: panelAlert 0.3s ease 2;
         }
 
         .hidden { display: none !important; }
@@ -261,302 +247,250 @@
 
     <div id="viewport-root">
         
-        <!-- STAGE 1: Branding-Only Screen (Strictly 5 Seconds) -->
+        <!-- STAGE 1: Branding-Only Logo Screen (5 Seconds Strict) -->
         <div id="branding-splash">
-            <img src="assets/logo.png" class="branding-img" alt="Innovine" onerror="this.src='https://placehold.co/180x60/ffffff/0b0f19?text=INNOVINE';">
+            <img src="assets/logo.png" class="branding-img" alt="Innovine Logo" onerror="this.src='https://placehold.co/180x60/ffffff/0a192f?text=INNOVINE';">
         </div>
 
-        <!-- STAGE 2: Mission Brief Instructions -->
+        <!-- STAGE 2: Architect Studio Rules Instructions -->
         <div id="instructions-screen" class="stage-overlay hidden">
-            <div class="tactical-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
+            <div class="blueprint-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
                 <div class="header-panel">
-                    <div class="header-title">⚡ MISSION BRIEFING: DEFUSE INBOUND</div>
+                    <div class="header-title">📐 Blueprint Assembly Workshop</div>
                 </div>
                 <div class="instruction-text">
-                    <p>Unlock and bypass the electronic tactical arrays by inputting geometric metrics into the keypad override:</p>
+                    <p>Complete structural design drafts by sliding the correct architectural components directly onto the blueprint layouts:</p>
                     <ul>
-                        <li>1. Evaluate the geometric radar telemetry lines and layouts accurately.</li>
-                        <li>2. Tap the <span class="highlight-text">▲ and ▼ selectors</span> on the input keypad to set the matching tracking data code digits.</li>
-                        <li>3. Submit your configuration. You have <span class="highlight-text">2 clear attempts</span> before the bypass sequence overrides automatic reveal!</li>
+                        <li>1. Examine the missing component request inside the master canvas box.</li>
+                        <li>2. <strong>Drag and drop</strong> or <strong>tap</strong> a layout block from the component tray down below.</li>
+                        <li>3. Fill the empty slot accurately. You have <strong>2 attempts</strong> per structural layer!</li>
                     </ul>
                 </div>
-                <button class="action-btn" style="color:#00ff66; border-color:#00ff66;" onclick="launchDefusalMatrix()">Accept Operation</button>
+                <button class="action-btn" onclick="startBlueprintSimulation()">Enter Blueprint Studio</button>
             </div>
         </div>
 
-        <!-- STAGE 3: Core Defusal Gameplay View -->
+        <!-- STAGE 3: Drag & Drop Assembly Gameplay View -->
         <div id="gameplay-screen" class="stage-overlay hidden">
             <div class="header-panel">
-                <div id="game-level-tag" class="header-title">SECTOR LINK: 01 / 15</div>
+                <div id="game-level-tag" class="header-title">Draft: 01 / 15</div>
                 <div id="game-score-tag" class="header-score">Score: 0</div>
             </div>
 
-            <div class="tactical-panel workspace-area" id="main-panel">
-                <!-- Tactical Question Prompt -->
-                <div id="game-prompt" class="question-box">Scanning radar telemetry matrices...</div>
+            <div class="blueprint-panel workspace-area">
+                <!-- Question Clue Box -->
+                <div id="game-prompt" class="question-box">Analyzing design blueprint requirements...</div>
                 
-                <!-- Geometry Radar Display -->
-                <div class="geometry-canvas-area">
-                    <svg id="radar-vector-display" width="100%" height="100%" style="overflow: visible;"></svg>
-                </div>
-                
-                <!-- KEYPAD INTERFACE COUNTER (Pure integers, no place value headings) -->
-                <div class="defuse-dial-chassis">
-                    <div class="dial-column">
-                        <button class="dial-spinner" onclick="adjustDigit(0, 1)">▲</button>
-                        <div class="dial-screen">0</div>
-                        <button class="dial-spinner" onclick="adjustDigit(0, -1)">▼</button>
-                    </div>
-                    <div class="dial-column">
-                        <button class="dial-spinner" onclick="adjustDigit(1, 1)">▲</button>
-                        <div class="dial-screen">0</div>
-                        <button class="dial-spinner" onclick="adjustDigit(1, -1)">▼</button>
-                    </div>
-                    <div class="dial-column">
-                        <button class="dial-spinner" onclick="adjustDigit(2, 1)">▲</button>
-                        <div class="dial-screen">0</div>
-                        <button class="dial-spinner" onclick="adjustDigit(2, -1)">▼</button>
-                    </div>
+                <!-- Master Blueprint Draft Frame Canvas -->
+                <div class="blueprint-dropzone" id="blueprint-canvas">
+                    <svg id="blueprint-svg" width="100%" height="100%" style="position:absolute; pointer-events:none;"></svg>
+                    <div class="target-slot" id="target-slot-zone" style="top: 40px; left: 160px;">Drop Here</div>
                 </div>
 
-                <!-- 2-Attempt Module Trackers -->
+                <!-- 2 Attempt Strike Dot Array -->
                 <div class="chance-counter-tray">
                     <div id="strike-dot-1" class="chance-dot"></div>
                     <div id="strike-dot-2" class="chance-dot"></div>
                 </div>
-
-                <button class="action-btn submit-lever" onclick="executeDefusalOverride()">Transmit Defusal Code</button>
+                
+                <!-- Component Parts Collection Selector Tray -->
+                <div class="parts-tray" id="tray-container">
+                    <!-- Options injected dynamically by JS -->
+                </div>
             </div>
 
-            <div id="game-toast-feedback" class="status-banner">Awaiting bypass telemetry input codes...</div>
+            <div id="game-toast-feedback" class="status-banner">Slide the requested geometry block into place!</div>
         </div>
 
     </div>
 
     <script>
-        // Audio Asset Elements
+        // Media Sound Notification Tracks
         const audioCorrect = new Audio('assets/correct.mp3');
         const audioWrong = new Audio('assets/wrong.mp3');
         const audioWin = new Audio('assets/freesound_community-claps-44774.mp3');
 
-        function routeAudioPlay(source) {
+        function playAudio(track) {
             try {
-                source.currentTime = 0;
-                source.play();
-            } catch(err) { console.log("Audio asset safely bypassed setup."); }
+                track.currentTime = 0;
+                track.play();
+            } catch(e) { console.log("Audio play safely routed."); }
         }
 
-        // State Trackers
+        // Gameplay Track States
         let scoreCount = 0;
         let taskIndex = 0;
         let internalStrikeCounter = 0;
-        let activeKeypadDigits = [0, 0, 0];
+        let draggedType = null;
 
-        // 15 Curated Grade-5 Geometry Data Tasks mapping perfectly to image_1b7462.png
-        const tacticalTasks = [
-            { q: "Count the total number of collinear points aligned perfectly on baseline path XY.", solution: [0, 0, 4], render: (svg) => drawRadarPoints(svg, 4) },
-            { q: "Scan radar map: How many non-collinear warning points exist off the main tracking vector line?", solution: [0, 0, 3], render: (svg) => drawOffGridPoints(svg, 3) },
-            { q: "Analyze the connection vectors. How many open path lines are currently traced?", solution: [0, 0, 2], render: (svg) => drawRadarPaths(svg, true) },
-            { q: "Analyze the connection lines. Count the total number of fully closed perimeter figures.", solution: [0, 0, 3], render: (svg) => drawRadarPaths(svg, false) },
-            { q: "Bypass telemetry formula: How many definitive ending points are present on a closed line segment?", solution: [0, 0, 2], render: (svg) => drawSegmentTelemetry(svg) },
-            { q: "Bypass telemetry formula: How many starting endpoints does a single infinite directional ray contain?", solution: [0, 0, 1], render: (svg) => drawRayTelemetry(svg) },
-            { q: "A perfect right angle tracking grid contains how many total degrees? Set the bypass code.", solution: [0, 9, 0], render: (svg) => drawVectorAngle(svg, 90) },
-            { q: "An acute tracking path is displayed. Identify its exact measure from your sensor scale reading.", solution: [0, 4, 5], render: (svg) => drawVectorAngle(svg, 45) },
-            { q: "Identify the metric index of the obtuse system ray shown on screen.", solution: [1, 3, 5], render: (svg) => drawVectorAngle(svg, 135) },
-            { q: "Input the degree value of a straight-line layout angle configuration.", solution: [1, 8, 0], render: (svg) => drawVectorAngle(svg, 180) },
-            { q: "Input the degree value of an acute angle reading exactly 30 degrees less than a right corner block.", solution: [0, 6, 0], render: (svg) => drawVectorAngle(svg, 60) },
-            { q: "How many network streams run perfectly parallel and never touch on this channel track?", solution: [0, 0, 2], render: (svg) => drawParallelStreams(svg) },
-            { q: "Count the number of lines crossing concurrently through a single target center point P.", solution: [0, 0, 3], render: (svg) => drawConcurrentStreams(svg) },
-            { q: "Perpendicular pathways meet together at what exact cross degree intersection value?", solution: [0, 9, 0], render: (svg) => drawPerpStreams(svg) },
-            { q: "How many total intersecting center connection points are located on this simple layout grid?", solution: [0, 0, 1], render: (svg) => drawPerpStreams(svg) }
+        // Dataset built directly around the image guidelines (No numeric counters/places, entirely direct matching interaction)
+        const blueprintPuzzles = [
+            { q: "The floor plan shows points on a path. Find the set that contains only Collinear Points.", correct: "collinear", options: ["collinear", "perpendicular", "parallel"], render: (svg) => drawPointsBase(svg) },
+            { q: "Complete the structural array: Which element has no fixed endpoints and extends infinitely?", correct: "line", options: ["line", "segment", "ray"], render: null },
+            { q: "Locate the component that contains exactly 1 single fixed endpoint and extends outward infinitely.", correct: "ray", options: ["segment", "ray", "line"], render: null },
+            { q: "Select the specific architectural component bound by 2 fixed endpoints.", correct: "segment", options: ["line", "ray", "segment"], render: null },
+            { q: "The frame layout requires a right angle. Find the layout matching exactly 90 degrees.", correct: "90deg", options: ["45deg", "90deg", "135deg"], render: (svg) => drawAngleGuide(svg) },
+            { q: "A diagonal structural brace forms a sharp angle under 90 degrees. Identify this Acute Type.", correct: "acute", options: ["acute", "obtuse", "right"], render: null },
+            { q: "This wider support beam opens wider than 90 degrees. Identify this Obtuse Type.", correct: "obtuse", options: ["acute", "right", "obtuse"], render: null },
+            { q: "Select the layout where structural lines cross cleanly at an exact 90-degree corner intersection.", correct: "perp", options: ["parallel", "perp", "concurrent"], render: null },
+            { q: "Two utility pipes run perfectly beside each other on the wall plan and will never intersect.", correct: "parallel", options: ["parallel", "perp", "intersect"], render: null },
+            { q: "Identify a shape configuration where the boundary perimeter forms a fully Closed Figure.", correct: "closed", options: ["open", "closed", "ray"], render: (svg) => drawShapesGuide(svg) },
+            { q: "Identify the boundary trace layout where the path breaks, forming an Open Figure.", correct: "open", options: ["closed", "open", "segment"], render: (svg) => drawShapesGuide(svg) },
+            { q: "Three or more lines meet and cross together right at a single central focus point P. This is called:", correct: "concurrent", options: ["parallel", "concurrent", "perp"], render: null },
+            { q: "Two basic tracking grid vectors simply cross each other without matching a corner right angle.", correct: "intersect", options: ["intersect", "parallel", "perp"], render: null },
+            { q: "A flat horizontal layout floor segment features a wide Straight Angle measuring exactly:", correct: "180deg", options: ["90deg", "180deg", "45deg"], render: null },
+            { q: "Find the point on an angle layout frame where two lines or rays meet to form its corner:", correct: "vertex", options: ["vertex", "ray", "segment"], render: null }
         ];
 
-        // 5-Second Strict Branding Screen Timer
+        // Strict 5-Second Brand Window Setup
         setTimeout(() => {
-            const logoScreen = document.getElementById('branding-splash');
-            if (logoScreen) {
-                logoScreen.style.opacity = '0';
+            const splash = document.getElementById('branding-splash');
+            if (splash) {
+                splash.style.opacity = '0';
                 setTimeout(() => {
-                    logoScreen.remove();
+                    splash.remove();
                     document.getElementById('instructions-screen').classList.remove('hidden');
                 }, 500);
             }
         }, 5000);
 
-        function launchDefusalMatrix() {
+        function startBlueprintSimulation() {
             document.getElementById('instructions-screen').classList.add('hidden');
             document.getElementById('gameplay-screen').classList.remove('hidden');
-            loadActiveTaskSector();
+            loadNextBlueprintLayout();
         }
 
-        function loadActiveTaskSector() {
-            if (taskIndex >= tacticalTasks.length) {
-                triggerOperationVictory();
+        function loadNextBlueprintLayout() {
+            if (taskIndex >= blueprintPuzzles.length) {
+                triggerStudioVictory();
                 return;
             }
 
-            document.getElementById('game-level-tag').innerText = `SECTOR LINK: ${String(taskIndex + 1).padStart(2, '0')} / ${tacticalTasks.length}`;
+            document.getElementById('game-level-tag').innerText = `Draft: ${String(taskIndex + 1).padStart(2, '0')} / ${blueprintPuzzles.length}`;
             document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
 
             internalStrikeCounter = 0;
             document.getElementById('strike-dot-1').classList.remove('used');
             document.getElementById('strike-dot-2').classList.remove('used');
 
-            activeKeypadDigits = [0, 0, 0];
-            updateKeypadUI();
+            const currentTask = blueprintPuzzles[taskIndex];
+            document.getElementById('game-prompt').innerText = currentTask.q;
 
-            const taskItem = tacticalTasks[taskIndex];
-            document.getElementById('game-prompt').innerText = taskItem.q;
+            const svg = document.getElementById('blueprint-svg');
+            svg.innerHTML = '';
+            if (currentTask.render) currentTask.render(svg);
 
-            const svgRoot = document.getElementById('radar-vector-display');
-            svgRoot.innerHTML = '';
-            if (taskItem.render) taskItem.render(svgRoot);
-
-            const toast = document.getElementById('game-toast-feedback');
-            toast.innerText = "Awaiting code bypass verification entry...";
-            toast.style.color = "#64748b";
-            document.querySelector('.submit-lever').disabled = false;
-        }
-
-        function adjustDigit(col, step) {
-            activeKeypadDigits[col] += step;
-            if (activeKeypadDigits[col] > 9) activeKeypadDigits[col] = 0;
-            if (activeKeypadDigits[col] < 0) activeKeypadDigits[col] = 9;
-            updateKeypadUI();
-        }
-
-        function updateKeypadUI() {
-            const screens = document.querySelectorAll('.dial-screen');
-            screens[0].innerText = activeKeypadDigits[0];
-            screens[1].innerText = activeKeypadDigits[1];
-            screens[2].innerText = activeKeypadDigits[2];
-        }
-
-        function executeDefusalOverride() {
-            const currentItem = tacticalTasks[taskIndex];
-            const toast = document.getElementById('game-toast-feedback');
-            const panel = document.getElementById('main-panel');
-
-            const isCorrect = activeKeypadDigits[0] === currentItem.solution[0] &&
-                              activeKeypadDigits[1] === currentItem.solution[1] &&
-                              activeKeypadDigits[2] === currentItem.solution[2];
-
-            if (isCorrect) {
-                scoreCount += 20;
-                toast.innerText = "✔ LINK DECRYPTED: Defusal stream cleared.";
-                toast.style.color = "#00ff66";
-                routeAudioPlay(audioCorrect);
-
-                panel.classList.add('alert-flash');
-                document.querySelector('.submit-lever').disabled = true;
+            // Re-render Option Cards Into Tray
+            const tray = document.getElementById('tray-container');
+            tray.innerHTML = '';
+            
+            currentTask.options.forEach(opt => {
+                const card = document.createElement('div');
+                card.className = 'draggable-part';
+                card.innerText = opt.toUpperCase();
+                card.setAttribute('draggable', 'true');
                 
+                // Mouse/Desktop Drag Events
+                card.addEventListener('dragstart', () => { draggedType = opt; });
+                // Touch/Mobile Tap Support Fallback Selection
+                card.addEventListener('touchstart', () => { draggedType = opt; handleDirectTapSelection(opt); });
+                
+                tray.appendChild(card);
+            });
+
+            // Set Up Blueprint Drop Container Listeners
+            const dropzone = document.getElementById('target-slot-zone');
+            dropzone.innerText = "Drop Here";
+            dropzone.style.borderColor = "#f59e0b";
+            dropzone.style.background = "rgba(245, 158, 11, 0.1)";
+
+            document.getElementById('game-toast-feedback').innerText = "Slide the requested geometry block into place!";
+            document.getElementById('game-toast-feedback').style.color = "#64748b";
+        }
+
+        // Standard HTML5 Drag Mechanics
+        const zone = document.getElementById('blueprint-canvas');
+        zone.addEventListener('dragover', (e) => e.preventDefault());
+        zone.addEventListener('drop', () => { processIncomingSelection(draggedType); });
+
+        function handleDirectTapSelection(opt) {
+            // instant tap bypass action for easy grade-5 mobile accessibility testing
+            setTimeout(() => { processIncomingSelection(opt); }, 150);
+        }
+
+        function processIncomingSelection(selectedType) {
+            if (!selectedType) return;
+            const activePuzzle = blueprintPuzzles[taskIndex];
+            const dropzone = document.getElementById('target-slot-zone');
+            const toast = document.getElementById('game-toast-feedback');
+
+            if (selectedType === activePuzzle.correct) {
+                scoreCount += 20;
+                playAudio(audioCorrect);
+                toast.innerText = "✔ DESIGN VERIFIED: Blueprint part locked into draft!";
+                toast.style.color = "#10b981";
+                
+                dropzone.innerText = selectedType.toUpperCase();
+                dropzone.style.borderColor = "#10b981";
+                dropzone.style.background = "rgba(16, 185, 129, 0.2)";
+
                 taskIndex++;
-                setTimeout(() => {
-                    panel.classList.remove('alert-flash');
-                    loadActiveTaskSector();
-                }, 1500);
+                draggedType = null;
+                setTimeout(() => loadNextBlueprintLayout(), 1500);
             } else {
                 internalStrikeCounter++;
-                routeAudioPlay(audioWrong);
+                playAudio(audioWrong);
+                draggedType = null;
 
                 if (internalStrikeCounter === 1) {
                     document.getElementById('strike-dot-1').classList.add('used');
-                    toast.innerText = "⚠ CODE REFUSED: Core line distortion. 1 try remains.";
-                    toast.style.color = "#f97316";
+                    toast.innerText = "❌ ALIGNMENT ERROR: Structural stress detected. Try again!";
+                    toast.style.color = "#ef4444";
                 } else {
                     document.getElementById('strike-dot-2').classList.add('used');
-                    document.querySelector('.submit-lever').disabled = true;
-
-                    const overrideCodeValue = `${currentItem.solution[0]}${currentItem.solution[1]}${currentItem.solution[2]}`;
-                    toast.innerText = `OVERRIDE ACTIVE: System bypass layout was: ${overrideCodeValue}`;
-                    toast.style.color = "#ef4444";
+                    toast.innerText = `Bypassing Slot! Correct draft fitting was: ${activePuzzle.correct.toUpperCase()}`;
+                    toast.style.color = "#f59e0b";
 
                     taskIndex++;
-                    setTimeout(() => loadActiveTaskSector(), 3500);
+                    setTimeout(() => loadNextBlueprintLayout(), 3000);
                 }
             }
             document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
         }
 
-        function triggerOperationVictory() {
-            routeAudioPlay(audioWin);
-            document.getElementById('game-level-tag').innerText = "MAINFRAME SAFE";
+        function triggerStudioVictory() {
+            playAudio(audioWin);
+            document.getElementById('game-level-tag').innerText = "STUDIO ARCHIVE COMPLETE";
             document.getElementById('game-prompt').innerHTML = `
-                <div style="font-size: 1.15rem; color: #f97316; margin-bottom: 4px;">🏆 OPERATION COMPLETION CLEAR!</div>
-                <div style="font-size: 0.85rem; color: #00ff66; font-weight: 900;">All geometry segments stabilized. Total Output: ${scoreCount} Credits.</div>
+                <div style="font-size: 1.2rem; color: #38bdf8; margin-bottom: 4px;">🏆 MASTER ARCHITECT QUALIFIED!</div>
+                <div style="font-size: 0.85rem; color: #10b981; font-weight: 800;">All geometry engineering drafts verified. Final Score: ${scoreCount} points.</div>
             `;
-            document.getElementById('game-toast-feedback').innerText = "All link network terminals closed safely.";
+            document.getElementById('game-toast-feedback').innerText = "Blueprint assembly complete.";
             document.getElementById('game-toast-feedback').style.color = "#e2e8f0";
 
-            document.getElementById('radar-vector-display').innerHTML = `
-                <text x="50%" y="58%" font-size="38" fill="#00ff66" text-anchor="middle">[CLEARED]</text>
+            document.getElementById('blueprint-canvas').innerHTML = `
+                <text x="50%" y="55%" font-size="50" style="position:absolute; width:100%; text-align:center; top:45px; left:0;">🏛️</text>
             `;
-
-            const btn = document.querySelector('.submit-lever');
-            btn.disabled = false;
-            btn.innerText = "Re-Lock Defusal Vectors";
-            btn.style.backgroundColor = "#1e293b";
-            btn.style.color = "#00ff66";
-            btn.style.borderColor = "#00ff66";
-            btn.onclick = () => location.reload();
+            document.getElementById('tray-container').innerHTML = `
+                <button class="action-btn" onclick="location.reload()">Draft New Blueprint Project</button>
+            `;
         }
 
-        /* --- RADAR GEO VECTOR CANVAS SYSTEM --- */
-        function createTag(name) { return document.createElementNS("http://www.w3.org/2000/svg", name); }
+        /* --- VECTOR DRAWING ASSISTANTS --- */
+        function makeTag(name) { return document.createElementNS("http://www.w3.org/2000/svg", name); }
 
-        function drawRadarPoints(svg, total) {
-            let line = createTag("line"); line.setAttribute("x1", "30"); line.setAttribute("y1", "80"); line.setAttribute("x2", "350"); line.setAttribute("y2", "80"); line.setAttribute("stroke", "#334155"); line.setAttribute("stroke-width", "4"); svg.appendChild(line);
-            for(let i=0; i<total; i++) {
-                let c = createTag("circle"); c.setAttribute("cx", 55 + i*80); c.setAttribute("cy", "80"); c.setAttribute("r", "6"); c.setAttribute("fill", "#00ff66"); svg.appendChild(c);
-            }
-        }
-        function drawOffGridPoints(svg, totalOutside) {
-            drawRadarPoints(svg, 2);
-            for(let i=0; i<totalOutside; i++) {
-                let c = createTag("circle"); c.setAttribute("cx", 90 + i*90); c.setAttribute("cy", "35"); c.setAttribute("r", "6"); c.setAttribute("fill", "#f97316"); svg.appendChild(c);
-            }
-        }
-        function drawRadarPaths(svg, isOpenMode) {
-            let paths = isOpenMode ? ["M 40,110 L 90,40 L 140,110", "M 160,40 L 200,110"] : ["M 40,110 L 90,40 L 140,110 Z"];
-            let closedBlocks = ["M 220,50 L 270,50 L 245,105 Z", "M 300,45 L 350,45 L 350,105 L 300,105 Z"];
-            if(!isOpenMode) paths = paths.concat(closedBlocks);
-            
-            paths.forEach((d) => {
-                let p = createTag("path"); p.setAttribute("d", d); p.setAttribute("stroke", "#00ff66"); p.setAttribute("stroke-width", "3"); p.setAttribute("fill", "none"); svg.appendChild(p);
-            });
-        }
-        function drawSegmentTelemetry(svg) {
-            let l = createTag("line"); l.setAttribute("x1", "100"); l.setAttribute("y1", "80"); l.setAttribute("x2", "280"); l.setAttribute("y2", "80"); l.setAttribute("stroke", "#f97316"); l.setAttribute("stroke-width", "4"); svg.appendChild(l);
-            let c1 = createTag("circle"); c1.setAttribute("cx", "100"); c1.setAttribute("cy", "80"); c1.setAttribute("r", "6"); c1.setAttribute("fill", "#f8fafc"); svg.appendChild(c1);
-            let c2 = createTag("circle"); c2.setAttribute("cx", "280"); c2.setAttribute("cy", "80"); c2.setAttribute("r", "6"); c2.setAttribute("fill", "#f8fafc"); svg.appendChild(c2);
-        }
-        function drawRayTelemetry(svg) {
-            let l = createTag("line"); l.setAttribute("x1", "100"); l.setAttribute("y1", "80"); l.setAttribute("x2", "270"); l.setAttribute("y2", "80"); l.setAttribute("stroke", "#00ff66"); l.setAttribute("stroke-width", "4"); svg.appendChild(l);
-            let c = createTag("circle"); c.setAttribute("cx", "100"); c.setAttribute("cy", "80"); c.setAttribute("r", "6"); c.setAttribute("fill", "#f8fafc"); svg.appendChild(c);
-            let a = createTag("path"); a.setAttribute("d", "M 265,72 L 282,80 L 265,88 Z"); a.setAttribute("fill", "#00ff66"); svg.appendChild(a);
-        }
-        function drawVectorAngle(svg, degrees) {
-            let rad = -degrees * Math.PI / 180;
-            let x2 = 190 + 90 * Math.cos(rad); let y2 = 115 + 90 * Math.sin(rad);
-            let b = createTag("line"); b.setAttribute("x1", "190"); b.setAttribute("y1", "115"); b.setAttribute("x2", "300"); b.setAttribute("y2", "115"); b.setAttribute("stroke", "#475569"); b.setAttribute("stroke-width", "4"); svg.appendChild(b);
-            let a = createTag("line"); a.setAttribute("x1", "190"); a.setAttribute("y1", "115"); a.setAttribute("x2", x2); a.setAttribute("y2", y2); a.setAttribute("stroke", "#f97316"); a.setAttribute("stroke-width", "4"); svg.appendChild(a);
-        }
-        function drawParallelStreams(svg) {
-            for(let i=0; i<2; i++) {
-                let l = createTag("line"); l.setAttribute("x1", "60"); l.setAttribute("y1", 55 + i*40); l.setAttribute("x2", "320"); l.setAttribute("y2", 55 + i*40); l.setAttribute("stroke", "#00ff66"); l.setAttribute("stroke-width", "4"); svg.appendChild(l);
-            }
-        }
-        function drawConcurrentStreams(svg) {
+        function drawPointsBase(svg) {
+            let l = makeTag("line"); l.setAttribute("x1", "40"); l.setAttribute("y1", "120"); l.setAttribute("x2", "360"); l.setAttribute("y2", "120"); l.setAttribute("stroke", "rgba(255,255,255,0.4)"); l.setAttribute("stroke-width", "3"); svg.appendChild(l);
             for(let i=0; i<3; i++) {
-                let ang = i * 60; let r = ang * Math.PI / 180;
-                let x1 = 190 - 90*Math.cos(r); let y1 = 80 - 90*Math.sin(r);
-                let x2 = 190 + 90*Math.cos(r); let y2 = 80 + 90*Math.sin(r);
-                let l = createTag("line"); l.setAttribute("x1", x1); l.setAttribute("y1", y1); l.setAttribute("x2", x2); l.setAttribute("y2", y2); l.setAttribute("stroke", "#00ff66"); l.setAttribute("stroke-width", "3"); svg.appendChild(l);
+                let c = makeTag("circle"); c.setAttribute("cx", 80 + i*110); c.setAttribute("cy", "120"); c.setAttribute("r", "5"); c.setAttribute("fill", "#38bdf8"); svg.appendChild(c);
             }
         }
-        function drawPerpStreams(svg) {
-            let h = createTag("line"); h.setAttribute("x1", "60"); h.setAttribute("y1", "80"); h.setAttribute("x2", "320"); h.setAttribute("y2", "80"); h.setAttribute("stroke", "#475569"); h.setAttribute("stroke-width", "4"); svg.appendChild(h);
-            let v = createTag("line"); v.setAttribute("x1", "190"); v.setAttribute("y1", "15"); v.setAttribute("x2", "190"); v.setAttribute("y2", "145"); v.setAttribute("stroke", "#f97316"); v.setAttribute("stroke-width", "4"); svg.appendChild(v);
+        function drawAngleGuide(svg) {
+            let b = makeTag("line"); b.setAttribute("x1", "70"); b.setAttribute("y1", "130"); b.setAttribute("x2", "170"); b.setAttribute("y2", "130"); b.setAttribute("stroke", "rgba(255,255,255,0.5)"); b.setAttribute("stroke-width", "3"); svg.appendChild(b);
+            let a = makeTag("line"); a.setAttribute("x1", "70"); a.setAttribute("y1", "130"); a.setAttribute("x2", "70"); a.setAttribute("y2", "40"); a.setAttribute("stroke", "#38bdf8"); a.setAttribute("stroke-width", "3"); svg.appendChild(a);
+        }
+        function drawShapesGuide(svg) {
+            let p = makeTag("path"); p.setAttribute("d", "M 40,50 L 100,50 L 80,120 Z"); p.setAttribute("stroke", "rgba(255,255,255,0.5)"); p.setAttribute("stroke-width", "3"); p.setAttribute("fill", "none"); svg.appendChild(p);
         }
     </script>
 </body>
