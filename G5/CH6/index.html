@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Grade 5 Decimals Lab</title>
+    <title>Decimal Space Explorer</title>
     <style>
         * {
             box-sizing: border-box;
@@ -16,7 +16,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #0b1528;
+            background-color: #020208;
             font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial', sans-serif;
         }
         #game-container {
@@ -28,11 +28,12 @@
             align-items: center;
         }
         canvas {
-            background: linear-gradient(to bottom, #0d1b2a, #1b263b);
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            background-color: #050515;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
             max-width: 100%;
             max-height: 100%;
             aspect-ratio: 16 / 9;
+            cursor: none; /* Hide default cursor to use custom ship steering */
         }
         audio {
             display: none;
@@ -53,7 +54,7 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// --- GAME STATE SYSTEM ---
+// --- GAME SYSTEM STATES ---
 const STATES = {
     BRANDING: 0,
     INSTRUCTIONS: 1,
@@ -64,7 +65,7 @@ const STATES = {
 let currentState = STATES.BRANDING;
 let stateStartTime = Date.now();
 
-// --- ASSET MANAGEMENT ---
+// --- ASSETS ---
 const logoImg = new Image();
 logoImg.src = 'assets/logo.png';
 
@@ -72,43 +73,45 @@ const audioCorrect = document.getElementById('snd-correct');
 const audioWrong = document.getElementById('snd-wrong');
 const audioWin = document.getElementById('snd-win');
 
-// --- DECIMALS APPLICATION CURRICULUM (14 Unique Items) ---
-const decimalQuestions = [
-    { id: 1, problem: "What is the place value of 5 in 12.35?", targetValue: "Hundredths", options: ["Tenths", "Hundredths", "Ones", "Thousandths"], hint: "Count the spaces right of the decimal point: tenths first, then..." },
-    { id: 2, problem: "Convert 0.75 into a fraction in its simplest form.", targetValue: "3/4", options: ["75/10", "3/4", "1/2", "5/7"], hint: "Think about quarters of a dollar: 75 cents out of 100 cents." },
-    { id: 3, problem: "Convert the fraction 3/10 into a decimal format.", targetValue: "0.3", options: ["3.0", "0.03", "0.3", "3.10"], hint: "Dividing by 10 moves the decimal point one step to the left." },
-    { id: 4, problem: "Which is the correct expanded form of 4.26?", targetValue: "4 + 0.2 + 0.06", options: ["4 + 2 + 6", "4 + 0.2 + 0.06", "40 + 2 + 0.6", "4 + 0.02 + 0.6"], hint: "Break down each digit individually by its place position value." },
-    { id: 5, problem: "Find the equivalent decimal to 0.4", targetValue: "0.400", options: ["0.04", "4.0", "0.400", "0.004"], hint: "Adding zeros at the very end of a decimal value doesn't change its worth." },
-    { id: 6, problem: "Identify which pair forms a set of 'Like Decimals'.", targetValue: "1.25 and 4.82", options: ["0.5 and 0.55", "1.25 and 4.82", "3.1 and 12.009", "7 and 0.7"], hint: "Like decimals must have the exact same number of decimal digits." },
-    { id: 7, problem: "Which symbol makes this true?  4.09 [ ? ] 4.1", targetValue: "<", options: [">", "<", "=", "+"], hint: "Convert them to like decimals: compare 4.09 against 4.10." },
-    { id: 8, problem: "Order from LEAST to GREATEST: 0.2, 0.12, 0.22", targetValue: "0.12, 0.2, 0.22", options: ["0.2, 0.12, 0.22", "0.12, 0.2, 0.22", "0.22, 0.2, 0.12", "0.12, 0.22, 0.2"], hint: "Padding with trailing zeros makes reading values easier: 0.20, 0.12, 0.22." },
-    { id: 9, problem: "Calculate the sum: 2.5 + 1.45", targetValue: "3.95", options: ["1.70", "3.95", "3.50", "2.95"], hint: "Align your decimal points perfectly in a vertical column before adding!" },
-    { id: 10, problem: "Solve this subtraction: 5.0 - 1.2", targetValue: "3.8", options: ["4.8", "4.2", "3.8", "3.0"], hint: "Borrow from the ones place just like regular column subtraction." },
-    { id: 11, problem: "Multiply: 0.3 x 4", targetValue: "1.2", options: ["12.0", "0.12", "1.2", "0.7"], hint: "Multiply the whole numbers normally first, then place one decimal jump." },
-    { id: 12, problem: "A wire measures 4.8m. If cut equally into 2 pieces, how long is each?", targetValue: "2.4m", options: ["2.4m", "2.2m", "4.2m", "1.6m"], hint: "Divide 48 by 2, then re-insert the decimal point in the middle position." },
-    { id: 13, problem: "Sam spent $4.50 on juice and $2.25 on snacks. Total spent?", targetValue: "$6.75", options: ["$6.50", "$6.75", "$7.00", "$4.75"], hint: "Combine the dollar components and then add the cent parts cleanly." },
-    { id: 14, problem: "What is the missing value? 7 tenths + 3 hundredths = [ ? ]", targetValue: "0.73", options: ["7.3", "0.073", "0.73", "73.0"], hint: "Write out 0.7 and 0.03 then combine them together vertically." }
+// --- DECIMALS LEARNING CURRICULUM DATA ---
+const dataset = [
+    { id: 1, problem: "Collect the place value of 5 in 12.35", target: "Hundredths", options: ["Tenths", "Hundredths", "Ones", "Thousandths"], hint: "First spot right is tenths, second spot is..." },
+    { id: 2, problem: "Find the simplest fraction form of 0.75", target: "3/4", options: ["75/10", "3/4", "1/2", "5/7"], hint: "Think of 75 cents out of 100 cents (3 quarters)." },
+    { id: 3, problem: "Intercept the decimal format for 3/10", target: "0.3", options: ["3.0", "0.03", "0.3", "3.10"], hint: "Three tenths means a 3 right after the decimal point." },
+    { id: 4, problem: "Catch the correct expanded form of 4.26", target: "4 + 0.2 + 0.06", options: ["4 + 2 + 6", "4 + 0.2 + 0.06", "40 + 2 + 0.6", "4+0.02+0.6"], hint: "Break down the ones, tenths, and hundredths values." },
+    { id: 5, problem: "Capture the equivalent decimal to 0.4", target: "0.400", options: ["0.04", "4.0", "0.400", "0.004"], hint: "Adding trailing zeros on the far right does not alter value." },
+    { id: 6, problem: "Which pair shows a set of Like Decimals?", target: "1.25 & 4.82", options: ["0.5 & 0.55", "1.25 & 4.82", "3.1 & 12.009", "7 & 0.7"], hint: "Like decimals have the same number of digits after the decimal point." },
+    { id: 7, problem: "Which symbol makes this true: 4.09 [ ? ] 4.1", target: "<", options: [">", "<", "=", "+"], hint: "Compare 4.09 with 4.10. Which one is larger?" },
+    { id: 8, problem: "Solve the summation challenge: 2.5 + 1.45", target: "3.95", options: ["1.70", "3.95", "3.50", "2.95"], hint: "Line up the decimals vertically: 2.50 + 1.45" },
+    { id: 9, problem: "Solve this subtraction problem: 5.0 - 1.2", target: "3.8", options: ["4.8", "4.2", "3.8", "3.0"], hint: "Borrow from the ones place just like regular subtraction." },
+    { id: 10, problem: "Multiply these factors: 0.3 x 4", target: "1.2", options: ["12.0", "0.12", "1.2", "0.7"], hint: "Calculate 3 x 4, then slide the decimal point back one space." },
+    { id: 11, problem: "Divide up this measurement: 4.8m cut into 2 equal parts", target: "2.4m", options: ["2.4m", "2.2m", "4.2m", "1.6m"], hint: "Cut 48 in half, then place the decimal back in the middle." },
+    { id: 12, problem: "Sam spent $4.50 on juice and $2.25 on snacks. Total?", target: "$6.75", options: ["$6.50", "$6.75", "$7.00", "$4.75"], hint: "Add the dollars together, then add the cent parts cleanly." }
 ];
 
-let sessionQuestions = [];
+let gameQuestions = [];
 let currentQIndex = 0;
 let score = 0;
 let attempts = 0;
-let feedbackType = ""; 
+let feedbackType = "";
 let feedbackTimer = 0;
 let hintActive = false;
 
-// Interface coordinates & physics references
-let flasks = [];
-let condenserTarget = null;
-let draggedFlask = null;
-let dragOffset = { x: 0, y: 0 };
+// --- GAME OBJECTS & INTERACTION ---
+let ship = { x: 512, y: 480, r: 25, targetX: 512 };
+let asteroids = [];
 let particles = [];
+let stars = [];
+let mouseInputX = 512;
 
-// --- INITIALIZE GAME ---
+// Populate background starfield array
+for (let i = 0; i < 40; i++) {
+    stars.push({ x: Math.random() * 1024, y: Math.random() * 576, speed: Math.random() * 1.5 + 0.5, size: Math.random() * 2 });
+}
+
+// --- INITIALIZE GAME SESSION ---
 function initGame() {
-    // Randomize elements and select 10 unique non-repetitive tasks
-    sessionQuestions = [...decimalQuestions].sort(() => Math.random() - 0.5).slice(0, 10);
+    gameQuestions = [...dataset].sort(() => Math.random() - 0.5).slice(0, 10); // Pick 10 randomized non-repetitive tasks
     score = 0;
     currentQIndex = 0;
     loadQuestion();
@@ -117,86 +120,55 @@ function initGame() {
 function loadQuestion() {
     attempts = 0;
     hintActive = false;
-    draggedFlask = null;
-    flasks = [];
-
-    if (currentQIndex >= sessionQuestions.length) {
+    asteroids = [];
+    
+    if (currentQIndex >= gameQuestions.length) {
         currentState = STATES.GAMEOVER;
         audioWin.currentTime = 0;
-        audioWin.play().catch(e => console.log("Audio device standby"));
+        audioWin.play().catch(() => {});
         return;
     }
 
-    const q = sessionQuestions[currentQIndex];
+    const q = gameQuestions[currentQIndex];
     
-    // Position flasks in a non-overlapping horizontal rack layout
-    const startX = 120;
-    const spacing = 210;
-    const yPos = 430;
-
+    // Distribute answer option asteroids down along the top line evenly
+    const laneWidth = 1024 / q.options.length;
     q.options.forEach((opt, idx) => {
-        flasks.push({
-            id: idx,
+        asteroids.push({
             text: opt.toString(),
-            x: startX + (idx * spacing),
-            y: yPos,
-            ox: startX + (idx * spacing),
-            oy: yPos,
-            w: 150,
-            h: 85,
-            isCorrect: opt.toString() === q.targetValue.toString()
+            x: (laneWidth * idx) + (laneWidth / 2),
+            y: -60 - (Math.random() * 40), // slightly staggered launch
+            r: 45,
+            speed: 1.5,
+            isCorrect: opt.toString() === q.target.toString()
         });
     });
-
-    // Central safe chemical processing destination boundaries
-    condenserTarget = {
-        x: 387,
-        y: 200,
-        w: 250,
-        h: 140,
-        text: "LAB CONDENSER"
-    };
 }
 
-// --- VISUAL FX PARTICLES ---
-function generateCelebrationFX() {
-    particles = [];
-    for (let i = 0; i < 50; i++) {
+// --- PARTICLE EMITTER ENGINE ---
+function spawnExplosion(x, y, color) {
+    for (let i = 0; i < 40; i++) {
         particles.push({
-            x: canvas.width / 2,
-            y: canvas.height / 2,
+            x: x,
+            y: y,
             vx: (Math.random() - 0.5) * 12,
-            vy: (Math.random() - 0.5) * 12 - 4,
-            radius: Math.random() * 5 + 4,
-            color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+            vy: (Math.random() - 0.5) * 12,
+            radius: Math.random() * 4 + 2,
+            color: color,
             alpha: 1,
-            life: Math.random() * 20 + 40
+            life: Math.random() * 20 + 25
         });
     }
 }
 
-function updateParticles() {
-    for (let i = particles.length - 1; i >= 0; i--) {
-        let p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.15; // Gravity pull simulations
-        p.alpha -= 1 / p.life;
-        if (p.alpha <= 0) particles.splice(i, 1);
-    }
-}
-
-// --- DRAW FUNCTIONS ---
+// --- LOOP RENDERING LOGIC ---
 function drawBranding() {
-    // Requirements enforced: background must not be raw white inside transparent elements. 
-    // Pure branding screen blocks everything else for exactly 5 seconds.
-    ctx.fillStyle = "#ffffff"; 
+    ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     if (logoImg.complete && logoImg.naturalWidth !== 0) {
         ctx.drawImage(logoImg, canvas.width / 2 - logoImg.width / 2, canvas.height / 2 - logoImg.height / 2);
     } else {
-        ctx.fillStyle = "#1b263b";
+        ctx.fillStyle = "#0a0a23";
         ctx.font = "bold 45px Arial";
         ctx.textAlign = "center";
         ctx.fillText("INNOVINE", canvas.width / 2, canvas.height / 2);
@@ -204,201 +176,260 @@ function drawBranding() {
 }
 
 function drawInstructions() {
-    ctx.fillStyle = "#0f172a";
+    ctx.fillStyle = "#030312";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Decorative child header elements
+    // Dynamic space aesthetic accents
     ctx.fillStyle = "#38bdf8";
-    ctx.font = "bold 42px 'Comic Sans MS'";
+    ctx.font = "bold 40px 'Comic Sans MS'";
     ctx.textAlign = "center";
-    ctx.fillText("🧪 THE DECIMAL LAB EXPERIMENT 🧪", canvas.width / 2, 110);
+    ctx.fillText("🚀 DECIMAL ASTEROID NAVIGATOR 🚀", canvas.width / 2, 120);
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "23px 'Comic Sans MS'";
-    ctx.fillText("Power up the lab equipment by parsing chemical formulas correctly!", canvas.width / 2, 210);
-    ctx.fillText("Drag the correct Flask choice directly onto the Main Lab Condenser slot.", canvas.width / 2, 260);
-    ctx.fillText("Warning: You have 2 attempts before automatic formula hints are revealed!", canvas.width / 2, 310);
+    ctx.font = "22px 'Comic Sans MS'";
+    ctx.fillText("Pilot your Starship left or right to capture the correct math asteroid!", canvas.width / 2, 220);
+    ctx.fillText("Avoid colliding with wrong values or your shields will take structural damage.", canvas.width / 2, 270);
+    ctx.fillText("Fail twice on a question, and your ship's AI computer will transmit a hint!", canvas.width / 2, 320);
 
-    // Bouncing action trigger button
-    let shiftY = Math.sin(Date.now() / 150) * 6;
-    ctx.fillStyle = "#10b981";
+    let pulseButton = Math.sin(Date.now() / 150) * 5;
+    ctx.fillStyle = "#f43f5e";
     ctx.beginPath();
-    ctx.roundRect(canvas.width / 2 - 140, 390 + shiftY, 280, 65, 25);
+    ctx.roundRect(canvas.width / 2 - 140, 400 + pulseButton, 280, 60, 20);
     ctx.fill();
     ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 2;
     ctx.stroke();
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 24px 'Comic Sans MS'";
-    ctx.fillText("START EXPERIMENT", canvas.width / 2, 431 + shiftY);
+    ctx.fillText("LAUNCH SECTOR", canvas.width / 2, 438 + pulseButton);
 }
 
 function drawHUD() {
-    ctx.fillStyle = "rgba(15, 23, 42, 0.6)";
+    // Top control banner strip
+    ctx.fillStyle = "rgba(10, 10, 35, 0.8)";
+    ctx.fillRect(0, 0, canvas.width, 70);
+    ctx.strokeStyle = "#38bdf8";
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.roundRect(20, 15, 984, 65, 12);
-    ctx.fill();
+    ctx.moveTo(0, 70); ctx.lineTo(canvas.width, 70);
+    ctx.stroke();
 
     ctx.fillStyle = "#fbbf24";
-    ctx.font = "bold 22px 'Comic Sans MS'";
+    ctx.font = "bold 20px 'Comic Sans MS'";
     ctx.textAlign = "left";
-    ctx.fillText(`💡 Task: ${currentQIndex + 1} / ${sessionQuestions.length}`, 40, 54);
+    ctx.fillText(`Sector Progress: ${currentQIndex + 1} / 10`, 30, 42);
 
     ctx.textAlign = "right";
     ctx.fillStyle = "#34d399";
-    ctx.fillText(`Lab Points: ${score}`, 984 - 40, 54);
+    ctx.fillText(`Shield Power Points: ${score}`, canvas.width - 30, 42);
 }
 
 function drawPlayingState() {
-    drawHUD();
-    const q = sessionQuestions[currentQIndex];
-
-    // Problem Canvas Module
-    ctx.fillStyle = "#1e293b";
-    ctx.beginPath();
-    ctx.roundRect(100, 100, 824, 85, 16);
-    ctx.fill();
-    ctx.strokeStyle = "#38bdf8";
-    ctx.lineWidth = 3;
-    ctx.stroke();
-
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 24px 'Comic Sans MS'";
-    ctx.textAlign = "center";
-    ctx.fillText(q.problem, canvas.width / 2, 150);
-
-    // Lab Condenser Container Target
-    ctx.fillStyle = "rgba(56, 189, 248, 0.15)";
-    ctx.beginPath();
-    ctx.roundRect(condenserTarget.x, condenserTarget.y, condenserTarget.w, condenserTarget.h, 20);
-    ctx.fill();
-    ctx.strokeStyle = "#38bdf8";
-    ctx.lineWidth = 2;
-    ctx.setLineDash([8, 6]);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    ctx.fillStyle = "#38bdf8";
-    ctx.font = "bold 18px 'Comic Sans MS'";
-    ctx.fillText("🧪 DROP FLASK HERE", condenserTarget.x + condenserTarget.w / 2, condenserTarget.y + condenserTarget.h / 2 + 6);
-
-    // Process Dynamic Multi-Attempt Prompt Condition
-    if (hintActive) {
-        ctx.fillStyle = "#f43f5e";
-        ctx.font = "bold 19px 'Comic Sans MS'";
-        ctx.fillText(`Hint: ${q.hint}`, canvas.width / 2, 380);
-    }
-
-    // Render Chemical Flask Options
-    flasks.forEach(f => {
-        if (f === draggedFlask) return;
-        drawFlaskElement(f);
+    // Background Starfield Move Engine
+    stars.forEach(s => {
+        s.y += s.speed;
+        if (s.y > canvas.height) s.y = 0;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(s.x, s.y, s.size, s.size);
     });
 
-    if (draggedFlask) {
-        drawFlaskElement(draggedFlask);
-    }
-}
+    drawHUD();
+    const q = gameQuestions[currentQIndex];
 
-function drawFlaskElement(f) {
-    // Child friendly colorful lab-flask simulation style draw
-    ctx.fillStyle = "#a855f7";
+    // Main HUD Mission Display Panel
+    ctx.fillStyle = "#0f172a";
     ctx.beginPath();
-    ctx.roundRect(f.x, f.y, f.w, f.h, 15);
+    ctx.roundRect(120, 90, 784, 65, 12);
     ctx.fill();
-    ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = "#a855f7";
     ctx.stroke();
 
-    // Top rim indicator accent
-    ctx.fillStyle = "#c084fc";
-    ctx.fillRect(f.x + 20, f.y, f.w - 40, 6);
-
-    // Choice string text
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 20px 'Comic Sans MS'";
+    ctx.font = "bold 22px 'Comic Sans MS'";
     ctx.textAlign = "center";
-    ctx.fillText(f.text, f.x + f.w / 2, f.y + f.h / 2 + 7);
+    ctx.fillText(q.problem, canvas.width / 2, 130);
+
+    // Multi-Attempt Trigger Prompt Processing Hint
+    if (hintActive) {
+        ctx.fillStyle = "#f43f5e";
+        ctx.font = "bold 18px 'Comic Sans MS'";
+        ctx.fillText(`⚠️ Ship Computer Hint: ${q.hint}`, canvas.width / 2, 190);
+    }
+
+    // Ship Target Smooth Interpolation Physics
+    ship.x += (ship.targetX - ship.x) * 0.15;
+    
+    // Render Spaceship Model Vector Geometry
+    ctx.save();
+    ctx.translate(ship.x, ship.y);
+    // Draw Engine fire pulse
+    let thrustGlow = Math.random() * 15 + 10;
+    ctx.fillStyle = "#f97316";
+    ctx.beginPath();
+    ctx.moveTo(-10, 25); ctx.lineTo(0, 25 + thrustGlow); ctx.lineTo(10, 25);
+    ctx.closePath();
+    ctx.fill();
+
+    // Main Ship Hull
+    ctx.fillStyle = "#38bdf8";
+    ctx.beginPath();
+    ctx.moveTo(0, -30); // nose cone
+    ctx.lineTo(-22, 25); // wings left
+    ctx.lineTo(0, 12);  // core rear inward indent
+    ctx.lineTo(22, 25);  // wings right
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "#ffffff";
+    ctx.stroke();
+
+    // Cockpit windshield accent
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.moveTo(0, -15); ctx.lineTo(-7, 5); ctx.lineTo(7, 5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    // Engine Tick Processing for falling Asteroids
+    asteroids.forEach(a => {
+        a.y += a.speed;
+        
+        // Loop position wrapping back to screen top edge if it falls past bounds
+        if (a.y - a.r > canvas.height) {
+            a.y = -60;
+            a.x = Math.random() * (canvas.width - 100) + 50;
+        }
+
+        // Vector circle canvas draw for space asteroids
+        ctx.fillStyle = "#475569";
+        ctx.beginPath();
+        ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#94a3b8";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Print mathematical choices centered on asteroid surface bodies
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 18px 'Comic Sans MS'";
+        ctx.textAlign = "center";
+        ctx.fillText(a.text, a.x, a.y + 6);
+
+        // Core Circle Boundary Box Collision Checks
+        let dx = a.x - ship.x;
+        let dy = a.y - ship.y;
+        let gapDistance = Math.sqrt(dx * dx + dy * dy);
+
+        if (gapDistance < a.r + ship.r - 5) {
+            // Evaluated Hit Mechanics triggered!
+            if (a.isCorrect) {
+                spawnExplosion(a.x, a.y, "#10b981");
+                audioCorrect.currentTime = 0;
+                audioCorrect.play().catch(() => {});
+                score += 10;
+                feedbackType = "correct";
+            } else {
+                spawnExplosion(a.x, a.y, "#ef4444");
+                audioWrong.currentTime = 0;
+                audioWrong.play().catch(() => {});
+                attempts++;
+                feedbackType = "wrong";
+            }
+            feedbackTimer = Date.now();
+            currentState = STATES.FEEDBACK;
+        }
+    });
 }
 
 function drawFeedbackState() {
-    drawHUD();
-    
-    ctx.globalAlpha = 0.35;
+    // Keep space scene executing smoothly underneath transparency mask
     drawPlayingState();
-    ctx.globalAlpha = 1.0;
 
-    ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+    ctx.fillStyle = "rgba(2, 2, 10, 0.8)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    particles.forEach(p => {
+    // Particle execution update processing loops
+    for (let i = particles.length - 1; i >= 0; i--) {
+        let p = particles[i];
+        p.x += p.vx; p.y += p.vy;
+        p.alpha -= 1 / p.life;
+        if (p.alpha <= 0) { particles.splice(i, 1); continue; }
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.alpha;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fill();
-    });
+    }
     ctx.globalAlpha = 1.0;
 
     ctx.textAlign = "center";
     if (feedbackType === "correct") {
         ctx.fillStyle = "#34d399";
-        ctx.font = "bold 52px 'Comic Sans MS'";
-        ctx.fillText("🧪 REACTION SUCCESSFUL! 🧪", canvas.width / 2, canvas.height / 2 - 15);
-        ctx.font = "22px 'Comic Sans MS'";
-        ctx.fillStyle = "#e2e8f0";
-        ctx.fillText("+10 Score Points added safely to your profile matrix.", canvas.width / 2, canvas.height / 2 + 35);
+        ctx.font = "bold 48px 'Comic Sans MS'";
+        ctx.fillText("🌟 SECTOR CLEARED! 🌟", canvas.width / 2, canvas.height / 2 - 10);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "20px 'Comic Sans MS'";
+        ctx.fillText("Warp Speed Activated to Next Target System...", canvas.width / 2, canvas.height / 2 + 35);
     } else {
         ctx.fillStyle = "#f43f5e";
-        ctx.font = "bold 52px 'Comic Sans MS'";
-        ctx.fillText("💥 UNSTABLE MIXTURE 💥", canvas.width / 2, canvas.height / 2 - 15);
-        ctx.font = "22px 'Comic Sans MS'";
-        ctx.fillStyle = "#e2e8f0";
-        ctx.fillText("Elements unstable. Resetting positions to try again!", canvas.width / 2, canvas.height / 2 + 35);
+        ctx.font = "bold 48px 'Comic Sans MS'";
+        ctx.fillText("💥 HULL COLLISION CRITICAL 💥", canvas.width / 2, canvas.height / 2 - 10);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "20px 'Comic Sans MS'";
+        ctx.fillText("Re-engaging shields... Deflectors resetting!", canvas.width / 2, canvas.height / 2 + 35);
+    }
+
+    if (Date.now() - feedbackTimer > 2000) { // Keep display freeze localized to 2 seconds
+        if (feedbackType === "correct") {
+            currentQIndex++;
+            loadQuestion();
+            currentState = STATES.PLAYING;
+        } else {
+            if (attempts >= 2) hintActive = true;
+            // Respawn all tumbling items immediately above viewable viewport
+            asteroids.forEach(a => a.y = -60 - (Math.random() * 40));
+            currentState = STATES.PLAYING;
+        }
     }
 }
 
 function drawGameOverState() {
-    ctx.fillStyle = "#0f172a";
+    ctx.fillStyle = "#030312";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "#fbbf24";
-    ctx.font = "bold 54px 'Comic Sans MS'";
+    ctx.font = "bold 50px 'Comic Sans MS'";
     ctx.textAlign = "center";
-    ctx.fillText("LAB RESEARCH COMPLETE!", canvas.width / 2, 170);
+    ctx.fillText("GALAXY JOURNEY COMPLETE!", canvas.width / 2, 180);
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "28px 'Comic Sans MS'";
-    ctx.fillText(`Final Lab Performance Score: ${score} / 100`, canvas.width / 2, 260);
+    ctx.font = "26px 'Comic Sans MS'";
+    ctx.fillText(`Total Collected Shield Energy: ${score} Points`, canvas.width / 2, 270);
 
-    let ranking = "Master Decimal Chemist! 🏆";
-    if (score < 80) ranking = "Junior Lab Assistant! Keep testing! 🔬";
+    let badge = "Rank achieved: Admiral of Decimals! 🌌🏆";
+    if(score < 70) badge = "Rank achieved: Space Pilot Trainee! 🚀";
     ctx.fillStyle = "#38bdf8";
-    ctx.font = "bold 24px 'Comic Sans MS'";
-    ctx.fillText(ranking, canvas.width / 2, 320);
+    ctx.fillText(badge, canvas.width / 2, 330);
 
-    // Interactive Loop Reset Trigger Element
+    // Interactive Core Return Loop Trigger Interface
     ctx.fillStyle = "#6366f1";
     ctx.beginPath();
-    ctx.roundRect(canvas.width / 2 - 130, 410, 260, 65, 20);
+    ctx.roundRect(canvas.width / 2 - 120, 420, 240, 60, 20);
     ctx.fill();
     ctx.strokeStyle = "#ffffff";
     ctx.stroke();
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 24px 'Comic Sans MS'";
-    ctx.fillText("RUN AGAIN", canvas.width / 2, 451);
+    ctx.fillText("REPLAY MISSION", canvas.width / 2, 458);
 }
 
-// --- ENGINE REFRESH LOOP ---
-function runEngine() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+// --- MAIN RUNTIME LOOPS ---
+function updateAndRender() {
     switch (currentState) {
         case STATES.BRANDING:
             drawBranding();
-            if (Date.now() - stateStartTime > 5000) { 
+            if (Date.now() - stateStartTime > 5000) { // Enforces strict 5-second lock
                 currentState = STATES.INSTRUCTIONS;
             }
             break;
@@ -409,135 +440,73 @@ function runEngine() {
             drawPlayingState();
             break;
         case STATES.FEEDBACK:
-            updateParticles();
             drawFeedbackState();
-            if (Date.now() - feedbackTimer > 2000) { 
-                if (feedbackType === "correct") {
-                    currentQIndex++;
-                    loadQuestion();
-                    currentState = STATES.PLAYING;
-                } else {
-                    if (attempts >= 2) hintActive = true;
-                    flasks.forEach(f => { f.x = f.ox; f.y = f.oy; });
-                    currentState = STATES.PLAYING;
-                }
-            }
             break;
         case STATES.GAMEOVER:
             drawGameOverState();
             break;
     }
-    requestAnimationFrame(runEngine);
+    requestAnimationFrame(updateAndRender);
 }
 
-// --- CALCULATION COORDINATE INTERPOLATIONS ---
-function extractPositionCoords(e) {
-    const spaceRect = canvas.getBoundingClientRect();
-    const multiplierX = canvas.width / spaceRect.width;
-    const multiplierY = canvas.height / spaceRect.height;
+// --- DEVICE INPUT RESOLUTION SYSTEM ---
+function calculateScaleCoords(e) {
+    const boundRect = canvas.getBoundingClientRect();
+    const multX = canvas.width / boundRect.width;
+    const multY = canvas.height / boundRect.height;
     
-    let baseClientX = e.clientX;
-    let baseClientY = e.clientY;
+    let pointerX = e.clientX;
+    let pointerY = e.clientY;
     if (e.touches && e.touches.length > 0) {
-        baseClientX = e.touches[0].clientX;
-        baseClientY = e.touches[0].clientY;
+        pointerX = e.touches[0].clientX;
+        pointerY = e.touches[0].clientY;
     }
-
     return {
-        x: (baseClientX - spaceRect.left) * multiplierX,
-        y: (baseClientY - spaceRect.top) * multiplierY
+        x: (pointerX - boundRect.left) * multX,
+        y: (pointerY - boundRect.top) * multY
     };
 }
 
-function verifyIntersect(cursorPos, boxElement) {
-    return cursorPos.x > boxElement.x && 
-           cursorPos.x < boxElement.x + boxElement.w && 
-           cursorPos.y > boxElement.y && 
-           cursorPos.y < boxElement.y + boxElement.h;
+function processPointerMovement(coords) {
+    mouseInputX = coords.x;
+    if (currentState === STATES.PLAYING) {
+        // Constrain the ship within the inner field margins safely
+        if (mouseInputX < 30) mouseInputX = 30;
+        if (mouseInputX > 994) mouseInputX = 994;
+        ship.targetX = mouseInputX;
+    }
 }
 
-// --- INPUT HANDLERS ---
-function triggerPress(pos) {
+function processPointerClicks(coords) {
     if (currentState === STATES.INSTRUCTIONS) {
-        if (pos.x > canvas.width/2 - 140 && pos.x < canvas.width/2 + 140 && pos.y > 390 && pos.y < 455) {
+        if (coords.x > canvas.width/2 - 140 && coords.x < canvas.width/2 + 140 && coords.y > 400 && coords.y < 460) {
             initGame();
             currentState = STATES.PLAYING;
-        }
-    } 
-    else if (currentState === STATES.PLAYING) {
-        for (let flask of flasks) {
-            if (verifyIntersect(pos, flask)) {
-                draggedFlask = flask;
-                dragOffset.x = pos.x - flask.x;
-                dragOffset.y = pos.y - flask.y;
-                break;
-            }
         }
     } 
     else if (currentState === STATES.GAMEOVER) {
-        if (pos.x > canvas.width/2 - 130 && pos.x < canvas.width/2 + 130 && pos.y > 410 && pos.y < 475) {
+        if (coords.x > canvas.width/2 - 120 && coords.x < canvas.width/2 + 120 && coords.y > 420 && coords.y < 480) {
             initGame();
             currentState = STATES.PLAYING;
         }
     }
 }
 
-function triggerDrag(pos) {
-    if (currentState === STATES.PLAYING && draggedFlask) {
-        draggedFlask.x = pos.x - dragOffset.x;
-        draggedFlask.y = pos.y - dragOffset.y;
-    }
-}
+// --- COMPATIBILITY LISTENER REGISTRATION ---
+canvas.addEventListener('mousemove', (e) => processPointerMovement(calculateScaleCoords(e)));
+canvas.addEventListener('mousedown', (e) => processPointerClicks(calculateScaleCoords(e)));
 
-function triggerRelease() {
-    if (currentState === STATES.PLAYING && draggedFlask) {
-        let centerPoint = {
-            x: draggedFlask.x + draggedFlask.w / 2,
-            y: draggedFlask.y + draggedFlask.h / 2
-        };
-
-        if (centerPoint.x > condenserTarget.x && centerPoint.x < condenserTarget.x + condenserTarget.w &&
-            centerPoint.y > condenserTarget.y && centerPoint.y < condenserTarget.y + condenserTarget.h) {
-            
-            if (draggedFlask.isCorrect) {
-                audioCorrect.currentTime = 0;
-                audioCorrect.play().catch(err => console.log("Audio contextual lock"));
-                generateCelebrationFX();
-                score += 10;
-                feedbackType = "correct";
-            } else {
-                audioWrong.currentTime = 0;
-                audioWrong.play().catch(err => console.log("Audio contextual lock"));
-                attempts++;
-                feedbackType = "wrong";
-            }
-            feedbackTimer = Date.now();
-            currentState = STATES.FEEDBACK;
-        } else {
-            draggedFlask.x = draggedFlask.ox;
-            draggedFlask.y = draggedFlask.oy;
-        }
-        draggedFlask = null;
-    }
-}
-
-// --- DESKTOP AND TOUCH EVENT REGISTRATIONS ---
-canvas.addEventListener('mousedown', (e) => triggerPress(extractPositionCoords(e)));
-canvas.addEventListener('mousemove', (e) => triggerDrag(extractPositionCoords(e)));
-window.addEventListener('mouseup', () => triggerRelease());
-
-canvas.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    triggerPress(extractPositionCoords(e));
-}, { passive: false });
 canvas.addEventListener('touchmove', (e) => {
     e.preventDefault();
-    triggerDrag(extractPositionCoords(e));
+    processPointerMovement(calculateScaleCoords(e));
 }, { passive: false });
-window.addEventListener('touchend', () => triggerRelease());
+canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    processPointerClicks(calculateScaleCoords(e));
+}, { passive: false });
 
-// Run Engine Initialization
-runEngine();
+// Start the game engine loop
+updateAndRender();
 </script>
 
 </body>
