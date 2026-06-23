@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cartography Treasure Hunt</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Georgia', serif;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #1a120b;
+            color: #f5f2eb;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #viewport-root {
+            width: 100%;
+            max-width: 440px;
+            height: 100%;
+            max-height: 780px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: #2c1e11;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            border: 4px double #d4af37;
+        }
+
+        /* --- STAGE 1: BRANDING-ONLY LOGO SCREEN (5 SECONDS) --- */
+        #branding-splash {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .branding-img {
+            max-width: 180px;
+            height: auto;
+        }
+
+        /* --- OVERLAY INTERFACES --- */
+        .stage-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 16px;
+            z-index: 10;
+        }
+
+        .parchment-panel {
+            background: #f4eccf;
+            background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            border: 2px solid #8b5a2b;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: inset 0 0 20px rgba(139,90,43,0.3);
+            color: #3e2723;
+        }
+
+        .header-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #5c3a21;
+            color: #d4af37;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid #d4af37;
+        }
+        .header-title { font-weight: 800; font-size: 0.9rem; letter-spacing: 0.5px; text-transform: uppercase; }
+        .header-score { font-weight: 800; font-size: 0.9rem; background: #8b5a2b; color: #fff; padding: 4px 12px; border-radius: 6px; border: 1px solid #d4af37; }
+
+        .instruction-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #3e2723;
+            margin-bottom: 20px;
+        }
+        .instruction-text ul { margin-left: 18px; margin-top: 8px; }
+        .instruction-text li { margin-bottom: 10px; font-weight: 600; color: #795548; }
+
+        .workspace-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .clue-box {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #3e2723;
+            background: #e7dbb3;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #8b5a2b;
+            width: 100%;
+            text-align: center;
+            min-height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* --- THE EXPEDITION MAP ZONE --- */
+        .map-canvas-container {
+            width: 100%;
+            height: 220px;
+            background: #e3d5a8;
+            border-radius: 10px;
+            border: 2px solid #6d4c41;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .target-drop-slot {
+            width: 125px;
+            height: 44px;
+            border: 2px dashed #b22222;
+            border-radius: 6px;
+            background: rgba(178, 34, 34, 0.15);
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #b22222;
+            text-transform: uppercase;
+            z-index: 20;
+            transition: all 0.3s ease;
+            text-align: center;
+            padding: 2px;
+            background-color: rgba(244, 236, 207, 0.85);
+        }
+
+        /* --- COMPONENT PARTS TRAY --- */
+        .parts-tray {
+            width: 100%;
+            background: #d7ccc8;
+            border: 2px solid #8d6e63;
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .draggable-part {
+            width: 110px;
+            height: 48px;
+            background: #f5f5f5;
+            border: 2px solid #5d4037;
+            border-radius: 8px;
+            cursor: grab;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #3e2723;
+            touch-action: none;
+            transition: transform 0.2s, background 0.2s;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            padding: 2px;
+        }
+        .draggable-part:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+            background: #bcaaa4;
+        }
+
+        .strike-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .strike-token {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #cc3333;
+            box-shadow: 0 0 6px #cc3333;
+            transition: all 0.3s ease;
+        }
+        .strike-token.used {
+            background: #b0bec5;
+            box-shadow: none;
+        }
+
+        .action-btn {
+            background: #8b5a2b;
+            color: #ffffff;
+            border: none;
+            border-bottom: 4px solid #5c3a21;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .action-btn:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+
+        .status-banner {
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            min-height: 22px;
+            color: #5d4037;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="viewport-root">
+        
+        <div id="branding-splash">
+            <img src="assets/logo.png" class="branding-img" alt="Innovine Logo" onerror="this.src='https://placehold.co/180x60/ffffff/1a120b?text=INNOVINE';">
+        </div>
+
+        <div id="instructions-screen" class="stage-overlay hidden">
+            <div class="parchment-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 12px;">
+                <div class="header-panel">
+                    <div class="header-title">🧭 Cartography Rules & Map Legend</div>
+                </div>
+                <div class="instruction-text">
+                    <p>Welcome to the Cartography Hunt! Navigate coordinates, trace scale bars, and match symbols to solve the map secrets:</p>
+                    <ul>
+                        <li>1. Analyze the tracking logs and compass directions in the scroll box.</li>
+                        <li>2. **Drag & drop** or **tap** an answer ticket from the toolkit tray down below.</li>
+                        <li>3. Fill the empty map marker accurately. You get **2 search attempts** per layout!</li>
+                    </ul>
+                </div>
+                <button class="action-btn" onclick="initializeTreasureHunt()">Begin Map Expedition</button>
+            </div>
+        </div>
+
+        <div id="gameplay-screen" class="stage-overlay hidden">
+            <div class="header-panel">
+                <div id="game-level-tag" class="header-title">Map Segment: 01 / 08</div>
+                <div id="game-score-tag" class="header-score">Gold: 0</div>
+            </div>
+
+            <div class="parchment-panel workspace-area">
+                <div id="game-prompt" class="clue-box">Unrolling old exploration layouts...</div>
+                
+                <div class="map-canvas-container" id="map-frame-box">
+                    <svg id="map-svg" width="100%" height="100%" style="position:absolute; pointer-events:none;"></svg>
+                    <div class="target-drop-slot" id="target-slot-zone">Drop Marker</div>
+                </div>
+
+                <div class="strike-container">
+                    <div id="strike-dot-1" class="strike-token"></div>
+                    <div id="strike-dot-2" class="strike-token"></div>
+                </div>
+                
+                <div class="parts-tray" id="tray-container">
+                    </div>
+            </div>
+
+            <div id="game-toast-feedback" class="status-banner">Align the tracking ticket onto the map!</div>
+        </div>
+
+    </div>
+
+    <script>
+        // Media Sound Notification Outlets
+        const audioCorrect = new Audio('assets/correct.mp3');
+        const audioWrong = new Audio('assets/wrong.mp3');
+        const audioWin = new Audio('assets/freesound_community-claps-44774.mp3');
+
+        function playAudio(track) {
+            try {
+                track.currentTime = 0;
+                track.play();
+            } catch(e) { console.log("Audio routing handled safely."); }
+        }
+
+        // State Engine Registers
+        let scoreCount = 0;
+        let taskIndex = 0;
+        let internalStrikeCounter = 0;
+        let draggedType = null;
+        let expeditionPuzzles = [];
+
+        // SVG Graphics Building Handlers
+        function makeSVGTag(name) { return document.createElementNS("http://www.w3.org/2000/svg", name); }
+        
+        function applySVGAttrs(el, attrs) {
+            for (let key in attrs) { el.setAttribute(key, attrs[key]); }
+            return el;
+        }
+
+        function createMapLabel(svg, x, y, text, color = "#4e342e", size = "11") {
+            let t = makeSVGTag("text");
+            applySVGAttrs(t, { x: x, y: y, fill: color, "font-size": size, "font-weight": "bold", "text-anchor": "middle" });
+            t.textContent = text;
+            svg.appendChild(t);
+        }
+
+        function renderCompassRose(svg, cx, cy) {
+            let p1 = makeSVGTag("path"); applySVGAttrs(p1, { d: `M ${cx} ${cy} L ${cx} ${cy-25} L ${cx+6} ${cy} Z`, fill: "#b22222" }); svg.appendChild(p1);
+            let p2 = makeSVGTag("path"); applySVGAttrs(p2, { d: `M ${cx} ${cy} L ${cx} ${cy-25} L ${cx-6} ${cy} Z`, fill: "#5d4037" }); svg.appendChild(p2);
+            let p3 = makeSVGTag("path"); applySVGAttrs(p3, { d: `M ${cx} ${cy} L ${cx} ${cy+25} L ${cx+6} ${cy} Z`, fill: "#5d4037" }); svg.appendChild(p3);
+            let p4 = makeSVGTag("path"); applySVGAttrs(p4, { d: `M ${cx} ${cy} L ${cx} ${cy+25} L ${cx-6} ${cy} Z`, fill: "#b22222" }); svg.appendChild(p4);
+            let p5 = makeSVGTag("path"); applySVGAttrs(p5, { d: `M ${cx} ${cy} L ${cx+25} ${cy} L ${cx} ${cy-6} Z`, fill: "#b22222" }); svg.appendChild(p5);
+            let p6 = makeSVGTag("path"); applySVGAttrs(p6, { d: `M ${cx} ${cy} L ${cx+25} ${cy} L ${cx} ${cy+6} Z`, fill: "#5d4037" }); svg.appendChild(p6);
+            let p7 = makeSVGTag("path"); applySVGAttrs(p7, { d: `M ${cx} ${cy} L ${cx-25} ${cy} L ${cx} ${cy-6} Z`, fill: "#5d4037" }); svg.appendChild(p7);
+            let p8 = makeSVGTag("path"); applySVGAttrs(p8, { d: `M ${cx} ${cy} L ${cx-25} ${cy} L ${cx} ${cy+6} Z`, fill: "#b22222" }); svg.appendChild(p8);
+            createMapLabel(svg, cx, cy - 29, "N", "#b22222", "10");
+        }
+
+        // Complete Grade 5 Curricular Quiz Database Pool
+        const mapQuizDatabase = [
+            {
+                q: "Observe the map lines. Find the tracking path that marks a set of perfectly Collinear Points.",
+                correct: "collinear",
+                options: ["collinear", "concurrent", "perpendicular"],
+                slotPos: { top: "135px", left: "140px" },
+                render: (svg) => {
+                    let r = makeSVGTag("rect"); applySVGAttrs(r, { x: "10", y: "10", width: "380", height: "200", fill: "none", stroke: "#8b5a2b", "stroke-width": "1" }); svg.appendChild(r);
+                    let l = makeSVGTag("line"); applySVGAttrs(l, { x1: "40", y1: "80", x2: "360", y2: "80", stroke: "#8b5a2b", "stroke-width": "2", "stroke-dasharray": "6 4" }); svg.appendChild(l);
+                    let locs = [70, 200, 330]; let tokens = ["Oasis Alpha", "Camp Site 1", "Oasis Beta"];
+                    locs.forEach((cx, i) => {
+                        let c = makeSVGTag("circle"); applySVGAttrs(c, { cx: cx, cy: "80", r: "6", fill: "#00796b" }); svg.appendChild(c);
+                        createMapLabel(svg, cx, 65, tokens[i]);
+                    });
+                    renderCompassRose(svg, 350, 40);
+                }
+            },
+            {
+                q: "A survey path boundary loops completely back to its origin station, forming an safely enclosed Closed Figure.",
+                correct: "closed",
+                options: ["open", "closed", "intersecting"],
+                slotPos: { top: "150px", left: "140px" },
+                render: (svg) => {
+                    let p = makeSVGTag("polygon"); applySVGAttrs(p, { points: "100,50 280,30 320,120 120,130", fill: "rgba(139,90,43,0.1)", stroke: "#5d4037", "stroke-width": "3" }); svg.appendChild(p);
+                    createMapLabel(svg, "200", "85", "Enclosed Safe Zone");
+                    renderCompassRose(svg, 40, 40);
+                }
+            },
+            {
+                q: "A broken canyon river trail splits wide open, meaning a scout cannot follow a complete loop. Identify this Open Figure.",
+                correct: "open",
+                options: ["closed", "open", "parallel"],
+                slotPos: { top: "150px", left: "140px" },
+                render: (svg) => {
+                    let p = makeSVGTag("path"); applySVGAttrs(p, { d: "M 80,40 L 280,40 L 320,120 L 160,120", fill: "none", stroke: "#b22222", "stroke-width": "3" }); svg.appendChild(p);
+                    let c1 = makeSVGTag("circle"); applySVGAttrs(c1, { cx: "80", cy: "40", r: "5", fill: "#b22222" }); svg.appendChild(c1);
+                    let c2 = makeSVGTag("circle"); applySVGAttrs(c2, { cx: "160", cy: "120", r: "5", fill: "#b22222" }); svg.appendChild(c2);
+                    createMapLabel(svg, "200", "80", "Broken Canyon Rift", "#b22222");
+                }
+            },
+            {
+                q: "The North trail runs exactly side-by-side alongside the South supply trail and they never cross. Identify these Parallel Lines.",
+                correct: "parallel",
+                options: ["parallel", "perpendicular", "ray"],
+                slotPos: { top: "145px", left: "140px" },
+                render: (svg) => {
+                    let l1 = makeSVGTag("line"); applySVGAttrs(l1, { x1: "40", y1: "60", x2: "350", y2: "60", stroke: "#00796b", "stroke-width": "3" }); svg.appendChild(l1);
+                    let l2 = makeSVGTag("line"); applySVGAttrs(l2, { x1: "40", y1: "110", x2: "350", y2: "110", stroke: "#00796b", "stroke-width": "3" }); svg.appendChild(l2);
+                    createMapLabel(svg, "195", "45", "North Supply Trail");
+                    createMapLabel(svg, "195", "130", "South Supply Trail");
+                    renderCompassRose(svg, 360, 40);
+                }
+            },
+            {
+                q: "Two exploration borders meet and intersect at a perfect square corner measuring exactly 90 DEGREES.",
+                correct: "90 degrees",
+                options: ["45 degrees", "90 degrees", "180 degrees"],
+                slotPos: { top: "140px", left: "210px" },
+                render: (svg) => {
+                    let l1 = makeSVGTag("line"); applySVGAttrs(l1, { x1: "100", y1: "150", x2: "300", y2: "150", stroke: "#5d4037", "stroke-width": "3" }); svg.appendChild(l1);
+                    let l2 = makeSVGTag("line"); applySVGAttrs(l2, { x1: "120", y1: "150", x2: "120", y2: "40", stroke: "#b22222", "stroke-width": "3" }); svg.appendChild(l2);
+                    let box = makeSVGTag("path"); applySVGAttrs(box, { d: "M 120 135 L 135 135 L 135 150", fill: "none", stroke: "#5d4037", "stroke-width": "2" }); svg.appendChild(box);
+                    createMapLabel(svg, "210", "125", "Perpendicular Boundary Grid Line");
+                    renderCompassRose(svg, 340, 50);
+                }
+            },
+            {
+                q: "Four separate scout paths all intersect and pass directly through one single focal point Node P. These are called:",
+                correct: "concurrent",
+                options: ["parallel", "concurrent", "collinear"],
+                slotPos: { top: "25px", left: "240px" },
+                render: (svg) => {
+                    let center = { x: 140, y: 110 };
+                    for (let i = 0; i < 4; i++) {
+                        let l = makeSVGTag("line");
+                        let angle = (i * Math.PI) / 4;
+                        let dx = Math.cos(angle) * 85;
+                        let dy = Math.sin(angle) * 85;
+                        applySVGAttrs(l, { x1: center.x - dx, y1: center.y - dy, x2: center.x + dx, y2: center.y + dy, stroke: "#795548", "stroke-width": "2" });
+                        svg.appendChild(l);
+                    }
+                    let c = makeSVGTag("circle"); applySVGAttrs(c, { cx: center.x, cy: center.y, r: "6", fill: "#d4af37" }); svg.appendChild(c);
+                    createMapLabel(svg, center.x + 25, center.y - 10, "Node P Meeting Hub");
+                    renderCompassRose(svg, 340, 55);
+                }
+            },
+            {
+                q: "A survey mapping point marks a completely horizontal, flat line layout measuring exactly 180 DEGREES.",
+                correct: "180 degrees",
+                options: ["90 degrees", "180 degrees", "270 degrees"],
+                slotPos: { top: "135px", left: "140px" },
+                render: (svg) => {
+                    let l = makeSVGTag("line"); applySVGAttrs(l, { x1: "50", y1: "90", x2: "340", y2: "90", stroke: "#8b5a2b", "stroke-width": "3" }); svg.appendChild(l);
+                    let c = makeSVGTag("circle"); applySVGAttrs(c, { cx: "195", cy: "90", r: "6", fill: "#b22222" }); svg.appendChild(c);
+                    let arc = makeSVGTag("path"); applySVGAttrs(arc, { d: "M 160 90 A 35 35 0 0 1 230 90", fill: "none", stroke: "#b22222", "stroke-width": "2" }); svg.appendChild(arc);
+                    createMapLabel(svg, "195", "45", "Straight Survey Line Profile View");
+                    renderCompassRose(svg, 350, 45);
+                }
+            },
+            {
+                q: "A path starts at an explicit anchor point and goes infinitely far into the desert. This tracking vector structure is a:",
+                correct: "ray",
+                options: ["ray", "line", "segment"],
+                slotPos: { top: "135px", left: "140px" },
+                render: (svg) => {
+                    let l = makeSVGTag("line"); applySVGAttrs(l, { x1: "80", y1: "90", x2: "320", y2: "90", stroke: "#5d4037", "stroke-width": "3" }); svg.appendChild(l);
+                    let c = makeSVGTag("circle"); applySVGAttrs(c, { cx: "80", cy: "90", r: "6", fill: "#b22222" }); svg.appendChild(c);
+                    let arr = makeSVGTag("path"); applySVGAttrs(arr, { d: "M 315 83 L 327 90 L 315 97 Z", fill: "#5d4037" }); svg.appendChild(arr);
+                    createMapLabel(svg, "80", "115", "Alpha Outpost Anchor Point", "#b22222");
+                    renderCompassRose(svg, 350, 45);
+                }
+            }
+        ];
+
+        // Knuth Shuffle Algorithm for Full Database Pool Randomization
+        function shuffleQuizArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Strict 5-Second Brand Splash Overlay Timer Handle
+        setTimeout(() => {
+            const splash = document.getElementById('branding-splash');
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.remove();
+                    document.getElementById('instructions-screen').classList.remove('hidden');
+                }, 500);
+            }
+        }, 5000);
+
+        function initializeTreasureHunt() {
+            // Seed a randomized version of the database pool every game launch
+            expeditionsPuzzles = shuffleQuizArray([...mapQuizDatabase]);
+            
+            document.getElementById('instructions-screen').classList.add('hidden');
+            document.getElementById('gameplay-screen').classList.remove('hidden');
+            loadNextExpeditionMap();
+        }
+
+        function loadNextExpeditionMap() {
+            if (taskIndex >= expeditionsPuzzles.length) {
+                triggerTreasureVictory();
+                return;
+            }
+
+            document.getElementById('game-level-tag').innerText = `Segment: ${String(taskIndex + 1).padStart(2, '0')} / ${expeditionsPuzzles.length}`;
+            document.getElementById('game-score-tag').innerText = `Gold: ${scoreCount}`;
+
+            internalStrikeCounter = 0;
+            document.getElementById('strike-dot-1').classList.remove('used');
+            document.getElementById('strike-dot-2').classList.remove('used');
+
+            const currentTask = expeditionsPuzzles[taskIndex];
+            document.getElementById('game-prompt').innerText = currentTask.q;
+
+            // Render Dynamic Mapping Vector Graphics
+            const svg = document.getElementById('map-svg');
+            svg.innerHTML = '';
+            if (currentTask.render) currentTask.render(svg);
+
+            // Relocate Drop Marker Target Area
+            const dropzone = document.getElementById('target-slot-zone');
+            dropzone.style.top = currentTask.slotPos.top;
+            dropzone.style.left = currentTask.slotPos.left;
+            dropzone.innerText = "Drop Marker";
+            dropzone.style.borderColor = "#b22222";
+            dropzone.style.background = "rgba(178, 34, 34, 0.15)";
+
+            // Populate Toolkit Cards Selection Tray Container
+            const tray = document.getElementById('tray-container');
+            tray.innerHTML = '';
+            
+            currentTask.options.forEach(opt => {
+                const card = document.createElement('div');
+                card.className = 'draggable-part';
+                card.innerText = opt.toUpperCase();
+                card.setAttribute('draggable', 'true');
+                
+                // Desktop Drag Triggers
+                card.addEventListener('dragstart', () => { draggedType = opt; });
+                // Mobile Interface Direct Tap Support Handles
+                card.addEventListener('touchstart', () => { draggedType = opt; evaluateTapSelection(opt); });
+                
+                tray.appendChild(card);
+            });
+
+            document.getElementById('game-toast-feedback').innerText = "Align the tracking ticket onto the map!";
+            document.getElementById('game-toast-feedback').style.color = "#5d4037";
+        }
+
+        const dropBox = document.getElementById('map-frame-box');
+        dropBox.addEventListener('dragover', (e) => e.preventDefault());
+        dropBox.addEventListener('drop', () => { verifyIncomingSelection(draggedType); });
+
+        function evaluateTapSelection(opt) {
+            setTimeout(() => { verifyIncomingSelection(opt); }, 150);
+        }
+
+        function verifyIncomingSelection(selectedType) {
+            if (!selectedType) return;
+            const currentPuzzle = expeditionsPuzzles[taskIndex];
+            const dropzone = document.getElementById('target-slot-zone');
+            const toast = document.getElementById('game-toast-feedback');
+
+            if (selectedType === currentPuzzle.correct) {
+                scoreCount += 50;
+                playAudio(audioCorrect);
+                toast.innerText = "✔ DISCOVERY: Target coordinates locked and validated!";
+                toast.style.color = "#2e7d32";
+                
+                dropzone.innerText = selectedType.toUpperCase();
+                dropzone.style.borderColor = "#2e7d32";
+                dropzone.style.background = "rgba(46, 125, 50, 0.3)";
+
+                taskIndex++;
+                draggedType = null;
+                setTimeout(() => loadNextExpeditionMap(), 1500);
+            } else {
+                internalStrikeCounter++;
+                playAudio(audioWrong);
+                draggedType = null;
+
+                if (internalStrikeCounter === 1) {
+                    document.getElementById('strike-dot-1').classList.add('used');
+                    toast.innerText = "❌ PATH MISALIGNMENT: Wrong layout path marker. Try again!";
+                    toast.style.color = "#c62828";
+                } else {
+                    document.getElementById('strike-dot-2').classList.add('used');
+                    toast.innerText = `Skipping Sector! Valid log entry was: ${currentPuzzle.correct.toUpperCase()}`;
+                    toast.style.color = "#ef6c00";
+
+                    taskIndex++;
+                    setTimeout(() => loadNextExpeditionMap(), 3000);
+                }
+            }
+            document.getElementById('game-score-tag').innerText = `Gold: ${scoreCount}`;
+        }
+
+        function triggerTreasureVictory() {
+            playAudio(audioWin);
+            document.getElementById('game-level-tag').innerText = "EXPEDITION COMPLETE";
+            document.getElementById('game-prompt').innerHTML = `
+                <div style="font-size: 1.15rem; color: #b22222; margin-bottom: 4px;">👑 CHAMPION CARTOGRAPHER</div>
+                <div style="font-size: 0.85rem; color: #2e7d32; font-weight: 800;">All maps deciphered. Total Gold Discovered: ${scoreCount} pieces.</div>
+            `;
+            document.getElementById('game-toast-feedback').innerText = "The hidden map vault opens safely.";
+            document.getElementById('game-toast-feedback').style.color = "#3e2723";
+
+            document.getElementById('map-frame-box').innerHTML = `
+                <div style="font-size:65px; text-align:center; width:100%; padding-top:40px;">🏆👑🪙</div>
+            `;
+            document.getElementById('tray-container').innerHTML = `
+                <button class="action-btn" onclick="location.reload()">Map Another Hunt</button>
+            `;
+        }
+    </script>
+</body>
+</html>
