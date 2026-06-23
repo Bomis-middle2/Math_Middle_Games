@@ -167,17 +167,17 @@
             line-height: 1.4;
         }
 
-        /* --- CLASSROOM PLACE VALUE INTERFACE --- */
-        .lock-container {
+        /* --- THE DIGILOCKER VAULT INTERFACE --- */
+        .vault-lock-chassis {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            background: #f7fafc;
-            padding: 16px 12px;
-            border-radius: 20px;
-            border: 2px solid #e2e8f0;
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
+            gap: 10px;
+            background: #2d3748;
+            padding: 24px 16px;
+            border-radius: 24px;
+            border: 4px solid #4a5568;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.3), 0 8px 16px rgba(0,0,0,0.1);
             margin: auto 0;
             width: 100%;
         }
@@ -186,62 +186,54 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
-        }
-
-        .column-label {
-            color: #718096;
-            font-size: 0.65rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 2px;
+            gap: 8px;
         }
 
         .dial-spinner {
-            width: 44px;
-            height: 34px;
-            background: #ebf4ff;
-            color: #4299e1;
-            border: 1px solid #bee3f8;
-            border-radius: 8px;
-            font-size: 1.1rem;
+            width: 42px;
+            height: 32px;
+            background: #4a5568;
+            color: #e2e8f0;
+            border: 1px solid #718096;
+            border-radius: 6px;
+            font-size: 1rem;
             font-weight: 900;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 3px 0 #bee3f8;
-            transition: transform 0.1s;
+            box-shadow: 0 2px 0 #1a202c;
+            transition: all 0.1s;
         }
         .dial-spinner:active { 
             transform: translateY(2px);
-            box-shadow: 0 1px 0 #bee3f8;
+            box-shadow: 0 0px 0 #1a202c;
         }
 
         .dial-screen {
             width: 46px;
-            height: 54px;
-            background: #ffffff;
-            border: 2px solid #cbd5e1;
-            color: #2d3748;
-            border-radius: 10px;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 2rem;
+            height: 58px;
+            background: linear-gradient(180deg, #ffffff 0%, #edf2f7 100%);
+            border: 2px solid #1a202c;
+            color: #1a202c;
+            border-radius: 8px;
+            font-family: monospace, sans-serif;
+            font-size: 2.2rem;
             font-weight: 900;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
         }
 
         .decimal-separator {
-            color: #f6ad55;
-            font-size: 3.5rem;
+            color: #ecc94b;
+            font-size: 4rem;
             font-weight: 900;
             align-self: flex-end;
-            margin-bottom: 24px;
-            line-height: 0.5;
+            margin-bottom: 22px;
+            line-height: 0.2;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .chance-counter-tray {
@@ -306,52 +298,45 @@
 
     <div id="viewport-root">
         
-        <!-- STAGE 1: Splash Screen -->
         <div id="hard-splash">
             <div class="splash-logo-container">
-                <img src="assets/logo.png" class="splash-img" alt="Logo" onerror="this.src='https://placehold.co/130x130/b2f5ea/234e52?text=%F0%9F%93%90';">
+                <img src="assets/logo.png" class="splash-img" alt="Logo" onerror="this.src='https://placehold.co/130x130/b2f5ea/234e52?text=%F0%9F%94%92';">
                 <div class="splash-title">DECIMAL QUEST</div>
-                <div class="splash-subtitle">Grade 5 Challenge</div>
+                <div class="splash-subtitle">Vault Breaker Edition</div>
             </div>
             <div class="loader-track">
                 <div class="loader-fill"></div>
             </div>
         </div>
 
-        <!-- STAGE 2: Guide View -->
         <div id="instructions-screen" class="stage-overlay hidden">
             <div class="glass-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
                 <div class="header-panel">
-                    <div class="header-title">📝 How to Play</div>
+                    <div class="header-title">🔒 Locker Security Guide</div>
                 </div>
                 <div class="instruction-text">
-                    <p>Welcome! Solve the randomized decimal puzzle on each level by rolling the place value boxes to the correct answers:</p>
+                    <p>Crack open the vault code by aligning the tumbler digits to solve the decimal puzzles:</p>
                     <ul>
-                        <li>1. Use the soft blue <strong>▲ and ▼ arrows</strong> above and below each box to change the digit.</li>
-                        <li>2. Read each problem carefully to answer exactly.</li>
-                        <li>3. Be careful: You have <strong>2 tries per question</strong> before the game automatically moves forward!</li>
+                        <li>1. Click the <strong>▲ and ▼ spin pads</strong> to scroll the digits up or down.</li>
+                        <li>2. Use the decimal point split to gauge your whole and fractional alignments perfectly.</li>
+                        <li>3. Careful: You only get <strong>2 attempts per combination lock</strong> before security rolls over!</li>
                     </ul>
                 </div>
-                <button class="action-btn" onclick="engageSimulationMatrix()">Start Random Challenge</button>
+                <button class="action-btn" onclick="engageSimulationMatrix()">Initialize Vault Access</button>
             </div>
         </div>
 
-        <!-- STAGE 3: Core Gameplay View -->
         <div id="gameplay-screen" class="stage-overlay hidden">
             <div class="header-panel">
-                <div id="game-level-tag" class="header-title">Level 1: Places</div>
+                <div id="game-level-tag" class="header-title">Vault Level 1</div>
                 <div id="game-score-tag" class="header-score">Score: 0</div>
             </div>
 
             <div class="glass-panel workspace-area">
-                <!-- Question Prompt -->
-                <div id="game-prompt" class="question-box">Loading question...</div>
+                <div id="game-prompt" class="question-box">Loading security puzzle...</div>
                 
-                <!-- Place Value Roller Board -->
-                <div class="lock-container">
-                    <!-- Ones Column -->
+                <div class="vault-lock-chassis">
                     <div class="dial-column">
-                        <div class="column-label">Ones</div>
                         <button class="dial-spinner" onclick="spinDigit('whole', 1)">▲</button>
                         <div id="digit-whole" class="dial-screen">0</div>
                         <button class="dial-spinner" onclick="spinDigit('whole', -1)">▼</button>
@@ -359,41 +344,34 @@
                     
                     <div class="decimal-separator">.</div>
                     
-                    <!-- Tenths Column -->
                     <div class="dial-column">
-                        <div class="column-label">Tenths</div>
                         <button class="dial-spinner" onclick="spinDigit('t1', 1)">▲</button>
                         <div id="digit-t1" class="dial-screen">0</div>
                         <button class="dial-spinner" onclick="spinDigit('t1', -1)">▼</button>
                     </div>
                     
-                    <!-- Hundredths Column -->
                     <div class="dial-column">
-                        <div class="column-label">Hund.</div>
                         <button class="dial-spinner" onclick="spinDigit('t2', 1)">▲</button>
                         <div id="digit-t2" class="dial-screen">0</div>
                         <button class="dial-spinner" onclick="spinDigit('t2', -1)">▼</button>
                     </div>
                     
-                    <!-- Thousandths Column -->
                     <div class="dial-column">
-                        <div class="column-label">Thous.</div>
                         <button class="dial-spinner" onclick="spinDigit('t3', 1)">▲</button>
                         <div id="digit-t3" class="dial-screen">0</div>
                         <button class="dial-spinner" onclick="spinDigit('t3', -1)">▼</button>
                     </div>
                 </div>
 
-                <!-- Two-Chance Track Dots -->
                 <div class="chance-counter-tray">
                     <div id="strike-dot-1" class="chance-dot"></div>
                     <div id="strike-dot-2" class="chance-dot"></div>
                 </div>
 
-                <button class="action-btn submit-lever" onclick="evaluateCombinationSubmission()">Check Answer</button>
+                <button class="action-btn submit-lever" onclick="evaluateCombinationSubmission()">Confirm Combination</button>
             </div>
 
-            <div id="game-toast-feedback" class="status-banner">Change the boxes to set your answer!</div>
+            <div id="game-toast-feedback" class="status-banner">Spin the tumbler gears to log a code response!</div>
         </div>
 
     </div>
@@ -423,189 +401,24 @@
 
         let currentLockState = { whole: 0, t1: 0, t2: 0, t3: 0 };
 
-        // EXPANDED Problem Matrix
+        // Randomized Database Rows
         const puzzleDatabase = {
             1: [
-                { q: "In the number 5.372, look at the tenths place. Set the boxes to show just that place value (Example: 0.300).", target: {whole:0, t1:3, t2:0, t3:0} },
+                { q: "In the number 5.372, look at the tenths place. Set the locker dials to show just that place value (Example: 0.300).", target: {whole:0, t1:3, t2:0, t3:0} },
                 { q: "In the number 5.372, show just the value of the digit located in the hundredths place.", target: {whole:0, t1:0, t2:7, t3:0} },
-                { q: "What is the value of the 9 in the decimal number 2.049?", target: {whole:0, t1:0, t2:0, t3:9} },
-                { q: "Identify the value of the digit in the ones place for the number 7.813.", target: {whole:7, t1:0, t2:0, t3:0} }
+                { q: "What is the specific value of the 9 in the decimal layout 2.049?", target: {whole:0, t1:0, t2:0, t3:9} },
+                { q: "Identify the value of the digit in the ones position for the configuration 7.813.", target: {whole:7, t1:0, t2:0, t3:0} }
             ],
             2: [
-                { q: "Convert the fraction 3/4 into its decimal equivalent.", target: {whole:0, t1:7, t2:5, t3:0} },
-                { q: "Convert the fraction 2/5 into its decimal form.", target: {whole:0, t1:4, t2:0, t3:0} },
-                { q: "Write the fraction 1/8 as a three-place decimal value.", target: {whole:0, t1:1, t2:2, t3:5} },
-                { q: "Convert the mixed number 3 and 1/2 into its decimal equivalent.", target: {whole:3, t1:5, t2:0, t3:0} }
+                { q: "Convert the fraction 3/4 into its decimal equivalent for the locker pass.", target: {whole:0, t1:7, t2:5, t3:0} },
+                { q: "Convert the fraction 2/5 into its responsive decimal code layout.", target: {whole:0, t1:4, t2:0, t3:0} },
+                { q: "Write the fraction 1/8 as a complete three-place decimal key.", target: {whole:0, t1:1, t2:2, t3:5} },
+                { q: "Convert the mixed balance 3 and 1/2 into its correct decimal code equivalent.", target: {whole:3, t1:5, t2:0, t3:0} }
             ],
             3: [
-                { q: "Add this expanded expression together: 5 + 0.3 + 0.07 + 0.002", target: {whole:5, t1:3, t2:7, t3:2} },
-                { q: "Solve for the missing number: 0.52 = 0.5 + [ ? ]", target: {whole:0, t1:0, t2:2, t3:0} },
-                { q: "Put together this expanded form value: 0.9 + 0.004", target: {whole:0, t1:9, t2:0, t3:4} },
-                { q: "Find the total sum: 1 + 0.05 + 0.008", target: {whole:1, t1:0, t2:5, t3:8} }
+                { q: "Add this expanded expression together to generate the code: 5 + 0.3 + 0.07 + 0.002", target: {whole:5, t1:3, t2:7, t3:2} },
+                { q: "Solve for the missing locker digit variable: 0.52 = 0.5 + [ ? ]", target: {whole:0, t1:0, t2:2, t3:0} },
+                { q: "Put together this expanded form value into a clean decimal entry: 0.9 + 0.004", target: {whole:0, t1:9, t2:0, t3:4} },
+                { q: "Find the total sum matrix value: 1 + 0.05 + 0.008", target: {whole:1, t1:0, t2:5, t3:8} }
             ],
-            4: [
-                { q: "Convert the decimal value 0.5 into an equivalent form containing 3 decimal places.", target: {whole:0, t1:5, t2:0, t3:0} },
-                { q: "Find the size difference between the decimals 3.67 and 2.50.", target: {whole:1, t1:1, t2:7, t3:0} },
-                { q: "Round the decimal number 0.473 to the nearest tenth place value.", target: {whole:0, t1:5, t2:0, t3:0} },
-                { q: "Round the decimal number 1.258 to the nearest hundredth place.", target: {whole:1, t1:2, t2:6, t3:0} }
-            ],
-            5: [
-                { q: "Solve the decimal addition problem: 1.2 + 2.35 (Tip: Align your place values!)", target: {whole:3, t1:5, t2:5, t3:0} },
-                { q: "Solve the decimal multiplication problem: 0.3 × 0.2", target: {whole:0, t1:0, t2:6, t3:0} },
-                { q: "Subtract these two decimals: 4.5 - 1.25", target: {whole:3, t1:2, t2:5, t3:0} },
-                { q: "A string is 0.8 meters long. If you cut it exactly in half, how long is each piece?", target: {whole:0, t1:4, t2:0, t3:0} }
-            ]
-        };
-
-        // Fisher-Yates Randomizer Utility
-        function randomizeDatabaseNodes() {
-            for (let level in puzzleDatabase) {
-                const array = puzzleDatabase[level];
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
-                }
-            }
-        }
-
-        // Trigger Randomization on startup
-        randomizeDatabaseNodes();
-
-        // Splash controller
-        setTimeout(() => {
-            const splash = document.getElementById('hard-splash');
-            if (splash) {
-                splash.style.opacity = '0';
-                splash.style.transform = 'scale(1.02)';
-                setTimeout(() => {
-                    if (splash && splash.parentNode) splash.parentNode.removeChild(splash);
-                    document.getElementById('instructions-screen').classList.remove('hidden');
-                }, 500);
-            }
-        }, 4100);
-
-        function engageSimulationMatrix() {
-            document.getElementById('instructions-screen').classList.add('hidden');
-            document.getElementById('gameplay-screen').classList.remove('hidden');
-            loadActivePuzzleNode();
-        }
-
-        function loadActivePuzzleNode() {
-            if (currentLevel > 5) {
-                triggerSanctuaryVictory();
-                return;
-            }
-
-            const levelTitles = { 
-                1: "Level 1: Place Values", 
-                2: "Level 2: Fractions to Decimals", 
-                3: "Level 3: Expanded Form", 
-                4: "Level 4: Comparing & Rounding", 
-                5: "Level 5: Math Arithmetic" 
-            };
-            document.getElementById('game-level-tag').innerText = levelTitles[currentLevel];
-            document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
-
-            internalStrikeCounter = 0;
-            document.getElementById('strike-dot-1').classList.remove('used');
-            document.getElementById('strike-dot-2').classList.remove('used');
-
-            currentLockState = { whole: 0, t1: 0, t2: 0, t3: 0 };
-            updateLockDisplay();
-
-            const item = puzzleDatabase[currentLevel][taskIndex];
-            document.getElementById('game-prompt').innerText = item.q;
-
-            const feedback = document.getElementById('game-toast-feedback');
-            feedback.innerText = "Click the arrows to choose your numbers!";
-            feedback.style.color = "#4a5568";
-            
-            document.querySelector('.submit-lever').disabled = false;
-            document.querySelector('.submit-lever').style.opacity = "1";
-        }
-
-        function spinDigit(key, change) {
-            currentLockState[key] += change;
-            if (currentLockState[key] > 9) currentLockState[key] = 0;
-            if (currentLockState[key] < 0) currentLockState[key] = 9;
-            updateLockDisplay();
-        }
-
-        function updateLockDisplay() {
-            document.getElementById('digit-whole').innerText = currentLockState.whole;
-            document.getElementById('digit-t1').innerText = currentLockState.t1;
-            document.getElementById('digit-t2').innerText = currentLockState.t2;
-            document.getElementById('digit-t3').innerText = currentLockState.t3;
-        }
-
-        function evaluateCombinationSubmission() {
-            const item = puzzleDatabase[currentLevel][taskIndex];
-            const feedback = document.getElementById('game-toast-feedback');
-
-            const isMatch = currentLockState.whole === item.target.whole &&
-                            currentLockState.t1 === item.target.t1 &&
-                            currentLockState.t2 === item.target.t2 &&
-                            currentLockState.t3 === item.target.t3;
-
-            if (isMatch) {
-                scoreCount += 20;
-                feedback.innerText = "🎉 Excellent! That is correct.";
-                feedback.style.color = "#2f855a";
-                playAssetSound('correct');
-                document.querySelector('.submit-lever').disabled = true;
-                
-                taskIndex++;
-                if (taskIndex >= puzzleDatabase[currentLevel].length) {
-                    currentLevel++;
-                    taskIndex = 0;
-                }
-                
-                setTimeout(() => loadActivePuzzleNode(), 1500);
-            } else {
-                internalStrikeCounter++;
-                playAssetSound('wrong');
-                
-                if (internalStrikeCounter === 1) {
-                    document.getElementById('strike-dot-1').classList.add('used');
-                    feedback.innerText = "❌ Not quite! Check your places. 1 try left!";
-                    feedback.style.color = "#c53030";
-                } else {
-                    document.getElementById('strike-dot-2').classList.add('used');
-                    document.querySelector('.submit-lever').disabled = true;
-                    document.querySelector('.submit-lever').style.opacity = "0.4";
-                    
-                    const answerString = `${item.target.whole}.${item.target.t1}${item.target.t2}${item.target.t3}`;
-                    feedback.innerText = `Moving on! The correct answer was: ${answerString}`;
-                    feedback.style.color = "#c53030";
-                    
-                    taskIndex++;
-                    if (taskIndex >= puzzleDatabase[currentLevel].length) {
-                        currentLevel++;
-                        taskIndex = 0;
-                    }
-                    
-                    setTimeout(() => loadActivePuzzleNode(), 3500);
-                }
-            }
-            document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
-        }
-
-        function triggerSanctuaryVictory() {
-            playAssetSound('correct');
-            document.getElementById('game-level-tag').innerText = "Game Completed!";
-            document.getElementById('game-prompt').innerHTML = `
-                <div style="font-size: 1.3rem; margin-bottom: 6px; color: #2c7a7b;">🏆 Amazing Job!</div>
-                <div style="font-size: 0.95rem; color: #2f855a; font-weight: 600;">You solved all the randomized decimal sets!</div>
-            `;
-            document.getElementById('game-toast-feedback').innerText = "You are a True Decimal Master!";
-            document.getElementById('game-toast-feedback').style.color = "#dd6b20";
-            
-            const lever = document.querySelector('.submit-lever');
-            lever.disabled = false;
-            lever.style.opacity = "1";
-            lever.innerText = "Play Again";
-            lever.onclick = () => location.reload();
-        }
-    </script>
-</body>
-</html>
+            4:
