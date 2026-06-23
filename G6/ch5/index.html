@@ -1,699 +1,477 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Innovine Mathematics - Grade 6 Geometry</title>
-    <style>
-        :root {
-            --primary: #4e54c8;
-            --secondary: #8f94fb;
-            --success: #2ecc71;
-            --error: #e74c3c;
-            --warning: #f1c40f;
-            --dark: #2c3e50;
-            --light: #f8f9fa;
-            --glass: rgba(255, 255, 255, 0.15);
-            --glass-border: rgba(255, 255, 255, 0.25);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            background: linear-gradient(135deg, #4e54c8 0%, #8f94fb 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow-x: hidden;
-            color: var(--dark);
-            position: relative;
-        }
-
-        /* Floating Background Elements */
-        .bg-animations {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .floating-shape {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 10%;
-            animation: float 20s infinite linear;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
-        }
-
-        /* Container & Card Base */
-        .game-container {
-            width: 90%;
-            max-width: 650px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 24px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            padding: 30px;
-            z-index: 10;
-            position: relative;
-            text-align: center;
-            min-height: 480px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            transition: all 0.4s ease;
-        }
-
-        .screen {
-            display: none;
-            width: 100%;
-            animation: fadeIn 0.5s ease forwards;
-        }
-
-        .screen.active {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Screen 1: Splash Screen */
-        #splash-screen {
-            background: #ffffff;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #splash-screen img {
-            max-width: 280px;
-            width: 70%;
-            height: auto;
-            animation: pulse 2s infinite ease-in-out;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); opacity: 0.8; }
-            50% { transform: scale(1.02); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.8; }
-        }
-
-        /* Screen 2: Intro Screen */
-        .intro-title {
-            font-size: 2rem;
-            color: var(--primary);
-            margin-bottom: 10px;
-            font-weight: 800;
-        }
-
-        .intro-subtitle {
-            font-size: 1.2rem;
-            color: #555;
-            margin-bottom: 30px;
-            font-weight: 600;
-        }
-
-        /* UI Controls & Buttons */
-        .btn {
-            background: linear-gradient(135deg, #4e54c8 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 35px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(78, 84, 200, 0.4);
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            outline: none;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(78, 84, 200, 0.6);
-        }
-
-        .btn:active {
-            transform: translateY(1px);
-        }
-
-        /* Top HUD / Progress Elements */
-        .hud-container {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            font-weight: 700;
-            color: var(--dark);
-            font-size: 0.95rem;
-        }
-
-        .hud-item {
-            background: rgba(255, 255, 255, 0.6);
-            padding: 6px 14px;
-            border-radius: 12px;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .progress-bar-container {
-            width: 100%;
-            height: 12px;
-            background: #e0e0e0;
-            border-radius: 6px;
-            margin-bottom: 25px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--success), #27ae60);
-            border-radius: 6px;
-            transition: width 0.4s ease;
-        }
-
-        /* Question Box Styling */
-        .question-text {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #222;
-            margin-bottom: 25px;
-            text-align: left;
-            width: 100%;
-            line-height: 1.4;
-        }
-
-        /* Options Grid */
-        .options-grid {
-            width: 100%;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .option-card {
-            background: #ffffff;
-            border: 2px solid #e0e0e0;
-            border-radius: 16px;
-            padding: 16px;
-            text-align: left;
-            font-size: 1.05rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
-        }
-
-        .option-card:hover {
-            border-color: var(--secondary);
-            background: #fdfdfd;
-            transform: translateY(-1px);
-        }
-
-        .option-card.correct {
-            border-color: var(--success) !important;
-            background-color: #e8f8f0 !important;
-            color: #1e7e34;
-        }
-
-        .option-card.wrong {
-            border-color: var(--error) !important;
-            background-color: #fceade !important;
-            color: #bd2130;
-        }
-
-        /* Feedback Screen Elements */
-        .feedback-box {
-            width: 100%;
-            margin-top: 15px;
-            padding: 15px;
-            border-radius: 14px;
-            display: none;
-            text-align: left;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .feedback-title {
-            font-weight: 800;
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-        }
-
-        .feedback-explanation {
-            font-size: 0.95rem;
-            line-height: 1.4;
-            color: #444;
-        }
-
-        .feedback-box.success-bg {
-            background-color: #e8f8f0;
-            border-left: 5px solid var(--success);
-            color: #1e7e34;
-        }
-
-        .feedback-box.error-bg {
-            background-color: #fdf0ed;
-            border-left: 5px solid var(--error);
-            color: #bd2130;
-        }
-
-        .action-container {
-            width: 100%;
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-
-        /* Results Elements */
-        .results-score {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin: 20px 0;
-        }
-
-        .results-msg {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 30px;
-        }
-
-        /* FX Animations */
-        .shake {
-            animation: shake 0.4s ease;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-8px); }
-            40%, 80% { transform: translateX(8px); }
-        }
-
-        .glow-green {
-            box-shadow: 0 0 20px rgba(46, 204, 113, 0.6);
-        }
-
-        /* Confetti Elements */
-        .confetti {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background-color: #f00;
-            border-radius: 50%;
-            animation: confetti-fall 2.5s ease-out infinite;
-            pointer-events: none;
-            z-index: 99;
-        }
-
-        @keyframes confetti-fall {
-            0% { transform: translateY(-50px) translateX(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) translateX(100px) rotate(360deg); opacity: 0; }
-        }
-
-        /* Responsiveness */
-        @media(max-width: 480px) {
-            .game-container {
-                padding: 20px 15px;
-                width: 95%;
-                min-height: 450px;
-            }
-            .intro-title { font-size: 1.6rem; }
-            .question-text { font-size: 1.15rem; }
-            .option-card { font-size: 0.95rem; padding: 12px; }
-            .hud-container { font-size: 0.85rem; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 6 Basics of Geometry Route Game</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  color:#172b43;
+  background:linear-gradient(#83dcff 0%,#c9f4ff 34%,#72c767 35%,#2f8447 100%);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+button{font-family:inherit;cursor:pointer;border:0}
+.screen{display:none;min-height:100vh;padding:16px}
+.active{display:flex}
+#splash{
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  background:linear-gradient(#eefcff,#ffffff,#e6ffd9);
+}
+#splash img{max-width:420px;width:75vw}
+.timer{
+  margin-top:20px;
+  background:#123b66;
+  color:white;
+  padding:12px 24px;
+  border-radius:20px;
+  font-weight:bold;
+  box-shadow:0 10px 24px rgba(0,0,0,.25);
+}
+#intro,#result{justify-content:center;align-items:center}
+.card{
+  width:min(850px,94vw);
+  background:#fff1cb;
+  color:#123b66;
+  border-radius:28px;
+  padding:28px;
+  text-align:center;
+  box-shadow:0 12px 28px rgba(0,0,0,.25);
+  border:5px solid white;
+}
+h1{font-size:clamp(32px,6vw,56px);margin:0 0 12px}
+.rules{
+  text-align:left;
+  margin:20px auto;
+  max-width:650px;
+  counter-reset:step;
+  display:grid;
+  gap:10px;
+}
+.rule{
+  background:white;
+  border-radius:15px;
+  padding:14px;
+  font-size:clamp(16px,2.5vw,20px);
+  font-weight:bold;
+}
+.rule:before{
+  counter-increment:step;
+  content:counter(step) ". ";
+  color:#0072bc;
+  margin-right:8px;
+}
+.play,.next,.restart{
+  background:linear-gradient(#50dc65,#149a3c);
+  color:white;
+  font-size:22px;
+  font-weight:bold;
+  padding:14px 30px;
+  border-radius:30px;
+  box-shadow:0 7px 0 #0b6a2b;
+}
+#game{
+  flex-direction:column;
+  gap:10px;
+  background:
+    radial-gradient(circle at 18% 12%,rgba(255,255,255,.45),transparent 14%),
+    linear-gradient(#7edfff 0%,#beefff 32%,#72ca6e 33%,#2d874b 100%);
+}
+.top{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  width:min(1100px,96vw);
+  margin:auto;
+  font-weight:bold;
+}
+.box{
+  background:#513218;
+  color:white;
+  padding:10px;
+  border-radius:14px;
+  text-align:center;
+  border:3px solid #c8893f;
+  box-shadow:0 7px 18px rgba(0,0,0,.25);
+}
+.scene{
+  width:min(1100px,96vw);
+  margin:auto;
+  background:rgba(255,255,255,.24);
+  border-radius:28px;
+  padding:16px;
+  box-shadow:0 10px 24px rgba(0,0,0,.25);
+  position:relative;
+  min-height:640px;
+  overflow:hidden;
+  border:4px solid rgba(255,255,255,.38);
+}
+.mountain{
+  position:absolute;
+  bottom:45%;
+  width:330px;
+  height:210px;
+  background:#70abc9;
+  clip-path:polygon(50% 0,100% 100%,0 100%);
+  opacity:.75;
+}
+.m1{left:4%}
+.m2{left:28%;transform:scale(.75);opacity:.6}
+.m3{right:2%;transform:scale(.9)}
+.camp{
+  position:absolute;
+  right:35px;
+  bottom:220px;
+  font-size:64px;
+  z-index:3;
+}
+.campSign{
+  position:absolute;
+  right:28px;
+  bottom:190px;
+  background:#6b3a17;
+  color:white;
+  padding:8px 18px;
+  border-radius:10px;
+  border:3px solid #d99b44;
+  font-weight:bold;
+  z-index:4;
+}
+.questionCard{
+  position:relative;
+  z-index:5;
+  background:#fff1cb;
+  border:4px dashed #c78c50;
+  border-radius:22px;
+  width:min(680px,94%);
+  margin:0 auto 22px;
+  padding:22px;
+  text-align:center;
+}
+.qtext{
+  font-size:clamp(20px,3.1vw,32px);
+  font-weight:bold;
+  min-height:84px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.paths{
+  position:relative;
+  z-index:4;
+  height:300px;
+  margin:8px auto;
+}
+.path{
+  position:absolute;
+  left:8%;
+  right:8%;
+  height:62px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  border:5px solid rgba(255,255,255,.7);
+  box-shadow:0 8px 18px rgba(0,0,0,.24);
+}
+.path:after{
+  content:"";
+  position:absolute;
+  left:5%;
+  right:5%;
+  top:50%;
+  height:6px;
+  transform:translateY(-50%);
+  background:repeating-linear-gradient(90deg,#fff 0 25px,transparent 25px 45px);
+  opacity:.9;
+  pointer-events:none;
+}
+.p1{top:0;background:#d98a29}
+.p2{top:105px;background:#3489d8}
+.p3{top:210px;background:#904ec9}
+.routeBtn{
+  position:relative;
+  z-index:2;
+  min-width:130px;
+  min-height:52px;
+  border-radius:16px;
+  background:#fff7e6;
+  color:#123b66;
+  font-size:clamp(17px,2.8vw,24px);
+  font-weight:bold;
+  border:4px solid transparent;
+  box-shadow:0 6px 0 rgba(0,0,0,.24);
+}
+.routeBtn:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.24)}
+.routeBtn.chosen{border-color:#ffe100;background:#fff5a8}
+.routeBtn.correct{border-color:#13bd51;background:#caffd9}
+.routeBtn.wrong{border-color:#e74c3c;background:#ffd4cd;animation:shake .25s}
+.jeep{
+  position:absolute;
+  left:2%;
+  top:338px;
+  font-size:56px;
+  z-index:8;
+  transition:all .8s ease;
+}
+.jeep.shake{animation:shake .25s}
+.feedback{
+  position:relative;
+  z-index:8;
+  margin:12px auto 0;
+  width:min(680px,94%);
+  min-height:58px;
+  background:#fff1cb;
+  border:4px solid white;
+  color:#123;
+  border-radius:18px;
+  padding:12px;
+  text-align:center;
+  font-weight:bold;
+  font-size:clamp(16px,2.4vw,21px);
+}
+.next{display:none;margin:12px auto 0}
+.finalScore{font-size:64px;color:#7b3fd1;font-weight:bold}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:20}
+.piece{position:absolute;top:-20px;width:12px;height:18px;animation:fall 1.5s linear forwards}
+@keyframes shake{
+  25%{transform:translateX(-5px)}
+  50%{transform:translateX(5px)}
+  75%{transform:translateX(-3px)}
+}
+@keyframes fall{
+  to{transform:translateY(110vh) rotate(500deg)}
+}
+@media(max-width:760px){
+  .top{grid-template-columns:1fr 1fr}
+  .top .box:nth-child(2){grid-column:1/3;order:-1}
+  .scene{min-height:720px}
+  .paths{height:360px}
+  .path{left:2%;right:2%;height:82px;gap:8px;padding:0 8px}
+  .p1{top:0}.p2{top:135px}.p3{top:270px}
+  .routeBtn{min-width:30%;font-size:16px}
+  .jeep{font-size:46px;top:375px}
+  .camp{right:15px;bottom:255px;font-size:44px}
+  .campSign{right:10px;bottom:225px}
+}
+</style>
 </head>
 <body>
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
-    <!-- Background Elements -->
-    <div class="bg-animations" id="bg-shapes"></div>
+<section id="splash" class="screen active">
+  <img src="assets/innovine-logo.png" alt="Innovine Logo">
+  <div class="timer">Starting in <span id="count">5</span>s</div>
+</section>
 
-    <!-- Screen 1: Splash Screen -->
-    <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+<section id="intro" class="screen">
+  <div class="card">
+    <h1>Geometry Route Adventure</h1>
+    <p><b>Help the explorer reach the camp by choosing the correct path.</b></p>
+    <div class="rules">
+      <div class="rule">Read the geometry question carefully.</div>
+      <div class="rule">Tap the correct path sign.</div>
+      <div class="rule">You have 2 attempts for each challenge.</div>
+      <div class="rule">The jeep follows the correct path only after a correct answer.</div>
+      <div class="rule">Complete all 10 challenges to reach the camp.</div>
     </div>
+    <button class="play" onclick="startGame()">LET’S PLAY</button>
+  </div>
+</section>
 
-    <!-- Main Game Wrapper Container -->
-    <div class="game-container" id="game-box">
+<section id="game" class="screen">
+  <div class="top">
+    <div class="box">Score: <span id="score">0</span> ⭐</div>
+    <div class="box">Level: <span id="level">1</span>/10</div>
+    <div class="box">Attempts: <span id="hearts">❤️❤️</span></div>
+  </div>
 
-        <!-- Screen 2: Intro Screen -->
-        <div id="intro-screen" class="screen">
-            <h1 class="intro-title">Basics of Geometry</h1>
-            <h3 class="intro-subtitle">Grade 6</h3>
-            <button class="btn" onclick="startGame()">Start Adventure</button>
-        </div>
+  <main class="scene">
+    <div class="mountain m1"></div><div class="mountain m2"></div><div class="mountain m3"></div>
+    <div class="camp">⛺</div>
+    <div class="campSign">CAMP</div>
 
-        <!-- Screen 3: Question / Interactive Play Stage -->
-        <div id="play-screen" class="screen">
-            <div class="hud-container">
-                <div class="hud-item" id="hud-question">Question: 1/10</div>
-                <div class="hud-item" id="hud-timer">Time: 45s</div>
-                <div class="hud-item" id="hud-score">Score: 0</div>
-            </div>
-            
-            <div class="progress-bar-container">
-                <div class="progress-bar-fill" id="progress-fill"></div>
-            </div>
+    <section class="questionCard">
+      <div class="qtext" id="qtext"></div>
+    </section>
 
-            <div class="question-text" id="question-label"></div>
-            
-            <div class="options-grid" id="options-box"></div>
+    <div class="jeep" id="jeep">🚙</div>
 
-            <div class="feedback-box" id="feedback-panel">
-                <div class="feedback-title" id="feedback-title"></div>
-                <div class="feedback-explanation" id="feedback-desc"></div>
-            </div>
+    <section class="paths">
+      <div class="path p1" id="path0"></div>
+      <div class="path p2" id="path1"></div>
+      <div class="path p3" id="path2"></div>
+    </section>
 
-            <div class="action-container">
-                <button class="btn" id="next-btn" onclick="nextQuestion()" style="display: none; padding: 10px 25px; font-size: 0.95rem;">Next</button>
-            </div>
-        </div>
+    <div class="feedback" id="msg">Tap the correct path sign.</div>
+    <button class="next" id="nextBtn" onclick="nextQuestion()">NEXT ➜</button>
+  </main>
+</section>
 
-        <!-- Screen 4: Results Screen -->
-        <div id="results-screen" class="screen">
-            <h1 class="intro-title">Adventure Completed!</h1>
-            <div class="results-score" id="final-score-text">0/10</div>
-            <div class="results-msg" id="final-message-text">Keep practicing!</div>
-            <button class="btn" onclick="restartGame()">Play Again</button>
-        </div>
+<section id="result" class="screen">
+  <div class="card">
+    <h1>You Reached the Geometry Camp!</h1>
+    <p>You completed all 10 geometry challenges.</p>
+    <div class="finalScore" id="finalScore">0</div>
+    <div style="font-size:50px" id="stars">⭐⭐⭐</div>
+    <button class="restart" onclick="startGame()">PLAY AGAIN</button>
+  </div>
+</section>
 
-    </div>
+<div class="confetti" id="confetti"></div>
 
-    <script>
-        // Game Questions Config
-        const questionsConfig = [
-            {
-                q: "How many points are enough to fix a line?",
-                options: ["1", "2", "3", "4"],
-                correct: 1, // index 1 means '2'
-                exp: "Exactly two distinct points in a plane determine a unique straight line."
-            },
-            {
-                q: "How many lines can pass through two given points?",
-                options: ["One", "Two", "Three", "Countless"],
-                correct: 0,
-                exp: "Only one single straight line can perfectly connect two given distinct points."
-            },
-            {
-                q: "Two intersecting lines meet at:",
-                options: ["A segment", "A point", "A ray", "A curve"],
-                correct: 1,
-                exp: "When two distinct straight lines cross each other, they meet at exactly one single point."
-            },
-            {
-                q: "A line segment has:",
-                options: ["One endpoint", "Two endpoints", "No endpoints", "Three endpoints"],
-                correct: 1,
-                exp: "A line segment is a fixed portion of a line with clear starting and stopping points, giving it precisely two endpoints."
-            },
-            {
-                q: "Three or more points lying on the same line are called:",
-                options: ["Parallel points", "Collinear points", "Intersecting points", "Acute points"],
-                correct: 1,
-                exp: "Points that fall directly along the exact same straight line are defined as collinear points."
-            },
-            {
-                q: "The longest chord of a circle is the:",
-                options: ["Radius", "Diameter", "Arc", "Sector"],
-                correct: 1,
-                exp: "The diameter passes through the very center of a circle, making it the absolute longest possible straight chord."
-            },
-            {
-                q: "A triangle has:",
-                options: ["2 sides", "3 sides", "4 sides", "5 sides"],
-                correct: 1,
-                exp: "By definition, a triangle is a three-sided polygon formed by joining three non-collinear points."
-            },
-            {
-                q: "How many vertices are there in a quadrilateral?",
-                options: ["2", "3", "4", "5"],
-                correct: 2,
-                exp: "A quadrilateral is a polygon with four straight edges, which naturally connect to form four corner vertices."
-            },
-            {
-                q: "An angle of 90° is called a:",
-                options: ["Acute angle", "Obtuse angle", "Right angle", "Reflex angle"],
-                correct: 2,
-                exp: "An angle measuring exactly 90 degrees creates a perfect perpendicular square corner called a right angle."
-            },
-            {
-                q: "A flat surface that extends indefinitely in all directions is called:",
-                options: ["Point", "Ray", "Plane", "Line segment"],
-                correct: 2,
-                exp: "A plane is an infinitely extending, smooth, two-dimensional flat surface without thickness or outer boundaries."
-            }
-        ];
+<script>
+const questions=[
+{text:"I have 4 equal sides and 4 right angles. What am I?",answer:"Square",opts:["Square","Rectangle","Triangle","Circle"],explain:"A square has 4 equal sides and 4 right angles."},
+{text:"A road starts at point A and goes endlessly in one direction. What is it?",answer:"Ray",opts:["Ray","Line segment","Line","Angle"],explain:"A ray has one fixed endpoint and extends endlessly in one direction."},
+{text:"Which figure has two fixed endpoints?",answer:"Line segment",opts:["Line segment","Ray","Line","Curve"],explain:"A line segment has two fixed endpoints."},
+{text:"Two rays meet at one common endpoint. What is formed?",answer:"Angle",opts:["Angle","Circle","Line","Point"],explain:"An angle is formed when two rays meet at a common endpoint."},
+{text:"Which shape has 3 sides?",answer:"Triangle",opts:["Triangle","Square","Circle","Rectangle"],explain:"A triangle has 3 sides."},
+{text:"Which shape has no sides and no corners?",answer:"Circle",opts:["Circle","Triangle","Square","Rectangle"],explain:"A circle has no sides and no corners."},
+{text:"What is the common endpoint of the arms of an angle called?",answer:"Vertex",opts:["Vertex","Side","Ray","Segment"],explain:"The common endpoint of the two arms of an angle is called the vertex."},
+{text:"Which instrument is used to draw a circle?",answer:"Compass",opts:["Compass","Ruler","Protractor","Divider only"],explain:"A compass is used to draw circles."},
+{text:"A straight path extends endlessly in both directions. What is it?",answer:"Line",opts:["Line","Ray","Line segment","Angle"],explain:"A line extends endlessly in both directions."},
+{text:"Which instrument is used to measure an angle?",answer:"Protractor",opts:["Protractor","Compass","Scale only","Set square only"],explain:"A protractor is used to measure angles."}
+];
 
-        // Core App State
-        let currentIdx = 0;
-        let score = 0;
-        let livesLeft = 2;
-        let timerInterval = null;
-        let timeLeft = 45;
-        let optionSelected = false;
+let order=[],current=0,score=0,attempts=0,locked=false,correctPath=0;
+function $(id){return document.getElementById(id)}
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  $(id).classList.add("active");
+}
+let c=5;
+let splash=setInterval(()=>{
+  c--;
+  $("count").textContent=c;
+  if(c<=0){clearInterval(splash);show("intro")}
+},1000);
 
-        // Audio Triggers (mapped relative to Math_Middle_Games/G6/ch5/assets/)
-        const sndCorrect = new Audio('assets/correct.mp3');
-        const sndWrong = new Audio('assets/wrong.mp3');
-        const sndClaps = new Audio('assets/freesound_community-claps-44774.mp3');
+function sound(id){
+  const a=$(id);
+  a.currentTime=0;
+  a.play().catch(()=>{});
+}
+function startGame(){
+  ["correctSound","wrongSound","clapSound"].forEach(id=>{
+    const a=$(id);
+    a.volume=.75;
+    a.play().then(()=>{a.pause();a.currentTime=0}).catch(()=>{});
+  });
+  order=[...questions].sort(()=>Math.random()-.5);
+  current=0;
+  score=0;
+  loadQuestion();
+  show("game");
+}
+function loadQuestion(){
+  locked=false;
+  attempts=0;
+  const q=order[current];
+  $("score").textContent=score;
+  $("level").textContent=current+1;
+  $("hearts").textContent="❤️❤️";
+  $("qtext").textContent=q.text;
+  $("msg").textContent="Tap the correct path sign.";
+  $("nextBtn").style.display="none";
+  positionJeep();
+  makeRoutes(q);
+}
+function makeRoutes(q){
+  ["path0","path1","path2"].forEach(id=>$(id).innerHTML="");
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  opts.forEach((opt,i)=>{
+    const b=document.createElement("button");
+    b.className="routeBtn";
+    b.textContent=opt;
+    const pathNo=i%3;
+    if(opt===q.answer) correctPath=pathNo;
+    b.onclick=()=>choose(b,opt,pathNo);
+    $("path"+pathNo).appendChild(b);
+  });
+}
+function positionJeep(){
+  const startPath = $("path1");
+  const pathsBox = document.querySelector(".paths");
+  const sceneBox = document.querySelector(".scene");
+  const topValue = pathsBox.offsetTop + startPath.offsetTop + (startPath.offsetHeight/2) - 28;
+  $("jeep").style.left="2%";
+  $("jeep").style.top=topValue+"px";
+}
+function choose(btn,val,pathNo){
+  if(locked)return;
+  document.querySelectorAll(".routeBtn").forEach(t=>t.classList.remove("chosen","wrong","correct"));
+  btn.classList.add("chosen");
+  const q=order[current];
 
-        const successPhrases = ["Excellent!", "Fantastic!", "Brilliant!", "Great Job!", "Outstanding!"];
+  if(val===q.answer){
+    locked=true;
+    btn.classList.add("correct");
+    score+=attempts===0?100:60;
+    $("score").textContent=score;
+    $("msg").textContent="Correct! The jeep followed the correct path. "+q.explain;
+    moveJeepToCorrectPath(correctPath);
+    sound("correctSound");
+    sound("clapSound");
+    confetti();
+    $("nextBtn").style.display="block";
+  }else{
+    attempts++;
+    btn.classList.add("wrong");
+    $("jeep").classList.add("shake");
+    setTimeout(()=>$("jeep").classList.remove("shake"),300);
+    sound("wrongSound");
+    $("hearts").textContent=attempts===1?"❤️🤎":"🤎🤎";
 
-        // Initialization Logic
-        window.addEventListener('DOMContentLoaded', () => {
-            generateBgDecoration();
-            // Handle active Splash screen countdown of exactly 5 seconds
-            setTimeout(() => {
-                document.getElementById('splash-screen').style.display = 'none';
-                showScreen('intro-screen');
-            }, 5000);
-        });
-
-        function generateBgDecoration() {
-            const space = document.getElementById('bg-shapes');
-            for(let i=0; i<15; i++) {
-                let div = document.createElement('div');
-                div.className = 'floating-shape';
-                let scale = Math.random() * 40 + 20;
-                div.style.width = `${scale}px`;
-                div.style.height = `${scale}px`;
-                div.style.left = `${Math.random() * 100}%`;
-                div.style.animationDelay = `${Math.random() * 15}s`;
-                div.style.animationDuration = `${Math.random() * 12 + 10}s`;
-                space.appendChild(div);
-            }
-        }
-
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        function startGame() {
-            currentIdx = 0;
-            score = 0;
-            showScreen('play-screen');
-            loadQuestion();
-        }
-
-        function loadQuestion() {
-            optionSelected = false;
-            livesLeft = 2;
-            timeLeft = 45;
-            
-            document.getElementById('next-btn').style.display = 'none';
-            document.getElementById('feedback-panel').style.display = 'none';
-            document.getElementById('game-box').classList.remove('shake', 'glow-green');
-
-            // Render text trackers
-            document.getElementById('hud-question').innerText = `Question: ${currentIdx + 1}/${questionsConfig.length}`;
-            document.getElementById('hud-score').innerText = `Score: ${score}`;
-            document.getElementById('hud-timer').innerText = `Time: ${timeLeft}s`;
-            
-            // Progress tracker fill
-            let percent = ((currentIdx) / questionsConfig.length) * 100;
-            document.getElementById('progress-fill').style.width = `${percent}%`;
-
-            const currentQ = questionsConfig[currentIdx];
-            document.getElementById('question-label').innerText = currentQ.q;
-
-            const grid = document.getElementById('options-box');
-            grid.innerHTML = '';
-
-            currentQ.options.forEach((opt, idx) => {
-                let card = document.createElement('div');
-                card.className = 'option-card';
-                card.innerText = opt;
-                card.setAttribute('data-idx', idx);
-                card.onclick = () => selectOption(card, idx);
-                grid.appendChild(card);
-            });
-
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                document.getElementById('hud-timer').innerText = `Time: ${timeLeft}s`;
-                if(timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    handleTimeOut();
-                }
-            }, 1000);
-        }
-
-        function selectOption(cardElement, index) {
-            if(optionSelected) return;
-
-            const currentQ = questionsConfig[currentIdx];
-
-            if(index === currentQ.correct) {
-                // Correct path
-                optionSelected = true;
-                clearInterval(timerInterval);
-                cardElement.classList.add('correct');
-                document.getElementById('game-box').classList.add('glow-green');
-                
-                sndCorrect.play();
-                setTimeout(() => { sndClaps.play(); }, 250);
-
-                triggerConfetti();
-                showFeedback(true, successPhrases[Math.floor(Math.random() * successPhrases.length)], currentQ.exp);
-                score++;
-                document.getElementById('hud-score').innerText = `Score: ${score}`;
-                document.getElementById('next-btn').style.display = 'inline-block';
-            } else {
-                // Incorrect path
-                livesLeft--;
-                cardElement.classList.add('wrong');
-                document.getElementById('game-box').classList.add('shake');
-                sndWrong.play();
-                
-                setTimeout(() => {
-                    document.getElementById('game-box').classList.remove('shake');
-                }, 400);
-
-                if(livesLeft > 0) {
-                    // One retry allowed
-                    cardElement.style.pointerEvents = 'none';
-                    showFeedback(false, "Try Again!", "That wasn't quite right. Review the geometry properties and select another choice.");
-                } else {
-                    // Out of retries
-                    optionSelected = true;
-                    clearInterval(timerInterval);
-                    revealCorrectAnswer();
-                    showFeedback(false, "Incorrect", currentQ.exp);
-                    document.getElementById('next-btn').style.display = 'inline-block';
-                }
-            }
-        }
-
-        function handleTimeOut() {
-            optionSelected = true;
-            revealCorrectAnswer();
-            showFeedback(false, "Time's Up!", questionsConfig[currentIdx].exp);
-            document.getElementById('next-btn').style.display = 'inline-block';
-        }
-
-        function revealCorrectAnswer() {
-            const correctIdx = questionsConfig[currentIdx].correct;
-            const cards = document.querySelectorAll('.option-card');
-            cards.forEach(c => {
-                if(parseInt(c.getAttribute('data-idx')) === correctIdx) {
-                    c.classList.add('correct');
-                }
-            });
-        }
-
-        function showFeedback(isSuccess, heading, explanation) {
-            const panel = document.getElementById('feedback-panel');
-            const title = document.getElementById('feedback-title');
-            const desc = document.getElementById('feedback-desc');
-
-            panel.className = 'feedback-box ' + (isSuccess ? 'success-bg' : 'error-bg');
-            title.innerText = heading;
-            desc.innerText = explanation;
-            panel.style.display = 'block';
-        }
-
-        function nextQuestion() {
-            currentIdx++;
-            if(currentIdx < questionsConfig.length) {
-                loadQuestion();
-            } else {
-                finishGame();
-            }
-        }
-
-        function finishGame() {
-            clearInterval(timerInterval);
-            document.getElementById('progress-fill').style.width = `100%`;
-            showScreen('results-screen');
-            
-            document.getElementById('final-score-text').innerText = `${score} / ${questionsConfig.length}`;
-            
-            const passingRatio = score / questionsConfig.length;
-            if(passingRatio >= 0.8) {
-                document.getElementById('final-message-text').innerText = "Outstanding Geometric Mastery! ⭐";
-                sndClaps.play();
-                triggerConfetti();
-            } else if(passingRatio >= 0.5) {
-                document.getElementById('final-message-text').innerText = "Great effort! Review and try again to master it.";
-            } else {
-                document.getElementById('final-message-text').innerText = "Keep practicing! You will conquer geometry soon.";
-            }
-        }
-
-        function restartGame() {
-            startGame();
-        }
-
-        function triggerConfetti() {
-            for(let i=0; i<30; i++) {
-                let conf = document.createElement('div');
-                conf.className = 'confetti';
-                conf.style.left = `${Math.random() * 100}%`;
-                conf.style.backgroundColor = `hsl(${Math.random() * 360}deg, 80%, 60%)`;
-                conf.style.animationDelay = `${Math.random() * 0.4}s`;
-                document.body.appendChild(conf);
-                setTimeout(() => conf.remove(), 2500);
-            }
-        }
-    </script>
+    if(attempts>=2){
+      locked=true;
+      $("msg").textContent="Correct answer: "+q.answer+". "+q.explain;
+      document.querySelectorAll(".routeBtn").forEach(t=>{
+        if(t.textContent===q.answer)t.classList.add("correct");
+      });
+      $("nextBtn").style.display="block";
+    }else{
+      $("msg").textContent="Not quite. Try one more time.";
+    }
+  }
+}
+function moveJeepToCorrectPath(pathNo){
+  const targetPath = $("path"+pathNo);
+  const pathsBox = document.querySelector(".paths");
+  const topValue = pathsBox.offsetTop + targetPath.offsetTop + (targetPath.offsetHeight/2) - 28;
+  $("jeep").style.left="78%";
+  $("jeep").style.top=topValue+"px";
+}
+function nextQuestion(){
+  current++;
+  if(current>=10){endGame()}
+  else loadQuestion();
+}
+function endGame(){
+  $("finalScore").textContent=score;
+  $("stars").textContent=score>=850?"⭐⭐⭐":score>=650?"⭐⭐":"⭐";
+  confetti(70);
+  show("result");
+}
+function confetti(n=30){
+  const wrap=$("confetti");
+  for(let i=0;i<n;i++){
+    const p=document.createElement("div");
+    p.className="piece";
+    p.style.left=Math.random()*100+"vw";
+    p.style.background=["#ffd75b","#ff6b6b","#38a9ff","#55df75","#b369ff"][Math.floor(Math.random()*5)];
+    p.style.animationDelay=Math.random()*.4+"s";
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(),1700);
+  }
+}
+</script>
 </body>
 </html>
