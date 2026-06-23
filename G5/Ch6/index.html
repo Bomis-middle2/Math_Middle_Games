@@ -3,50 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geo-Explorer: Geometry Quest</title>
+    <title>GeoQuest: Grade 5 Geometry Adventure</title>
     <style>
-        :root {
-            --primary: #4a154b;
-            --accent: #ffb81c;
-            --bg-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            --card-bg: rgba(255, 255, 255, 0.15);
-            --text-color: #ffffff;
-        }
-
         * {
             box-sizing: border-box;
             user-select: none;
+            -webkit-user-select: none;
+        }
+        body, html {
             margin: 0;
             padding: 0;
+            width: 100%;
+            height: 100%;
             font-family: 'Comic Sans MS', 'Chalkboard SE', 'Ubuntu', sans-serif;
-        }
-
-        body, html {
-            width: 100%;
-            height: 100%;
+            background-color: #2c3e50;
             overflow: hidden;
-            background: var(--bg-gradient);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            color: #ffffff;
         }
-
-        #game-container {
-            position: relative;
-            width: 100%;
-            max-width: 1024px;
-            height: 100%;
-            max-height: 768px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Screen States */
         .screen {
             position: absolute;
             top: 0;
@@ -57,270 +30,248 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 40px;
-            text-align: center;
-            z-index: 10;
+            padding: 20px;
+            transition: opacity 0.5s ease-in-out;
+            z-index: 1;
+        }
+        .hidden {
+            display: none !important;
             opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
         }
-
-        .screen.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* Logo Screen */
+        /* Logo Screen Styles */
         #logo-screen {
-            background: #ffffff; /* Allowed for logo introduction screen only */
-            z-index: 100;
+            background-color: #ffffff; /* Explicitly white only for corporate branding identity screen */
+            z-index: 10;
         }
         #logo-screen img {
-            max-width: 300px;
-            animation: pulse 2s infinite ease-in-out;
+            max-width: 80%;
+            max-height: 60vh;
+            object-fit: contain;
+            animation: pulse 2s infinite alternate;
         }
-
-        /* Instructions Screen */
-        #instructions-screen {
-            background: var(--bg-gradient);
+        @keyframes pulse {
+            0% { transform: scale(0.95); }
+            100% { transform: scale(1.05); }
         }
-        .instruction-box {
-            background: var(--card-bg);
+        /* Child-friendly backgrounds for gameplay elements */
+        #instruction-screen, #game-screen, #completion-screen {
+            background: linear-gradient(135deg, #2980b9, #6dd5fa, #ffffff);
+            background-attachment: fixed;
+            color: #1a252f;
+        }
+        .panel {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 24px;
             padding: 30px;
-            border-radius: 15px;
-            max-width: 600px;
-            border: 3px solid var(--accent);
-            backdrop-filter: blur(10px);
-            margin-bottom: 20px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 650px;
+            width: 100%;
+            border: 4px solid #f39c12;
         }
-        .instruction-box h2 {
-            color: var(--accent);
-            margin-bottom: 15px;
-            font-size: 2rem;
+        h1 {
+            color: #d35400;
+            margin-top: 0;
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
-        .instruction-box ul {
-            text-align: left;
-            margin-left: 20px;
+        p {
             font-size: 1.2rem;
             line-height: 1.6;
+            color: #2c3e50;
         }
-
-        /* Game Screen Layout */
-        #game-screen {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 15px;
-        }
-
-        header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0,0,0,0.3);
-            padding: 10px 20px;
-            border-radius: 50px;
-            margin-bottom: 10px;
-        }
-
-        .hud-item {
-            font-size: 1.2rem;
-            font-weight: bold;
-            background: rgba(255,255,255,0.1);
-            padding: 5px 15px;
-            border-radius: 20px;
-            border: 2px solid rgba(255,255,255,0.2);
-        }
-
-        #task-prompt {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--accent);
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            margin: 10px 0;
-            background: rgba(0,0,0,0.2);
-            padding: 10px;
-            border-radius: 10px;
-            width: 100%;
-        }
-
-        #gameplay-area {
-            flex: 1;
-            width: 100%;
-            position: relative;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            border: 2px dashed rgba(255,255,255,0.3);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-
-        /* Interactive Elements Overlay */
-        #interaction-overlay {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .interactive-btn-container {
-            pointer-events: auto;
-            display: flex;
-            gap: 20px;
-            position: absolute;
-            bottom: 20px;
-        }
-
-        /* Buttons & UI Components */
         .btn {
-            background: linear-gradient(180deg, #ffcc00 0%, #ff9900 100%);
+            background-color: #e67e22;
+            color: white;
             border: none;
-            padding: 12px 30px;
-            font-size: 1.3rem;
+            padding: 15px 35px;
+            font-size: 1.4rem;
             font-weight: bold;
-            color: #000;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            transition: transform 0.1s, filter 0.2s;
-        }
-        .btn:hover {
-            filter: brightness(1.1);
+            box-shadow: 0 6px #d35400;
+            transition: all 0.1s ease;
+            margin-top: 20px;
+            display: inline-block;
         }
         .btn:active {
-            transform: scale(0.95);
+            box-shadow: 0 2px #d35400;
+            transform: translateY(4px);
         }
-
-        .choice-btn {
-            background: rgba(255,255,255,0.2);
-            border: 3px solid white;
-            color: white;
-            padding: 15px 30px;
-            font-size: 1.2rem;
+        /* Top HUD Navbar */
+        #hud {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px 25px;
             border-radius: 15px;
-            cursor: pointer;
-            pointer-events: auto;
-            transition: all 0.2s;
-        }
-        .choice-btn:hover {
-            background: var(--accent);
-            color: black;
-            transform: translateY(-3px);
-        }
-
-        /* Hint Overlay */
-        #hint-box {
-            position: absolute;
-            top: 70px;
-            background: rgba(231, 76, 60, 0.95);
-            padding: 10px 20px;
-            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 3px solid #3498db;
+            font-weight: bold;
             font-size: 1.1rem;
-            border: 2px solid white;
-            display: none;
-            animation: fadeIn 0.3s ease;
-            z-index: 50;
         }
-
-        /* Feedback Effects */
-        .feedback-flash {
-            position: absolute;
+        .hud-item {
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        /* Main Interactive Game Container */
+        #interactive-container {
+            width: 100%;
+            max-width: 900px;
+            height: 60vh;
+            background: #ffffff;
+            border-radius: 20px;
+            position: relative;
+            border: 5px solid #f1c40f;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.15);
+        }
+        #game-canvas {
             width: 100%;
             height: 100%;
-            top:0; left:0;
-            pointer-events: none;
-            z-index: 40;
-            opacity: 0;
-            transition: opacity 0.2s ease;
+            display: block;
         }
-        .feedback-flash.correct { background: rgba(46, 204, 113, 0.3); opacity: 1; }
-        .feedback-flash.wrong { background: rgba(231, 76, 60, 0.3); opacity: 1; }
-
-        /* End Screen */
-        #end-screen h1 {
-            font-size: 3rem;
-            color: var(--accent);
-            margin-bottom: 20px;
+        /* Task Instruction Header Banner */
+        #task-bar {
+            background: #f1c40f;
+            color: #2c3e50;
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-bottom: 3px solid #f39c12;
         }
-        #end-screen .score-report {
-            font-size: 2rem;
-            margin-bottom: 30px;
+        /* Interactive Feedback Overlay Banner */
+        #feedback-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+            font-size: 2.5rem;
+            font-weight: bold;
+            transform: scale(0);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        #feedback-overlay.show {
+            transform: scale(1);
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        #feedback-overlay.correct { color: #27ae60; }
+        #feedback-overlay.wrong { color: #c0392b; }
+        #hint-text {
+            font-size: 1.2rem;
+            color: #d35400;
+            margin-top: 10px;
+            background: #fff3cd;
+            padding: 8px 15px;
+            border-radius: 10px;
+            border: 1px dashed #ffeba8;
+            max-width: 80%;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <div id="game-container">
-        
-        <!-- Audio Assets -->
-        <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
-        <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
-        <audio id="snd-win" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+    <!-- SCREEN 1: BRANDING LOGO SCREEN -->
+    <div id="logo-screen" class="screen">
+        <img src="assets/logo.png" alt="Innovine Solutions Logo" onerror="this.src='https://placehold.co'">
+    </div>
 
-        <!-- Screen 1: Logo Intro -->
-        <div id="logo-screen" class="screen active">
-            <img src="assets/logo.png" alt="Innovine Logo" onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='block';">
-            <h1 id="logo-fallback" style="display:none; color:#4a154b; font-size:3rem;">Innovine</h1>
+    <!-- SCREEN 2: INSTRUCTIONS SCREEN -->
+    <div id="instruction-screen" class="screen hidden">
+        <div class="panel">
+            <h1>📐 GeoQuest Lab! 🎒</h1>
+            <p>Welcome, young Mathematician! Explore, sort, and identify points, lines, figures, and angles to complete your geometry quest.</p>
+            <p style="font-weight: bold; color: #2980b9;">How to Play: Read the goal at the top of the canvas, then click on the correct geometric element or shape directly on the workspace.</p>
+            <button class="btn" id="start-btn">Start Adventure 🚀</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 3: GAME SCREEN -->
+    <div id="game-screen" class="screen hidden">
+        <div id="hud">
+            <div class="hud-item">🎯 Score: <span id="score-val">0</span></div>
+            <div class="hud-item">🧩 Task: <span id="progress-val">1/12</span></div>
+            <div class="hud-item">❤️ Attempts Left: <span id="attempts-val">2</span></div>
         </div>
 
-        <!-- Screen 2: Instructions -->
-        <div id="instructions-screen" class="screen">
-            <div class="instruction-box">
-                <h2>📐 Geometry Lab Explorer</h2>
-                <p style="font-size: 1.3rem; margin-bottom: 15px;">Welcome, Young Mathematician! Ready to test your space and shape skills?</p>
-                <ul>
-                    <li>Interact directly with lines, rays, segments, and angles.</li>
-                    <li>Click or sort items based on the active structural rule.</li>
-                    <li>You have 2 attempts per task before a helpful geometry guide appears!</li>
-                </ul>
-            </div>
-            <button class="btn" onclick="startGame()">Let's Explore! 🚀</button>
-        </div>
-
-        <!-- Screen 3: Gameplay -->
-        <div id="game-screen" class="screen">
-            <header>
-                <div class="hud-item" id="hud-level">Task: 1 / 10</div>
-                <div class="hud-item" id="hud-score">Score: 0</div>
-                <div class="hud-item" id="hud-attempts">Attempts Left: 2</div>
-            </header>
-
-            <div id="task-prompt">Loading task criteria...</div>
-
-            <div id="gameplay-area">
-                <div class="feedback-flash" id="flash-effect"></div>
-                <div id="hint-box">💡 Hint displayed here</div>
-                <canvas id="game-canvas"></canvas>
-                <div id="interaction-overlay">
-                    <div class="interactive-btn-container" id="action-controls"></div>
-                </div>
+        <div id="interactive-container">
+            <div id="task-bar">Loading task...</div>
+            <canvas id="game-canvas"></canvas>
+            
+            <div id="feedback-overlay">
+                <span id="feedback-text">Correct!</span>
+                <span id="hint-text" class="hidden"></span>
             </div>
         </div>
+    </div>
 
+    <!-- SCREEN 4: COMPLETION SCREEN -->
+    <div id="completion-screen" class="screen hidden">
+        <div class="panel">
+            <h1>🏆 Quest Accomplished! 🎉</h1>
+            <p>Fantastic job! You've mastered Grade 5 geometry basics like an absolute pro.</p>
+            <h2 style="font-size: 2.5rem; color: #27ae60; margin: 15px 0;">Final Score: <span id="final-score">0</span> / 120</h2>
+            <button class="btn" id="restart-btn">Play Again 🔄</button>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="audio-win" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+    <script>
+        // DOM Elements
+        const screens = {
+            logo: document.getElementById('logo-screen'),
+            instruction: document.getElementById('instruction-screen'),
+            game: document.getElementById('game-screen'),
+            completion: document.getElementById('completion-screen')
+        };
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const taskBar = document.getElementById('task-bar');
+        const scoreVal = document.getElementById('score-val');
+        const progressVal = document.getElementById('progress-val');
+        const attemptsVal = document.getElementById('attempts-val');
+        const feedbackOverlay = document.getElementById('feedback-overlay');
+        const feedbackText = document.getElementById('feedback-text');
+        const hintText = document.getElementById('hint-text');
+
+        // Audio Objects
+        const sounds = {
+            correct: document.getElementById('audio-correct'),
+            wrong: document.getElementById('audio-wrong'),
+            win: document.getElementById('audio-win')
+        };
+
+        // Game State Variables
+        let score = 0;
+        let currentTaskIndex = 0;
+        let attemptsLeft = 2;
+        let activeElements = [];
+        let canClick = true;
+
+        // Task Database (12 Unique Application-Based Interactive Non-MCQ Tasks)
+        const tasksData = [
+            {
+                instruction: "Click on the COLLINEAR points (the line path where 3 points sit perfectly straight together).",
+                hint: "Collinear points are three or more points that lie on a single straight line.",
+                generate: () => [
+                    { id: 'correct', type: 'collinear_set', x1: 150, y1: 150, x2: 450, y2: 150, points: [{x:200,y:150}, {x:300,y:150}, {x:400,y:150}], clickZone: {x:300, y:150, r:160} },
