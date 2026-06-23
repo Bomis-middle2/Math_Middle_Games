@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Alchemist's Lab: Metric Elixir</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Cinzel', 'Georgia', serif;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #0f0c1b;
+            color: #f1e9db;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #viewport-root {
+            width: 100%;
+            max-width: 440px;
+            height: 100%;
+            max-height: 780px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: #1a1423;
+            box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85);
+            overflow: hidden;
+            border: 3px solid #b79ced;
+        }
+
+        /* --- STAGE 1: BRANDING-ONLY SPLASH (5 SECONDS STRICT) --- */
+        #branding-splash {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .branding-img {
+            max-width: 180px;
+            height: auto;
+        }
+
+        /* --- OVERLAY STAGES --- */
+        .stage-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 16px;
+            z-index: 10;
+        }
+
+        .potion-panel {
+            background: #2d1e3d;
+            border: 2px solid #b79ced;
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: inset 0 0 20px rgba(183, 156, 237, 0.2);
+            color: #f1e9db;
+        }
+
+        .header-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #3d2647;
+            color: #e2cfea;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid #b79ced;
+        }
+        .header-title { font-weight: 800; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
+        .header-score { font-weight: 800; font-size: 0.85rem; background: #745185; color: #fff; padding: 4px 12px; border-radius: 6px; }
+
+        .instruction-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #d2c4db;
+            margin-bottom: 20px;
+        }
+        .instruction-text ul { margin-left: 18px; margin-top: 8px; }
+        .instruction-text li { margin-bottom: 10px; font-weight: 600; color: #b79ced; }
+
+        .workspace-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            background: #160f1f;
+            border-radius: 12px;
+            border: 2px solid #3d2647;
+            padding: 16px;
+        }
+
+        .clue-box {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #f1e9db;
+            background: #261730;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #745185;
+            width: 100%;
+            text-align: center;
+            min-height: 85px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.4;
+        }
+
+        /* --- GRAPHICS VISUALIZATION VIEWPORT --- */
+        .vector-canvas-box {
+            width: 100%;
+            height: 160px;
+            background: #0d0814;
+            border-radius: 12px;
+            border: 1px dashed #b79ced;
+            position: relative;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- QUANTITY ARTIFACT STEPPER --- */
+        .potion-counter-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            background: #261730;
+            border: 2px solid #745185;
+            padding: 10px 16px;
+            border-radius: 14px;
+        }
+
+        .counter-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .counter-btn {
+            background: #745185;
+            border: none;
+            color: white;
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .counter-btn:active { transform: scale(0.9); background: #b79ced; }
+
+        .counter-display-window {
+            width: 40px;
+            height: 44px;
+            background: #0d0814;
+            border: 2px solid #b79ced;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #c8b1ef;
+            text-shadow: 0 0 6px rgba(183,156,237,0.7);
+        }
+
+        .counter-decimal {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #b79ced;
+            align-self: flex-end;
+            margin-bottom: 4px;
+        }
+
+        /* --- EXTRA MEASURE UNIT LABEL --- */
+        .unit-lbl {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #e2cfea;
+            margin-left: 6px;
+            align-self: center;
+        }
+
+        /* --- STRIKE TRACKING CONSOLE --- */
+        .strike-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .strike-cell {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ef4444;
+            box-shadow: 0 0 6px #ef4444;
+            transition: all 0.3s ease;
+        }
+        .strike-cell.used {
+            background: #4a3b5c;
+            box-shadow: none;
+        }
+
+        .action-btn {
+            background: #b79ced;
+            color: #160f1f;
+            border: none;
+            border-bottom: 4px solid #745185;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 800;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .action-btn:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+
+        .status-banner {
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            min-height: 22px;
+            color: #a795b5;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="viewport-root">
+        
+        <!-- STAGE 1: Branding Intro Splash -->
+        <div id="branding-splash">
+            <img src="assets/logo.png" class="branding-img" alt="Innovine Logo" onerror="this.src='https://placehold.co/180x60/ffffff/160f1f?text=INNOVINE';">
+        </div>
+
+        <!-- STAGE 2: Interactive Mission Rules Setup -->
+        <div id="instructions-screen" class="stage-overlay hidden">
+            <div class="potion-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
+                <div class="header-panel">
+                    <div class="header-title">🧪 The Alchemist's Metric Lab</div>
+                </div>
+                <div class="instruction-text">
+                    <p>Help the Chief Wizard brew rare magical elixirs by calculating metric conversions perfectly:</p>
+                    <ul>
+                        <li>1. Study the requested transmutation recipe on the scroll.</li>
+                        <li>2. Use the **▲** and **▼** dials to set your calculated value.</li>
+                        <li>3. Pour the ingredient! You have **2 stability attempts** per elixir compound.</li>
+                    </ul>
+                </div>
+                <button class="action-btn" onclick="startAlchemistLab()">Stir Catalyst Core</button>
+            </div>
+        </div>
+
+        <!-- STAGE 3: Main Gameplay Viewport -->
+        <div id="gameplay-screen" class="stage-overlay hidden">
+            <div class="header-panel">
+                <div id="game-level-tag" class="header-title">Elixir: 01 / 06</div>
+                <div id="game-score-tag" class="header-score">Mana: 0</div>
+            </div>
+
+            <div class="workspace-area">
+                <!-- Recipe Query Prompt Card -->
+                <div id="game-prompt" class="clue-box">Formulating recipe scroll criteria...</div>
+                
+                <!-- Dynamic SVG Metric Beaker Layout -->
+                <div class="vector-canvas-box">
+                    <svg id="drawing-svg" width="100%" height="100%" style="position:absolute; pointer-events:none;"></svg>
+                </div>
+
+                <!-- Digital Counter Stepper Matrix -->
+                <div class="potion-counter-box">
+                    <div class="counter-column">
+                        <button class="counter-btn" onclick="stepCounter(0, 1)">▲</button>
+                        <div id="digit-display-0" class="counter-display-window">0</div>
+                        <button class="counter-btn" onclick="stepCounter(0, -1)">▼</button>
+                    </div>
+                    <div class="counter-column">
+                        <button class="counter-btn" onclick="stepCounter(1, 1)">▲</button>
+                        <div id="digit-display-1" class="counter-display-window">0</div>
+                        <button class="counter-btn" onclick="stepCounter(1, -1)">▼</button>
+                    </div>
+                    <div class="counter-column">
+                        <button class="counter-btn" onclick="stepCounter(2, 1)">▲</button>
+                        <div id="digit-display-2" class="counter-display-window">0</div>
+                        <button class="counter-btn" onclick="stepCounter(2, -1)">▼</button>
+                    </div>
+                    
+                    <!-- Dynamic Decimal Separator Point (only shows up for decimal tasks) -->
+                    <div id="ui-decimal-dot" class="counter-decimal hidden">.</div>
+
+                    <div class="counter-column id-dec-col hidden">
+                        <button class="counter-btn" onclick="stepCounter(3, 1)">▲</button>
+                        <div id="digit-display-3" class="counter-display-window">0</div>
+                        <button class="counter-btn" onclick="stepCounter(3, -1)">▼</button>
+                    </div>
+                    
+                    <div id="ui-unit-label" class="unit-lbl">ml</div>
+                </div>
+
+                <!-- Safe Infusion Stability Lights -->
+                <div class="strike-container">
+                    <div id="strike-dot-1" class="strike-cell"></div>
+                    <div id="strike-dot-2" class="strike-cell"></div>
+                </div>
+
+                <button class="action-btn" onclick="brewElixirAttempt()">Pour Into Catalyst</button>
+            </div>
+
+            <div id="game-toast-feedback" class="status-banner">Balance the compound proportions carefully.</div>
+        </div>
+
+    </div>
+
+    <script>
+        // Media Sound Notification Tracks
+        const audioCorrect = new Audio('assets/correct.mp3');
+        const audioWrong = new Audio('assets/wrong.mp3');
+        const audioWin = new Audio('assets/freesound_community-claps-44774.mp3');
+
+        function playAudio(track) {
+            try {
+                track.currentTime = 0;
+                track.play();
+            } catch(e) { console.log("Audio routing offline fail-safe triggered."); }
+        }
+
+        // Active State Engine Variables
+        let scoreCount = 0;
+        let taskIndex = 0;
+        let internalStrikeCounter = 0;
+        let activeComboDigits = [0, 0, 0, 0]; // Supports up to 4 digits for layout flexibility
+        let dynamicShufflePool = [];
+
+        // SVG Dynamic Vector Graphics Builders
+        function buildSVGElement(name) { return document.createElementNS("http://www.w3.org/2000/svg", name); }
+        
+        function setSVGProperties(el, attrs) {
+            for (let k in attrs) { el.setAttribute(k, attrs[k]); }
+            return el;
+        }
+
+        // Complete Core Grade 5 Metric Conversion Dataset [Matches image_33f0e3.png outcomes]
+        const rawMetricPuzzles = [
+            {
+                q: "A recipe requires a magic vine length of 40 millimetres (mm). Convert this layout value into centimetres (cm).",
+                correct: [0, 0, 4, 0],
+                isDecimal: false,
+                unit: "cm",
+                render: (svg) => {
+                    // Render interactive measurement wand line
+                    let line = buildSVGElement("line"); setSVGProperties(line, { x1: "60", y1: "80", x2: "260", y2: "80", stroke: "#b79ced", "stroke-width": "4" }); svg.appendChild(line);
+                    let cap1 = buildSVGElement("circle"); setSVGProperties(cap1, { cx: "60", cy: "80", r: "6", fill: "#745185" }); svg.appendChild(cap1);
+                    let cap2 = buildSVGElement("circle"); setSVGProperties(cap2, { cx: "260", cy: "80", r: "6", fill: "#745185" }); svg.appendChild(cap2);
+                    
+                    let text = buildSVGElement("text"); setSVGProperties(text, { x: "160", y: "60", fill: "#f1e9db", "font-size": "13", "text-anchor": "middle" });
+                    text.textContent = "Current Length: 40 mm"; svg.appendChild(text);
+                }
+            },
+            {
+                q: "The wizard needs to crush 5 kilograms (kg) of moonstone crystal powder. Convert this weight into grams (g).",
+                correct: [5, 0, 0, 0],
+                isDecimal: false,
+                unit: "g",
+                render: (svg) => {
+                    // Render scale weight cauldron plate
+                    let base = buildSVGElement("path"); setSVGProperties(base, { d: "M 110 110 L 210 110 L 190 70 L 130 70 Z", fill: "#3d2647", stroke: "#b79ced", "stroke-width": "2" }); svg.appendChild(base);
+                    let text = buildSVGElement("text"); setSVGProperties(text, { x: "160", y: "95", fill: "#f1e9db", "font-size": "12", "text-anchor": "middle", "font-weight": "bold" });
+                    text.textContent = "5 kg Heavy Weight"; svg.appendChild(text);
+                }
+            },
+            {
+                q: "To prevent a solution from evaporating, pour exactly 3000 millilitres (ml) of clear stream distillate. How many Litres (L) is this?",
+                correct: [0, 0, 3, 0],
+                isDecimal: false,
+                unit: "L",
+                render: (svg) => {
+                    // Render liquid volumetric beaker lines
+                    let flask = buildSVGElement("rect"); setSVGProperties(flask, { x: "120", y: "30", width: "80", height: "100", fill: "rgba(183,156,237,0.1)", stroke: "#b79ced", "stroke-width": "3" }); svg.appendChild(flask);
+                    let fluid = buildSVGElement("rect"); setSVGProperties(fluid, { x: "123", y: "60", width: "74", height: "67", fill: "rgba(116,81,133,0.6)" }); svg.appendChild(fluid);
+                    
+                    let text = buildSVGElement("text"); setSVGProperties(text, { x: "160", y: "95", fill: "#fff", "font-size": "11", "text-anchor": "middle" });
+                    text.textContent = "3000 ml Filling"; svg.appendChild(text);
+                }
+            },
+            {
+                q: "A wizard's apprentice runs a messenger track that spans 8 kilometres (km). Convert this travel layout length into meters (m).",
+                correct: [8, 0, 0, 0],
+                isDecimal: false,
+                unit: "m",
+                render: (svg) => {
+                    let path = buildSVGElement("path"); setSVGProperties(path, { d: "M 40 100 Q 160 30 280 100", fill: "none", stroke: "#745185", "stroke-width": "3", "stroke-dasharray": "6 4" }); svg.appendChild(path);
+                    let text = buildSVGElement("text"); setSVGProperties(text, { x: "160", y: "50", fill: "#f1e9db", "font-size": "13", "text-anchor": "middle" });
+                    text.textContent = "Path Span: 8 km"; svg.appendChild(text);
+                }
+            },
+            {
+                q: "A specialized flask contains 1.5 litres (L) of dragon-fire essence. Convert this capacity measurement into millilitres (ml).",
+                correct: [1, 5, 0, 0],
+                isDecimal: false,
+                unit: "ml",
+                render: (svg) => {
+                    let flask = buildSVGElement("polygon"); setSVGProperties(flask, { points: "130,40 190,40 220,120 100,120", fill: "rgba(239,68,68,0.15)", stroke: "#ef4444", "stroke-width": "2" }); svg.appendChild(flask);
+                    let text = buildSVGElement("text"); setSVGProperties(text, { x: "160", y: "95", fill: "#f1e9db", "font-size": "12", "text-anchor": "middle" });
+                    text.textContent = "1.5 Litres"; svg.appendChild(text);
+                }
+            },
+            {
+                q: "[Word Problem]: If a standard crystal flask holds 250 ml of fluid elixir, how many total ml are in 3 identical crystal flasks?",
+                correct: [7, 5, 0, 0],
+                isDecimal: false,
+                unit: "ml",
+                render: (svg) => {
+                    for(let i=0; i<3; i++) {
+                        let c = buildSVGElement("rect"); setSVGProperties(c, { x: 70 + (i*65), y: 50, width: "40", height: "60", fill: "#3d2647", stroke: "#b79ced", "stroke-width": "2" }); svg.appendChild(c);
+                        let lbl = buildSVGElement("text"); setSVGProperties(lbl, { x: 90 + (i*65), y: 85, fill: "#fff", "font-size": "10", "text-anchor": "middle" });
+                        lbl.textContent = "250"; svg.appendChild(lbl);
+                    }
+                }
+            }
+        ];
+
+        // Knuth Shuffle Array Utility to Randomize Dataset
+        function shuffleMasterArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Strict 5-Second Splash Trigger
+        setTimeout(() => {
+            const splash = document.getElementById('branding-splash');
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.remove();
+                    document.getElementById('instructions-screen').classList.remove('hidden');
+                }, 500);
+            }
+        }, 5000);
+
+        function startAlchemistLab() {
+            dynamicShufflePool = shuffleMasterArray([...rawMetricPuzzles]);
+            
+            document.getElementById('instructions-screen').classList.add('hidden');
+            document.getElementById('gameplay-screen').classList.remove('hidden');
+            loadNextAlchemistTask();
+        }
+
+        function loadNextAlchemistTask() {
+            if (taskIndex >= dynamicShufflePool.length) {
+                triggerLabVictory();
+                return;
+            }
+
+            document.getElementById('game-level-tag').innerText = `Elixir: ${String(taskIndex + 1).padStart(2, '0')} / ${dynamicShufflePool.length}`;
+            document.getElementById('game-score-tag').innerText = `Mana: ${scoreCount}`;
+
+            internalStrikeCounter = 0;
+            document.getElementById('strike-dot-1').classList.remove('used');
+            document.getElementById('strike-dot-2').classList.remove('used');
+
+            // Reset dynamic counters
+            activeComboDigits = [0, 0, 0, 0];
+            
+            const currentPuzzle = dynamicShufflePool[taskIndex];
+            document.getElementById('game-prompt').innerText = currentPuzzle.q;
+            document.getElementById('ui-unit-label').innerText = currentPuzzle.unit;
+
+            // Handle decimal rendering columns selectively
+            const decimalDot = document.getElementById('ui-decimal-dot');
+            const extraCol = document.querySelector('.id-dec-col');
+            if (currentPuzzle.isDecimal) {
+                decimalDot.classList.remove('hidden');
+                extraCol.classList.remove('hidden');
+            } else {
+                decimalDot.classList.add('hidden');
+                extraCol.classList.add('hidden');
+            }
+
+            updateCounterDisplayUI();
+
+            // Clear and draw matching vector graphic context
+            const svg = document.getElementById('drawing-svg');
+            svg.innerHTML = '';
+            if (currentPuzzle.render) currentPuzzle.render(svg);
+
+            document.getElementById('game-toast-feedback').innerText = "Balance the compound proportions carefully.";
+            document.getElementById('game-toast-feedback').style.color = "#a795b5";
+        }
+
+        function stepCounter(columnIdx, offset) {
+            let val = activeComboDigits[columnIdx] + offset;
+            if (val > 9) val = 0;
+            if (val < 0) val = 9;
+            activeComboDigits[columnIdx] = val;
+            updateCounterDisplayUI();
+        }
+
+        function updateCounterDisplayUI() {
+            for (let i = 0; i < 4; i++) {
+                const cell = document.getElementById(`digit-display-${i}`);
+                if (cell) cell.innerText = activeComboDigits[i];
+            }
+        }
+
+        function brewElixirAttempt() {
+            const currentPuzzle = dynamicShufflePool[taskIndex];
+            const toast = document.getElementById('game-toast-feedback');
+
+            let isMatching = true;
+            const comparativeLength = currentPuzzle.isDecimal ? 4 : 3;
+
+            for (let i = 0; i < comparativeLength; i++) {
+                if (activeComboDigits[i] !== currentPuzzle.correct[i]) {
+                    isMatching = false;
+                    break;
+                }
+            }
+
+            if (isMatching) {
+                scoreCount += 100;
+                playAudio(audioCorrect);
+                toast.innerText = "✔ TRANSMUTATION STABLE: Elixir compound calculated cleanly!";
+                toast.style.color = "#b79ced";
+
+                taskIndex++;
+                setTimeout(() => loadNextAlchemistTask(), 1600);
+            } else {
+                internalStrikeCounter++;
+                playAudio(audioWrong);
+
+                if (internalStrikeCounter === 1) {
+                    document.getElementById('strike-dot-1').classList.add('used');
+                    toast.innerText = "❌ COMPOUND UNSTABLE: Conversions mismatched. Recalibrate!";
+                    toast.style.color = "#ef4444";
+                } else {
+                    document.getElementById('strike-dot-2').classList.add('used');
+                    
+                    // Format output readable trace
+                    let printAns = currentPuzzle.isDecimal ? 
+                        `${currentPuzzle.correct[0]}${currentPuzzle.correct[1]}${currentPuzzle.correct[2]}.${currentPuzzle.correct[3]}` :
+                        currentPuzzle.correct.slice(0, 3).join("");
+                    
+                    // Parse out leading zeroes cleanly for presentation feedback
+                    printAns = parseInt(printAns, 10) || printAns;
+
+                    toast.innerText = `Catalyst reset! Balanced value was: ${printAns} ${currentPuzzle.unit}`;
+                    toast.style.color = "#f59e0b";
+
+                    taskIndex++;
+                    setTimeout(() => loadNextAlchemistTask(), 3500);
+                }
+            }
+            document.getElementById('game-score-tag').innerText = `Mana: ${scoreCount}`;
+        }
+
+        function triggerLabVictory() {
+            playAudio(audioWin);
+            document.getElementById('game-level-tag').innerText = "ALCHEMY MASTERED";
+            document.getElementById('game-prompt').innerHTML = `
+                <div style="font-size: 1.15rem; color: #b79ced; margin-bottom: 4px;">🧙‍♂️ SUPREME METRIC GRANDMASTER!</div>
+                <div style="font-size: 0.85rem; color: #e2cfea; font-weight: 800;">All conversion elixirs distilled successfully. Total Score: ${scoreCount} Mana</div>
+            `;
+            document.getElementById('game-toast-feedback').innerText = "The grand elixir transitions perfectly.";
+            document.getElementById('game-toast-feedback').style.color = "#f1e9db";
+
+            document.getElementById('drawing-svg').parentElement.innerHTML = `
+                <div style="font-size:60px; text-align:center; width:100%; padding-top:35px;">🧪🔮✨</div>
+            `;
+            
+            const moduleArea = document.querySelector('.potion-counter-box');
+            moduleArea.style.display = "block";
+            moduleArea.innerHTML = `
+                <button class="action-btn" onclick="location.reload()">Brew More Compounds</button>
+            `;
+        }
+    </script>
+</body>
+</html>
