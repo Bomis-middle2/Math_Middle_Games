@@ -1,363 +1,469 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Grade 6 Decimals Route Runner</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 6 Decimals Train Game</title>
 <style>
-:root{
-  --ink:#12304f; --cream:#fff2cf; --green:#2bbf5b; --red:#e84b42;
-  --gold:#ffd75b; --blue:#38a9ff; --purple:#7b4bd8; --road:#5cae37;
-  --shadow:0 14px 30px rgba(0,0,0,.28);
-}
 *{box-sizing:border-box}
 body{
-  margin:0; min-height:100vh; overflow-x:hidden;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  color:white;
-  background:linear-gradient(#74d7ff 0%, #b7f3ff 26%, #6cc872 27%, #2d884d 100%);
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(#8ee3ff,#dff7ff 40%,#71c86f 41%,#338b4b);
+  min-height:100vh;
+  color:#123;
 }
-button{font:inherit;cursor:pointer;border:0}
-.screen{display:none;min-height:100vh;padding:14px}
-.screen.active{display:flex}
+.screen{display:none;min-height:100vh;padding:18px}
+.active{display:flex}
+button{font-family:inherit;cursor:pointer;border:0}
 #splash{
-  align-items:center;justify-content:center;flex-direction:column;
-  background:linear-gradient(160deg,#e8fbff,#ffffff 46%,#e3f8d8);
+  justify-content:center;align-items:center;flex-direction:column;
+  background:linear-gradient(#eefcff,#ffffff,#e6ffd9);
 }
-#splash img{max-width:min(74vw,430px);animation:pop .65s ease both}
-.timer-badge{margin-top:22px;background:#143e6d;color:white;border-radius:18px;padding:12px 22px;font-weight:900;box-shadow:var(--shadow)}
-#intro,#result{align-items:center;justify-content:center}
+#splash img{max-width:420px;width:75vw}
+.timer{
+  margin-top:20px;
+  background:#123b66;
+  color:white;
+  padding:12px 24px;
+  border-radius:20px;
+  font-weight:bold;
+}
+#intro,#result{justify-content:center;align-items:center}
 .card{
-  width:min(900px,94vw); background:rgba(255,242,207,.97); color:var(--ink);
-  border-radius:28px; padding:28px; box-shadow:var(--shadow); text-align:center;
-  border:5px solid rgba(255,255,255,.55);
+  width:min(850px,94vw);
+  background:#fff1cb;
+  color:#123b66;
+  border-radius:28px;
+  padding:28px;
+  text-align:center;
+  box-shadow:0 12px 28px rgba(0,0,0,.25);
+  border:5px solid white;
 }
-h1{margin:0 0 12px;font-size:clamp(30px,6vw,56px)}
-.subtitle{font-weight:800;font-size:clamp(16px,2.6vw,22px);margin:0 auto 10px;max-width:720px}
+h1{font-size:clamp(32px,6vw,56px);margin:0 0 12px}
 .rules{
-  max-width:680px;margin:18px auto;text-align:left;display:grid;gap:10px;
-  font-weight:750;font-size:clamp(16px,2.5vw,20px);counter-reset:item;
+  text-align:left;
+  margin:20px auto;
+  max-width:650px;
+  counter-reset:step;
+  display:grid;
+  gap:10px;
 }
 .rule{
-  background:white;border-radius:14px;padding:12px 16px;
-  display:grid;grid-template-columns:32px 1fr;gap:6px;align-items:start;
+  background:white;
+  border-radius:15px;
+  padding:14px;
+  font-size:clamp(16px,2.5vw,20px);
+  font-weight:bold;
 }
-.rule::before{counter-increment:item;content:counter(item) ".";font-weight:1000;color:#0f6fb2}
-.play-btn,.next-btn,.restart-btn{
-  background:linear-gradient(#57df71,#119541); color:white; border-radius:999px;
-  padding:14px 30px; font-weight:1000; font-size:clamp(18px,3vw,24px);
-  box-shadow:0 8px 0 #0b6e30,var(--shadow); text-shadow:0 2px 0 rgba(0,0,0,.24);
+.rule:before{
+  counter-increment:step;
+  content:counter(step) ". ";
+  color:#0072bc;
+  margin-right:8px;
 }
-#game{flex-direction:column;gap:10px;min-height:100vh;background:
-  radial-gradient(circle at 18% 12%,rgba(255,255,255,.35),transparent 15%),
-  linear-gradient(#66d3ff 0%,#a8efff 24%,#83d36f 25%,#377f4c 100%);
+.play,.next,.restart{
+  background:linear-gradient(#50dc65,#149a3c);
+  color:white;
+  font-size:22px;
+  font-weight:bold;
+  padding:14px 30px;
+  border-radius:30px;
+  box-shadow:0 7px 0 #0b6a2b;
 }
-.topbar{
-  width:min(1200px,97vw);margin:0 auto;display:grid;grid-template-columns:1fr auto 1fr;
-  gap:10px;align-items:center;font-weight:1000;font-size:clamp(15px,2.4vw,21px)
+#game{
+  flex-direction:column;
+  gap:10px;
 }
-.pill{background:#0f3764;border:3px solid rgba(255,255,255,.25);border-radius:18px;padding:10px 14px;box-shadow:var(--shadow)}
-.center{text-align:center}.right{text-align:right}
-.progress{height:10px;width:min(1200px,97vw);margin:0 auto;background:rgba(15,55,100,.35);border-radius:999px;overflow:hidden}
-#bar{height:100%;width:0;background:linear-gradient(90deg,var(--gold),#ff8d34);transition:.35s}
-.scene{
-  position:relative;width:min(1200px,97vw);margin:0 auto;flex:1;min-height:610px;
-  border-radius:28px;overflow:hidden;box-shadow:var(--shadow);border:4px solid rgba(255,255,255,.35);
-  background:
-    radial-gradient(circle at 82% 20%,#ffffff 0 3%,transparent 4%),
-    linear-gradient(#7be0ff 0 29%,#55ad64 30% 100%);
+.top{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  width:min(1000px,96vw);
+  margin:auto;
+  font-weight:bold;
 }
-.mountain{position:absolute;bottom:44%;width:340px;height:220px;background:#6daac9;clip-path:polygon(50% 0,100% 100%,0 100%);opacity:.8}
-.m1{left:6%}.m2{left:24%;transform:scale(.75);opacity:.65}.m3{right:4%;transform:scale(.9);opacity:.75}
+.box{
+  background:#123b66;
+  color:white;
+  padding:10px;
+  border-radius:14px;
+  text-align:center;
+}
+.track-area{
+  width:min(1000px,96vw);
+  margin:auto;
+  background:rgba(255,255,255,.35);
+  border-radius:28px;
+  padding:18px;
+  box-shadow:0 10px 24px rgba(0,0,0,.25);
+  position:relative;
+  min-height:560px;
+  overflow:hidden;
+}
 .city{
-  position:absolute;right:3%;top:17%;display:flex;align-items:end;gap:5px;z-index:2;
+  position:absolute;
+  right:18px;
+  top:28px;
+  font-size:48px;
 }
-.build{width:34px;background:#2a73b7;border:3px solid #165083;border-radius:5px 5px 0 0;box-shadow:inset 0 0 0 3px rgba(255,255,255,.18)}
-.build:nth-child(1){height:78px}.build:nth-child(2){height:112px}.build:nth-child(3){height:92px}.build:nth-child(4){height:135px}
-.sign{
-  position:absolute;right:3%;top:35%;background:#285c18;color:white;border:4px solid #ffd75b;
-  border-radius:12px;padding:10px 14px;font-weight:1000;text-align:center;z-index:4;box-shadow:var(--shadow)
+.station-label{
+  position:absolute;
+  right:18px;
+  top:88px;
+  background:#184c1f;
+  color:white;
+  padding:8px 12px;
+  border-radius:10px;
+  border:3px solid #ffd84d;
+  font-weight:bold;
 }
 .question-card{
-  position:absolute;left:50%;top:20px;transform:translateX(-50%);
-  width:min(620px,88vw);background:rgba(255,244,221,.98);color:var(--ink);
-  border-radius:22px;border:4px dashed #c28f52;padding:16px;text-align:center;z-index:5;
+  background:#fff1cb;
+  color:#123;
+  border:4px solid white;
+  border-radius:22px;
+  padding:18px;
+  width:min(720px,92%);
+  margin:0 auto;
+  text-align:center;
 }
-.question{font-size:clamp(18px,2.7vw,26px);font-weight:1000;margin-bottom:10px}
-.display{font-size:clamp(28px,6vw,56px);font-weight:1000;color:#0d2e51}
-.paths{position:absolute;left:3%;right:3%;bottom:34px;height:350px;z-index:3}
-.path{
-  position:absolute;left:7%;right:8%;height:74px;border-radius:999px;
-  display:flex;align-items:center;justify-content:space-around;padding:0 7%;
-  border:6px solid rgba(255,255,255,.75);box-shadow:inset 0 0 0 6px rgba(0,0,0,.05), var(--shadow);
+.qtext{
+  font-size:clamp(18px,3vw,28px);
+  font-weight:bold;
 }
-.path.green{top:0;background:#69bd34}
-.path.orange{top:125px;background:#f2a51f}
-.path.purple{top:250px;background:#8a51d7}
-.path::after{
-  content:"";position:absolute;left:4%;right:4%;top:50%;height:8px;transform:translateY(-50%);
-  background:repeating-linear-gradient(90deg,#fff 0 35px,transparent 35px 62px);opacity:.9;border-radius:99px;pointer-events:none;
+.qdisplay{
+  font-size:clamp(34px,7vw,64px);
+  font-weight:bold;
+  color:#06345d;
+  margin-top:8px;
+}
+.rail{
+  position:relative;
+  margin:60px auto 20px;
+  width:92%;
+  height:90px;
+  border-radius:50px;
+  background:#6b4a28;
+  border:8px solid #3a2715;
+}
+.rail:before{
+  content:"";
+  position:absolute;
+  left:3%;
+  right:3%;
+  top:50%;
+  height:8px;
+  background:repeating-linear-gradient(90deg,#fff 0 28px,transparent 28px 48px);
+  transform:translateY(-50%);
+}
+.station{
+  position:absolute;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:32px;
+  height:32px;
+  background:#ffd84d;
+  border:4px solid white;
+  border-radius:50%;
+  z-index:2;
+}
+.train{
+  position:absolute;
+  top:-56px;
+  left:0%;
+  font-size:58px;
+  transition:left .8s ease, transform .35s ease;
+  z-index:3;
+  line-height:1;
+}
+.train.chug{
+  animation:chug .45s ease;
+}
+.answers{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px;
+  margin:18px auto;
+  max-width:620px;
 }
 .tile{
-  position:relative;z-index:2;min-width:130px;min-height:58px;border-radius:18px;
-  background:linear-gradient(#fff8b7,#d99d20);color:white;text-shadow:0 2px 0 rgba(0,0,0,.35);
-  border:4px solid #fff1a6;font-weight:1000;font-size:clamp(19px,3vw,30px);
-  box-shadow:0 8px 0 rgba(93,58,10,.4), var(--shadow);
+  min-height:64px;
+  border-radius:18px;
+  background:white;
+  color:#123b66;
+  font-size:clamp(20px,4vw,32px);
+  font-weight:bold;
+  border:4px solid transparent;
+  box-shadow:0 6px 0 #b8c8d8;
 }
-.tile.green-btn{background:linear-gradient(#9ee86b,#3d981e)}
-.tile.orange-btn{background:linear-gradient(#ffd45a,#dd8d0f)}
-.tile.purple-btn{background:linear-gradient(#b992ff,#6d39c7)}
-.tile:active{transform:translateY(4px);box-shadow:0 4px 0 rgba(93,58,10,.4), var(--shadow)}
-.tile.chosen{outline:5px solid #ffe100}
-.tile.correct{outline:5px solid #18dd67;animation:glow .7s infinite alternate}
-.tile.wrong{outline:5px solid var(--red);animation:shake .3s}
-.train{
-  position:absolute;left:5%;bottom:405px;width:150px;height:85px;z-index:6;transition:1s ease-in-out;
+.tile.chosen{border-color:#ffd600;background:#fff6b6}
+.tile.correct{border-color:#12b94f;background:#c9ffd9}
+.tile.wrong{border-color:#e74c3c;background:#ffd3cd;animation:shake .25s}
+.msg{
+  min-height:55px;
+  background:white;
+  color:#123;
+  border-radius:16px;
+  padding:12px;
+  font-size:clamp(16px,2.5vw,21px);
+  font-weight:bold;
+  text-align:center;
 }
-.engine{position:absolute;bottom:0;left:0;width:118px;height:58px;background:linear-gradient(#ff6a2e,#bd2d19);border:5px solid #4c1b13;border-radius:16px 28px 12px 12px}
-.cabin{position:absolute;bottom:34px;left:43px;width:48px;height:42px;background:#f2c230;border:5px solid #4c1b13;border-radius:12px}
-.window{width:24px;height:20px;margin:6px auto;background:#9eeaff;border-radius:6px;border:3px solid #4c1b13}
-.wheel{position:absolute;bottom:-10px;width:28px;height:28px;background:#152234;border:5px solid #89a;border-radius:50%;animation:spin 1s linear infinite}
-.w1{left:16px}.w2{left:70px}
-.smoke{position:absolute;left:100px;bottom:72px;width:24px;height:24px;background:rgba(255,255,255,.8);border-radius:50%;animation:smoke 1.3s infinite}
-.feedback{
-  position:absolute;left:50%;bottom:12px;transform:translateX(-50%);
-  width:min(560px,88vw);background:rgba(255,244,221,.98);color:var(--ink);
-  border-radius:20px;padding:12px 16px;text-align:center;font-weight:1000;font-size:clamp(16px,2.4vw,22px);z-index:7;
-  box-shadow:var(--shadow);
+.next{display:none;margin:12px auto 0}
+.final-score{
+  font-size:64px;
+  font-weight:bold;
+  color:#7b3fd1;
 }
-.next-btn{display:none;position:absolute;right:3%;bottom:20px;z-index:8}
-.score-big{font-size:clamp(42px,9vw,84px);font-weight:1000;color:#8e44ad}
-.stars{font-size:clamp(38px,8vw,72px);letter-spacing:8px;margin:12px 0}
-.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:20}
-.piece{position:absolute;width:12px;height:18px;top:-25px;animation:fall 1.55s linear forwards}
-@keyframes pop{from{transform:scale(.75);opacity:0}to{transform:scale(1);opacity:1}}
-@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
-@keyframes glow{from{filter:brightness(1)}to{filter:brightness(1.35)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes smoke{to{transform:translate(-12px,-35px) scale(1.8);opacity:0}}
-@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
-@media(max-width:820px){
-  .screen{padding:10px}.topbar{grid-template-columns:1fr 1fr;font-size:14px}
-  .pill.center{grid-column:1/3;order:-1}
-  .scene{min-height:720px}.question-card{top:18px;width:92vw}
-  .paths{height:440px;bottom:72px}
-  .path{left:3%;right:3%;height:98px;padding:0 3%;gap:6px}
-  .path.green{top:0}.path.orange{top:150px}.path.purple{top:300px}
-  .tile{min-width:30%;font-size:18px;min-height:54px}
-  .train{width:118px;transform:scale(.78);transform-origin:left bottom;bottom:520px}
-  .city{transform:scale(.72);transform-origin:right top;right:2%;top:24%}
-  .sign{top:37%;font-size:13px}
-  .feedback{bottom:8px;width:64vw;left:39%;font-size:15px}
-  .next-btn{right:2%;bottom:10px;padding:12px 18px}
+.confetti{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.piece{
+  position:absolute;
+  top:-20px;
+  width:12px;
+  height:18px;
+  animation:fall 1.5s linear forwards;
+}
+@keyframes shake{
+  25%{transform:translateX(-5px)}
+  50%{transform:translateX(5px)}
+  75%{transform:translateX(-3px)}
+}
+@keyframes chug{
+  0%{transform:translateY(0)}
+  35%{transform:translateY(-8px)}
+  70%{transform:translateY(3px)}
+  100%{transform:translateY(0)}
+}
+@keyframes fall{
+  to{transform:translateY(110vh) rotate(500deg)}
+}
+@media(max-width:700px){
+  .top{grid-template-columns:1fr 1fr}
+  .top .box:nth-child(2){grid-column:1/3;order:-1}
+  .track-area{min-height:620px}
+  .answers{grid-template-columns:1fr 1fr}
+  .city{font-size:34px}
+  .station-label{font-size:12px}
+  .rail{margin-top:70px;width:98%}
+  .train{font-size:44px;top:-46px}
 }
 </style>
 </head>
 <body>
 
-<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <section id="splash" class="screen active">
   <img src="assets/innovine-logo.png" alt="Innovine Logo">
-  <div class="timer-badge">Starting in <span id="splashCount">5</span>s</div>
+  <div class="timer">Starting in <span id="count">5</span>s</div>
 </section>
 
 <section id="intro" class="screen">
   <div class="card">
-    <h1>Decimal Route Runner</h1>
-    <p class="subtitle">Help the train choose the correct decimal route to reach City Central.</p>
+    <h1>Decimal Express</h1>
+    <p><b>Help the train reach Decimal City.</b></p>
     <div class="rules">
-      <div class="rule">Read the question carefully.</div>
-      <div class="rule">Tap the correct route tile.</div>
-      <div class="rule">You have 2 attempts for each challenge.</div>
+      <div class="rule">Read the decimal question carefully.</div>
+      <div class="rule">Tap the correct answer tile.</div>
+      <div class="rule">You have 2 attempts for each question.</div>
       <div class="rule">The train moves ahead after every correct answer.</div>
-      <div class="rule">Complete all 10 challenges to finish the journey.</div>
+      <div class="rule">Complete all 10 stations to finish the game.</div>
     </div>
-    <button class="play-btn" onclick="startGame()">LET’S PLAY</button>
+    <button class="play" onclick="startGame()">LET’S PLAY</button>
   </div>
 </section>
 
 <section id="game" class="screen">
-  <div class="topbar">
-    <div class="pill">Score: <span id="score">0</span> ⭐</div>
-    <div class="pill center">Level: <span id="qNo">1</span>/10</div>
-    <div class="pill right">Attempts: <span id="hearts">❤️❤️</span></div>
+  <div class="top">
+    <div class="box">Score: <span id="score">0</span> ⭐</div>
+    <div class="box">Station: <span id="level">1</span>/10</div>
+    <div class="box">Attempts: <span id="hearts">❤️❤️</span></div>
   </div>
-  <div class="progress"><div id="bar"></div></div>
 
-  <main class="scene">
-    <div class="mountain m1"></div><div class="mountain m2"></div><div class="mountain m3"></div>
-    <div class="city"><div class="build"></div><div class="build"></div><div class="build"></div><div class="build"></div></div>
-    <div class="sign">CITY<br>CENTRAL</div>
+  <div class="track-area">
+    <div class="city">🏙️</div>
+    <div class="station-label">DECIMAL CITY</div>
 
-    <section class="question-card">
-      <div class="question" id="questionText"></div>
-      <div class="display" id="displayText"></div>
-    </section>
-
-    <div class="train" id="train">
-      <div class="smoke"></div>
-      <div class="cabin"><div class="window"></div></div>
-      <div class="engine"></div>
-      <div class="wheel w1"></div><div class="wheel w2"></div>
+    <div class="question-card">
+      <div class="qtext" id="qtext"></div>
+      <div class="qdisplay" id="qdisplay"></div>
     </div>
 
-    <section class="paths">
-      <div class="path green" id="path0"></div>
-      <div class="path orange" id="path1"></div>
-      <div class="path purple" id="path2"></div>
-    </section>
+    <div class="rail" id="rail">
+      <div class="train" id="train">🚆</div>
+    </div>
 
-    <div class="feedback" id="message">Tap the correct route tile.</div>
-    <button id="nextBtn" class="next-btn" onclick="nextQuestion()">NEXT ➜</button>
-  </main>
+    <div class="answers" id="answers"></div>
+    <div class="msg" id="msg">Tap the correct answer tile.</div>
+    <button class="next" id="nextBtn" onclick="nextQuestion()">NEXT ➜</button>
+  </div>
 </section>
 
 <section id="result" class="screen">
   <div class="card">
-    <h1>You Reached City Central!</h1>
-    <p>You completed all 10 decimal challenges.</p>
-    <div class="score-big"><span id="finalScore">0</span></div>
-    <div class="stars" id="finalStars">⭐⭐⭐</div>
-    <button class="restart-btn" onclick="restartGame()">PLAY AGAIN</button>
+    <h1>You Reached Decimal City!</h1>
+    <p>You completed all 10 decimal stations.</p>
+    <div class="final-score" id="finalScore">0</div>
+    <div style="font-size:50px" id="stars">⭐⭐⭐</div>
+    <button class="restart" onclick="startGame()">PLAY AGAIN</button>
   </div>
 </section>
-<div id="confetti" class="confetti"></div>
+
+<div class="confetti" id="confetti"></div>
 
 <script>
-const questions = [
-  {text:"A box weighs 3.75 kg. Which digit is in the tenths place?", display:"3.75 kg", answer:"7", opts:["7","5","3","75"], explain:"The first digit after the decimal point is the tenths place."},
-  {text:"A bottle has 0.6 L. Write it as hundredths.", display:"0.6 L = ?", answer:"0.60", opts:["0.60","0.06","6.00","0.006"], explain:"0.6 is the same as 0.60."},
-  {text:"A parcel is 4.8 kg and another is 2.5 kg. Find the total weight.", display:"4.8 + 2.5", answer:"7.3", opts:["7.3","6.13","7.13","6.3"], explain:"4.8 + 2.5 = 7.3."},
-  {text:"A rope is 9.6 m long. 3.2 m is cut. How much rope is left?", display:"9.6 − 3.2", answer:"6.4", opts:["6.4","6.8","12.8","5.4"], explain:"9.6 − 3.2 = 6.4."},
-  {text:"A notebook costs ₹12.50. Which amount has the same value?", display:"₹12.50", answer:"₹12.5", opts:["₹12.5","₹12.05","₹125.0","₹1.25"], explain:"Zeros at the end after the decimal do not change the value."},
-  {text:"A track mark shows 5.09 m. Which digit is in the hundredths place?", display:"5.09 m", answer:"9", opts:["9","0","5","59"], explain:"The second digit after the decimal point is the hundredths place."},
-  {text:"A plant grew 1.25 cm and then 0.35 cm. Find the total growth.", display:"1.25 + 0.35", answer:"1.60 cm", opts:["1.60 cm","1.50 cm","1.55 cm","1.70 cm"], explain:"1.25 + 0.35 = 1.60."},
-  {text:"A van travelled 8.75 km and has 2.25 km left. Find the total route.", display:"8.75 + 2.25", answer:"11.00 km", opts:["11.00 km","10.90 km","10.100 km","6.50 km"], explain:"8.75 + 2.25 = 11.00."},
-  {text:"Choose the greatest decimal weight.", display:"4.05, 4.5, 4.15, 4.005", answer:"4.5", opts:["4.5","4.05","4.15","4.005"], explain:"4.5 is greater than 4.15 and 4.05."},
-  {text:"Which decimal is shown by 6 ones, 3 tenths and 4 hundredths?", display:"6 ones + 3 tenths + 4 hundredths", answer:"6.34", opts:["6.34","63.4","6.43","0.634"], explain:"6 ones, 3 tenths and 4 hundredths make 6.34."}
+const questions=[
+{text:"Which digit is in the tenths place?", display:"3.75", answer:"7", opts:["7","5","3","75"], explain:"The first digit after the decimal point is the tenths place."},
+{text:"Write 0.6 as hundredths.", display:"0.6 = ?", answer:"0.60", opts:["0.60","0.06","6.00","0.006"], explain:"0.6 and 0.60 have the same value."},
+{text:"Add the decimals.", display:"4.8 + 2.5", answer:"7.3", opts:["7.3","6.13","7.13","6.3"], explain:"4.8 + 2.5 = 7.3."},
+{text:"Subtract the decimals.", display:"9.6 − 3.2", answer:"6.4", opts:["6.4","6.8","12.8","5.4"], explain:"9.6 − 3.2 = 6.4."},
+{text:"Which amount has the same value?", display:"₹12.50", answer:"₹12.5", opts:["₹12.5","₹12.05","₹125.0","₹1.25"], explain:"A zero at the end after the decimal does not change the value."},
+{text:"Which digit is in the hundredths place?", display:"5.09", answer:"9", opts:["9","0","5","59"], explain:"The second digit after the decimal point is the hundredths place."},
+{text:"Find the total growth.", display:"1.25 + 0.35", answer:"1.60", opts:["1.60","1.50","1.55","1.70"], explain:"1.25 + 0.35 = 1.60."},
+{text:"Find the total distance.", display:"8.75 + 2.25", answer:"11.00", opts:["11.00","10.90","10.100","6.50"], explain:"8.75 + 2.25 = 11.00."},
+{text:"Choose the greatest decimal.", display:"4.05, 4.5, 4.15, 4.005", answer:"4.5", opts:["4.5","4.05","4.15","4.005"], explain:"4.5 is the greatest."},
+{text:"Make the decimal number.", display:"6 ones, 3 tenths, 4 hundredths", answer:"6.34", opts:["6.34","63.4","6.43","0.634"], explain:"6 ones, 3 tenths and 4 hundredths make 6.34."}
 ];
 
-let order=[], current=0, score=0, attempts=0, locked=false;
-const $ = id => document.getElementById(id);
-function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active")}
+let order=[],current=0,score=0,attempts=0,locked=false;
 
-let count=5;
-const splashTimer=setInterval(()=>{
-  count--; $("splashCount").textContent=count;
-  if(count<=0){clearInterval(splashTimer); showScreen("intro");}
+function $(id){return document.getElementById(id)}
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  $(id).classList.add("active");
+}
+let c=5;
+let splash=setInterval(()=>{
+  c--;
+  $("count").textContent=c;
+  if(c<=0){clearInterval(splash);show("intro")}
 },1000);
 
+function sound(id){
+  const a=$(id);
+  a.currentTime=0;
+  a.play().catch(()=>{});
+}
 function startGame(){
-  unlockAudio();
-  order=[...questions].sort(()=>Math.random()-.5);
-  current=0; score=0;
-  loadQuestion();
-  showScreen("game");
-}
-function restartGame(){startGame()}
-function unlockAudio(){
   ["correctSound","wrongSound","clapSound"].forEach(id=>{
-    const a=$(id); a.volume=.75; a.play().then(()=>{a.pause();a.currentTime=0}).catch(()=>{});
+    const a=$(id);
+    a.volume=.75;
+    a.play().then(()=>{a.pause();a.currentTime=0}).catch(()=>{});
   });
+  order=[...questions].sort(()=>Math.random()-.5);
+  current=0;score=0;
+  loadQuestion();
+  show("game");
 }
-function play(id){const a=$(id); a.currentTime=0; a.play().catch(()=>{});}
 function loadQuestion(){
-  locked=false; attempts=0;
+  locked=false;attempts=0;
   const q=order[current];
-  $("qNo").textContent=current+1;
   $("score").textContent=score;
+  $("level").textContent=current+1;
   $("hearts").textContent="❤️❤️";
-  $("bar").style.width=(current/questions.length*100)+"%";
-  $("questionText").textContent=q.text;
-  $("displayText").textContent=q.display;
-  $("message").textContent="Tap the correct route tile.";
+  $("qtext").textContent=q.text;
+  $("qdisplay").textContent=q.display;
+  $("msg").textContent="Tap the correct answer tile.";
   $("nextBtn").style.display="none";
-  positionTrain();
-  buildRoutes(q);
+  moveTrain(current);
+  makeStations();
+  makeAnswers(q);
 }
-function buildRoutes(q){
-  const options=[...q.opts].sort(()=>Math.random()-.5);
-  const paths=["path0","path1","path2"];
-  paths.forEach(id=>$(id).innerHTML="");
-  options.forEach((opt,i)=>{
-    const btn=document.createElement("button");
-    btn.className="tile "+(i<3?["green-btn","orange-btn","purple-btn"][i]:"green-btn");
-    btn.textContent=opt;
-    btn.onclick=()=>choose(btn,opt);
-    $(paths[i%3]).appendChild(btn);
+function makeStations(){
+  const rail=$("rail");
+  rail.querySelectorAll(".station").forEach(s=>s.remove());
+  for(let i=0;i<10;i++){
+    const st=document.createElement("div");
+    st.className="station";
+    st.style.left=(5+i*10)+"%";
+    st.style.background=i<=current?"#ffd84d":"#b6c3cf";
+    rail.appendChild(st);
+  }
+}
+function moveTrain(pos){
+  const train=$("train");
+  train.style.left=(Math.min(92,5+pos*10))+"%";
+}
+function chugTrain(){
+  const train=$("train");
+  train.classList.remove("chug");
+  void train.offsetWidth;
+  train.classList.add("chug");
+}
+function makeAnswers(q){
+  const box=$("answers");
+  box.innerHTML="";
+  [...q.opts].sort(()=>Math.random()-.5).forEach(opt=>{
+    const b=document.createElement("button");
+    b.className="tile";
+    b.textContent=opt;
+    b.onclick=()=>choose(b,opt);
+    box.appendChild(b);
   });
 }
 function choose(btn,val){
-  if(locked) return;
+  if(locked)return;
   document.querySelectorAll(".tile").forEach(t=>t.classList.remove("chosen","wrong","correct"));
   btn.classList.add("chosen");
   const q=order[current];
   if(val===q.answer){
     locked=true;
     btn.classList.add("correct");
-    score += attempts===0 ? 100 : 60;
+    score+=attempts===0?100:60;
     $("score").textContent=score;
-    $("message").textContent="Woohoo! Correct. The train moved ahead. "+q.explain;
-    play("correctSound"); play("clapSound"); burst();
-    moveTrainForward();
-    $("nextBtn").style.display="inline-block";
+    $("msg").textContent="Correct! Train moved ahead. "+q.explain;
+    moveTrain(current+1);
+    chugTrain();
+    sound("correctSound"); sound("clapSound"); confetti();
+    $("nextBtn").style.display="block";
   }else{
     attempts++;
     btn.classList.add("wrong");
-    play("wrongSound");
+    sound("wrongSound");
     $("hearts").textContent=attempts===1?"❤️🤎":"🤎🤎";
     if(attempts>=2){
       locked=true;
-      $("message").textContent="Correct answer: "+q.answer+". "+q.explain;
-      const correctBtn=[...document.querySelectorAll(".tile")].find(b=>b.textContent===q.answer);
-      if(correctBtn) correctBtn.classList.add("correct");
-      moveTrainForward();
-      $("nextBtn").style.display="inline-block";
+      $("msg").textContent="Correct answer: "+q.answer+". "+q.explain;
+      document.querySelectorAll(".tile").forEach(t=>{
+        if(t.textContent===q.answer)t.classList.add("correct");
+      });
+      moveTrain(current+1);
+      chugTrain();
+      $("nextBtn").style.display="block";
     }else{
-      $("message").textContent="Not quite. Try one more time.";
+      $("msg").textContent="Not quite. Try one more time.";
     }
   }
 }
-function positionTrain(){
-  const progress=current/questions.length;
-  const scene=$(".scene");
-  const w=scene.clientWidth;
-  const y = window.innerWidth<=820 ? 520 : 405;
-  $("train").style.left=(5 + progress*72)+"%";
-  $("train").style.bottom=y+"px";
-}
-function moveTrainForward(){
-  const progress=(current+1)/questions.length;
-  $("train").style.left=(5 + progress*72)+"%";
-}
 function nextQuestion(){
   current++;
-  if(current>=questions.length){$("bar").style.width="100%"; setTimeout(endGame,350)}
+  if(current>=10){endGame()}
   else loadQuestion();
 }
 function endGame(){
   $("finalScore").textContent=score;
-  $("finalStars").textContent=score>=850?"⭐⭐⭐":score>=650?"⭐⭐":"⭐";
-  burst(70);
-  showScreen("result");
+  $("stars").textContent=score>=850?"⭐⭐⭐":score>=650?"⭐⭐":"⭐";
+  confetti(70);
+  show("result");
 }
-function $(selectorOrId){
-  if(selectorOrId.startsWith && selectorOrId.startsWith(".")) return document.querySelector(selectorOrId);
-  return document.getElementById(selectorOrId);
-}
-function burst(n=28){
+function confetti(n=30){
   const wrap=$("confetti");
   for(let i=0;i<n;i++){
-    const p=document.createElement("span");
+    const p=document.createElement("div");
     p.className="piece";
     p.style.left=Math.random()*100+"vw";
-    p.style.background=["#ffd65a","#ff6b6b","#4aa3ff","#5dff9a","#c56bff"][Math.floor(Math.random()*5)];
-    p.style.animationDelay=(Math.random()*.45)+"s";
+    p.style.background=["#ffd75b","#ff6b6b","#38a9ff","#55df75","#b369ff"][Math.floor(Math.random()*5)];
+    p.style.animationDelay=Math.random()*.4+"s";
     wrap.appendChild(p);
-    setTimeout(()=>p.remove(),1800);
+    setTimeout(()=>p.remove(),1700);
   }
 }
 </script>
