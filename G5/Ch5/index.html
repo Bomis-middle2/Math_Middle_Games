@@ -252,10 +252,12 @@
 
     <div id="viewport-root">
         
+        <!-- STAGE 1: BRANDING-ONLY SCREEN (STRICTLY 5 SECONDS) -->
         <div id="branding-splash">
             <img src="assets/logo.png" class="innovine-logo" alt="Innovine" onerror="this.src='https://placehold.co/150x50/ffffff/234e52?text=INNOVINE';">
         </div>
 
+        <!-- STAGE 2: INSTRUCTIONS SCREEN (REVEALED AFTER SPLASH) -->
         <div id="instructions-screen" class="stage-overlay hidden">
             <div class="glass-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
                 
@@ -276,6 +278,7 @@
             </div>
         </div>
 
+        <!-- CORE GAMEPLAY VIEW -->
         <div id="gameplay-screen" class="stage-overlay hidden">
             <div class="header-panel">
                 <div id="game-level-tag" class="header-title">Lock Block Level 1</div>
@@ -283,29 +286,36 @@
             </div>
 
             <div class="glass-panel workspace-area">
+                <!-- Question Prompt -->
                 <div id="game-prompt" class="question-box">Loading security puzzle...</div>
                 
+                <!-- DIGILOCKER ENTRY CHASSIS -->
                 <div class="vault-lock-chassis">
+                    <!-- Column 1 (Whole Number) -->
                     <div class="dial-column">
                         <button class="dial-spinner" onclick="spinDigit('whole', 1)">▲</button>
                         <div id="digit-whole" class="dial-screen">0</div>
                         <button class="dial-spinner" onclick="spinDigit('whole', -1)">▼</button>
                     </div>
                     
+                    <!-- Code Decimals Hub Separator -->
                     <div class="decimal-separator">.</div>
                     
+                    <!-- Column 2 (Tenths) -->
                     <div class="dial-column">
                         <button class="dial-spinner" onclick="spinDigit('t1', 1)">▲</button>
                         <div id="digit-t1" class="dial-screen">0</div>
                         <button class="dial-spinner" onclick="spinDigit('t1', -1)">▼</button>
                     </div>
                     
+                    <!-- Column 3 (Hundredths) -->
                     <div class="dial-column">
                         <button class="dial-spinner" onclick="spinDigit('t2', 1)">▲</button>
                         <div id="digit-t2" class="dial-screen">0</div>
                         <button class="dial-spinner" onclick="spinDigit('t2', -1)">▼</button>
                     </div>
                     
+                    <!-- Column 4 (Thousandths) -->
                     <div class="dial-column">
                         <button class="dial-spinner" onclick="spinDigit('t3', 1)">▲</button>
                         <div id="digit-t3" class="dial-screen">0</div>
@@ -313,6 +323,7 @@
                     </div>
                 </div>
 
+                <!-- Two-Chance Track Dots -->
                 <div class="chance-counter-tray">
                     <div id="strike-dot-1" class="chance-dot"></div>
                     <div id="strike-dot-2" class="chance-dot"></div>
@@ -350,40 +361,131 @@
         let internalStrikeCounter = 0;
 
         let currentLockState = { whole: 0, t1: 0, t2: 0, t3: 0 };
+        let puzzleDatabase = { 1: [], 2: [], 3: [], 4: [], 5: [] };
 
-        // Randomized Database Rows
-        const puzzleDatabase = {
-            1: [
-                { q: "In the number 5.372, look at the tenths place. Set the locker dials to show just that place value (Example: 0.300).", target: {whole:0, t1:3, t2:0, t3:0} },
-                { q: "In the number 5.372, show just the value of the digit located in the hundredths place.", target: {whole:0, t1:0, t2:7, t3:0} },
-                { q: "What is the specific value of the 9 in the decimal layout 2.049?", target: {whole:0, t1:0, t2:0, t3:9} },
-                { q: "Identify the value of the digit in the ones position for the configuration 7.813.", target: {whole:7, t1:0, t2:0, t3:0} }
-            ],
-            2: [
-                { q: "Convert the fraction 3/4 into its decimal equivalent for the locker pass.", target: {whole:0, t1:7, t2:5, t3:0} },
-                { q: "Convert the fraction 2/5 into its responsive decimal code layout.", target: {whole:0, t1:4, t2:0, t3:0} },
-                { q: "Write the fraction 1/8 as a complete three-place decimal key.", target: {whole:0, t1:1, t2:2, t3:5} },
-                { q: "Convert the mixed balance 3 and 1/2 into its correct decimal code equivalent.", target: {whole:3, t1:5, t2:0, t3:0} }
-            ],
-            3: [
-                { q: "Add this expanded expression together to generate the code: 5 + 0.3 + 0.07 + 0.002", target: {whole:5, t1:3, t2:7, t3:2} },
-                { q: "Solve for the missing locker digit variable: 0.52 = 0.5 + [ ? ]", target: {whole:0, t1:0, t2:2, t3:0} },
-                { q: "Put together this expanded form value into a clean decimal entry: 0.9 + 0.004", target: {whole:0, t1:9, t2:0, t3:4} },
-                { q: "Find the total sum matrix value: 1 + 0.05 + 0.008", target: {whole:1, t1:0, t2:5, t3:8} }
-            ],
-            4: [
-                { q: "Convert the decimal value 0.5 into an equivalent form containing 3 decimal places.", target: {whole:0, t1:5, t2:0, t3:0} },
-                { q: "Find the structural difference interval between the decimals 3.67 and 2.50.", target: {whole:1, t1:1, t2:7, t3:0} },
-                { q: "Round the decimal reading 0.473 to its nearest single tenth point configuration.", target: {whole:0, t1:5, t2:0, t3:0} },
-                { q: "Round the decimal string 1.258 to its nearest hundredth dial frame point.", target: {whole:1, t1:2, t2:6, t3:0} }
-            ],
-            5: [
-                { q: "Compute the decimal sum operation accurately: 1.2 + 2.35", target: {whole:3, t1:5, t2:5, t3:0} },
-                { q: "Compute the decimal product challenge verification code: 0.3 × 0.2", target: {whole:0, t1:0, t2:6, t3:0} },
-                { q: "Perform subtraction optimization code computations: 4.5 - 1.25", target: {whole:3, t1:2, t2:5, t3:0} },
-                { q: "A secure wire is 0.8 meters long. If cut into two perfectly equal parts, how long is one segment?", target: {whole:0, t1:4, t2:0, t3:0} }
-            ]
-        };
+        // Helper random integer function
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // --- ALGORITHMIC GENERATOR SYSTEM ---
+        // Dynamically designs unique puzzle structures every run containing every required concept category
+        function compileDynamicPuzzles() {
+            // Level 1: Identification & Core Place Values Matrix
+            let w1 = getRandomInt(1, 9), t_1 = getRandomInt(1, 9), h1 = getRandomInt(1, 9), th1 = getRandomInt(1, 9);
+            puzzleDatabase[1].push({
+                q: `In the number ${w1}.${t_1}${h1}${th1}, identify the tenths place. Set dials to match just that specific place value position (e.g., 0.x00).`,
+                target: {whole: 0, t1: t_1, t2: 0, t3: 0}
+            });
+            puzzleDatabase[1].push({
+                q: `In the number ${w1}.${t_1}${h1}${th1}, show just the individual fractional value of the digit located in the hundredths place.`,
+                target: {whole: 0, t1: 0, t2: h1, t3: 0}
+            });
+            let w2 = getRandomInt(1, 9), t_2 = getRandomInt(0, 9), h2 = getRandomInt(0, 9), th2 = getRandomInt(1, 9);
+            puzzleDatabase[1].push({
+                q: `What is the isolated structural value of the ${th2} digit inside the decimal configuration ${w2}.${t_2}${h2}${th2}?`,
+                target: {whole: 0, t1: 0, t2: 0, t3: th2}
+            });
+            let w3 = getRandomInt(2, 9), t_3 = getRandomInt(1, 9), h3 = getRandomInt(1, 9), th3 = getRandomInt(1, 9);
+            puzzleDatabase[1].push({
+                q: `Identify the whole unit value of the digit in the ones position for the configuration ${w3}.${t_3}${h3}${th3}.`,
+                target: {whole: w3, t1: 0, t2: 0, t3: 0}
+            });
+
+            // Level 2: Fractional Partitions Matrix
+            const fractionalPool = [
+                {q: "Convert the fraction 3/4 into its decimal equivalent for the locker pass.", t: {whole:0, t1:7, t2:5, t3:0}},
+                {q: "Convert the fraction 2/5 into its responsive decimal code layout.", t: {whole:0, t1:4, t2:0, t3:0}},
+                {q: "Write the fraction 1/8 as a complete three-place decimal key.", t: {whole:0, t1:1, t2:2, t3:5}},
+                {q: "Convert the fraction 1/2 into its clean decimal code counterpart.", t: {whole:0, t1:5, t2:0, t3:0}},
+                {q: "Convert the fraction 3/5 into its correct decimal code signature.", t: {whole:0, t1:6, t2:0, t3:0}},
+                {q: "Convert the fraction 4/5 into its correct decimal code representation.", t: {whole:0, t1:8, t2:0, t3:0}}
+            ];
+            // Pick a mix of single fractions and one mixed balance
+            let indices = [];
+            while(indices.length < 3) {
+                let r = getRandomInt(0, fractionalPool.length - 1);
+                if(!indices.includes(r)) indices.push(r);
+            }
+            indices.forEach(idx => {
+                puzzleDatabase[2].push({ q: fractionalPool[idx].q, target: fractionalPool[idx].t });
+            });
+            let mixedWhole = getRandomInt(1, 8);
+            puzzleDatabase[2].push({
+                q: `Convert the mixed balance ${mixedWhole} and 1/2 into its complete decimal code equivalent sequence.`,
+                target: {whole: mixedWhole, t1: 5, t2: 0, t3: 0}
+            });
+
+            // Level 3: Expanded Mathematical Matrix
+            let ew1 = getRandomInt(2, 9), et1 = getRandomInt(1, 9), eh1 = getRandomInt(1, 9), eth1 = getRandomInt(1, 9);
+            puzzleDatabase[3].push({
+                q: `Add this expanded notation expression together to generate the final key: ${ew1} + 0.${et1} + 0.0${eh1} + 0.00${eth1}`,
+                target: {whole: ew1, t1: et1, t2: eh1, t3: eth1}
+            });
+            let missVal = getRandomInt(1, 9);
+            puzzleDatabase[3].push({
+                q: `Solve for the missing locker digit variable inside this puzzle: 0.5${missVal} = 0.5 + [ ? ]`,
+                target: {whole: 0, t1: 0, t2: missVal, t3: 0}
+            });
+            let et2 = getRandomInt(1, 9), eth2 = getRandomInt(1, 9);
+            puzzleDatabase[3].push({
+                q: `Put together this expanded form string values into a clean decimal entry: 0.${et2} + 0.00${eth2}`,
+                target: {whole: 0, t1: et2, t2: 0, t3: eth2}
+            });
+            let ew2 = getRandomInt(1, 8), eh2 = getRandomInt(1, 9), eth3 = getRandomInt(1, 9);
+            puzzleDatabase[3].push({
+                q: `Find the total matrix sum by compressing the sequence: ${ew2} + 0.0${eh2} + 0.00${eth3}`,
+                target: {whole: ew2, t1: 0, t2: eh2, t3: eth3}
+            });
+
+            // Level 4: Conversions, Differences & Estimation Boundaries
+            let padVal = getRandomInt(1, 9);
+            puzzleDatabase[4].push({
+                q: `Convert the short decimal reading 0.${padVal} into an equivalent matching string with 3 decimal places.`,
+                target: {whole: 0, t1: padVal, t2: 0, t3: 0}
+            });
+            let subWhole = getRandomInt(3, 5), subT1 = getRandomInt(5, 8), subT2 = getRandomInt(5, 9);
+            let diffW = subWhole - 2, diffT1 = subTail1 = subT1 - 3, diffT2 = subT2; 
+            puzzleDatabase[4].push({
+                q: `Find the structural difference interval between the two decimals: ${subWhole}.${subT1}${subT2} and 2.30.`,
+                target: {whole: diffW, t1: diffT1, t2: diffT2, t3: 0}
+            });
+            // Rounding down logic scenario
+            let rDownVal = getRandomInt(1, 4);
+            puzzleDatabase[4].push({
+                q: `Round the tracking decimal sequence 0.4${rDownVal}8 to its nearest single tenth point configuration.`,
+                target: {whole: 0, t1: 4, t2: 0, t3: 0}
+            });
+            // Rounding up logic scenario
+            let rUpVal = getRandomInt(6, 9);
+            puzzleDatabase[4].push({
+                q: `Round the system decimal code signature 1.25${rUpVal} to its nearest hundredth dial frame point.`,
+                target: {whole: 1, t1: 2, t2: 6, t3: 0}
+            });
+
+            // Level 5: Operational Optimizations Matrix
+            let addWhole = getRandomInt(1, 4), addT1 = getRandomInt(1, 4);
+            let targetW = addWhole + 2, targetT1 = addT1 + 3;
+            puzzleDatabase[5].push({
+                q: `Compute the decimal sum configuration optimization matrix cleanly: ${addWhole}.${addT1} + 2.35`,
+                target: {whole: targetW, t1: targetT1, t2: 5, t3: 0}
+            });
+            let multDigit = getRandomInt(2, 4); // 0.3 * 0.2 = 0.06 || 0.3 * 0.3 = 0.09 || 0.3 * 0.1 = 0.03
+            puzzleDatabase[5].push({
+                q: `Compute the decimal product challenge verification verification: 0.3 × 0.${multDigit}`,
+                target: {whole: 0, t1: 0, t2: (3 * multDigit), t3: 0}
+            });
+            let minWhole = getRandomInt(5, 9);
+            puzzleDatabase[5].push({
+                q: `Perform subtraction optimization operations accurately: ${minWhole}.5 - 1.25`,
+                target: {whole: (minWhole - 2), t1: 2, t2: 5, t3: 0}
+            });
+            let wireLen = getRandomInt(2, 4) * 2; // guarantees even number: 4, 6, 8
+            puzzleDatabase[5].push({
+                q: `A secure data wire line is 0.${wireLen} meters long. If segmented into two perfectly equal system parts, how long is one segment?`,
+                target: {whole: 0, t1: (wireLen / 2), t2: 0, t3: 0}
+            });
+        }
 
         // Fisher-Yates Randomizer Utility
         function randomizeDatabaseNodes() {
@@ -396,7 +498,8 @@
             }
         }
 
-        // Initialize Random Question Mix
+        // Execute dynamic initialization matrices
+        compileDynamicPuzzles();
         randomizeDatabaseNodes();
 
         // Strict 5-Second Brand Window Setup
