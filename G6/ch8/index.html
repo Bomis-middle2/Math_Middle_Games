@@ -1,1027 +1,173 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovine Mathematics Interactive Game - Ratio and Proportion</title>
-    <style>
-        :root {
-            --primary: #4a00e0;
-            --secondary: #8e2de2;
-            --success: #00b09b;
-            --success-glow: rgba(0, 176, 155, 0.4);
-            --danger: #ff416c;
-            --danger-glow: rgba(255, 65, 108, 0.4);
-            --background: #0f0c20;
-            --card-bg: rgba(255, 255, 255, 0.08);
-            --card-border: rgba(255, 255, 255, 0.15);
-            --text: #ffffff;
-            --text-muted: #b3b3b3;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background: var(--background);
-            color: var(--text);
-            overflow: hidden;
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Animated Background Environment */
-        .bg-animations {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            overflow: hidden;
-            pointer-events: none;
-        }
-
-        .floating-symbol {
-            position: absolute;
-            color: rgba(255, 255, 255, 0.03);
-            font-weight: bold;
-            font-size: var(--size);
-            top: var(--top);
-            left: var(--left);
-            animation: floatAround 15s infinite ease-in-out;
-            animation-delay: var(--delay);
-        }
-
-        @keyframes floatAround {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-35px) rotate(15deg); }
-        }
-
-        /* Main Structural Containers */
-        .game-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            height: 100%;
-            max-height: 700px;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-        }
-
-        .screen {
-            display: none;
-            width: 100%;
-            height: 100%;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            border: 1px solid var(--card-border);
-            background: var(--card-bg);
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            animation: screenFadeIn 0.5s ease-out forwards;
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
-        @keyframes screenFadeIn {
-            from { opacity: 0; transform: scale(0.96); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* Screen 1: Splash Layout */
-        #splash-screen {
-            background: #0f0c20;
-            border: none;
-            box-shadow: none;
-        }
-
-        .logo-container img {
-            max-width: 280px;
-            height: auto;
-            animation: logoPulse 2s infinite ease-in-out;
-        }
-
-        @keyframes logoPulse {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(255,255,255,0)); }
-            50% { transform: scale(1.04); filter: drop-shadow(0 0 20px rgba(255,255,255,0.25)); }
-        }
-
-        /* Screen 2: Intro Layout */
-        .title-meta {
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-        }
-
-        .title-main {
-            font-size: 3rem;
-            font-weight: 800;
-            background: linear-gradient(45deg, #ff007f, #7f00ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, var(--secondary), var(--primary));
-            color: white;
-            border: none;
-            padding: 16px 40px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(142, 45, 226, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 25px rgba(142, 45, 226, 0.6);
-        }
-
-        .btn:active {
-            transform: translateY(1px);
-        }
-
-        /* Screen 3: Gameplay Board Layout Panels */
-        .game-header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .hud-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px 20px;
-            border-radius: 15px;
-            border: 1px solid var(--card-border);
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .progress-container {
-            width: 100%;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            margin-bottom: 25px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--secondary), var(--success));
-            transition: width 0.4s ease;
-        }
-
-        .game-body {
-            width: 100%;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        .question-text {
-            font-size: 1.35rem;
-            font-weight: 600;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        /* Interactive Choice Blocks Grid */
-        .options-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 600px) {
-            .options-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .option-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid var(--card-border);
-            border-radius: 16px;
-            padding: 18px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            display: flex;
-            align-items: center;
-            font-weight: 500;
-        }
-
-        .option-card:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        /* Drag & Drop Frame Containers Layout */
-        .drag-drop-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .matching-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            align-items: center;
-        }
-
-        .drag-source, .drop-target, .sort-item {
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px dashed var(--card-border);
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center;
-            font-size: 1.05rem;
-            min-height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: 500;
-        }
-
-        .drag-source {
-            border-style: solid;
-            background: linear-gradient(135deg, rgba(142, 45, 226, 0.2), rgba(74, 0, 226, 0.2));
-            cursor: grab;
-        }
-
-        .drag-source:active {
-            cursor: grabbing;
-        }
-
-        .drag-source.dragging {
-            opacity: 0.4;
-        }
-
-        .drop-target.hovered {
-            background: rgba(142, 45, 226, 0.15);
-            border-color: var(--secondary);
-        }
-
-        .drop-target.filled {
-            border-style: solid;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Horizontal Sorting Pools Panel */
-        .sort-container {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 15px;
-            margin-bottom: 15px;
-            width: 100%;
-        }
-
-        .sort-item {
-            border-style: solid;
-            background: linear-gradient(135deg, rgba(142, 45, 226, 0.2), rgba(74, 0, 226, 0.2));
-            min-width: 110px;
-            cursor: grab;
-        }
-
-        /* Runtime Assessment Functional Visual Modifiers */
-        .option-card.correct, .drop-target.correct, .sort-item.correct {
-            background: var(--success) !important;
-            border-color: var(--success) !important;
-            box-shadow: 0 0 15px var(--success-glow);
-            color: #fff;
-        }
-
-        .option-card.wrong, .drop-target.wrong, .sort-item.wrong {
-            background: var(--danger) !important;
-            border-color: var(--danger) !important;
-            box-shadow: 0 0 15px var(--danger-glow);
-            color: #fff;
-            animation: cardShake 0.4s ease-in-out;
-        }
-
-        @keyframes cardShake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-6px); }
-            40%, 80% { transform: translateX(6px); }
-        }
-
-        /* Interactive Core Dashboard Console Evaluation Panel */
-        .feedback-panel {
-            margin-top: auto;
-            min-height: 95px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            text-align: center;
-        }
-
-        .feedback-message {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .explanation-text {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            max-width: 620px;
-            line-height: 1.4;
-        }
-
-        .action-container {
-            width: 100%;
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 12px;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* Screen 4: Final Results Summary Layout */
-        .score-circle {
-            width: 160px;
-            height: 160px;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--secondary), var(--primary));
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.5rem;
-            font-weight: 800;
-            box-shadow: 0 10px 30px rgba(142, 45, 226, 0.5);
-            margin-bottom: 25px;
-        }
-
-        .score-circle span {
-            font-size: 1rem;
-            font-weight: 400;
-            color: var(--text-muted);
-        }
-
-        .result-msg {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        /* Particles Celebration System */
-        .confetti {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: #fff;
-            opacity: 0.8;
-            border-radius: 50%;
-            animation: confettiFall 2.8s infinite linear;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        @keyframes confettiFall {
-            0% { transform: translateY(-20px) rotate(0deg); top: 0%; }
-            100% { transform: translateY(100vh) rotate(360deg); top: 100%; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 6 Quadrilateral Bridge Builder</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(#78d8ff 0%,#d9fbff 35%,#72c56b 36%,#23733d 100%);min-height:100vh;color:#17304a;overflow-x:hidden}
+button{font-family:inherit;cursor:pointer;border:0}
+.screen{display:none;min-height:100vh;padding:16px}.active{display:flex}
+#splash{justify-content:center;align-items:center;flex-direction:column;background:linear-gradient(#ecfbff,#fff,#e5ffd9)}
+#splash img{max-width:420px;width:75vw}.timer{margin-top:20px;background:#123b66;color:white;padding:12px 24px;border-radius:20px;font-weight:bold;box-shadow:0 10px 24px #0004}
+#intro,#result{justify-content:center;align-items:center}
+.card{width:min(850px,94vw);background:#fff1cb;border:5px solid white;color:#123b66;border-radius:28px;padding:28px;text-align:center;box-shadow:0 12px 28px #0004}
+h1{font-size:clamp(32px,6vw,56px);margin:0 0 12px}.rules{text-align:left;margin:20px auto;max-width:650px;counter-reset:step;display:grid;gap:10px}
+.rule{background:white;border-radius:15px;padding:14px;font-size:clamp(16px,2.5vw,20px);font-weight:bold}.rule:before{counter-increment:step;content:counter(step) ". ";color:#0072bc;margin-right:8px}
+.play,.next,.restart{background:linear-gradient(#50dc65,#149a3c);color:white;font-size:22px;font-weight:bold;padding:14px 30px;border-radius:30px;box-shadow:0 7px 0 #0b6a2b}
+#game{flex-direction:column;gap:10px;background:radial-gradient(circle at 80% 12%,#fff 0 5%,transparent 6%),linear-gradient(#78d8ff 0%,#c5f7ff 34%,#0c83bc 35%,#0c5b84 100%)}
+.top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:min(1120px,97vw);margin:auto;font-weight:bold}
+.box{background:#573212;color:white;padding:10px;border-radius:14px;text-align:center;border:3px solid #c8893f;box-shadow:0 7px 18px #0004}
+.scene{width:min(1120px,97vw);margin:auto;min-height:690px;position:relative;overflow:hidden;border-radius:28px;border:4px solid #ffffff70;box-shadow:0 12px 28px #0005;background:linear-gradient(#79dcff 0%,#caf7ff 28%,#1687bf 29%,#075174 100%)}
+.hill{position:absolute;bottom:235px;width:360px;height:180px;background:#4fb24d;border-radius:50% 50% 0 0;z-index:1}.h1{left:-80px}.h2{right:-80px}
+.title{position:absolute;top:14px;left:50%;transform:translateX(-50%);background:#6b3a17;color:white;border:5px solid #c8893f;border-radius:18px;padding:10px 34px;font-size:clamp(23px,4vw,42px);font-weight:bold;z-index:8;box-shadow:0 8px 18px #0004}
+.qcard{position:absolute;top:88px;left:50%;transform:translateX(-50%);z-index:7;width:min(790px,92vw);background:#fff1cb;border:5px solid #8a4f20;border-radius:24px;padding:18px;text-align:center;box-shadow:0 8px 18px #0004}
+.qtext{font-size:clamp(20px,3vw,32px);font-weight:bold;min-height:72px;display:flex;align-items:center;justify-content:center}
+.bridge{position:absolute;left:8%;right:8%;top:310px;height:120px;z-index:5}
+.road{position:absolute;left:0;right:0;top:44px;height:42px;background:#7b5a35;border:6px solid #49311a;border-radius:999px}
+.road:after{content:"";position:absolute;left:4%;right:4%;top:50%;height:6px;transform:translateY(-50%);background:repeating-linear-gradient(90deg,#fff 0 25px,transparent 25px 45px);opacity:.8}
+.post{position:absolute;top:13px;width:58px;height:58px;border-radius:50%;background:#ffd75b;border:5px solid white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:28px;color:#633;box-shadow:0 6px 14px #0004}
+.p1{left:8%}.p2{left:28%}.p3{left:48%}.p4{left:68%}.p5{left:88%}
+.truck{position:absolute;left:3%;top:350px;font-size:62px;z-index:8;transition:left .75s ease}.vehicle{display:inline-block;transform:scaleX(-1)}
+.answerBoard{position:absolute;left:50%;bottom:42px;transform:translateX(-50%);width:min(900px,94vw);background:#8a4f20;border-radius:18px;padding:14px;z-index:8;box-shadow:0 8px 18px #0005}
+.answerTitle{color:#ffd75b;font-weight:bold;text-align:center;font-size:clamp(15px,2.5vw,21px);margin-bottom:10px}
+.options{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.opt{min-height:118px;border-radius:16px;background:#fff1cb;color:#123b66;border:4px solid transparent;font-size:clamp(15px,2.2vw,19px);font-weight:bold;box-shadow:0 6px 0 #0004;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.opt:active{transform:translateY(4px);box-shadow:0 2px 0 #0004}.opt.chosen{border-color:#ffe100;background:#fff5a8}.opt.correct{border-color:#15bd51;background:#caffd9}.opt.wrong{border-color:#e74c3c;background:#ffd4cd;animation:shake .25s}
+.shape{width:70px;height:48px;background:#ddd;border:3px solid #111}.square{width:54px;height:54px;background:#ffd325}.rectangle{width:78px;height:42px;background:#ff5a9d}.parallelogram{background:#287ee6;transform:skew(-18deg)}.trapezium{background:#6ccd2c;clip-path:polygon(20% 0,80% 0,100% 100%,0 100%)}.rhombus{width:56px;height:56px;background:#ff8c1a;transform:rotate(45deg)}
+.msg{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:min(720px,88vw);min-height:34px;background:#2b211c;color:white;border-radius:14px;padding:8px 12px;text-align:center;font-weight:bold;z-index:10}
+.next{display:none;position:absolute;right:28px;bottom:42px;z-index:11}.finalScore{font-size:64px;font-weight:bold;color:#7b3fd1}.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:20}.piece{position:absolute;top:-20px;width:12px;height:18px;animation:fall 1.5s linear forwards}
+@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}@keyframes fall{to{transform:translateY(110vh) rotate(500deg)}}
+@media(max-width:820px){.top{grid-template-columns:1fr 1fr}.top .box:nth-child(2){grid-column:1/3;order:-1}.scene{min-height:820px}.qcard{top:82px}.bridge{top:300px}.truck{top:360px;font-size:48px}.answerBoard{bottom:62px}.options{grid-template-columns:repeat(2,1fr)}.opt{min-height:92px}.next{bottom:8px;right:12px;padding:10px 18px}.msg{bottom:8px;left:40%;width:65vw}}
+</style>
 </head>
 <body>
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
-    <div class="bg-animations">
-        <div class="floating-symbol" style="--size: 4rem; --top: 15%; --left: 10%; --delay: 0s;">1:2</div>
-        <div class="floating-symbol" style="--size: 4.5rem; --top: 70%; --left: 85%; --delay: 3s;">x:y</div>
-        <div class="floating-symbol" style="--size: 3.5rem; --top: 75%; --left: 15%; --delay: 1.5s;">::</div>
-        <div class="floating-symbol" style="--size: 4rem; --top: 12%; --left: 75%; --delay: 4.5s;">3:4</div>
+<section id="splash" class="screen active">
+  <img src="assets/innovine-logo.png" alt="Innovine Logo">
+  <div class="timer">Starting in <span id="count">5</span>s</div>
+</section>
+
+<section id="intro" class="screen">
+  <div class="card">
+    <h1>Quadrilateral Bridge Builder</h1>
+    <p><b>Help the truck cross the bridge by choosing the correct quadrilateral.</b></p>
+    <div class="rules">
+      <div class="rule">Read the clue carefully.</div>
+      <div class="rule">Tap the correct shape card.</div>
+      <div class="rule">You have 2 attempts for each challenge.</div>
+      <div class="rule">The truck moves ahead after every correct answer.</div>
+      <div class="rule">Complete all 10 challenges to finish the bridge.</div>
     </div>
-
-    <div class="game-container">
-        
-        <div id="splash-screen" class="screen active">
-            <div class="logo-container">
-                <img src="assets/innovine-logo.png" alt="Innovine Logo">
-            </div>
-        </div>
-
-        <div id="intro-screen" class="screen">
-            <div class="title-meta">Grade 6 • Chapter 8</div>
-            <div class="title-main">Ratio and Proportion Adventure</div>
-            <button class="btn" id="start-adventure-btn">Start Adventure</button>
-        </div>
-
-        <div id="game-screen" class="screen">
-            <div class="game-header">
-                <div class="hud-item" id="hud-question-idx">Question: 1/10</div>
-                <div class="hud-item" id="hud-timer" style="color: #ff416c;">Time: 45s</div>
-                <div class="hud-item" id="hud-score">Score: 0</div>
-            </div>
-
-            <div class="progress-container">
-                <div class="progress-bar" id="game-progress"></div>
-            </div>
-
-            <div class="game-body">
-                <div class="question-text" id="question-text">Loading question workspace matrix data...</div>
-                
-                <div id="interactive-workspace" style="width: 100%;"></div>
-
-                <div class="feedback-panel">
-                    <div class="feedback-message id-feedback-msg"></div>
-                    <div class="explanation-text id-explanation-text"></div>
-                    <div class="action-container">
-                        <button class="btn hidden" id="next-question-btn" style="padding: 10px 30px; font-size: 1rem;">Next</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="results-screen" class="screen">
-            <div class="title-meta">Adventure Completed</div>
-            <div class="score-circle" id="final-score-badge">0/10 <span>Score</span></div>
-            <div class="result-msg" id="final-result-msg">Great attempt!</div>
-            <button class="btn" onclick="location.reload();">Play Again</button>
-        </div>
-
-    </div>
-
-    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
-    <audio id="snd-claps" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
-
-    <script>
-        // INPUT MATRIX - QUESTION ARCHITECTURE REPOSITORY CONFIGURATION
-        const questions = [
-            {
-                type: "MCQ",
-                question: "In a basket, there are 4 apples and 8 oranges. What is the ratio of apples to oranges?",
-                options: ["1 : 2", "2 : 1", "4 : 8 : 12", "8 : 4"],
-                answer: "1 : 2",
-                explanation: "4 : 8 simplifies to 1 : 2."
-            },
-            {
-                type: "MCQ",
-                question: "A recipe uses 2 cups of milk for every 5 cups of flour. What is the ratio of milk to flour?",
-                options: ["5 : 2", "2 : 5", "7 : 5", "3 : 5"],
-                answer: "2 : 5",
-                explanation: "Milk : Flour = 2 : 5."
-            },
-            {
-                type: "MCQ",
-                question: "If 3 notebooks cost ₹45, how much will 6 notebooks cost at the same rate?",
-                options: ["₹60", "₹75", "₹90", "₹120"],
-                answer: "₹90",
-                explanation: "Doubling the notebooks doubles the cost."
-            },
-            {
-                type: "TF",
-                question: "The ratios 2 : 4 and 1 : 2 are equivalent ratios.",
-                answer: "True",
-                explanation: "Both represent the same comparison."
-            },
-            {
-                type: "TF",
-                question: "If two quantities increase in the same ratio, they are in proportion.",
-                answer: "True",
-                explanation: "Proportion means two ratios are equal."
-            },
-            {
-                type: "TF",
-                question: "The ratios 3 : 5 and 6 : 8 form a proportion.",
-                answer: "False",
-                explanation: "3/5 ≠ 6/8."
-            },
-            {
-                type: "MATCH",
-                question: "Match the ratio with its simplest form.",
-                pairs: [
-                    { left: "4 : 8", right: "1 : 2" },
-                    { left: "6 : 9", right: "2 : 3" },
-                    { left: "10 : 15", right: "2 : 3 " }, /* preserved exact text match */
-                    { left: "12 : 16", right: "3 : 4" }
-                ],
-                explanation: "Simplest form is obtained by dividing both terms by their highest common factor (HCF)."
-            },
-            {
-                type: "SORT",
-                question: "Arrange the ratios from smallest to largest value.",
-                items: ["1 : 2", "3 : 4", "1 : 4", "1 : 1"],
-                correctOrder: ["1 : 4", "1 : 2", "3 : 4", "1 : 1"],
-                explanation: "Converting to decimals: 1:4 (0.25) < 1:2 (0.5) < 3:4 (0.75) < 1:1 (1.0)."
-            },
-            {
-                type: "MATCH",
-                question: "Match the situation with the correct ratio.",
-                pairs: [
-                    { left: "2 red balls and 6 blue balls", right: "1 : 3" },
-                    { left: "3 boys and 9 girls", right: "1 : 3 " }, /* preserved unique mapping space */
-                    { left: "5 pencils and 10 erasers", right: "1 : 2" },
-                    { left: "4 cats and 8 dogs", right: "1 : 2 " }  /* preserved unique mapping space */
-                ],
-                explanation: "Simplifying these comparative relations reduces them to uniform fractional scaling factors."
-            },
-            {
-                type: "MCQ",
-                question: "A map uses a scale of 1 cm : 5 km. If two towns are 4 cm apart on the map, what is the actual distance between them?",
-                options: ["9 km", "10 km", "20 km", "25 km"],
-                answer: "20 km",
-                explanation: "4 × 5 = 20 km."
-            }
-        ];
-
-        // ENGINE SYSTEM RUNTIME OPERATIONAL REGULATORS
-        let currentQuestionIdx = 0;
-        let score = 0;
-        let timerInterval = null;
-        let timeLeft = 45;
-        let attemptsCount = 0;
-        let isQuestionLocked = false;
-        let draggedElement = null;
-
-        const successMessages = ["Excellent!", "Fantastic!", "Brilliant!", "Great Job!", "Outstanding!"];
-
-        // SELECTOR HOOK REFERENCE DOM OBJECTS
-        const splashScreen = document.getElementById('splash-screen');
-        const introScreen = document.getElementById('intro-screen');
-        const gameScreen = document.getElementById('game-screen');
-        const resultsScreen = document.getElementById('results-screen');
-        
-        const startBtn = document.getElementById('start-adventure-btn');
-        const nextBtn = document.getElementById('next-question-btn');
-        const workspace = document.getElementById('interactive-workspace');
-
-        const hudQuestionIdx = document.getElementById('hud-question-idx');
-        const hudTimer = document.getElementById('hud-timer');
-        const hudScore = document.getElementById('hud-score');
-        const progressBar = document.getElementById('game-progress');
-        const questionText = document.getElementById('question-text');
-
-        const feedbackMsg = document.querySelector('.id-feedback-msg');
-        const explanationText = document.querySelector('.id-explanation-text');
-
-        // AUDIO DISPATCH CORE UTILITY FUNCTIONS
-        function playSound(id) {
-            const aud = document.getElementById(id);
-            if(aud) {
-                aud.currentTime = 0;
-                aud.play().catch(() => {});
-            }
-        }
-
-        function triggerCorrectSequence() {
-            playSound('snd-correct');
-            setTimeout(() => {
-                playSound('snd-claps');
-            }, 250);
-        }
-
-        // APP INITIALIZATION RUNTIME SETUP LIFECYCLE
-        window.addEventListener('DOMContentLoaded', () => {
-            // Splash transitions strictly out to entry terminal view after exactly 5 seconds
-            setTimeout(() => {
-                splashScreen.classList.remove('active');
-                introScreen.classList.add('active');
-            }, 5000);
-        });
-
-        startBtn.addEventListener('click', () => {
-            introScreen.classList.remove('active');
-            gameScreen.classList.add('active');
-            loadQuestion(0);
-        });
-
-        nextBtn.addEventListener('click', () => {
-            currentQuestionIdx++;
-            if(currentQuestionIdx < questions.length) {
-                loadQuestion(currentQuestionIdx);
-            } else {
-                showResultsSummary();
-            }
-        });
-
-        // QUESTION LOADING SYSTEM DISPATCHER
-        function loadQuestion(index) {
-            clearInterval(timerInterval);
-            isQuestionLocked = false;
-            attemptsCount = 0;
-            timeLeft = 45;
-            
-            feedbackMsg.textContent = "";
-            explanationText.textContent = "";
-            nextBtn.classList.add('hidden');
-
-            // Synchronize Variable States onto Dashboard UI Viewport
-            hudQuestionIdx.textContent = `Question: ${index + 1}/${questions.length}`;
-            hudScore.textContent = `Score: ${score}`;
-            hudTimer.textContent = `Time: ${timeLeft}s`;
-            progressBar.style.width = `${((index) / questions.length) * 100}%`;
-
-            const qData = questions[index];
-            questionText.textContent = qData.question;
-            workspace.innerHTML = "";
-
-            // Evaluate Matrix Execution Templates Routing Block
-            if(qData.type === "MCQ") {
-                renderMCQ(qData);
-            } else if (qData.type === "TF") {
-                renderTrueFalse(qData);
-            } else if (qData.type === "MATCH") {
-                renderMatching(qData);
-            } else if (qData.type === "SORT") {
-                renderSorting(qData);
-            }
-
-            // Start Clock Interval Tracking Threads Module
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                hudTimer.textContent = `Time: ${timeLeft}s`;
-                if(timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    handleTimeoutOrMaxFail(true);
-                }
-            }, 1000);
-        }
-
-        // DISPLAY WRAPPERS: MCQ TEMPLATE GENERATOR
-        function renderMCQ(data) {
-            const grid = document.createElement('div');
-            grid.className = 'options-grid';
-            data.options.forEach(opt => {
-                const card = document.createElement('div');
-                card.className = 'option-card';
-                card.textContent = opt;
-                card.addEventListener('click', () => handleChoiceSelection(card, opt, data.answer, data.explanation));
-                grid.appendChild(card);
-            });
-            workspace.appendChild(grid);
-        }
-
-        // DISPLAY WRAPPERS: TRUE/FALSE TEMPLATE GENERATOR
-        function renderTrueFalse(data) {
-            const grid = document.createElement('div');
-            grid.className = 'options-grid';
-            ["True", "False"].forEach(opt => {
-                const card = document.createElement('div');
-                card.className = 'option-card';
-                card.textContent = opt;
-                card.addEventListener('click', () => handleChoiceSelection(card, opt, data.answer, data.explanation));
-                grid.appendChild(card);
-            });
-            workspace.appendChild(grid);
-        }
-
-        // CHOICE EVALUATION LOGIC MATRIX FUNCTION
-        function handleChoiceSelection(cardElement, selectedVal, correctVal, explanation) {
-            if(isQuestionLocked) return;
-
-            if(selectedVal === correctVal) {
-                cardElement.classList.add('correct');
-                score++;
-                hudScore.textContent = `Score: ${score}`;
-                triggerSuccessState(explanation);
-            } else {
-                cardElement.classList.add('wrong');
-                attemptsCount++;
-                playSound('snd-wrong');
-
-                if(attemptsCount >= 2) {
-                    handleTimeoutOrMaxFail(false, correctVal, explanation);
-                } else {
-                    feedbackMsg.style.color = "var(--danger)";
-                    feedbackMsg.textContent = "Incorrect! Try again.";
-                    setTimeout(() => { cardElement.classList.remove('wrong'); }, 1000);
-                }
-            }
-        }
-
-        // DISPLAY WRAPPERS: MATCHING MATRIX BUILDER
-        function renderMatching(data) {
-            const container = document.createElement('div');
-            container.className = 'drag-drop-container';
-
-            // Scramble unique mapping pairs to guarantee mathematical structural tracking integrity
-            const rightOptionsShuffled = data.pairs.map(p => p.right).sort(() => Math.random() - 0.5);
-
-            data.pairs.forEach((pair) => {
-                const row = document.createElement('div');
-                row.className = 'matching-row';
-
-                const leftBox = document.createElement('div');
-                leftBox.className = 'sort-item';
-                leftBox.style.cursor = 'default';
-                leftBox.style.background = 'rgba(255, 255, 255, 0.08)';
-                leftBox.textContent = pair.left;
-
-                const dropTarget = document.createElement('div');
-                dropTarget.className = 'drop-target';
-                dropTarget.dataset.expected = pair.right;
-                dropTarget.textContent = "Drop matching card here";
-
-                setupDropTargetLifecycle(dropTarget);
-
-                row.appendChild(leftBox);
-                row.appendChild(dropTarget);
-                container.appendChild(row);
-            });
-
-            const sourcePool = document.createElement('div');
-            sourcePool.className = 'sort-container';
-            sourcePool.style.marginTop = "25px";
-            sourcePool.style.borderTop = "1px solid var(--card-border)";
-            sourcePool.style.paddingTop = "15px";
-
-            rightOptionsShuffled.forEach(val => {
-                const src = document.createElement('div');
-                src.className = 'drag-source';
-                src.draggable = true;
-                src.textContent = val;
-                setupDragSourceLifecycle(src);
-                sourcePool.appendChild(src);
-            });
-
-            workspace.appendChild(container);
-            workspace.appendChild(sourcePool);
-
-            appendDragValidationButton(() => validateMatchingChallenge(data.explanation));
-        }
-
-        // DISPLAY WRAPPERS: SORT SEQUENCE BUILDER
-        function renderSorting(data) {
-            const wrapper = document.createElement('div');
-            wrapper.style.width = "100%";
-            
-            const label = document.createElement('div');
-            label.textContent = "Drag cards horizontally to position them from smallest to largest value:";
-            label.style.color = "var(--text-muted)";
-            label.style.marginBottom = "10px";
-            wrapper.appendChild(label);
-
-            const container = document.createElement('div');
-            container.className = 'sort-container';
-            
-            const shuffledItems = [...data.items].sort(() => Math.random() - 0.5);
-            
-            shuffledItems.forEach(val => {
-                const item = document.createElement('div');
-                item.className = 'sort-item';
-                item.draggable = true;
-                item.textContent = val;
-                setupSortingDragLifecycle(item, container);
-                container.appendChild(item);
-            });
-
-            wrapper.appendChild(container);
-            workspace.appendChild(wrapper);
-
-            appendDragValidationButton(() => validateSortingChallenge(data.correctOrder, data.explanation));
-        }
-
-        // DRAG AND DROP HANDLER LIFECYCLE ROUTINES
-        function setupDragSourceLifecycle(el) {
-            el.addEventListener('dragstart', () => {
-                if(isQuestionLocked) return;
-                draggedElement = el;
-                el.classList.add('dragging');
-            });
-            el.addEventListener('dragend', () => { el.classList.remove('dragging'); });
-        }
-
-        function setupDropTargetLifecycle(target) {
-            target.addEventListener('dragover', (e) => { e.preventDefault(); });
-            target.addEventListener('dragenter', () => { if(!isQuestionLocked) target.classList.add('hovered'); });
-            target.addEventListener('dragleave', () => { target.classList.remove('hovered'); });
-            
-            target.addEventListener('drop', (e) => {
-                e.preventDefault();
-                target.classList.remove('hovered');
-                if(isQuestionLocked || !draggedElement) return;
-
-                if(target.classList.contains('filled')) {
-                    const currentVal = target.textContent;
-                    const returnedSrc = document.createElement('div');
-                    returnedSrc.className = 'drag-source';
-                    returnedSrc.draggable = true;
-                    returnedSrc.textContent = currentVal;
-                    setupDragSourceLifecycle(returnedSrc);
-                    workspace.querySelector('.sort-container').appendChild(returnedSrc);
-                }
-
-                target.textContent = draggedElement.textContent;
-                target.classList.add('filled');
-                draggedElement.remove();
-                draggedElement = null;
-            });
-        }
-
-        function setupSortingDragLifecycle(el, container) {
-            el.addEventListener('dragstart', () => { if(!isQuestionLocked) el.classList.add('dragging'); });
-            el.addEventListener('dragend', () => { el.classList.remove('dragging'); });
-            
-            container.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                if(isQuestionLocked) return;
-                const draggingItem = container.querySelector('.dragging');
-                if(!draggingItem) return;
-                const siblings = [...container.querySelectorAll('.sort-item:not(.dragging)')];
-                let nextSibling = siblings.find(sibling => {
-                    return e.clientX <= sibling.getBoundingClientRect().left + sibling.getBoundingClientRect().width / 2;
-                });
-                container.insertBefore(draggingItem, nextSibling);
-            });
-        }
-
-        function appendDragValidationButton(validationCallback) {
-            const container = document.createElement('div');
-            container.className = 'action-container';
-            container.style.justifyContent = 'center';
-            container.style.marginTop = '20px';
-
-            const checkBtn = document.createElement('button');
-            checkBtn.className = 'btn';
-            checkBtn.id = "submit-drag-btn";
-            checkBtn.style.padding = '10px 30px';
-            checkBtn.style.fontSize = '1rem';
-            checkBtn.textContent = "Check Answer";
-            checkBtn.addEventListener('click', validationCallback);
-
-            container.appendChild(checkBtn);
-            workspace.appendChild(container);
-        }
-
-        // EVALUATOR ROUTINES: D&D VALIDATORS MODULES
-        function validateMatchingChallenge(explanation) {
-            if(isQuestionLocked) return;
-            const targets = workspace.querySelectorAll('.drop-target');
-            let allCorrect = true;
-
-            targets.forEach(t => {
-                const filledVal = t.classList.contains('filled') ? t.textContent : "";
-                // Trim evaluation strings to securely bypass unique space identifier tags safely
-                if(filledVal.trim() === t.dataset.expected.trim()) {
-                    t.classList.add('correct');
-                } else {
-                    t.classList.add('wrong');
-                    allCorrect = false;
-                }
-            });
-
-            handleInteractiveEndState(allCorrect, explanation);
-        }
-
-        function validateSortingChallenge(correctSequence, explanation) {
-            if(isQuestionLocked) return;
-            const items = workspace.querySelectorAll('.sort-item');
-            let allCorrect = true;
-
-            items.forEach((item, idx) => {
-                if(item.textContent.trim() === correctSequence[idx].trim()) {
-                    item.classList.add('correct');
-                } else {
-                    item.classList.add('wrong');
-                    allCorrect = false;
-                }
-            });
-
-            handleInteractiveEndState(allCorrect, explanation);
-        }
-
-        function handleInteractiveEndState(isCorrect, explanation) {
-            const submitBtn = document.getElementById('submit-drag-btn');
-            if(submitBtn) submitBtn.remove();
-
-            if(isCorrect) {
-                score++;
-                hudScore.textContent = `Score: ${score}`;
-                triggerSuccessState(explanation);
-            } else {
-                attemptsCount++;
-                playSound('snd-wrong');
-                if(attemptsCount >= 2) {
-                    handleTimeoutOrMaxFail(false, null, explanation);
-                } else {
-                    feedbackMsg.style.color = "var(--danger)";
-                    feedbackMsg.textContent = "Some elements are misplaced! Try one more time.";
-                    setTimeout(() => {
-                        workspace.querySelectorAll('.wrong').forEach(el => {
-                            el.classList.remove('wrong');
-                        });
-                    }, 1200);
-                }
-            }
-        }
-
-        // RUNTIME STATUS TRANSITIONS CONTROLLERS
-        function triggerSuccessState(explanation) {
-            clearInterval(timerInterval);
-            isQuestionLocked = true;
-            
-            feedbackMsg.style.color = "var(--success)";
-            feedbackMsg.textContent = successMessages[Math.floor(Math.random() * successMessages.length)];
-            explanationText.textContent = explanation;
-            
-            triggerCorrectSequence();
-            nextBtn.classList.remove('hidden');
-        }
-
-        document.addEventListener('contextmenu', event => event.preventDefault());
-
-        function handleTimeoutOrMaxFail(isTimeout = false, correctString = null, explanation = "") {
-            clearInterval(timerInterval);
-            isQuestionLocked = true;
-            playSound('snd-wrong');
-
-            feedbackMsg.style.color = "var(--danger)";
-            feedbackMsg.textContent = isTimeout ? "Time's Up!" : "Incorrect!";
-
-            if(correctString) {
-                explanationText.textContent = `Correct Answer: ${correctString}. ${explanation}`;
-            } else {
-                explanationText.textContent = explanation;
-            }
-
-            workspace.querySelectorAll('.option-card, .drag-source, .sort-item').forEach(el => {
-                el.setAttribute('draggable', 'false');
-                el.style.cursor = 'default';
-            });
-
-            nextBtn.classList.remove('hidden');
-        }
-
-        // SCREEN 4: DISPATCH FINALIZE SUMMARY CONTROLLER
-        function showResultsSummary() {
-            gameScreen.classList.remove('active');
-            resultsScreen.classList.add('active');
-
-            const finalPercentage = (score / questions.length) * 100;
-            const badge = document.getElementById('final-score-badge');
-            const msg = document.getElementById('final-result-msg');
-
-            badge.innerHTML = `${score}/${questions.length} <span>Score</span>`;
-
-            if(finalPercentage >= 80) {
-                msg.textContent = "Outstanding Achievement! Ratio Master!";
-                msg.style.color = "var(--success)";
-                triggerConfettiShower();
-                playSound('snd-claps');
-            } else {
-                msg.textContent = "Good try! Review mathematical proportion laws to scale your scores!";
-                msg.style.color = "var(--text)";
-            }
-        }
-
-        function triggerConfettiShower() {
-            for(let i = 0; i < 60; i++) {
-                const conf = document.createElement('div');
-                conf.className = 'confetti';
-                conf.style.left = `${Math.random() * 100}%`;
-                conf.style.background = `hsl(${Math.random() * 360}deg, 100%, 70%)`;
-                conf.style.animationDelay = `${Math.random() * 2}s`;
-                conf.style.animationDuration = `${2 + Math.random() * 3}s`;
-                resultsScreen.appendChild(conf);
-            }
-        }
-    </script>
+    <button class="play" onclick="startGame()">LET’S PLAY</button>
+  </div>
+</section>
+
+<section id="game" class="screen">
+  <div class="top">
+    <div class="box">Score: <span id="score">0</span> ⭐</div>
+    <div class="box">Bridge: <span id="adv">1</span>/10</div>
+    <div class="box">Attempts: <span id="hearts">❤️❤️</span></div>
+  </div>
+  <main class="scene">
+    <div class="hill h1"></div><div class="hill h2"></div>
+    <div class="title">BRIDGE BUILDER</div>
+    <section class="qcard"><div class="qtext" id="qtext"></div></section>
+    <section class="bridge"><div class="road"></div><div class="post p1">1</div><div class="post p2">2</div><div class="post p3">3</div><div class="post p4">4</div><div class="post p5">5</div></section>
+    <div class="truck" id="truck"><span class="vehicle">🚚</span></div>
+    <section class="answerBoard">
+      <div class="answerTitle">TAP THE CORRECT SHAPE CARD</div>
+      <div class="options" id="options"></div>
+    </section>
+    <div class="msg" id="msg">Tap the correct shape card.</div>
+    <button class="next" id="nextBtn" onclick="nextQuestion()">NEXT ➜</button>
+  </main>
+</section>
+
+<section id="result" class="screen">
+  <div class="card">
+    <h1>Bridge Complete!</h1>
+    <p>You completed all 10 quadrilateral challenges.</p>
+    <div class="finalScore" id="finalScore">0</div>
+    <div style="font-size:50px" id="stars">⭐⭐⭐</div>
+    <button class="restart" onclick="startGame()">PLAY AGAIN</button>
+  </div>
+</section>
+<div class="confetti" id="confetti"></div>
+
+<script>
+const cards={
+  Square:{cls:"square"},
+  Rectangle:{cls:"rectangle"},
+  Parallelogram:{cls:"parallelogram"},
+  Trapezium:{cls:"trapezium"},
+  Rhombus:{cls:"rhombus"}
+};
+
+const questions=[
+{text:"Which quadrilateral has four equal sides and four right angles?",answer:"Square",explain:"A square has four equal sides and four right angles."},
+{text:"Which quadrilateral has opposite sides equal and four right angles?",answer:"Rectangle",explain:"A rectangle has opposite sides equal and four right angles."},
+{text:"Which quadrilateral has two pairs of parallel sides, but right angles are not required?",answer:"Parallelogram",explain:"A parallelogram has two pairs of parallel sides."},
+{text:"Which quadrilateral has exactly one pair of parallel sides?",answer:"Trapezium",explain:"A trapezium has exactly one pair of parallel sides."},
+{text:"Which quadrilateral has four equal sides, but right angles are not necessary?",answer:"Rhombus",explain:"A rhombus has four equal sides."},
+{text:"A square sheet is folded into a diamond-like shape with all sides equal. Which quadrilateral does it look like?",answer:"Rhombus",explain:"A rhombus is a quadrilateral with all four sides equal."},
+{text:"A door is shaped like a quadrilateral with opposite sides equal and each angle 90°. Which shape is it?",answer:"Rectangle",explain:"A rectangle has opposite sides equal and all angles 90°."},
+{text:"A slanting tile has both pairs of opposite sides parallel. Which shape is it?",answer:"Parallelogram",explain:"A parallelogram has both pairs of opposite sides parallel."},
+{text:"A bridge support has only its top and bottom sides parallel. Which shape is it?",answer:"Trapezium",explain:"A trapezium has one pair of parallel sides."},
+{text:"Which quadrilateral is a special rectangle with all sides equal?",answer:"Square",explain:"A square is a rectangle with all sides equal."}
+];
+
+let order=[],current=0,score=0,attempts=0,locked=false;
+function $(id){return document.getElementById(id)}
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active")}
+let c=5;let splash=setInterval(()=>{c--;$("count").textContent=c;if(c<=0){clearInterval(splash);show("intro")}},1000);
+function sound(id){const a=$(id);a.currentTime=0;a.play().catch(()=>{})}
+function startGame(){
+  ["correctSound","wrongSound","clapSound"].forEach(id=>{const a=$(id);a.volume=.75;a.play().then(()=>{a.pause();a.currentTime=0}).catch(()=>{})});
+  order=[...questions].sort(()=>Math.random()-.5);current=0;score=0;loadQuestion();show("game")
+}
+function loadQuestion(){
+  locked=false;attempts=0;const q=order[current];
+  $("score").textContent=score;$("adv").textContent=current+1;$("hearts").textContent="❤️❤️";
+  $("qtext").textContent=q.text;$("msg").textContent="Tap the correct shape card.";$("nextBtn").style.display="none";
+  positionTruck(current);makeOptions(q)
+}
+function shapeHTML(name){return `<div class="shape ${cards[name].cls}"></div><div>${name}</div>`}
+function makeOptions(q){
+  const box=$("options");box.innerHTML="";
+  Object.keys(cards).sort(()=>Math.random()-.5).forEach(name=>{
+    const b=document.createElement("button");b.className="opt";b.innerHTML=shapeHTML(name);b.onclick=()=>choose(b,name);box.appendChild(b)
+  })
+}
+function positionTruck(pos){$("truck").style.left=Math.min(84,3+pos*8.4)+"%"}
+function choose(btn,name){
+  if(locked)return;
+  document.querySelectorAll(".opt").forEach(t=>t.classList.remove("chosen","wrong","correct"));
+  btn.classList.add("chosen");const q=order[current];
+  if(name===q.answer){
+    locked=true;btn.classList.add("correct");score+=attempts===0?100:60;$("score").textContent=score;
+    $("msg").textContent="Correct! "+q.explain;moveTruck();sound("correctSound");sound("clapSound");confetti();$("nextBtn").style.display="block"
+  }else{
+    attempts++;btn.classList.add("wrong");$("truck").style.animation="shake .25s";setTimeout(()=>$("truck").style.animation="",300);sound("wrongSound");
+    $("hearts").textContent=attempts===1?"❤️🤎":"🤎🤎";
+    if(attempts>=2){
+      locked=true;$("msg").textContent="Correct answer: "+q.answer+". "+q.explain;
+      document.querySelectorAll(".opt").forEach(t=>{if(t.textContent.trim()===q.answer)t.classList.add("correct")});
+      $("nextBtn").style.display="block"
+    }else{$("msg").textContent="Not quite. Try one more time."}
+  }
+}
+function moveTruck(){$("truck").style.left=Math.min(88,3+(current+1)*8.4)+"%"}
+function nextQuestion(){current++;if(current>=10){endGame()}else loadQuestion()}
+function endGame(){$("finalScore").textContent=score;$("stars").textContent=score>=850?"⭐⭐⭐":score>=650?"⭐⭐":"⭐";confetti(70);show("result")}
+function confetti(n=30){
+  const wrap=$("confetti");
+  for(let i=0;i<n;i++){const p=document.createElement("div");p.className="piece";p.style.left=Math.random()*100+"vw";p.style.background=["#ffd75b","#ff6b6b","#38a9ff","#55df75","#b369ff"][Math.floor(Math.random()*5)];p.style.animationDelay=Math.random()*.4+"s";wrap.appendChild(p);setTimeout(()=>p.remove(),1700)}
+}
+</script>
 </body>
 </html>
-
-```
