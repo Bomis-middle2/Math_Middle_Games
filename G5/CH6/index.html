@@ -26,13 +26,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            background-color: #000;
         }
         canvas {
-            background-color: #050515;
             box-shadow: 0 0 30px rgba(0,0,0,0.8);
             max-width: 100%;
             max-height: 100%;
             aspect-ratio: 16 / 9;
+            display: block;
         }
         audio {
             display: none;
@@ -72,7 +73,7 @@ const audioCorrect = document.getElementById('snd-correct');
 const audioWrong = document.getElementById('snd-wrong');
 const audioWin = document.getElementById('snd-win');
 
-// --- DECIMALS LEARRICULUM DATA ---
+// --- DECIMALS CURRICULUM DATA ---
 const dataset = [
     { id: 1, problem: "Collect the place value of 5 in 12.35", target: "Hundredths", options: ["Tenths", "Hundredths", "Ones", "Thousandths"], hint: "First spot right is tenths, second spot is..." },
     { id: 2, problem: "Find the simplest fraction form of 0.75", target: "3/4", options: ["75/10", "3/4", "1/2", "5/7"], hint: "Think of 75 cents out of 100 cents (3 quarters)." },
@@ -96,19 +97,22 @@ let feedbackType = "";
 let feedbackTimer = 0;
 let hintActive = false;
 
-// --- GAME OBJECTS & INTERACTION ---
-let ship = { x: 512, y: 480, r: 25, targetX: 512 };
+// --- GAME OBJECTS ---
+let ship = { x: 512, y: 480, r: 20, targetX: 512 };
 let asteroids = [];
 let particles = [];
 let stars = [];
-let mouseInputX = 512;
 
 // Populate background starfield array
-for (let i = 0; i < 40; i++) {
-    stars.push({ x: Math.random() * 1024, y: Math.random() * 576, speed: Math.random() * 1.5 + 0.5, size: Math.random() * 2 });
+for (let i = 0; i < 45; i++) {
+    stars.push({
+        x: Math.random() * 1024,
+        y: Math.random() * 576,
+        speed: Math.random() * 2 + 1,
+        size: Math.random() * 2 + 0.5
+    });
 }
 
-// --- INITIALIZE GAME SESSION ---
 function initGame() {
     gameQuestions = [...dataset].sort(() => Math.random() - 0.5).slice(0, 10);
     score = 0;
@@ -129,84 +133,95 @@ function loadQuestion() {
     }
 
     const q = gameQuestions[currentQIndex];
-    
     const laneWidth = 1024 / q.options.length;
-    q.options.forEach((opt, idx) => {
+    
+    // Scramble the visual order of target options
+    const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+
+    shuffledOptions.forEach((opt, idx) => {
         asteroids.push({
             text: opt.toString(),
             x: (laneWidth * idx) + (laneWidth / 2),
-            y: -60 - (Math.random() * 40),
-            r: 45,
-            speed: 1.5,
+            y: -50 - (Math.random() * 100), // Better vertical scattering to prevent row-clumping
+            r: 42,
+            speed: 1.8,
             isCorrect: opt.toString() === q.target.toString()
         });
     });
 }
 
-// --- PARTICLE EMITTER ENGINE ---
 function spawnExplosion(x, y, color) {
-    for (let i = 0; i < 40; i++) {
+    particles = [];
+    for (let i = 0; i < 35; i++) {
         particles.push({
             x: x,
             y: y,
-            vx: (Math.random() - 0.5) * 12,
-            vy: (Math.random() - 0.5) * 12,
-            radius: Math.random() * 4 + 2,
+            vx: (Math.random() - 0.5) * 10,
+            vy: (Math.random() - 0.5) * 10,
+            radius: Math.random() * 3 + 2,
             color: color,
             alpha: 1,
-            life: Math.random() * 20 + 25
+            life: Math.random() * 20 + 20
         });
     }
 }
 
-// --- LOOP RENDERING LOGIC ---
+// --- RENDERING SCENE BUILDERS ---
+
 function drawBranding() {
-    // FIX: Changed branding screen background color from white to space theme dark
-    canvas.style.cursor = "default"; 
+    canvas.style.cursor = "default";
+    // FIX: Enforce completely black baseline fill to override ghost frames
     ctx.fillStyle = "#020208";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
     if (logoImg.complete && logoImg.naturalWidth !== 0) {
         ctx.drawImage(logoImg, canvas.width / 2 - logoImg.width / 2, canvas.height / 2 - logoImg.height / 2);
     } else {
         ctx.fillStyle = "#38bdf8";
-        ctx.font = "bold 45px Arial";
+        ctx.font = "bold 45px 'Comic Sans MS'";
         ctx.textAlign = "center";
         ctx.fillText("INNOVINE", canvas.width / 2, canvas.height / 2);
     }
 }
 
 function drawInstructions() {
-    // FIX: Ensure cursor is visible on instructions screen
     canvas.style.cursor = "default";
-    ctx.fillStyle = "#030312";
+    ctx.fillStyle = "#050515";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Background decorative stars to look spacey
+    ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+    for(let i=0; i<20; i++) {
+        ctx.fillRect((i*73)%canvas.width, (i*37)%canvas.height, 2, 2);
+    }
+
     ctx.fillStyle = "#38bdf8";
-    ctx.font = "bold 40px 'Comic Sans MS'";
+    ctx.font = "bold 38px 'Comic Sans MS'";
     ctx.textAlign = "center";
     ctx.fillText("🚀 DECIMAL ASTEROID NAVIGATOR 🚀", canvas.width / 2, 120);
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "22px 'Comic Sans MS'";
     ctx.fillText("Pilot your Starship left or right to capture the correct math asteroid!", canvas.width / 2, 220);
-    ctx.fillText("Avoid colliding with wrong values or your shields will take structural damage.", canvas.width / 2, 270);
-    ctx.fillText("Fail twice on a question, and your ship's AI computer will transmit a hint!", canvas.width / 2, 320);
+    ctx.fillText("Avoid colliding with wrong values or your shields will take damage.", canvas.width / 2, 275);
+    ctx.fillText("Fail twice on a question, and your ship's AI will transmit a hint!", canvas.width / 2, 330);
 
-    let pulseButton = Math.sin(Date.now() / 150) * 5;
+    let pulseButton = Math.sin(Date.now() / 150) * 4;
     ctx.fillStyle = "#f43f5e";
     ctx.beginPath();
-    ctx.roundRect(canvas.width / 2 - 140, 400 + pulseButton, 280, 60, 20);
+    ctx.roundRect(canvas.width / 2 - 130, 410 + pulseButton, 260, 60, 20);
     ctx.fill();
     ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2;
     ctx.stroke();
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 24px 'Comic Sans MS'";
-    ctx.fillText("LAUNCH SECTOR", canvas.width / 2, 438 + pulseButton);
+    ctx.font = "bold 22px 'Comic Sans MS'";
+    ctx.fillText("LAUNCH SECTOR", canvas.width / 2, 446 + pulseButton);
 }
 
 function drawHUD() {
-    ctx.fillStyle = "rgba(10, 10, 35, 0.8)";
+    ctx.fillStyle = "rgba(10, 10, 35, 0.9)";
     ctx.fillRect(0, 0, canvas.width, 70);
     ctx.strokeStyle = "#38bdf8";
     ctx.lineWidth = 2;
@@ -225,66 +240,70 @@ function drawHUD() {
 }
 
 function drawPlayingState() {
-    // FIX: Hide cursor only during the actual shooter gameplay to make it immersive
-    canvas.style.cursor = "none";
+    canvas.style.cursor = "none"; // Hide standard mouse cursor to follow ship mechanics cleanly
+    
+    // Clear whole canvas baseline securely before calculations to stop trailing graphics
+    ctx.fillStyle = "#050515";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Stars scrolling backgrounds
     stars.forEach(s => {
         s.y += s.speed;
         if (s.y > canvas.height) s.y = 0;
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
         ctx.fillRect(s.x, s.y, s.size, s.size);
     });
 
-    drawHUD();
     const q = gameQuestions[currentQIndex];
 
+    // Challenge Header Layout Block
     ctx.fillStyle = "#0f172a";
     ctx.beginPath();
-    ctx.roundRect(120, 90, 784, 65, 12);
+    ctx.roundRect(100, 90, 824, 65, 12);
     ctx.fill();
     ctx.strokeStyle = "#a855f7";
+    ctx.lineWidth = 2;
     ctx.stroke();
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 22px 'Comic Sans MS'";
+    ctx.font = "bold 20px 'Comic Sans MS'";
     ctx.textAlign = "center";
     ctx.fillText(q.problem, canvas.width / 2, 130);
 
     if (hintActive) {
         ctx.fillStyle = "#f43f5e";
         ctx.font = "bold 18px 'Comic Sans MS'";
-        ctx.fillText(`⚠️ Ship Computer Hint: ${q.hint}`, canvas.width / 2, 190);
+        ctx.fillText(`⚠️ AI Hint: ${q.hint}`, canvas.width / 2, 190);
     }
 
-    ship.x += (ship.targetX - ship.x) * 0.15;
+    // Ship Physics interpolation mechanics
+    ship.x += (ship.targetX - ship.x) * 0.2;
     
+    // Draw Spaceship Graphic
     ctx.save();
     ctx.translate(ship.x, ship.y);
-    let thrustGlow = Math.random() * 15 + 10;
+    
+    let enginePulse = Math.random() * 12 + 8;
     ctx.fillStyle = "#f97316";
     ctx.beginPath();
-    ctx.moveTo(-10, 25); ctx.lineTo(0, 25 + thrustGlow); ctx.lineTo(10, 25);
+    ctx.moveTo(-8, 20); ctx.lineTo(0, 20 + enginePulse); ctx.lineTo(8, 20);
     ctx.closePath();
     ctx.fill();
 
     ctx.fillStyle = "#38bdf8";
     ctx.beginPath();
-    ctx.moveTo(0, -30);
-    ctx.lineTo(-22, 25);
-    ctx.lineTo(0, 12);
-    ctx.lineTo(22, 25);
+    ctx.moveTo(0, -25); 
+    ctx.lineTo(-20, 20); 
+    ctx.lineTo(0, 10);  
+    ctx.lineTo(20, 20);  
     ctx.closePath();
     ctx.fill();
     ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2;
     ctx.stroke();
-
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.moveTo(0, -15); ctx.lineTo(-7, 5); ctx.lineTo(7, 5);
-    ctx.closePath();
-    ctx.fill();
     ctx.restore();
 
+    // Compute falling rock updates
     asteroids.forEach(a => {
         a.y += a.speed;
         
@@ -293,32 +312,34 @@ function drawPlayingState() {
             a.x = Math.random() * (canvas.width - 100) + 50;
         }
 
-        ctx.fillStyle = "#475569";
+        // Draw Asteroids
+        ctx.fillStyle = "#334155";
         ctx.beginPath();
         ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = "#94a3b8";
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = "#64748b";
+        ctx.lineWidth = 2.5;
         ctx.stroke();
 
         ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 18px 'Comic Sans MS'";
+        ctx.font = "bold 17px 'Comic Sans MS'";
         ctx.textAlign = "center";
         ctx.fillText(a.text, a.x, a.y + 6);
 
+        // Circular Collision Check Box Algorithms
         let dx = a.x - ship.x;
         let dy = a.y - ship.y;
-        let gapDistance = Math.sqrt(dx * dx + dy * dy);
+        let dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (gapDistance < a.r + ship.r - 5) {
+        if (dist < a.r + ship.r) {
             if (a.isCorrect) {
-                spawnExplosion(a.x, a.y, "#10b981");
+                spawnExplosion(a.x, a.y, "#34d399");
                 audioCorrect.currentTime = 0;
                 audioCorrect.play().catch(() => {});
                 score += 10;
                 feedbackType = "correct";
             } else {
-                spawnExplosion(a.x, a.y, "#ef4444");
+                spawnExplosion(a.x, a.y, "#f43f5e");
                 audioWrong.currentTime = 0;
                 audioWrong.play().catch(() => {});
                 attempts++;
@@ -328,20 +349,28 @@ function drawPlayingState() {
             currentState = STATES.FEEDBACK;
         }
     });
+
+    drawHUD();
 }
 
 function drawFeedbackState() {
-    // FIX: Bring back cursor for the pop-up screens
     canvas.style.cursor = "default";
-    drawPlayingState();
-
-    ctx.fillStyle = "rgba(2, 2, 10, 0.8)";
+    
+    // Re-draw clean deep space state on static frames to bypass messy artifact smears
+    ctx.fillStyle = "#050515";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw background stars statically so screen doesn't clip out completely black
+    stars.forEach(s => {
+        ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+        ctx.fillRect(s.x, s.y, s.size, s.size);
+    });
 
+    // Render Exploding Particles smoothly
     for (let i = particles.length - 1; i >= 0; i--) {
         let p = particles[i];
         p.x += p.vx; p.y += p.vy;
-        p.alpha -= 1 / p.life;
+        p.alpha -= 0.03;
         if (p.alpha <= 0) { particles.splice(i, 1); continue; }
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.alpha;
@@ -351,22 +380,28 @@ function drawFeedbackState() {
     }
     ctx.globalAlpha = 1.0;
 
+    // Dim overlay cover block
+    ctx.fillStyle = "rgba(2, 2, 10, 0.75)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     ctx.textAlign = "center";
     if (feedbackType === "correct") {
         ctx.fillStyle = "#34d399";
-        ctx.font = "bold 48px 'Comic Sans MS'";
+        ctx.font = "bold 44px 'Comic Sans MS'";
         ctx.fillText("🌟 SECTOR CLEARED! 🌟", canvas.width / 2, canvas.height / 2 - 10);
         ctx.fillStyle = "#ffffff";
         ctx.font = "20px 'Comic Sans MS'";
-        ctx.fillText("Warp Speed Activated to Next Target System...", canvas.width / 2, canvas.height / 2 + 35);
+        ctx.fillText("Warp Speed Activated to Next Target System...", canvas.width / 2, canvas.height / 2 + 40);
     } else {
         ctx.fillStyle = "#f43f5e";
-        ctx.font = "bold 48px 'Comic Sans MS'";
+        ctx.font = "bold 44px 'Comic Sans MS'";
         ctx.fillText("💥 HULL COLLISION CRITICAL 💥", canvas.width / 2, canvas.height / 2 - 10);
         ctx.fillStyle = "#ffffff";
         ctx.font = "20px 'Comic Sans MS'";
-        ctx.fillText("Re-engaging shields... Deflectors resetting!", canvas.width / 2, canvas.height / 2 + 35);
+        ctx.fillText("Re-engaging shields... Deflectors resetting!", canvas.width / 2, canvas.height / 2 + 40);
     }
+
+    drawHUD();
 
     if (Date.now() - feedbackTimer > 2000) {
         if (feedbackType === "correct") {
@@ -375,30 +410,31 @@ function drawFeedbackState() {
             currentState = STATES.PLAYING;
         } else {
             if (attempts >= 2) hintActive = true;
-            asteroids.forEach(a => a.y = -60 - (Math.random() * 40));
+            // Respawn option items safely off-screen to give user time to position ship
+            asteroids.forEach(a => a.y = -60 - (Math.random() * 80));
             currentState = STATES.PLAYING;
         }
     }
 }
 
 function drawGameOverState() {
-    // FIX: Make cursor visible on game over screen
     canvas.style.cursor = "default";
     ctx.fillStyle = "#030312";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "#fbbf24";
-    ctx.font = "bold 50px 'Comic Sans MS'";
+    ctx.font = "bold 48px 'Comic Sans MS'";
     ctx.textAlign = "center";
     ctx.fillText("GALAXY JOURNEY COMPLETE!", canvas.width / 2, 180);
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "26px 'Comic Sans MS'";
-    ctx.fillText(`Total Collected Shield Energy: ${score} Points`, canvas.width / 2, 270);
+    ctx.fillText(`Total Collected Shield Energy: ${score} / 100 Points`, canvas.width / 2, 270);
 
     let badge = "Rank achieved: Admiral of Decimals! 🌌🏆";
     if(score < 70) badge = "Rank achieved: Space Pilot Trainee! 🚀";
     ctx.fillStyle = "#38bdf8";
+    ctx.font = "bold 22px 'Comic Sans MS'";
     ctx.fillText(badge, canvas.width / 2, 330);
 
     ctx.fillStyle = "#6366f1";
@@ -406,14 +442,15 @@ function drawGameOverState() {
     ctx.roundRect(canvas.width / 2 - 120, 420, 240, 60, 20);
     ctx.fill();
     ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2;
     ctx.stroke();
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 24px 'Comic Sans MS'";
-    ctx.fillText("REPLAY MISSION", canvas.width / 2, 458);
+    ctx.font = "bold 22px 'Comic Sans MS'";
+    ctx.fillText("REPLAY MISSION", canvas.width / 2, 456);
 }
 
-// --- MAIN RUNTIME LOOPS ---
+// --- ENGINE RUNTIME ---
 function updateAndRender() {
     switch (currentState) {
         case STATES.BRANDING:
@@ -457,17 +494,17 @@ function calculateScaleCoords(e) {
 }
 
 function processPointerMovement(coords) {
-    mouseInputX = coords.x;
     if (currentState === STATES.PLAYING) {
-        if (mouseInputX < 30) mouseInputX = 30;
-        if (mouseInputX > 994) mouseInputX = 994;
-        ship.targetX = mouseInputX;
+        let inputX = coords.x;
+        if (inputX < 40) inputX = 40;
+        if (inputX > 984) inputX = 984;
+        ship.targetX = inputX;
     }
 }
 
 function processPointerClicks(coords) {
     if (currentState === STATES.INSTRUCTIONS) {
-        if (coords.x > canvas.width/2 - 140 && coords.x < canvas.width/2 + 140 && coords.y > 400 && coords.y < 460) {
+        if (coords.x > canvas.width/2 - 130 && coords.x < canvas.width/2 + 130 && coords.y > 410 && coords.y < 470) {
             initGame();
             currentState = STATES.PLAYING;
         }
@@ -480,7 +517,7 @@ function processPointerClicks(coords) {
     }
 }
 
-// --- COMPATIBILITY LISTENER REGISTRATION ---
+// --- INPUT EVENT LISTENERS ---
 canvas.addEventListener('mousemove', (e) => processPointerMovement(calculateScaleCoords(e)));
 canvas.addEventListener('mousedown', (e) => processPointerClicks(calculateScaleCoords(e)));
 
@@ -493,7 +530,7 @@ canvas.addEventListener('touchstart', (e) => {
     processPointerClicks(calculateScaleCoords(e));
 }, { passive: false });
 
-// Start the game engine loop
+// Kickstart Game Loop
 updateAndRender();
 </script>
 
