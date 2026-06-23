@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Geometry Blueprint Builder</title>
+    <title>Geometry Sandbox Constructor</title>
     <style>
         * {
             box-sizing: border-box;
@@ -16,7 +16,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #0b0f19;
+            background-color: #080a14;
             font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial', sans-serif;
         }
         #game-container {
@@ -26,7 +26,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #05070f;
+            background-color: #03050a;
         }
         canvas {
             box-shadow: 0 0 35px rgba(0,0,0,0.9);
@@ -73,41 +73,40 @@ const audioCorrect = document.getElementById('snd-correct');
 const audioWrong = document.getElementById('snd-wrong');
 const audioWin = document.getElementById('snd-win');
 
-// --- GEOMETRICAL SHAPES LEARNING DATA ---
+// --- GEOMETRY SYLLABUS CHALLENGES ---
 const dataset = [
-    { id: 1, problem: "Select the triangle with 3 equal sides (Equilateral Triangle)", target: "Equilateral", options: ["Isosceles", "Equilateral", "Scalene", "Right-Angled"], hint: "Look for the shape where all three sides and angles match perfectly." },
-    { id: 2, problem: "Identify the triangle that contains a perfect 90° corner angle", target: "Right-Angled", options: ["Equilateral", "Scalene", "Right-Angled", "Isosceles"], hint: "It looks like the sharp corner of a square room or box." },
-    { id: 3, problem: "Which mathematical formula correctly relates a circle's elements?", target: "Diameter = 2 × Radius", options: ["Diameter = Radius", "Diameter = 2 × Radius", "Radius = 2 × Diameter", "Diameter = Radius ÷ 3"], hint: "The line crossing all the way through a circle is twice the length of the half-line radius." },
-    { id: 4, problem: "Find the quadrilateral with 4 equal sides but NO right angles", target: "Rhombus", options: ["Square", "Rectangle", "Rhombus", "Trapezium"], hint: "Think of a tilted or pushed-over square diamond shape." },
-    { id: 5, problem: "Identify a quadrilateral featuring exactly 1 pair of parallel sides", target: "Trapezium", options: ["Parallelogram", "Trapezium", "Rectangle", "Square"], hint: "Its top side is shorter than its flat baseline, resembling a gold brick profile." },
-    { id: 6, problem: "Select the triangle that has 2 equal sides and 1 different side", target: "Isosceles", options: ["Isosceles", "Scalene", "Equilateral", "Obtuse"], hint: "Two sides match length like a tall pyramid roof." },
-    { id: 7, problem: "Find the shape where opposite sides are equal and all angles are 90°", target: "Rectangle", options: ["Kite", "Rhombus", "Trapezium", "Rectangle"], hint: "Think of a stretched out square, like a standard brick or door." },
-    { id: 8, problem: "Identify the part of a triangle where two flat sides meet at a point", target: "Vertex", options: ["Base", "Vertex", "Radius", "Diagonal"], hint: "The sharp corner tips or points of a polygon shape are called vertices." }
+    { id: 1, problem: "Slide the controls to make an Equilateral Triangle (3 equal sides & angles)", check: (v1, v2) => Math.abs(v1 - 60) < 5 && Math.abs(v2 - 60) < 5, s1Name: "Base Width", s2Name: "Corner Angle", s1Min: 30, s1Max: 90, s2Min: 30, s2Max: 90, s1Start: 40, s2Start: 45, hint: "An equilateral shape requires a corner angle adjusted exactly around 60 degrees." },
+    { id: 2, problem: "Adjust the constructor to form a Right-Angled Triangle (exactly 90° corner)", check: (v1, v2) => Math.abs(v2 - 90) < 4, s1Name: "Base Width", s2Name: "Corner Angle", s1Min: 40, s1Max: 100, s2Min: 40, s2Max: 120, s1Start: 70, s2Start: 60, hint: "Move the angle control right until it hits a vertical 90-degree box edge layout." },
+    { id: 3, problem: "Scale up a Circle so that its complete Diameter is exactly equal to 80 units", check: (v1, v2) => Math.abs(v1 - 40) < 3, s1Name: "Radius Size", s2Name: "Rotation Axis", s1Min: 20, s1Max: 70, s2Min: 0, s2Max: 100, s1Start: 25, s2Start: 10, hint: "Diameter = 2 × Radius! So set your Radius scale perfectly to 40." },
+    { id: 4, problem: "Shape a Rectangle with opposite sides matching (Width: 80, Height: 40)", check: (v1, v2) => Math.abs(v1 - 80) < 5 && Math.abs(v2 - 40) < 4, s1Name: "Shape Width", s2Name: "Shape Height", s1Min: 30, s1Max: 120, s2Min: 20, s2Max: 80, s1Start: 50, s2Start: 65, hint: "Increase your shape width towards 80 while keeping height short at 40." },
+    { id: 5, problem: "Construct an Isosceles Triangle (Make 2 side lengths exactly match)", check: (v1, v2) => Math.abs(v2 - 72) < 4, s1Name: "Base Split", s2Name: "Roof Pitch Angle", s1Min: 30, s1Max: 90, s2Min: 40, s2Max: 90, s1Start: 60, s2Start: 50, hint: "Tweak the roof angle control until it scales perfectly to 72 degrees." }
 ];
 
 let gameQuestions = [];
 let currentQIndex = 0;
 let score = 0;
-let attempts = 0;
 let feedbackType = "";
 let feedbackTimer = 0;
 let hintActive = false;
+let wrongAttempts = 0;
 
-// --- INTERACTIVE SCREEN BLUEPRINT PADS ---
-let shapePads = [];
-const padColors = ["#38bdf8", "#a855f7", "#06b6d4", "#f43f5e"];
+// --- INTERACTIVE SLIDERS OBJECTS ---
+let slider1 = { x: 220, y: 490, w: 220, h: 10, val: 50, min: 0, max: 100, name: "Scale A", dragging: false };
+let slider2 = { x: 580, y: 490, w: 220, h: 10, val: 50, min: 0, max: 100, name: "Scale B", dragging: false };
+
+// Submit Button bounds
+const submitBtn = { x: 870, y: 470, w: 120, h: 48 };
 
 function initGame() {
-    gameQuestions = [...dataset].sort(() => Math.random() - 0.5).slice(0, 6); // Pick 6 dynamic randomized tasks
+    gameQuestions = [...dataset].sort(() => Math.random() - 0.5);
     score = 0;
     currentQIndex = 0;
     loadQuestion();
 }
 
 function loadQuestion() {
-    attempts = 0;
     hintActive = false;
-    shapePads = [];
+    wrongAttempts = 0;
     
     if (currentQIndex >= gameQuestions.length) {
         currentState = STATES.GAMEOVER;
@@ -117,27 +116,17 @@ function loadQuestion() {
     }
 
     const q = gameQuestions[currentQIndex];
-    const spacing = 1024 / (q.options.length + 1);
-
-    // Distribute answer choices evenly across safe screen coordinates
-    q.options.forEach((opt, idx) => {
-        shapePads.push({
-            text: opt,
-            x: spacing * (idx + 1),
-            y: 360,
-            width: 160,
-            height: 110,
-            color: padColors[idx % padColors.length],
-            isCorrect: opt === q.target
-        });
-    });
+    
+    // Assign custom configurations based on problem criteria
+    slider1.name = q.s1Name; slider1.min = q.s1Min; slider1.max = q.s1Max; slider1.val = q.s1Start;
+    slider2.name = q.s2Name; slider2.min = q.s2Min; slider2.max = q.s2Max; slider2.val = q.s2Start;
 }
 
-// --- RENDERING PIPELINES ---
+// --- RENDERING VIEWS ---
 
 function drawBranding() {
-    // FIX: Tight background fill right away to prevent white flash artifacts
-    ctx.fillStyle = "#0b0f19";
+    // Force direct black canvas paint to eradicate white screening completely
+    ctx.fillStyle = "#080a14";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     if (logoImg.complete && logoImg.naturalWidth !== 0) {
@@ -151,196 +140,196 @@ function drawBranding() {
 }
 
 function drawInstructions() {
-    ctx.fillStyle = "#0b0f19";
+    ctx.fillStyle = "#080a14";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Decorative geometric grid lines
-    ctx.strokeStyle = "rgba(56, 189, 248, 0.08)";
+    // Grid blueprint theme accents
+    ctx.strokeStyle = "rgba(56, 189, 248, 0.05)";
     ctx.lineWidth = 1;
     for(let i=0; i<canvas.width; i+=40) {
         ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
     }
-    for(let j=0; j<canvas.height; j+=40) {
-        ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(canvas.width, j); ctx.stroke();
-    }
 
     ctx.fillStyle = "#38bdf8";
-    ctx.font = "bold 40px 'Comic Sans MS'";
+    ctx.font = "bold 38px 'Comic Sans MS'";
     ctx.textAlign = "center";
-    ctx.fillText("📐 GEOMETRY BLUEPRINT BUILDER 📐", canvas.width / 2, 130);
+    ctx.fillText("📐 GEOMETRY SANDBOX CONSTRUCTOR 📐", canvas.width / 2, 140);
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "21px 'Comic Sans MS'";
-    ctx.fillText("Analyze the geometric property or question posted at the top.", canvas.width / 2, 230);
-    ctx.fillText("Examine the interactive blueprint pads shown below.", canvas.width / 2, 285);
-    ctx.fillText("Click or Tap the correct shape label to lock it into the schematic architecture!", canvas.width / 2, 340);
+    ctx.font = "20px 'Comic Sans MS'";
+    ctx.fillText("No multiple choice questions here! You are the builder.", canvas.width / 2, 240);
+    ctx.fillText("Read the geometry target prompt at the top of your layout matrix.", canvas.width / 2, 290);
+    ctx.fillText("Drag the dual calibration sliders to form, tilt, or reshape the item live!", canvas.width / 2, 340);
 
-    let pulseButton = Math.sin(Date.now() / 140) * 4;
-    ctx.fillStyle = "#a855f7";
+    let pulse = Math.sin(Date.now() / 150) * 4;
+    ctx.fillStyle = "#6366f1";
     ctx.beginPath();
-    ctx.roundRect(canvas.width / 2 - 140, 420 + pulseButton, 280, 60, 15);
+    ctx.roundRect(canvas.width / 2 - 130, 420 + pulse, 260, 60, 16);
     ctx.fill();
     ctx.strokeStyle = "#ffffff";
-    ctx.stroke();
-
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 22px 'Comic Sans MS'";
-    ctx.fillText("ENTER LAB", canvas.width / 2, 456 + pulseButton);
-}
-
-function drawHUD() {
-    ctx.fillStyle = "rgba(11, 15, 30, 0.9)";
-    ctx.fillRect(0, 0, canvas.width, 75);
-    
-    ctx.fillStyle = "#fbbf24";
-    ctx.font = "bold 19px 'Comic Sans MS'";
-    ctx.textAlign = "left";
-    ctx.fillText(`Blueprint Task: ${currentQIndex + 1} / ${gameQuestions.length}`, 30, 44);
-
-    ctx.textAlign = "right";
-    ctx.fillStyle = "#34d399";
-    ctx.fillText(`Accuracy Score: ${score}`, canvas.width - 30, 44);
-}
-
-// Custom specialized math rendering engine for clean geometry illustrations
-function renderGeometricShapeIcon(type, x, y) {
-    ctx.save();
-    ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 3;
-    ctx.fillStyle = "rgba(255,255,255,0.1)";
-
-    if (type === "Equilateral" || type === "Vertex") {
-        ctx.beginPath();
-        ctx.moveTo(x, y - 25);
-        ctx.lineTo(x - 30, y + 25);
-        ctx.lineTo(x + 30, y + 25);
-        ctx.closePath();
-        ctx.fill(); ctx.stroke();
-        // Highlight vertex dot if needed
-        if(type === "Vertex") {
-            ctx.fillStyle = "#f43f5e";
-            ctx.beginPath(); ctx.arc(x, y - 25, 6, 0, Math.PI*2); ctx.fill();
-        }
-    } 
-    else if (type === "Right-Angled") {
-        ctx.beginPath();
-        ctx.moveTo(x - 20, y - 25);
-        ctx.lineTo(x - 20, y + 25);
-        ctx.lineTo(x + 25, y + 25);
-        ctx.closePath();
-        ctx.fill(); ctx.stroke();
-    } 
-    else if (type === "Isosceles") {
-        ctx.beginPath();
-        ctx.moveTo(x, y - 30);
-        ctx.lineTo(x - 20, y + 25);
-        ctx.lineTo(x + 20, y + 25);
-        ctx.closePath();
-        ctx.fill(); ctx.stroke();
-    } 
-    else if (type === "Scalene" || type === "Obtuse") {
-        ctx.beginPath();
-        ctx.moveTo(x - 10, y - 25);
-        ctx.lineTo(x - 30, y + 25);
-        ctx.lineTo(x + 35, y + 15);
-        ctx.closePath();
-        ctx.fill(); ctx.stroke();
-    } 
-    else if (type.includes("Radius") || type.includes("Diameter")) {
-        ctx.beginPath();
-        ctx.arc(x, y, 25, 0, Math.PI * 2);
-        ctx.fill(); ctx.stroke();
-        // Draw cross-section line segments
-        ctx.strokeStyle = "#fbbf24";
-        ctx.beginPath();
-        ctx.moveTo(x - 25, y);
-        ctx.lineTo(x + 25, y);
-        ctx.stroke();
-    } 
-    else if (type === "Square" || type === "Rectangle") {
-        let w = type === "Square" ? 45 : 60;
-        let h = 40;
-        ctx.beginPath();
-        ctx.rect(x - w/2, y - h/2, w, h);
-        ctx.fill(); ctx.stroke();
-    } 
-    else if (type === "Rhombus" || type === "Parallelogram") {
-        ctx.beginPath();
-        ctx.moveTo(x - 15, y - 20); ctx.lineTo(x + 25, y - 20);
-        ctx.lineTo(x + 15, y + 20); ctx.lineTo(x - 25, y + 20);
-        ctx.closePath();
-        ctx.fill(); ctx.stroke();
-    } 
-    else if (type === "Trapezium") {
-        ctx.beginPath();
-        ctx.moveTo(x - 15, y - 20); ctx.lineTo(x + 15, y - 20);
-        ctx.lineTo(x + 35, y + 20); ctx.lineTo(x - 35, y + 20);
-        ctx.closePath();
-        ctx.fill(); ctx.stroke();
-    }
-    else { // Fallback standard universal box shape template icon
-        ctx.beginPath();
-        ctx.rect(x - 25, y - 25, 50, 50);
-        ctx.fill(); ctx.stroke();
-    }
-    ctx.restore();
-}
-
-function drawPlayingState() {
-    canvas.style.cursor = "default";
-    // Fresh solid background override color cycle loop boundary checks
-    ctx.fillStyle = "#101524";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw blueprint schematics background grids
-    ctx.strokeStyle = "rgba(56, 189, 248, 0.05)";
-    ctx.lineWidth = 1;
-    for (let g = 0; g < canvas.width; g += 30) {
-        ctx.beginPath(); ctx.moveTo(g, 0); ctx.lineTo(g, canvas.height); ctx.stroke();
-    }
-
-    const q = gameQuestions[currentQIndex];
-
-    // Main Laboratory Quest Display Header
-    ctx.fillStyle = "#1e293b";
-    ctx.beginPath();
-    ctx.roundRect(60, 100, 904, 75, 12);
-    ctx.fill();
-    ctx.strokeStyle = "#38bdf8";
-    ctx.lineWidth = 2;
     ctx.stroke();
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 21px 'Comic Sans MS'";
+    ctx.fillText("LAUNCH BUILDER", canvas.width / 2, 456 + pulse);
+}
+
+function drawHUD() {
+    ctx.fillStyle = "rgba(10, 12, 26, 0.9)";
+    ctx.fillRect(0, 0, canvas.width, 70);
+    
+    ctx.fillStyle = "#fbbf24";
+    ctx.font = "bold 19px 'Comic Sans MS'";
+    ctx.textAlign = "left";
+    ctx.fillText(`Structure System: ${currentQIndex + 1} / ${gameQuestions.length}`, 30, 42);
+
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#34d399";
+    ctx.fillText(`Accuracy Marks: ${score}`, canvas.width - 30, 42);
+}
+
+// Live procedural custom shape visualizer based on slider state parameters
+function drawLiveTargetShape(v1, v2, typeId) {
+    ctx.save();
+    ctx.translate(canvas.width / 2, 300); // Situate item squarely in mid-pad sandbox zone
+    ctx.strokeStyle = "#38bdf8";
+    ctx.lineWidth = 4;
+    ctx.fillStyle = "rgba(56, 189, 248, 0.15)";
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = "#38bdf8";
+
+    if (typeId === 1 || typeId === 2 || typeId === 5) { // Triangle Engine Layouts
+        let baseHalf = v1 * 1.5;
+        let height = 120;
+        
+        if(typeId === 2) { // Angle based right triangle
+            let rad = (v2 * Math.PI) / 180;
+            let targetX = -60 + Math.cos(rad) * 130;
+            let targetY = 40 - Math.sin(rad) * 130;
+            ctx.beginPath();
+            ctx.moveTo(-60, 40);
+            ctx.lineTo(60, 40);
+            ctx.lineTo(targetX, targetY);
+            ctx.closePath();
+        } else if (typeId === 5) { // Isosceles Pitch Engine
+            let rad = (v2 * Math.PI) / 180;
+            ctx.beginPath();
+            ctx.moveTo(-70, 50);
+            ctx.lineTo(70, 50);
+            ctx.lineTo(0, 50 - Math.sin(rad) * 140);
+            ctx.closePath();
+        } else { // Equilateral search engine
+            let angleRad = (v2 * Math.PI) / 180;
+            ctx.beginPath();
+            ctx.moveTo(-baseHalf, 40);
+            ctx.lineTo(baseHalf, 40);
+            ctx.lineTo(0, 40 - Math.sin(angleRad) * (baseHalf * 2));
+            ctx.closePath();
+        }
+        ctx.fill(); ctx.stroke();
+    } 
+    else if (typeId === 3) { // Circle Geometry Builder
+        ctx.beginPath();
+        ctx.arc(0, 0, v1, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke();
+
+        // Draw active tracking radius segment indicator line
+        ctx.strokeStyle = "#fbbf24";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(v1, 0);
+        ctx.stroke();
+
+        ctx.fillStyle = "#fbbf24";
+        ctx.font = "bold 14px Arial";
+        ctx.fillText(`R: ${Math.round(v1)}`, v1/2, -10);
+        ctx.fillText(`D: ${Math.round(v1 * 2)}`, -10, v1 + 20);
+    } 
+    else if (typeId === 4) { // Quadrilateral Box Builder
+        ctx.beginPath();
+        ctx.rect(-v1, -v2, v1 * 2, v2 * 2);
+        ctx.fill(); ctx.stroke();
+    }
+
+    ctx.restore();
+}
+
+function drawSlider(s) {
+    // Slide track baseline trace
+    ctx.fillStyle = "#1e293b";
+    ctx.beginPath();
+    ctx.roundRect(s.x, s.y, s.w, s.h, 4);
+    ctx.fill();
+
+    // Fill line active value tracker gauge
+    let pct = (s.val - s.min) / (s.max - s.min);
+    ctx.fillStyle = "#a855f7";
+    ctx.beginPath();
+    ctx.roundRect(s.x, s.y, s.w * pct, s.h, 4);
+    ctx.fill();
+
+    // Knob button element circle bounds
+    let knobX = s.x + (s.w * pct);
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(knobX, s.y + s.h/2, 11, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#a855f7";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Labels
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "bold 15px 'Comic Sans MS'";
+    ctx.textAlign = "left";
+    ctx.fillText(`${s.name}: ${Math.round(s.val)}`, s.x, s.y - 12);
+}
+
+function drawPlayingState() {
+    ctx.fillStyle = "#0c0f1d";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const q = gameQuestions[currentQIndex];
+
+    // Core Instruction Board
+    ctx.fillStyle = "#1e293b";
+    ctx.beginPath();
+    ctx.roundRect(50, 90, 924, 70, 14);
+    ctx.fill();
+    ctx.strokeStyle = "#38bdf8";
+    ctx.stroke();
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 20px 'Comic Sans MS'";
     ctx.textAlign = "center";
-    ctx.fillText(q.problem, canvas.width / 2, 144);
+    ctx.fillText(q.problem, canvas.width / 2, 132);
 
     if (hintActive) {
         ctx.fillStyle = "#fbbf24";
-        ctx.font = "bold 18px 'Comic Sans MS'";
-        ctx.fillText(`💡 Assistant Schematic Hint: ${q.hint}`, canvas.width / 2, 205);
+        ctx.font = "bold 17px 'Comic Sans MS'";
+        ctx.fillText(`💡 Assistant Constructor Formula: ${q.hint}`, canvas.width / 2, 195);
     }
 
-    // Render interactive geometric block pads
-    shapePads.forEach(p => {
-        // Flat pedestal container
-        ctx.fillStyle = "#1e1b4b";
-        ctx.beginPath();
-        ctx.roundRect(p.x - p.width/2, p.y - p.height/2, p.width, p.height, 12);
-        ctx.fill();
-        ctx.strokeStyle = p.color;
-        ctx.lineWidth = 2.5;
-        ctx.stroke();
+    // Render workspace target graphic live matrix tracking metrics updates
+    drawLiveTargetShape(slider1.val, slider2.val, q.id);
 
-        // Vector icon geometry generation
-        renderGeometricShapeIcon(p.text, p.x, p.y - 12);
+    // Draw control interfaces
+    drawSlider(slider1);
+    drawSlider(slider2);
 
-        // Textual answer option display labels
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 16px 'Comic Sans MS'";
-        ctx.textAlign = "center";
-        ctx.fillText(p.text, p.x, p.y + 40);
-    });
+    // Draw Submit / Construct confirmation button
+    ctx.fillStyle = "#10b981";
+    ctx.beginPath();
+    ctx.roundRect(submitBtn.x, submitBtn.y, submitBtn.w, submitBtn.h, 12);
+    ctx.fill();
+    ctx.strokeStyle = "#ffffff";
+    ctx.stroke();
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "bold 16px 'Comic Sans MS'";
+    ctx.textAlign = "center";
+    ctx.fillText("SUBMIT", submitBtn.x + submitBtn.w/2, submitBtn.y + 29);
 
     drawHUD();
 }
@@ -348,137 +337,176 @@ function drawPlayingState() {
 function drawFeedbackState() {
     drawPlayingState();
 
-    // Dark layout sheet cover to focus attention on user feedback popups
-    ctx.fillStyle = "rgba(11, 15, 25, 0.85)";
+    ctx.fillStyle = "rgba(8, 10, 20, 0.85)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.textAlign = "center";
     if (feedbackType === "correct") {
         ctx.fillStyle = "#34d399";
-        ctx.font = "bold 45px 'Comic Sans MS'";
-        ctx.fillText("🌟 REINFORCEMENT CALIBRATED! 🌟", canvas.width / 2, canvas.height / 2 - 10);
+        ctx.font = "bold 44px 'Comic Sans MS'";
+        ctx.fillText("🌟 STRUCTURE SECURED! 🌟", canvas.width / 2, canvas.height / 2 - 10);
         ctx.fillStyle = "#ffffff";
         ctx.font = "20px 'Comic Sans MS'";
-        ctx.fillText("Shape matches schematic blueprint signatures perfectly.", canvas.width / 2, canvas.height / 2 + 40);
+        ctx.fillText("Angles and side vectors verify target parameters successfully.", canvas.width / 2, canvas.height / 2 + 40);
     } else {
         ctx.fillStyle = "#f43f5e";
-        ctx.font = "bold 45px 'Comic Sans MS'";
-        ctx.fillText("💥 MATRIX MISALIGNMENT 💥", canvas.width / 2, canvas.height / 2 - 10);
+        ctx.font = "bold 44px 'Comic Sans MS'";
+        ctx.fillText("💥 PARAMETER MISMATCH 💥", canvas.width / 2, canvas.height / 2 - 10);
         ctx.fillStyle = "#ffffff";
         ctx.font = "20px 'Comic Sans MS'";
-        ctx.fillText("Properties don't align with this polygon. Resetting matrix locks...", canvas.width / 2, canvas.height / 2 + 40);
+        ctx.fillText("Shape geometry variance too high! Tweak your controls and retry.", canvas.width / 2, canvas.height / 2 + 40);
     }
 
-    if (Date.now() - feedbackTimer > 2000) {
+    if (Date.now() - feedbackTimer > 2500) {
         if (feedbackType === "correct") {
             currentQIndex++;
             loadQuestion();
             currentState = STATES.PLAYING;
         } else {
-            if (attempts >= 2) hintActive = true;
+            if(wrongAttempts >= 2) hintActive = true;
             currentState = STATES.PLAYING;
         }
     }
 }
 
 function drawGameOverState() {
-    ctx.fillStyle = "#0b0f19";
+    ctx.fillStyle = "#080a14";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "#fbbf24";
     ctx.font = "bold 48px 'Comic Sans MS'";
     ctx.textAlign = "center";
-    ctx.fillText("BLUEPRINT ANALYSIS COMPLETE!", canvas.width / 2, 180);
+    ctx.fillText("SANDBOX MATRIX COMPLETE!", canvas.width / 2, 190);
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "26px 'Comic Sans MS'";
-    ctx.fillText(`Final Engineering Score: ${score} Points`, canvas.width / 2, 270);
-
-    let rank = "Certified Grade 5 Master Architect! 📐🏆";
-    if (score < 40) rank = "Junior Drafter Trainee! Keep studying geometric lines.";
-    ctx.fillStyle = "#38bdf8";
-    ctx.font = "bold 22px 'Comic Sans MS'";
-    ctx.fillText(rank, canvas.width / 2, 335);
+    ctx.font = "25px 'Comic Sans MS'";
+    ctx.fillText(`Total Engineering Score: ${score} Points`, canvas.width / 2, 275);
 
     ctx.fillStyle = "#6366f1";
     ctx.beginPath();
-    ctx.roundRect(canvas.width / 2 - 120, 420, 240, 60, 20);
+    ctx.roundRect(canvas.width / 2 - 120, 390, 240, 60, 20);
     ctx.fill();
     ctx.strokeStyle = "#ffffff";
     ctx.stroke();
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 22px 'Comic Sans MS'";
-    ctx.fillText("ANALYZE AGAIN", canvas.width / 2, 456);
+    ctx.font = "bold 21px 'Comic Sans MS'";
+    ctx.fillText("REBUILD SANDBOX", canvas.width / 2, 426);
 }
 
-// --- INTERACTION HOOK RESOLUTIONS ---
+// --- INTERACTIVE EVENT MECHANICS ---
 
-function handlePointerClick(clickCoords) {
+function checkSliderClick(s, mx, my) {
+    let pct = (s.val - s.min) / (s.max - s.min);
+    let knobX = s.x + (s.w * pct);
+    // Expand hit tolerance detection parameters for cleaner mobile touchscreen capture
+    if (mx >= s.x - 15 && mx <= s.x + s.w + 15 && my >= s.y - 15 && my <= s.y + s.h + 20) {
+        s.dragging = true;
+        updateSliderVal(s, mx);
+        return true;
+    }
+    return false;
+}
+
+function updateSliderVal(s, mx) {
+    let pct = (mx - s.x) / s.w;
+    if (pct < 0) pct = 0;
+    if (pct > 1) pct = 1;
+    s.val = s.min + pct * (s.max - s.min);
+}
+
+function processPointerDown(coords) {
     if (currentState === STATES.INSTRUCTIONS) {
-        if (clickCoords.x > canvas.width/2 - 140 && clickCoords.x < canvas.width/2 + 140 && clickCoords.y > 420 && clickCoords.y < 480) {
+        if (coords.x > canvas.width/2 - 130 && coords.x < canvas.width/2 + 130 && coords.y > 420 && coords.y < 480) {
             initGame();
             currentState = STATES.PLAYING;
         }
     } 
     else if (currentState === STATES.PLAYING) {
-        shapePads.forEach(p => {
-            // Hitbox evaluation against safe rectangular pad widths
-            if (clickCoords.x > p.x - p.width/2 && clickCoords.x < p.x + p.width/2 &&
-                clickCoords.y > p.y - p.height/2 && clickCoords.y < p.y + p.height/2) {
-                
-                if (p.isCorrect) {
-                    audioCorrect.currentTime = 0;
-                    audioCorrect.play().catch(() => {});
-                    score += 10;
-                    feedbackType = "correct";
-                } else {
-                    audioWrong.currentTime = 0;
-                    audioWrong.play().catch(() => {});
-                    attempts++;
-                    feedbackType = "wrong";
-                }
-                feedbackTimer = Date.now();
-                currentState = STATES.FEEDBACK;
+        // Trigger drag checks
+        if (!checkSliderClick(slider1, coords.x, coords.y)) {
+            checkSliderClick(slider2, coords.x, coords.y);
+        }
+
+        // Handle active Submit verification node click tracking
+        if (coords.x >= submitBtn.x && coords.x <= submitBtn.x + submitBtn.w &&
+            coords.y >= submitBtn.y && coords.y <= submitBtn.y + submitBtn.h) {
+            
+            const currentTask = gameQuestions[currentQIndex];
+            let passed = currentTask.check(slider1.val, slider2.val);
+
+            if (passed) {
+                audioCorrect.currentTime = 0;
+                audioCorrect.play().catch(() => {});
+                score += 20;
+                feedbackType = "correct";
+            } else {
+                audioWrong.currentTime = 0;
+                audioWrong.play().catch(() => {});
+                wrongAttempts++;
+                feedbackType = "wrong";
             }
-        });
+            feedbackTimer = Date.now();
+            currentState = STATES.FEEDBACK;
+        }
     } 
     else if (currentState === STATES.GAMEOVER) {
-        if (clickCoords.x > canvas.width/2 - 120 && clickCoords.x < canvas.width/2 + 120 && clickCoords.y > 420 && clickCoords.y < 480) {
+        if (coords.x > canvas.width/2 - 120 && coords.x < canvas.width/2 + 120 && coords.y > 390 && coords.y < 450) {
             initGame();
             currentState = STATES.PLAYING;
         }
     }
 }
 
-function extractScaleCoords(e) {
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    let clientX = e.clientX;
-    let clientY = e.clientY;
+function processPointerMove(coords) {
+    if (currentState === STATES.PLAYING) {
+        if (slider1.dragging) updateSliderVal(slider1, coords.x);
+        if (slider2.dragging) updateSliderVal(slider2, coords.x);
+    }
+}
+
+function processPointerUp() {
+    slider1.dragging = false;
+    slider2.dragging = false;
+}
+
+function extractRelativeCoords(e) {
+    const bound = canvas.getBoundingClientRect();
+    const multX = canvas.width / bound.width;
+    const multY = canvas.height / bound.height;
+    let ptrX = e.clientX;
+    let ptrY = e.clientY;
     if (e.touches && e.touches.length > 0) {
-        clientX = e.touches[0].clientX;
-        clientY = e.touches[0].clientY;
+        ptrX = e.touches[0].clientX;
+        ptrY = e.touches[0].clientY;
     }
     return {
-        x: (clientX - rect.left) * scaleX,
-        y: (clientY - rect.top) * scaleY
+        x: (ptrX - bound.left) * multX,
+        y: (ptrY - bound.top) * multY
     };
 }
 
-// --- SYSTEM BINDINGS ---
-canvas.addEventListener('mousedown', (e) => handlePointerClick(extractScaleCoords(e)));
+// --- CONTROLLER EVENT CAPTURE ---
+canvas.addEventListener('mousedown', (e) => processPointerDown(extractRelativeCoords(e)));
+canvas.addEventListener('mousemove', (e) => processPointerMove(extractRelativeCoords(e)));
+window.addEventListener('mouseup', processPointerUp);
+
 canvas.addEventListener('touchstart', (e) => {
     e.preventDefault();
-    handlePointerClick(extractScaleCoords(e));
+    processPointerDown(extractRelativeCoords(e));
 }, { passive: false });
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    processPointerMove(extractRelativeCoords(e));
+}, { passive: false });
+window.addEventListener('touchend', processPointerUp);
 
-function runEngineLoop() {
+// --- RUNTIME INITIATOR ---
+function engineLoop() {
     switch (currentState) {
         case STATES.BRANDING:
             drawBranding();
-            if (Date.now() - stateStartTime > 5000) {
+            if (Date.now() - stateStartTime > 4000) {
                 currentState = STATES.INSTRUCTIONS;
             }
             break;
@@ -495,10 +523,10 @@ function runEngineLoop() {
             drawGameOverState();
             break;
     }
-    requestAnimationFrame(runEngineLoop);
+    requestAnimationFrame(engineLoop);
 }
 
-runEngineLoop();
+engineLoop();
 </script>
 
 </body>
