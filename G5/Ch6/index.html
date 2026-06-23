@@ -137,7 +137,7 @@
         }
 
         .target-slot {
-            width: 110px;
+            width: 125px;
             height: 44px;
             border: 2px dashed #f59e0b;
             border-radius: 8px;
@@ -146,13 +146,15 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: bold;
             color: #f59e0b;
             text-transform: uppercase;
             box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
             z-index: 20;
             transition: all 0.3s ease;
+            text-align: center;
+            padding: 2px;
         }
 
         /* --- INTERACTIVE DRAGGABLE PARTS TRAY --- */
@@ -169,7 +171,7 @@
         }
 
         .draggable-part {
-            width: 95px;
+            width: 105px;
             height: 50px;
             background: #1e293b;
             border: 2px solid #38bdf8;
@@ -179,13 +181,14 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
             color: #38bdf8;
             touch-action: none;
             transition: transform 0.2s, background 0.2s;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            padding: 4px;
         }
         .draggable-part:active {
             cursor: grabbing;
@@ -245,10 +248,12 @@
 
     <div id="viewport-root">
         
+        <!-- STAGE 1: Branding-Only Logo Screen -->
         <div id="branding-splash">
             <img src="assets/logo.png" class="branding-img" alt="Innovine Logo" onerror="this.src='https://placehold.co/180x60/ffffff/0a192f?text=INNOVINE';">
         </div>
 
+        <!-- STAGE 2: Architect Studio Rules Instructions -->
         <div id="instructions-screen" class="stage-overlay hidden">
             <div class="blueprint-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
                 <div class="header-panel">
@@ -266,6 +271,7 @@
             </div>
         </div>
 
+        <!-- STAGE 3: Drag & Drop Assembly Gameplay View -->
         <div id="gameplay-screen" class="stage-overlay hidden">
             <div class="header-panel">
                 <div id="game-level-tag" class="header-title">Draft: 01 / 15</div>
@@ -273,20 +279,25 @@
             </div>
 
             <div class="blueprint-panel workspace-area">
+                <!-- Question Clue Box -->
                 <div id="game-prompt" class="question-box">Analyzing design blueprint requirements...</div>
                 
+                <!-- Master Blueprint Draft Frame Canvas -->
                 <div class="blueprint-dropzone" id="blueprint-canvas">
                     <svg id="blueprint-svg" width="100%" height="100%" style="position:absolute; pointer-events:none;"></svg>
                     <div class="target-slot" id="target-slot-zone">Drop Here</div>
                 </div>
 
+                <!-- 2 Attempt Strike Dot Array -->
                 <div class="chance-counter-tray">
                     <div id="strike-dot-1" class="chance-dot"></div>
                     <div id="strike-dot-2" class="chance-dot"></div>
                 </div>
                 
+                <!-- Component Parts Collection Selector Tray -->
                 <div class="parts-tray" id="tray-container">
-                    </div>
+                    <!-- Options injected dynamically by JS -->
+                </div>
             </div>
 
             <div id="game-toast-feedback" class="status-banner">Slide the requested geometry block into place!</div>
@@ -312,6 +323,7 @@
         let taskIndex = 0;
         let internalStrikeCounter = 0;
         let draggedType = null;
+        let blueprintPuzzles = [];
 
         // Vector Helpers
         function makeTag(name) { return document.createElementNS("http://www.w3.org/2000/svg", name); }
@@ -328,8 +340,8 @@
             svg.appendChild(t);
         }
 
-        // Dataset built with unique structural SVG blueprints for each index task
-        const blueprintPuzzles = [
+        // Base Master Pool Database Configuration
+        const masterPuzzlePool = [
             { 
                 q: "The floor plan shows points on a path. Find the set that contains only Collinear Points.", 
                 correct: "collinear", 
@@ -358,7 +370,6 @@
                     let l = makeTag("line");
                     setAttrs(l, { x1: "50", y1: "90", x2: "340", y2: "90", stroke: "#38bdf8", "stroke-width": "3" });
                     svg.appendChild(l);
-                    // Arrows
                     let p1 = makeTag("path"); setAttrs(p1, { d: "M 55 83 L 43 90 L 55 97 Z", fill: "#38bdf8" }); svg.appendChild(p1);
                     let p2 = makeTag("path"); setAttrs(p2, { d: "M 335 83 L 347 90 L 335 97 Z", fill: "#38bdf8" }); svg.appendChild(p2);
                     createBlueprintText(svg, "195", "65", "Infinite Path Vector Spectrum");
@@ -394,15 +405,15 @@
                 } 
             },
             { 
-                q: "The frame layout requires a right angle. Find the layout matching exactly 90 degrees.", 
-                correct: "90deg", 
-                options: ["45deg", "90deg", "135deg"], 
+                q: "The frame layout requires a perpendicular perpendicular corner corner line angle. Find the layout matching exactly 90 degrees.", 
+                correct: "90 degrees", 
+                options: ["45 degrees", "90 degrees", "135 degrees"], 
                 slotPos: { top: "135px", left: "210px" },
                 render: (svg) => {
                     let b = makeTag("line"); setAttrs(b, { x1: "120", y1: "150", x2: "280", y2: "150", stroke: "rgba(255,255,255,0.4)", "stroke-width": "3" }); svg.appendChild(b);
                     let a = makeTag("line"); setAttrs(a, { x1: "120", y1: "150", x2: "120", y2: "40", stroke: "#38bdf8", "stroke-width": "3" }); svg.appendChild(a);
                     let r = makeTag("path"); setAttrs(r, { d: "M 120 135 L 135 135 L 135 150", fill: "none", stroke: "#ef4444", "stroke-width": "2" }); svg.appendChild(r);
-                    createBlueprintText(svg, "160", "125", "Corner Target", "#ef4444");
+                    createBlueprintText(svg, "175", "120", "Perpendicular Matrix", "#ef4444");
                 } 
             },
             { 
@@ -413,7 +424,7 @@
                 render: (svg) => {
                     let b = makeTag("line"); setAttrs(b, { x1: "100", y1: "150", x2: "260", y2: "150", stroke: "rgba(255,255,255,0.4)", "stroke-width": "3" }); svg.appendChild(b);
                     let a = makeTag("line"); setAttrs(a, { x1: "100", y1: "150", x2: "210", y2: "50", stroke: "#38bdf8", "stroke-width": "3" }); svg.appendChild(a);
-                    createBlueprintText(svg, "140", "130", "θ < 90°", "#38bdf8");
+                    createBlueprintText(svg, "140", "130", "Angle < 90 Degrees", "#38bdf8");
                 } 
             },
             { 
@@ -424,13 +435,13 @@
                 render: (svg) => {
                     let b = makeTag("line"); setAttrs(b, { x1: "180", y1: "150", x2: "320", y2: "150", stroke: "rgba(255,255,255,0.4)", "stroke-width": "3" }); svg.appendChild(b);
                     let a = makeTag("line"); setAttrs(a, { x1: "180", y1: "150", x2: "70", y2: "70", stroke: "#38bdf8", "stroke-width": "3" }); svg.appendChild(a);
-                    createBlueprintText(svg, "210", "130", "θ > 90°", "#38bdf8");
+                    createBlueprintText(svg, "225", "130", "Angle > 90 Degrees", "#38bdf8");
                 } 
             },
             { 
                 q: "Select the layout where structural lines cross cleanly at an exact 90-degree corner intersection.", 
-                correct: "perp", 
-                options: ["parallel", "perp", "concurrent"], 
+                correct: "perpendicular", 
+                options: ["parallel", "perpendicular", "concurrent"], 
                 slotPos: { top: "25px", left: "250px" },
                 render: (svg) => {
                     let l1 = makeTag("line"); setAttrs(l1, { x1: "50", y1: "110", x2: "230", y2: "110", stroke: "#94a3b8", "stroke-width": "3" }); svg.appendChild(l1);
@@ -441,7 +452,7 @@
             { 
                 q: "Two utility pipes run perfectly beside each other on the wall plan and will never intersect.", 
                 correct: "parallel", 
-                options: ["parallel", "perp", "intersect"], 
+                options: ["parallel", "perpendicular", "intersect"], 
                 slotPos: { top: "150px", left: "140px" },
                 render: (svg) => {
                     let l1 = makeTag("line"); setAttrs(l1, { x1: "50", y1: "60", x2: "340", y2: "60", stroke: "#38bdf8", "stroke-width": "3" }); svg.appendChild(l1);
@@ -475,7 +486,7 @@
             { 
                 q: "Three or more lines meet and cross together right at a single central focus point P. This is called:", 
                 correct: "concurrent", 
-                options: ["parallel", "concurrent", "perp"], 
+                options: ["parallel", "concurrent", "perpendicular"], 
                 slotPos: { top: "25px", left: "240px" },
                 render: (svg) => {
                     let center = { x: 140, y: 110 };
@@ -494,7 +505,7 @@
             { 
                 q: "Two basic tracking grid vectors simply cross each other without matching a corner right angle.", 
                 correct: "intersect", 
-                options: ["intersect", "parallel", "perp"], 
+                options: ["intersect", "parallel", "perpendicular"], 
                 slotPos: { top: "25px", left: "240px" },
                 render: (svg) => {
                     let l1 = makeTag("line"); setAttrs(l1, { x1: "60", y1: "50", x2: "260", y2: "160", stroke: "#38bdf8", "stroke-width": "3" }); svg.appendChild(l1);
@@ -503,9 +514,9 @@
                 } 
             },
             { 
-                q: "A flat horizontal layout floor segment features a wide Straight Angle measuring exactly:", 
-                correct: "180deg", 
-                options: ["90deg", "180deg", "45deg"], 
+                q: "A flat horizontal layout floor segment features a wide Straight Angle measuring exactly 180 degrees.", 
+                correct: "180 degrees", 
+                options: ["90 degrees", "180 degrees", "45 degrees"], 
                 slotPos: { top: "140px", left: "140px" },
                 render: (svg) => {
                     let l = makeTag("line"); setAttrs(l, { x1: "50", y1: "90", x2: "340", y2: "90", stroke: "#38bdf8", "stroke-width": "3" }); svg.appendChild(l);
@@ -527,7 +538,16 @@
             }
         ];
 
-        // Strict 5-Second Brand Window Setup
+        // Knuth Shuffle Algorithm for Randomized Blueprint Layout Array
+        function randomizeDatabasePool(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Strict 5-Second Brand Splash Window Handle
         setTimeout(() => {
             const splash = document.getElementById('branding-splash');
             if (splash) {
@@ -540,6 +560,9 @@
         }, 5000);
 
         function startBlueprintSimulation() {
+            // Seed randomized dataset on launch
+            blueprintPuzzles = randomizeDatabasePool([...masterPuzzlePool]);
+            
             document.getElementById('instructions-screen').classList.add('hidden');
             document.getElementById('gameplay-screen').classList.remove('hidden');
             loadNextBlueprintLayout();
@@ -561,7 +584,7 @@
             const currentTask = blueprintPuzzles[taskIndex];
             document.getElementById('game-prompt').innerText = currentTask.q;
 
-            // Render Custom Puzzle Blueprints Dynamically
+            // Render Custom Structural Vectors Dynamically
             const svg = document.getElementById('blueprint-svg');
             svg.innerHTML = '';
             if (currentTask.render) currentTask.render(svg);
@@ -584,9 +607,9 @@
                 card.innerText = opt.toUpperCase();
                 card.setAttribute('draggable', 'true');
                 
-                // Desktop Drag Events
+                // Desktop Drag Event Handlers
                 card.addEventListener('dragstart', () => { draggedType = opt; });
-                // Touch Accessibility Support
+                // Mobile & Tablet Direct Tap Support
                 card.addEventListener('touchstart', () => { draggedType = opt; handleDirectTapSelection(opt); });
                 
                 tray.appendChild(card);
@@ -596,7 +619,6 @@
             document.getElementById('game-toast-feedback').style.color = "#64748b";
         }
 
-        // Standard HTML5 Drag Mechanics Dropzone Attachments
         const zone = document.getElementById('blueprint-canvas');
         zone.addEventListener('dragover', (e) => e.preventDefault());
         zone.addEventListener('drop', () => { processIncomingSelection(draggedType); });
