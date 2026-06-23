@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Geometry Quest: Laser Reflect Protocol</title>
+    <title>Geometry Quest: Defuse Protocol</title>
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Courier New', Courier, monospace, sans-serif;
             margin: 0;
             padding: 0;
             user-select: none;
@@ -17,8 +17,8 @@
         body, html {
             width: 100%;
             height: 100%;
-            background-color: #0f172a;
-            color: #f8fafc;
+            background-color: #0b0f19;
+            color: #00ff66;
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -33,10 +33,10 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
-            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3);
+            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            box-shadow: 0 0 30px rgba(0, 255, 102, 0.2);
             overflow: hidden;
-            border: 1px solid #312e81;
+            border: 2px solid #1e293b;
         }
 
         /* --- STAGE 1: BRANDING-ONLY LOGO SCREEN (5 SECONDS STRICT) --- */
@@ -66,36 +66,36 @@
             z-index: 10;
         }
 
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.8);
-            border: 2px solid #3b82f6;
-            border-radius: 24px;
+        .tactical-panel {
+            background: rgba(15, 23, 42, 0.95);
+            border: 2px solid #00ff66;
+            border-radius: 16px;
             padding: 24px;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.1);
         }
 
         .header-panel {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(59, 130, 246, 0.2);
-            color: #38bdf8;
-            padding: 12px 18px;
-            border-radius: 16px;
-            border: 1px solid #3b82f6;
+            background: #1e293b;
+            color: #00ff66;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid #334155;
         }
-        .header-title { font-weight: 800; font-size: 0.95rem; letter-spacing: 0.5px; }
-        .header-score { font-weight: 800; font-size: 0.9rem; background: #3b82f6; color: #fff; padding: 4px 14px; border-radius: 20px; }
+        .header-title { font-weight: 900; font-size: 0.85rem; letter-spacing: 1px; color: #f97316; }
+        .header-score { font-weight: 900; font-size: 0.9rem; background: #020617; padding: 4px 12px; border-radius: 4px; border: 1px solid #00ff66; }
 
         .instruction-text {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #cbd5e1;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #94a3b8;
             margin-bottom: 20px;
         }
-        .instruction-text ul { margin-left: 18px; margin-top: 8px; }
-        .instruction-text li { margin-bottom: 10px; font-weight: 600; color: #38bdf8; }
+        .instruction-text ul { margin-left: 14px; margin-top: 8px; list-style-type: square; }
+        .instruction-text li { margin-bottom: 10px; font-weight: bold; color: #cbd5e1; }
+        .highlight-text { color: #00ff66; }
 
         .workspace-area {
             flex-grow: 1;
@@ -103,17 +103,17 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
         }
 
         .question-box {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 700;
-            color: #f8fafc;
-            background: rgba(15, 23, 42, 0.6);
+            color: #00ff66;
+            background: #020617;
             padding: 14px;
-            border-radius: 16px;
-            border: 1px solid #475569;
+            border-radius: 8px;
+            border: 1px solid #334155;
             width: 100%;
             text-align: center;
             min-height: 80px;
@@ -121,30 +121,31 @@
             align-items: center;
             justify-content: center;
             line-height: 1.4;
+            box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.05);
         }
 
-        /* --- THE GRID GRAPHICS MATRIX --- */
+        /* --- THE GRAPHICS SENSOR RENDER --- */
         .geometry-canvas-area {
             width: 100%;
             height: 160px;
             background: #020617;
-            border-radius: 16px;
-            border: 1px solid #1e293b;
+            border-radius: 8px;
+            border: 1px dashed #00ff66;
             display: flex;
             justify-content: center;
             align-items: center;
             position: relative;
         }
 
-        /* --- LASER CONTROL TOLD DIALS (NO PLACE VALUE MARKS) --- */
-        .laser-dial-chassis {
+        /* --- DEFUSAL BYPASS MECHANISM (NO PLACE VALUES) --- */
+        .defuse-dial-chassis {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 14px;
+            gap: 16px;
             background: #0f172a;
-            padding: 16px 20px;
-            border-radius: 20px;
+            padding: 16px;
+            border-radius: 12px;
             border: 2px solid #334155;
             width: 100%;
         }
@@ -153,16 +154,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
 
         .dial-spinner {
-            width: 46px;
-            height: 32px;
+            width: 48px;
+            height: 30px;
             background: #1e293b;
-            color: #38bdf8;
-            border: 1px solid #334155;
-            border-radius: 8px;
+            color: #f97316;
+            border: 1px solid #475569;
+            border-radius: 4px;
             font-size: 1.1rem;
             font-weight: 900;
             cursor: pointer;
@@ -171,84 +172,86 @@
             align-items: center;
         }
         .dial-spinner:active { 
-            background: #3b82f6;
-            color: #fff;
+            background: #f97316;
+            color: #020617;
         }
 
         .dial-screen {
             width: 52px;
-            height: 58px;
+            height: 56px;
             background: #020617;
-            border: 2px solid #3b82f6;
-            color: #f8fafc;
-            border-radius: 10px;
-            font-family: monospace, sans-serif;
+            border: 2px solid #00ff66;
+            color: #00ff66;
+            border-radius: 6px;
             font-size: 2.2rem;
             font-weight: 900;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+            text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
         }
 
         .chance-counter-tray {
             display: flex;
-            gap: 12px;
+            gap: 14px;
             justify-content: center;
         }
         .chance-dot {
             width: 14px;
             height: 14px;
-            border-radius: 50%;
+            border-radius: 2px;
             background: #ef4444;
-            border: 2px solid #fecaca;
-            box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
-            transition: all 0.3s;
+            border: 1px solid #fecaca;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
+            transition: all 0.2s;
         }
         .chance-dot.used {
-            background: #475569;
-            border-color: #64748b;
+            background: #334155;
+            border-color: #475569;
             box-shadow: none;
         }
 
         .action-btn {
-            background: #3b82f6;
-            color: #ffffff;
-            border: none;
-            border-bottom: 4px solid #1d4ed8;
+            background: #1e293b;
+            color: #94a3b8;
+            border: 1px solid #475569;
+            border-bottom: 4px solid #0f172a;
             padding: 14px;
-            font-size: 1.05rem;
-            font-weight: 800;
-            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 900;
+            border-radius: 8px;
             cursor: pointer;
             width: 100%;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
         .action-btn:active {
             transform: translateY(2px);
-            border-bottom-width: 2px;
+            border-bottom-width: 1px;
         }
         .action-btn.submit-lever {
-            background: #10b981;
-            border-color: #047857;
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+            background: #f97316;
+            color: #020617;
+            border-color: #ff9d5c;
+            border-bottom: 4px solid #c2410c;
+            box-shadow: 0 0 15px rgba(249, 115, 22, 0.2);
         }
 
         .status-banner {
             text-align: center;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             min-height: 24px;
-            color: #94a3b8;
+            color: #64748b;
+            letter-spacing: 0.5px;
         }
 
-        @keyframes beamPulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
+        @keyframes panelAlert {
+            0%, 100% { border-color: #00ff66; }
+            50% { border-color: #f97316; }
         }
-        .laser-beam-effect {
-            animation: beamPulse 0.2s ease infinite;
+        .alert-flash {
+            animation: panelAlert 0.3s ease 2;
         }
 
         .hidden { display: none !important; }
@@ -258,298 +261,302 @@
 
     <div id="viewport-root">
         
+        <!-- STAGE 1: Branding-Only Screen (Strictly 5 Seconds) -->
         <div id="branding-splash">
-            <img src="assets/logo.png" class="branding-img" alt="Innovine" onerror="this.src='https://placehold.co/180x60/ffffff/0f172a?text=INNOVINE';">
+            <img src="assets/logo.png" class="branding-img" alt="Innovine" onerror="this.src='https://placehold.co/180x60/ffffff/0b0f19?text=INNOVINE';">
         </div>
 
+        <!-- STAGE 2: Mission Brief Instructions -->
         <div id="instructions-screen" class="stage-overlay hidden">
-            <div class="glass-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
+            <div class="tactical-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
                 <div class="header-panel">
-                    <div class="header-title">📡 Laser Grid Calibration</div>
+                    <div class="header-title">⚡ MISSION BRIEFING: DEFUSE INBOUND</div>
                 </div>
                 <div class="instruction-text">
-                    <p>Align the dynamic optical reflectors to match geometric properties and fire the core beam energy:</p>
+                    <p>Unlock and bypass the electronic tactical arrays by inputting geometric metrics into the keypad override:</p>
                     <ul>
-                        <li>1. Read the system geometric target telemetry data rules carefully.</li>
-                        <li>2. Use the <strong>▲ and ▼ spin vectors</strong> to match the target degrees or item quantities.</li>
-                        <li>3. Press Fire to ignite the line arrays. You have exactly <strong>2 attempts</strong> per segment!</li>
+                        <li>1. Evaluate the geometric radar telemetry lines and layouts accurately.</li>
+                        <li>2. Tap the <span class="highlight-text">▲ and ▼ selectors</span> on the input keypad to set the matching tracking data code digits.</li>
+                        <li>3. Submit your configuration. You have <span class="highlight-text">2 clear attempts</span> before the bypass sequence overrides automatic reveal!</li>
                     </ul>
                 </div>
-                <button class="action-btn" onclick="igniteGameplaySystem()">Load Laser Protocols</button>
+                <button class="action-btn" style="color:#00ff66; border-color:#00ff66;" onclick="launchDefusalMatrix()">Accept Operation</button>
             </div>
         </div>
 
+        <!-- STAGE 3: Core Defusal Gameplay View -->
         <div id="gameplay-screen" class="stage-overlay hidden">
             <div class="header-panel">
-                <div id="game-level-tag" class="header-title">Sector Track 1 / 15</div>
+                <div id="game-level-tag" class="header-title">SECTOR LINK: 01 / 15</div>
                 <div id="game-score-tag" class="header-score">Score: 0</div>
             </div>
 
-            <div class="glass-panel workspace-area">
-                <div id="game-prompt" class="question-box">Initializing optical calculation modules...</div>
+            <div class="tactical-panel workspace-area" id="main-panel">
+                <!-- Tactical Question Prompt -->
+                <div id="game-prompt" class="question-box">Scanning radar telemetry matrices...</div>
                 
+                <!-- Geometry Radar Display -->
                 <div class="geometry-canvas-area">
-                    <svg id="laser-vector-hub" width="100%" height="100%" style="overflow: visible;"></svg>
+                    <svg id="radar-vector-display" width="100%" height="100%" style="overflow: visible;"></svg>
                 </div>
                 
-                <div class="laser-dial-chassis">
+                <!-- KEYPAD INTERFACE COUNTER (Pure integers, no place value headings) -->
+                <div class="defuse-dial-chassis">
                     <div class="dial-column">
-                        <button class="dial-spinner" onclick="adjustValue(0, 1)">▲</button>
+                        <button class="dial-spinner" onclick="adjustDigit(0, 1)">▲</button>
                         <div class="dial-screen">0</div>
-                        <button class="dial-spinner" onclick="adjustValue(0, -1)">▼</button>
+                        <button class="dial-spinner" onclick="adjustDigit(0, -1)">▼</button>
                     </div>
                     <div class="dial-column">
-                        <button class="dial-spinner" onclick="adjustValue(1, 1)">▲</button>
+                        <button class="dial-spinner" onclick="adjustDigit(1, 1)">▲</button>
                         <div class="dial-screen">0</div>
-                        <button class="dial-spinner" onclick="adjustValue(1, -1)">▼</button>
+                        <button class="dial-spinner" onclick="adjustDigit(1, -1)">▼</button>
                     </div>
                     <div class="dial-column">
-                        <button class="dial-spinner" onclick="adjustValue(2, 1)">▲</button>
+                        <button class="dial-spinner" onclick="adjustDigit(2, 1)">▲</button>
                         <div class="dial-screen">0</div>
-                        <button class="dial-spinner" onclick="adjustValue(2, -1)">▼</button>
+                        <button class="dial-spinner" onclick="adjustDigit(2, -1)">▼</button>
                     </div>
                 </div>
 
+                <!-- 2-Attempt Module Trackers -->
                 <div class="chance-counter-tray">
                     <div id="strike-dot-1" class="chance-dot"></div>
                     <div id="strike-dot-2" class="chance-dot"></div>
                 </div>
 
-                <button class="action-btn submit-lever" onclick="fireLaserReflector()">Engage Beam Core</button>
+                <button class="action-btn submit-lever" onclick="executeDefusalOverride()">Transmit Defusal Code</button>
             </div>
 
-            <div id="game-toast-feedback" class="status-banner">Tune dials and click engage to test ray alignment!</div>
+            <div id="game-toast-feedback" class="status-banner">Awaiting bypass telemetry input codes...</div>
         </div>
 
     </div>
 
     <script>
-        // Media Sound Elements
+        // Audio Asset Elements
         const audioCorrect = new Audio('assets/correct.mp3');
         const audioWrong = new Audio('assets/wrong.mp3');
         const audioWin = new Audio('assets/freesound_community-claps-44774.mp3');
 
-        function playSoundNotification(asset) {
+        function routeAudioPlay(source) {
             try {
-                asset.currentTime = 0;
-                asset.play();
-            } catch(e) { console.log("Sound bypassed safely."); }
+                source.currentTime = 0;
+                source.play();
+            } catch(err) { console.log("Audio asset safely bypassed setup."); }
         }
 
-        // State Engines
+        // State Trackers
         let scoreCount = 0;
         let taskIndex = 0;
         let internalStrikeCounter = 0;
-        let currentDialValues = [0, 0, 0];
+        let activeKeypadDigits = [0, 0, 0];
 
-        // 15 Progressive Core Geometry Tasks
-        const laserPuzzles = [
-            { q: "Count the total number of collinear points located strictly inside the tracking line.", solution: [0, 0, 4], render: (svg) => drawPointsLine(svg, 4) },
-            { q: "Identify the configuration: How many non-collinear points sit completely off the baseline path?", solution: [0, 0, 3], render: (svg) => drawMixedPoints(svg, 3) },
-            { q: "Scan the sector grid layout. How many open paths are currently detected?", solution: [0, 0, 2], render: (svg) => drawPathsSet(svg, true) },
-            { q: "Identify and count all fully closed geometric figures in this matrix loop zone.", solution: [0, 0, 3], render: (svg) => drawPathsSet(svg, false) },
-            { q: "Telemetry analysis: How many definite endpoints are found on a single finite line segment?", solution: [0, 0, 2], render: (svg) => drawSegmentComponent(svg) },
-            { q: "Calculate ray data: How many endpoints are present on an infinite directional ray element?", solution: [0, 0, 1], render: (svg) => drawRayComponent(svg) },
-            { q: "Set the reflector array to create a perfect right angle matching alignment.", solution: [0, 9, 0], render: (svg) => drawBeamAngle(svg, 90) },
-            { q: "Calibrate the laser reflector vector line to create an exact acute path of 45 degrees.", solution: [0, 4, 5], render: (svg) => drawBeamAngle(svg, 45) },
-            { q: "Calibrate the beam node to target an obtuse threshold alignment path at exactly 135 degrees.", solution: [1, 3, 5], render: (svg) => drawBeamAngle(svg, 135) },
-            { q: "An angle reflector matches two right angles added together. Input its total degree value.", solution: [1, 8, 0], render: (svg) => drawBeamAngle(svg, 180) },
-            { q: "Calibrate a sharp acute path that measures exactly 30 degrees less than a right angle frame.", solution: [0, 6, 0], render: (svg) => drawBeamAngle(svg, 60) },
-            { q: "How many tracking lines run perfectly parallel to each other in this system vector segment?", solution: [0, 0, 2], render: (svg) => drawParallelArrays(svg) },
-            { q: "Count the total number of individual crossing lines meeting concurrently at center hub point P.", solution: [0, 0, 3], render: (svg) => drawConcurrentArrays(svg) },
-            { q: "Perpendicular lines cross and lock together at what exact trajectory intersection degree value?", solution: [0, 9, 0], render: (svg) => drawPerpArrays(svg) },
-            { q: "How many single unique intersection meeting hubs exist on this perpendicular line layout?", solution: [0, 0, 1], render: (svg) => drawPerpArrays(svg) }
+        // 15 Curated Grade-5 Geometry Data Tasks mapping perfectly to image_1b7462.png
+        const tacticalTasks = [
+            { q: "Count the total number of collinear points aligned perfectly on baseline path XY.", solution: [0, 0, 4], render: (svg) => drawRadarPoints(svg, 4) },
+            { q: "Scan radar map: How many non-collinear warning points exist off the main tracking vector line?", solution: [0, 0, 3], render: (svg) => drawOffGridPoints(svg, 3) },
+            { q: "Analyze the connection vectors. How many open path lines are currently traced?", solution: [0, 0, 2], render: (svg) => drawRadarPaths(svg, true) },
+            { q: "Analyze the connection lines. Count the total number of fully closed perimeter figures.", solution: [0, 0, 3], render: (svg) => drawRadarPaths(svg, false) },
+            { q: "Bypass telemetry formula: How many definitive ending points are present on a closed line segment?", solution: [0, 0, 2], render: (svg) => drawSegmentTelemetry(svg) },
+            { q: "Bypass telemetry formula: How many starting endpoints does a single infinite directional ray contain?", solution: [0, 0, 1], render: (svg) => drawRayTelemetry(svg) },
+            { q: "A perfect right angle tracking grid contains how many total degrees? Set the bypass code.", solution: [0, 9, 0], render: (svg) => drawVectorAngle(svg, 90) },
+            { q: "An acute tracking path is displayed. Identify its exact measure from your sensor scale reading.", solution: [0, 4, 5], render: (svg) => drawVectorAngle(svg, 45) },
+            { q: "Identify the metric index of the obtuse system ray shown on screen.", solution: [1, 3, 5], render: (svg) => drawVectorAngle(svg, 135) },
+            { q: "Input the degree value of a straight-line layout angle configuration.", solution: [1, 8, 0], render: (svg) => drawVectorAngle(svg, 180) },
+            { q: "Input the degree value of an acute angle reading exactly 30 degrees less than a right corner block.", solution: [0, 6, 0], render: (svg) => drawVectorAngle(svg, 60) },
+            { q: "How many network streams run perfectly parallel and never touch on this channel track?", solution: [0, 0, 2], render: (svg) => drawParallelStreams(svg) },
+            { q: "Count the number of lines crossing concurrently through a single target center point P.", solution: [0, 0, 3], render: (svg) => drawConcurrentStreams(svg) },
+            { q: "Perpendicular pathways meet together at what exact cross degree intersection value?", solution: [0, 9, 0], render: (svg) => drawPerpStreams(svg) },
+            { q: "How many total intersecting center connection points are located on this simple layout grid?", solution: [0, 0, 1], render: (svg) => drawPerpStreams(svg) }
         ];
 
-        // Strict 5-Second Branding Screen Fade Out
+        // 5-Second Strict Branding Screen Timer
         setTimeout(() => {
-            const logoSplash = document.getElementById('branding-splash');
-            if (logoSplash) {
-                logoSplash.style.opacity = '0';
+            const logoScreen = document.getElementById('branding-splash');
+            if (logoScreen) {
+                logoScreen.style.opacity = '0';
                 setTimeout(() => {
-                    logoSplash.remove();
+                    logoScreen.remove();
                     document.getElementById('instructions-screen').classList.remove('hidden');
                 }, 500);
             }
         }, 5000);
 
-        function igniteGameplaySystem() {
+        function launchDefusalMatrix() {
             document.getElementById('instructions-screen').classList.add('hidden');
             document.getElementById('gameplay-screen').classList.remove('hidden');
-            loadPuzzleLayer();
+            loadActiveTaskSector();
         }
 
-        function loadPuzzleLayer() {
-            if (taskIndex >= laserPuzzles.length) {
-                triggerVictoryScreen();
+        function loadActiveTaskSector() {
+            if (taskIndex >= tacticalTasks.length) {
+                triggerOperationVictory();
                 return;
             }
 
-            document.getElementById('game-level-tag').innerText = `Sector Track ${taskIndex + 1} / ${laserPuzzles.length}`;
+            document.getElementById('game-level-tag').innerText = `SECTOR LINK: ${String(taskIndex + 1).padStart(2, '0')} / ${tacticalTasks.length}`;
             document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
 
             internalStrikeCounter = 0;
             document.getElementById('strike-dot-1').classList.remove('used');
             document.getElementById('strike-dot-2').classList.remove('used');
 
-            currentDialValues = [0, 0, 0];
-            refreshUI();
+            activeKeypadDigits = [0, 0, 0];
+            updateKeypadUI();
 
-            const item = laserPuzzles[taskIndex];
-            document.getElementById('game-prompt').innerText = item.q;
+            const taskItem = tacticalTasks[taskIndex];
+            document.getElementById('game-prompt').innerText = taskItem.q;
 
-            const svgHub = document.getElementById('laser-vector-hub');
-            svgHub.innerHTML = '';
-            if (item.render) item.render(svgHub);
+            const svgRoot = document.getElementById('radar-vector-display');
+            svgRoot.innerHTML = '';
+            if (taskItem.render) taskItem.render(svgRoot);
 
             const toast = document.getElementById('game-toast-feedback');
-            toast.innerText = "Tune dials and click engage to test ray alignment!";
-            toast.style.color = "#94a3b8";
+            toast.innerText = "Awaiting code bypass verification entry...";
+            toast.style.color = "#64748b";
             document.querySelector('.submit-lever').disabled = false;
         }
 
-        function adjustValue(col, delta) {
-            currentDialValues[col] += delta;
-            if (currentDialValues[col] > 9) currentDialValues[col] = 0;
-            if (currentDialValues[col] < 0) currentDialValues[col] = 9;
-            refreshUI();
+        function adjustDigit(col, step) {
+            activeKeypadDigits[col] += step;
+            if (activeKeypadDigits[col] > 9) activeKeypadDigits[col] = 0;
+            if (activeKeypadDigits[col] < 0) activeKeypadDigits[col] = 9;
+            updateKeypadUI();
         }
 
-        function refreshUI() {
+        function updateKeypadUI() {
             const screens = document.querySelectorAll('.dial-screen');
-            screens[0].innerText = currentDialValues[0];
-            screens[1].innerText = currentDialValues[1];
-            screens[2].innerText = currentDialValues[2];
+            screens[0].innerText = activeKeypadDigits[0];
+            screens[1].innerText = activeKeypadDigits[1];
+            screens[2].innerText = activeKeypadDigits[2];
         }
 
-        function fireLaserReflector() {
-            const activePuzzle = laserPuzzles[taskIndex];
+        function executeDefusalOverride() {
+            const currentItem = tacticalTasks[taskIndex];
             const toast = document.getElementById('game-toast-feedback');
-            const svgHub = document.getElementById('laser-vector-hub');
+            const panel = document.getElementById('main-panel');
 
-            const match = currentDialValues[0] === activePuzzle.solution[0] &&
-                          currentDialValues[1] === activePuzzle.solution[1] &&
-                          currentDialValues[2] === activePuzzle.solution[2];
+            const isCorrect = activeKeypadDigits[0] === currentItem.solution[0] &&
+                              activeKeypadDigits[1] === currentItem.solution[1] &&
+                              activeKeypadDigits[2] === currentItem.solution[2];
 
-            if (match) {
+            if (isCorrect) {
                 scoreCount += 20;
-                toast.innerText = "⚡ Core Beam Connected! Alignment Confirmed.";
-                toast.style.color = "#10b981";
-                playSoundNotification(audioCorrect);
+                toast.innerText = "✔ LINK DECRYPTED: Defusal stream cleared.";
+                toast.style.color = "#00ff66";
+                routeAudioPlay(audioCorrect);
 
-                // Add a dynamic glowing success line across the screen to signify completion
-                let beam = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                beam.setAttribute("x1", "0"); beam.setAttribute("y1", "80"); beam.setAttribute("x2", "400"); beam.setAttribute("y2", "80");
-                beam.setAttribute("stroke", "#10b981"); beam.setAttribute("stroke-width", "6");
-                beam.setAttribute("class", "laser-beam-effect");
-                svgHub.appendChild(beam);
-
+                panel.classList.add('alert-flash');
                 document.querySelector('.submit-lever').disabled = true;
+                
                 taskIndex++;
-                setTimeout(() => loadPuzzleLayer(), 1500);
+                setTimeout(() => {
+                    panel.classList.remove('alert-flash');
+                    loadActiveTaskSector();
+                }, 1500);
             } else {
                 internalStrikeCounter++;
-                playSoundNotification(audioWrong);
+                routeAudioPlay(audioWrong);
 
                 if (internalStrikeCounter === 1) {
                     document.getElementById('strike-dot-1').classList.add('used');
-                    toast.innerText = "❌ Deflection Error! Laser misfired. 1 attempt remains.";
-                    toast.style.color = "#f43f5e";
+                    toast.innerText = "⚠ CODE REFUSED: Core line distortion. 1 try remains.";
+                    toast.style.color = "#f97316";
                 } else {
                     document.getElementById('strike-dot-2').classList.add('used');
                     document.querySelector('.submit-lever').disabled = true;
 
-                    const solutionString = `${activePuzzle.solution[0]}${activePuzzle.solution[1]}${activePuzzle.solution[2]}`;
-                    toast.innerText = `Re-routing matrix! The correct required key index was: ${solutionString}`;
-                    toast.style.color = "#f43f5e";
+                    const overrideCodeValue = `${currentItem.solution[0]}${currentItem.solution[1]}${currentItem.solution[2]}`;
+                    toast.innerText = `OVERRIDE ACTIVE: System bypass layout was: ${overrideCodeValue}`;
+                    toast.style.color = "#ef4444";
 
                     taskIndex++;
-                    setTimeout(() => loadPuzzleLayer(), 3500);
+                    setTimeout(() => loadActiveTaskSector(), 3500);
                 }
             }
             document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
         }
 
-        function triggerVictoryScreen() {
-            playSoundNotification(audioWin);
-            document.getElementById('game-level-tag').innerText = "Grid Fully Secured!";
+        function triggerOperationVictory() {
+            routeAudioPlay(audioWin);
+            document.getElementById('game-level-tag').innerText = "MAINFRAME SAFE";
             document.getElementById('game-prompt').innerHTML = `
-                <div style="font-size: 1.2rem; color: #38bdf8; margin-bottom: 4px;">🏆 Master Laser Engineer!</div>
-                <div style="font-size: 0.9rem; color: #10b981; font-weight: 600;">You navigated and aligned every grid vector module perfectly. Final Score: ${scoreCount}</div>
+                <div style="font-size: 1.15rem; color: #f97316; margin-bottom: 4px;">🏆 OPERATION COMPLETION CLEAR!</div>
+                <div style="font-size: 0.85rem; color: #00ff66; font-weight: 900;">All geometry segments stabilized. Total Output: ${scoreCount} Credits.</div>
             `;
-            document.getElementById('game-toast-feedback').innerText = "All laser optical array vectors stabilized.";
-            document.getElementById('game-toast-feedback').style.color = "#fbbf24";
+            document.getElementById('game-toast-feedback').innerText = "All link network terminals closed safely.";
+            document.getElementById('game-toast-feedback').style.color = "#e2e8f0";
 
-            document.getElementById('laser-vector-hub').innerHTML = `
-                <text x="50%" y="60%" font-size="44" text-anchor="middle">⚡👑⚡</text>
+            document.getElementById('radar-vector-display').innerHTML = `
+                <text x="50%" y="58%" font-size="38" fill="#00ff66" text-anchor="middle">[CLEARED]</text>
             `;
 
             const btn = document.querySelector('.submit-lever');
             btn.disabled = false;
-            btn.innerText = "Reboot Laser Core Grid";
-            btn.style.backgroundColor = "#3b82f6";
-            btn.style.borderBottomColor = "#1d4ed8";
+            btn.innerText = "Re-Lock Defusal Vectors";
+            btn.style.backgroundColor = "#1e293b";
+            btn.style.color = "#00ff66";
+            btn.style.borderColor = "#00ff66";
             btn.onclick = () => location.reload();
         }
 
-        /* --- VECTOR DRAWING COMPONENT UTILITIES --- */
-        function makeSVG(tag) { return document.createElementNS("http://www.w3.org/2000/svg", tag); }
+        /* --- RADAR GEO VECTOR CANVAS SYSTEM --- */
+        function createTag(name) { return document.createElementNS("http://www.w3.org/2000/svg", name); }
 
-        function drawPointsLine(svg, count) {
-            let l = makeSVG("line"); l.setAttribute("x1", "20"); l.setAttribute("y1", "80"); l.setAttribute("x2", "360"); l.setAttribute("y2", "80"); l.setAttribute("stroke", "#6366f1"); l.setAttribute("stroke-width", "4"); svg.appendChild(l);
-            for(let i=0; i<count; i++) {
-                let c = makeSVG("circle"); c.setAttribute("cx", 50 + i*85); c.setAttribute("cy", "80"); c.setAttribute("r", "6"); c.setAttribute("fill", "#38bdf8"); svg.appendChild(c);
+        function drawRadarPoints(svg, total) {
+            let line = createTag("line"); line.setAttribute("x1", "30"); line.setAttribute("y1", "80"); line.setAttribute("x2", "350"); line.setAttribute("y2", "80"); line.setAttribute("stroke", "#334155"); line.setAttribute("stroke-width", "4"); svg.appendChild(line);
+            for(let i=0; i<total; i++) {
+                let c = createTag("circle"); c.setAttribute("cx", 55 + i*80); c.setAttribute("cy", "80"); c.setAttribute("r", "6"); c.setAttribute("fill", "#00ff66"); svg.appendChild(c);
             }
         }
-        function drawMixedPoints(svg, outside) {
-            drawPointsLine(svg, 2);
-            for(let i=0; i<outside; i++) {
-                let c = makeSVG("circle"); c.setAttribute("cx", 80 + i*100); c.setAttribute("cy", "35"); c.setAttribute("r", "6"); c.setAttribute("fill", "#f43f5e"); svg.appendChild(c);
+        function drawOffGridPoints(svg, totalOutside) {
+            drawRadarPoints(svg, 2);
+            for(let i=0; i<totalOutside; i++) {
+                let c = createTag("circle"); c.setAttribute("cx", 90 + i*90); c.setAttribute("cy", "35"); c.setAttribute("r", "6"); c.setAttribute("fill", "#f97316"); svg.appendChild(c);
             }
         }
-        function drawPathsSet(svg, showOpen) {
-            // Open lines
-            let paths = showOpen ? ["M 30,110 L 80,40 L 130,110", "M 150,40 L 190,110"] : ["M 30,110 L 80,40 L 130,110 Z"];
-            // Closed loops
-            let closed = ["M 220,50 L 270,50 L 245,105 Z", "M 300,45 L 350,45 L 350,105 L 300,105 Z"];
-            if(!showOpen) paths = paths.concat(closed);
+        function drawRadarPaths(svg, isOpenMode) {
+            let paths = isOpenMode ? ["M 40,110 L 90,40 L 140,110", "M 160,40 L 200,110"] : ["M 40,110 L 90,40 L 140,110 Z"];
+            let closedBlocks = ["M 220,50 L 270,50 L 245,105 Z", "M 300,45 L 350,45 L 350,105 L 300,105 Z"];
+            if(!isOpenMode) paths = paths.concat(closedBlocks);
             
-            paths.forEach((d, idx) => {
-                let p = makeSVG("path"); p.setAttribute("d", d); p.setAttribute("stroke", idx==0 && showOpen ? "#f43f5e" : "#38bdf8"); p.setAttribute("stroke-width", "3"); p.setAttribute("fill", "none"); svg.appendChild(p);
+            paths.forEach((d) => {
+                let p = createTag("path"); p.setAttribute("d", d); p.setAttribute("stroke", "#00ff66"); p.setAttribute("stroke-width", "3"); p.setAttribute("fill", "none"); svg.appendChild(p);
             });
         }
-        function drawSegmentComponent(svg) {
-            let l = makeSVG("line"); l.setAttribute("x1", "100"); l.setAttribute("y1", "80"); l.setAttribute("x2", "280"); l.setAttribute("y2", "80"); l.setAttribute("stroke", "#10b981"); l.setAttribute("stroke-width", "5"); svg.appendChild(l);
-            let c1 = makeSVG("circle"); c1.setAttribute("cx", "100"); c1.setAttribute("cy", "80"); c1.setAttribute("r", "7"); c1.setAttribute("fill", "#f8fafc"); svg.appendChild(c1);
-            let c2 = makeSVG("circle"); c2.setAttribute("cx", "280"); c2.setAttribute("cy", "80"); c2.setAttribute("r", "7"); c2.setAttribute("fill", "#f8fafc"); svg.appendChild(c2);
+        function drawSegmentTelemetry(svg) {
+            let l = createTag("line"); l.setAttribute("x1", "100"); l.setAttribute("y1", "80"); l.setAttribute("x2", "280"); l.setAttribute("y2", "80"); l.setAttribute("stroke", "#f97316"); l.setAttribute("stroke-width", "4"); svg.appendChild(l);
+            let c1 = createTag("circle"); c1.setAttribute("cx", "100"); c1.setAttribute("cy", "80"); c1.setAttribute("r", "6"); c1.setAttribute("fill", "#f8fafc"); svg.appendChild(c1);
+            let c2 = createTag("circle"); c2.setAttribute("cx", "280"); c2.setAttribute("cy", "80"); c2.setAttribute("r", "6"); c2.setAttribute("fill", "#f8fafc"); svg.appendChild(c2);
         }
-        function drawRayComponent(svg) {
-            let l = makeSVG("line"); l.setAttribute("x1", "100"); l.setAttribute("y1", "80"); l.setAttribute("x2", "270"); l.setAttribute("y2", "80"); l.setAttribute("stroke", "#a855f7"); l.setAttribute("stroke-width", "4"); svg.appendChild(l);
-            let c = makeSVG("circle"); c.setAttribute("cx", "100"); c.setAttribute("cy", "80"); c.setAttribute("r", "7"); c.setAttribute("fill", "#f8fafc"); svg.appendChild(c);
-            let arr = makeSVG("path"); arr.setAttribute("d", "M 265,72 L 282,80 L 265,88 Z"); arr.setAttribute("fill", "#a855f7"); svg.appendChild(arr);
+        function drawRayTelemetry(svg) {
+            let l = createTag("line"); l.setAttribute("x1", "100"); l.setAttribute("y1", "80"); l.setAttribute("x2", "270"); l.setAttribute("y2", "80"); l.setAttribute("stroke", "#00ff66"); l.setAttribute("stroke-width", "4"); svg.appendChild(l);
+            let c = createTag("circle"); c.setAttribute("cx", "100"); c.setAttribute("cy", "80"); c.setAttribute("r", "6"); c.setAttribute("fill", "#f8fafc"); svg.appendChild(c);
+            let a = createTag("path"); a.setAttribute("d", "M 265,72 L 282,80 L 265,88 Z"); a.setAttribute("fill", "#00ff66"); svg.appendChild(a);
         }
-        function drawBeamAngle(svg, degrees) {
+        function drawVectorAngle(svg, degrees) {
             let rad = -degrees * Math.PI / 180;
-            let x2 = 190 + 90 * Math.cos(rad); let y2 = 120 + 90 * Math.sin(rad);
-            let b = makeSVG("line"); b.setAttribute("x1", "190"); b.setAttribute("y1", "120"); b.setAttribute("x2", "300"); b.setAttribute("y2", "120"); b.setAttribute("stroke", "#475569"); b.setAttribute("stroke-width", "4"); svg.appendChild(b);
-            let a = makeSVG("line"); a.setAttribute("x1", "190"); a.setAttribute("y1", "120"); a.setAttribute("x2", x2); a.setAttribute("y2", y2); a.setAttribute("stroke", "#f43f5e"); a.setAttribute("stroke-width", "4"); svg.appendChild(a);
+            let x2 = 190 + 90 * Math.cos(rad); let y2 = 115 + 90 * Math.sin(rad);
+            let b = createTag("line"); b.setAttribute("x1", "190"); b.setAttribute("y1", "115"); b.setAttribute("x2", "300"); b.setAttribute("y2", "115"); b.setAttribute("stroke", "#475569"); b.setAttribute("stroke-width", "4"); svg.appendChild(b);
+            let a = createTag("line"); a.setAttribute("x1", "190"); a.setAttribute("y1", "115"); a.setAttribute("x2", x2); a.setAttribute("y2", y2); a.setAttribute("stroke", "#f97316"); a.setAttribute("stroke-width", "4"); svg.appendChild(a);
         }
-        function drawParallelArrays(svg) {
+        function drawParallelStreams(svg) {
             for(let i=0; i<2; i++) {
-                let l = makeSVG("line"); l.setAttribute("x1", "60"); l.setAttribute("y1", 55 + i*40); l.setAttribute("x2", "320"); l.setAttribute("y2", 55 + i*40); l.setAttribute("stroke", "#38bdf8"); l.setAttribute("stroke-width", "4"); svg.appendChild(l);
+                let l = createTag("line"); l.setAttribute("x1", "60"); l.setAttribute("y1", 55 + i*40); l.setAttribute("x2", "320"); l.setAttribute("y2", 55 + i*40); l.setAttribute("stroke", "#00ff66"); l.setAttribute("stroke-width", "4"); svg.appendChild(l);
             }
         }
-        function drawConcurrentArrays(svg) {
+        function drawConcurrentStreams(svg) {
             for(let i=0; i<3; i++) {
-                let angle = i * 60; let r = angle * Math.PI / 180;
+                let ang = i * 60; let r = ang * Math.PI / 180;
                 let x1 = 190 - 90*Math.cos(r); let y1 = 80 - 90*Math.sin(r);
                 let x2 = 190 + 90*Math.cos(r); let y2 = 80 + 90*Math.sin(r);
-                let l = makeSVG("line"); l.setAttribute("x1", x1); l.setAttribute("y1", y1); l.setAttribute("x2", x2); l.setAttribute("y2", y2); l.setAttribute("stroke", "#fbbf24"); l.setAttribute("stroke-width", "3"); svg.appendChild(l);
+                let l = createTag("line"); l.setAttribute("x1", x1); l.setAttribute("y1", y1); l.setAttribute("x2", x2); l.setAttribute("y2", y2); l.setAttribute("stroke", "#00ff66"); l.setAttribute("stroke-width", "3"); svg.appendChild(l);
             }
         }
-        function drawPerpArrays(svg) {
-            let h = makeSVG("line"); h.setAttribute("x1", "60"); h.setAttribute("y1", "80"); h.setAttribute("x2", "320"); h.setAttribute("y2", "80"); h.setAttribute("stroke", "#64748b"); h.setAttribute("stroke-width", "4"); svg.appendChild(h);
-            let v = makeSVG("line"); v.setAttribute("x1", "190"); v.setAttribute("y1", "15"); v.setAttribute("x2", "190"); v.setAttribute("y2", "145"); v.setAttribute("stroke", "#f43f5e"); v.setAttribute("stroke-width", "4"); svg.appendChild(v);
+        function drawPerpStreams(svg) {
+            let h = createTag("line"); h.setAttribute("x1", "60"); h.setAttribute("y1", "80"); h.setAttribute("x2", "320"); h.setAttribute("y2", "80"); h.setAttribute("stroke", "#475569"); h.setAttribute("stroke-width", "4"); svg.appendChild(h);
+            let v = createTag("line"); v.setAttribute("x1", "190"); v.setAttribute("y1", "15"); v.setAttribute("x2", "190"); v.setAttribute("y2", "145"); v.setAttribute("stroke", "#f97316"); v.setAttribute("stroke-width", "4"); svg.appendChild(v);
         }
     </script>
 </body>
