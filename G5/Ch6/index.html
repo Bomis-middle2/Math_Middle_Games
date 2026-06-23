@@ -1,568 +1,326 @@
 <!DOCTYPE html>
-<html lang="en" style="background-color: #0f172a;">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Math Quest: Decimal Cracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geo-Explorer: Geometry Quest</title>
     <style>
+        :root {
+            --primary: #4a154b;
+            --accent: #ffb81c;
+            --bg-gradient: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --card-bg: rgba(255, 255, 255, 0.15);
+            --text-color: #ffffff;
+        }
+
         * {
             box-sizing: border-box;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            user-select: none;
             margin: 0;
             padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Ubuntu', sans-serif;
         }
 
         body, html {
             width: 100%;
             height: 100%;
-            background-color: #0f172a;
-            color: #1e293b;
             overflow: hidden;
+            background: var(--bg-gradient);
+            color: var(--text-color);
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        #viewport-root {
-            width: 100%;
-            max-width: 440px;
-            height: 100%;
-            max-height: 780px;
-            display: flex;
-            flex-direction: column;
+        #game-container {
             position: relative;
-            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 1024px;
+            height: 100%;
+            max-height: 768px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* --- STAGE 1: G5 WELCOME SPLASH SCREEN --- */
-        #hard-splash {
+        /* Screen States */
+        .screen {
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #0f172a;
-            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 24px;
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-        .splash-logo-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            animation: bounceLogo 2s infinite ease-in-out;
-        }
-        .splash-img {
-            max-width: 130px;
-            height: auto;
-            margin-bottom: 12px;
-        }
-        .splash-title {
-            font-size: 28px;
-            font-weight: 900;
-            color: #38bdf8;
-            letter-spacing: 2px;
+            padding: 40px;
             text-align: center;
-        }
-        .splash-subtitle {
-            font-size: 14px;
-            font-weight: 600;
-            color: #94a3b8;
-            margin-top: 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .loader-track {
-            width: 220px;
-            height: 8px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid rgba(56, 189, 248, 0.3);
-        }
-        .loader-fill {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #38bdf8, #3b82f6);
-            animation: lockFiveSeconds 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        @keyframes lockFiveSeconds {
-            to { width: 100%; }
-        }
-        @keyframes bounceLogo {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
-        /* --- OVERLAY INTERFACES --- */
-        .stage-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            gap: 14px;
             z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
         }
 
-        .glass-panel {
-            background: #ffffff;
-            border: 3px solid #3b82f6;
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        .screen.active {
+            opacity: 1;
+            pointer-events: auto;
         }
 
-        .header-panel {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #2563eb;
-            color: #ffffff;
-            padding: 12px 18px;
-            border-radius: 16px;
-            border: 2px solid #60a5fa;
+        /* Logo Screen */
+        #logo-screen {
+            background: #ffffff; /* Allowed for logo introduction screen only */
+            z-index: 100;
         }
-        .header-title { font-weight: 800; font-size: 1rem; }
-        .header-score { font-weight: 800; font-size: 0.9rem; background: #1d4ed8; padding: 4px 14px; border-radius: 20px; border: 1px solid #60a5fa; }
+        #logo-screen img {
+            max-width: 300px;
+            animation: pulse 2s infinite ease-in-out;
+        }
 
-        .instruction-text {
-            font-size: 1rem;
-            line-height: 1.6;
-            color: #1e3a8a;
+        /* Instructions Screen */
+        #instructions-screen {
+            background: var(--bg-gradient);
+        }
+        .instruction-box {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            border: 3px solid var(--accent);
+            backdrop-filter: blur(10px);
             margin-bottom: 20px;
         }
-        .instruction-text ul { margin-left: 20px; margin-top: 10px; }
-        .instruction-text li { margin-bottom: 10px; font-weight: 600; }
+        .instruction-box h2 {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 2rem;
+        }
+        .instruction-box ul {
+            text-align: left;
+            margin-left: 20px;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
 
-        .workspace-area {
-            flex-grow: 1;
+        /* Game Screen Layout */
+        #game-screen {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            align-items: center;
-            gap: 16px;
+            padding: 15px;
         }
 
-        .question-box {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #1e3a8a;
-            background: #eff6ff;
-            padding: 16px;
-            border-radius: 16px;
-            border: 2px dashed #3b82f6;
+        header {
             width: 100%;
-            text-align: center;
-            min-height: 90px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            line-height: 1.4;
+            background: rgba(0,0,0,0.3);
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin-bottom: 10px;
         }
 
-        /* --- CLASSROOM PLACE VALUE INTERFACE --- */
-        .lock-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: #1e293b;
-            padding: 16px 12px;
+        .hud-item {
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
             border-radius: 20px;
-            border: 4px solid #475569;
-            box-shadow: inset 0 4px 10px rgba(0,0,0,0.4);
-            margin: auto 0;
-            width: 100%;
+            border: 2px solid rgba(255,255,255,0.2);
         }
 
-        .dial-column {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .column-label {
-            color: #94a3b8;
-            font-size: 0.65rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 2px;
-        }
-
-        .dial-spinner {
-            width: 44px;
-            height: 34px;
-            background: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 900;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 3px 0 #1d4ed8;
-            transition: transform 0.1s;
-        }
-        .dial-spinner:active { 
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #1d4ed8;
-        }
-
-        .dial-screen {
-            width: 46px;
-            height: 54px;
-            background: #ffffff;
-            border: 3px solid #3b82f6;
-            color: #1e3a8a;
+        #task-prompt {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin: 10px 0;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
             border-radius: 10px;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 2rem;
-            font-weight: 900;
+            width: 100%;
+        }
+
+        #gameplay-area {
+            flex: 1;
+            width: 100%;
+            position: relative;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 2px dashed rgba(255,255,255,0.3);
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .decimal-separator {
-            color: #f59e0b;
-            font-size: 3.5rem;
-            font-weight: 900;
-            align-self: flex-end;
-            margin-bottom: 24px;
-            line-height: 0.5;
-        }
-
-        .chance-counter-tray {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: -6px;
-        }
-        .chance-dot {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #ef4444;
-            border: 2px solid #fca5a5;
-            box-shadow: 0 0 6px rgba(239,68,68,0.4);
-            transition: all 0.3s ease;
-        }
-        .chance-dot.used {
-            background: #cbd5e1;
-            border-color: #94a3b8;
-            box-shadow: none;
-            transform: scale(0.9);
-        }
-
-        .action-btn {
-            background: #f59e0b;
-            color: #ffffff;
-            border: none;
-            border-bottom: 4px solid #b45309;
-            padding: 14px;
-            font-size: 1.1rem;
-            font-weight: 800;
-            border-radius: 16px;
-            cursor: pointer;
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .action-btn:active {
-            transform: translateY(2px);
-            border-bottom-width: 2px;
-        }
-        .action-btn.submit-lever {
-            background: #10b981;
-            border-color: #047857;
+            height: 100%;
+            cursor: pointer;
         }
 
-        .status-banner {
-            text-align: center;
-            font-weight: 800;
-            font-size: 1rem;
-            min-height: 24px;
-            color: #ffffff;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        /* Interactive Elements Overlay */
+        #interaction-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .hidden { display: none !important; }
+        .interactive-btn-container {
+            pointer-events: auto;
+            display: flex;
+            gap: 20px;
+            position: absolute;
+            bottom: 20px;
+        }
+
+        /* Buttons & UI Components */
+        .btn {
+            background: linear-gradient(180deg, #ffcc00 0%, #ff9900 100%);
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #000;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: transform 0.1s, filter 0.2s;
+        }
+        .btn:hover {
+            filter: brightness(1.1);
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .choice-btn {
+            background: rgba(255,255,255,0.2);
+            border: 3px solid white;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 15px;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: all 0.2s;
+        }
+        .choice-btn:hover {
+            background: var(--accent);
+            color: black;
+            transform: translateY(-3px);
+        }
+
+        /* Hint Overlay */
+        #hint-box {
+            position: absolute;
+            top: 70px;
+            background: rgba(231, 76, 60, 0.95);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            border: 2px solid white;
+            display: none;
+            animation: fadeIn 0.3s ease;
+            z-index: 50;
+        }
+
+        /* Feedback Effects */
+        .feedback-flash {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top:0; left:0;
+            pointer-events: none;
+            z-index: 40;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .feedback-flash.correct { background: rgba(46, 204, 113, 0.3); opacity: 1; }
+        .feedback-flash.wrong { background: rgba(231, 76, 60, 0.3); opacity: 1; }
+
+        /* End Screen */
+        #end-screen h1 {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+        #end-screen .score-report {
+            font-size: 2rem;
+            margin-bottom: 30px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
-    <div id="viewport-root">
+    <div id="game-container">
         
-        <div id="hard-splash">
-            <div class="splash-logo-container">
-                <img src="assets/logo.png" class="splash-img" alt="Logo" onerror="this.src='https://placehold.co/130x130/2563eb/ffffff?text=%F0%9F%93%90';">
-                <div class="splash-title">DECIMAL QUEST</div>
-                <div class="splash-subtitle">Grade 5 Challenge</div>
+        <!-- Audio Assets -->
+        <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+        <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+        <audio id="snd-win" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+        <!-- Screen 1: Logo Intro -->
+        <div id="logo-screen" class="screen active">
+            <img src="assets/logo.png" alt="Innovine Logo" onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='block';">
+            <h1 id="logo-fallback" style="display:none; color:#4a154b; font-size:3rem;">Innovine</h1>
+        </div>
+
+        <!-- Screen 2: Instructions -->
+        <div id="instructions-screen" class="screen">
+            <div class="instruction-box">
+                <h2>📐 Geometry Lab Explorer</h2>
+                <p style="font-size: 1.3rem; margin-bottom: 15px;">Welcome, Young Mathematician! Ready to test your space and shape skills?</p>
+                <ul>
+                    <li>Interact directly with lines, rays, segments, and angles.</li>
+                    <li>Click or sort items based on the active structural rule.</li>
+                    <li>You have 2 attempts per task before a helpful geometry guide appears!</li>
+                </ul>
             </div>
-            <div class="loader-track">
-                <div class="loader-fill"></div>
+            <button class="btn" onclick="startGame()">Let's Explore! 🚀</button>
+        </div>
+
+        <!-- Screen 3: Gameplay -->
+        <div id="game-screen" class="screen">
+            <header>
+                <div class="hud-item" id="hud-level">Task: 1 / 10</div>
+                <div class="hud-item" id="hud-score">Score: 0</div>
+                <div class="hud-item" id="hud-attempts">Attempts Left: 2</div>
+            </header>
+
+            <div id="task-prompt">Loading task criteria...</div>
+
+            <div id="gameplay-area">
+                <div class="feedback-flash" id="flash-effect"></div>
+                <div id="hint-box">💡 Hint displayed here</div>
+                <canvas id="game-canvas"></canvas>
+                <div id="interaction-overlay">
+                    <div class="interactive-btn-container" id="action-controls"></div>
+                </div>
             </div>
         </div>
 
-        <div id="instructions-screen" class="stage-overlay hidden">
-            <div class="glass-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
-                <div class="header-panel" style="background: #2563eb;">
-                    <div class="header-title">📝 How to Play</div>
-                </div>
-                <div class="instruction-text">
-                    <p>Welcome! Solve the decimal puzzle on each level by rolling the place value boxes to the right numbers:</p>
-                    <ul>
-                        <li>1. Use the blue <strong>▲ and ▼ arrows</strong> above and below each box to change the digit.</li>
-                        <li>2. Match your number to answer the question exactly!</li>
-                        <li>3. Be careful: You have <strong>2 tries per question</strong> before the game moves on!</li>
-                    </ul>
-                </div>
-                <button class="action-btn" onclick="engageSimulationMatrix()">Start Math Challenge</button>
-            </div>
-        </div>
-
-        <div id="gameplay-screen" class="stage-overlay hidden">
-            <div class="header-panel">
-                <div id="game-level-tag" class="header-title">Level 1: Places</div>
-                <div id="game-score-tag" class="header-score">Score: 0</div>
-            </div>
-
-            <div class="glass-panel workspace-area">
-                <div id="game-prompt" class="question-box">Loading question...</div>
-                
-                <div class="lock-container">
-                    <div class="dial-column">
-                        <div class="column-label">Ones</div>
-                        <button class="dial-spinner" onclick="spinDigit('whole', 1)">▲</button>
-                        <div id="digit-whole" class="dial-screen">0</div>
-                        <button class="dial-spinner" onclick="spinDigit('whole', -1)">▼</button>
-                    </div>
-                    
-                    <div class="decimal-separator">.</div>
-                    
-                    <div class="dial-column">
-                        <div class="column-label">Tenths</div>
-                        <button class="dial-spinner" onclick="spinDigit('t1', 1)">▲</button>
-                        <div id="digit-t1" class="dial-screen">0</div>
-                        <button class="dial-spinner" onclick="spinDigit('t1', -1)">▼</button>
-                    </div>
-                    
-                    <div class="dial-column">
-                        <div class="column-label">Hund.</div>
-                        <button class="dial-spinner" onclick="spinDigit('t2', 1)">▲</button>
-                        <div id="digit-t2" class="dial-screen">0</div>
-                        <button class="dial-spinner" onclick="spinDigit('t2', -1)">▼</button>
-                    </div>
-                    
-                    <div class="dial-column">
-                        <div class="column-label">Thous.</div>
-                        <button class="dial-spinner" onclick="spinDigit('t3', 1)">▲</button>
-                        <div id="digit-t3" class="dial-screen">0</div>
-                        <button class="dial-spinner" onclick="spinDigit('t3', -1)">▼</button>
-                    </div>
-                </div>
-
-                <div class="chance-counter-tray">
-                    <div id="strike-dot-1" class="chance-dot"></div>
-                    <div id="strike-dot-2" class="chance-dot"></div>
-                </div>
-
-                <button class="action-btn submit-lever" onclick="evaluateCombinationSubmission()">Check Answer</button>
-            </div>
-
-            <div id="game-toast-feedback" class="status-banner">Change the boxes to set your answer!</div>
-        </div>
-
-    </div>
-
-    <script>
-        // Media Hooks
-        const audioCorrect = new Audio('assets/correct.mp3');
-        const audioWrong = new Audio('assets/wrong.mp3');
-
-        function playAssetSound(type) {
-            try {
-                if(type === 'correct') {
-                    audioCorrect.currentTime = 0;
-                    audioCorrect.play();
-                } else {
-                    audioWrong.currentTime = 0;
-                    audioWrong.play();
-                }
-            } catch(e) { console.log("Audio skipped or blocked."); }
-        }
-
-        // States
-        let currentLevel = 1;
-        let scoreCount = 0;
-        let taskIndex = 0;
-        let internalStrikeCounter = 0;
-
-        let currentLockState = { whole: 0, t1: 0, t2: 0, t3: 0 };
-
-        // Problem Matrix mapped precisely
-        const puzzleDatabase = {
-            1: [
-                { q: "In the number 5.372, look at the tenths place. Set the boxes to show just that place value (Example: 0.300).", target: {whole:0, t1:3, t2:0, t3:0} },
-                { q: "In the number 5.372, show just the value of the digit located in the hundredths place.", target: {whole:0, t1:0, t2:7, t3:0} }
-            ],
-            2: [
-                { q: "Convert the fraction 3/4 into its decimal equivalent.", target: {whole:0, t1:7, t2:5, t3:0} },
-                { q: "Convert the fraction 2/5 into its decimal form.", target: {whole:0, t1:4, t2:0, t3:0} }
-            ],
-            3: [
-                { q: "Add this expanded expression together: 5 + 0.3 + 0.07 + 0.002", target: {whole:5, t1:3, t2:7, t3:2} },
-                { q: "Solve for the missing number: 0.52 = 0.5 + [ ? ]", target: {whole:0, t1:0, t2:2, t3:0} }
-            ],
-            4: [
-                { q: "Convert the decimal value 0.5 into an equivalent form containing 3 decimal places.", target: {whole:0, t1:5, t2:0, t3:0} },
-                { q: "Find the size difference between the decimals 3.67 and 2.50.", target: {whole:1, t1:1, t2:7, t3:0} }
-            ],
-            5: [
-                { q: "Solve the decimal addition problem: 1.2 + 2.35 (Tip: Align your place values!)", target: {whole:3, t1:5, t2:5, t3:0} },
-                { q: "Solve the decimal multiplication problem: 0.3 × 0.2", target: {whole:0, t1:0, t2:6, t3:0} }
-            ]
-        };
-
-        // Splash controller
-        setTimeout(() => {
-            const splash = document.getElementById('hard-splash');
-            if (splash) {
-                splash.style.opacity = '0';
-                splash.style.transform = 'scale(1.02)';
-                setTimeout(() => {
-                    if (splash && splash.parentNode) splash.parentNode.removeChild(splash);
-                    document.getElementById('instructions-screen').classList.remove('hidden');
-                }, 500);
-            }
-        }, 4100);
-
-        function engageSimulationMatrix() {
-            document.getElementById('instructions-screen').classList.add('hidden');
-            document.getElementById('gameplay-screen').classList.remove('hidden');
-            loadActivePuzzleNode();
-        }
-
-        function loadActivePuzzleNode() {
-            if (currentLevel > 5) {
-                triggerSanctuaryVictory();
-                return;
-            }
-
-            const levelTitles = { 1: "Level 1: Place Values", 2: "Level 2: Fractions to Decimals", 3: "Level 3: Expanded Form", 4: "Level 4: Comparing Decimals", 5: "Level 5: Math Arithmetic" };
-            document.getElementById('game-level-tag').innerText = levelTitles[currentLevel];
-            document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
-
-            internalStrikeCounter = 0;
-            document.getElementById('strike-dot-1').classList.remove('used');
-            document.getElementById('strike-dot-2').classList.remove('used');
-
-            currentLockState = { whole: 0, t1: 0, t2: 0, t3: 0 };
-            updateLockDisplay();
-
-            const item = puzzleDatabase[currentLevel][taskIndex];
-            document.getElementById('game-prompt').innerText = item.q;
-
-            const feedback = document.getElementById('game-toast-feedback');
-            feedback.innerText = "Click the arrows to choose your numbers!";
-            feedback.style.color = "#ffffff";
-            
-            document.querySelector('.submit-lever').disabled = false;
-            document.querySelector('.submit-lever').style.opacity = "1";
-        }
-
-        function spinDigit(key, change) {
-            currentLockState[key] += change;
-            if (currentLockState[key] > 9) currentLockState[key] = 0;
-            if (currentLockState[key] < 0) currentLockState[key] = 9;
-            updateLockDisplay();
-        }
-
-        function updateLockDisplay() {
-            document.getElementById('digit-whole').innerText = currentLockState.whole;
-            document.getElementById('digit-t1').innerText = currentLockState.t1;
-            document.getElementById('digit-t2').innerText = currentLockState.t2;
-            document.getElementById('digit-t3').innerText = currentLockState.t3;
-        }
-
-        function evaluateCombinationSubmission() {
-            const item = puzzleDatabase[currentLevel][taskIndex];
-            const feedback = document.getElementById('game-toast-feedback');
-
-            const isMatch = currentLockState.whole === item.target.whole &&
-                            currentLockState.t1 === item.target.t1 &&
-                            currentLockState.t2 === item.target.t2 &&
-                            currentLockState.t3 === item.target.t3;
-
-            if (isMatch) {
-                scoreCount += 20;
-                feedback.innerText = "🎉 Excellent! That is correct.";
-                feedback.style.color = "#6ee7b7";
-                playAssetSound('correct');
-                document.querySelector('.submit-lever').disabled = true;
-                
-                taskIndex++;
-                if (taskIndex >= puzzleDatabase[currentLevel].length) {
-                    currentLevel++;
-                    taskIndex = 0;
-                }
-                
-                setTimeout(() => loadActivePuzzleNode(), 1500);
-            } else {
-                internalStrikeCounter++;
-                playAssetSound('wrong');
-                
-                if (internalStrikeCounter === 1) {
-                    document.getElementById('strike-dot-1').classList.add('used');
-                    feedback.innerText = "❌ Not quite! Check your places. 1 try left!";
-                    feedback.style.color = "#fca5a5";
-                } else {
-                    document.getElementById('strike-dot-2').classList.add('used');
-                    document.querySelector('.submit-lever').disabled = true;
-                    document.querySelector('.submit-lever').style.opacity = "0.4";
-                    
-                    const answerString = `${item.target.whole}.${item.target.t1}${item.target.t2}${item.target.t3}`;
-                    feedback.innerText = `Moving on! The correct answer was: ${answerString}`;
-                    feedback.style.color = "#f87171";
-                    
-                    taskIndex++;
-                    if (taskIndex >= puzzleDatabase[currentLevel].length) {
-                        currentLevel++;
-                        taskIndex = 0;
-                    }
-                    
-                    setTimeout(() => loadActivePuzzleNode(), 3500);
-                }
-            }
-            document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
-        }
-
-        function triggerSanctuaryVictory() {
-            playAssetSound('correct');
-            document.getElementById('game-level-tag').innerText = "Game Completed!";
-            document.getElementById('game-prompt').innerHTML = `
-                <div style="font-size: 1.3rem; margin-bottom: 6px;">🏆 Amazing Job!</div>
-                <div style="font-size: 0.95rem; color: #047857; font-weight: 600;">You solved all the decimal problems perfectly!</div>
-            `;
-            document.getElementById('game-toast-feedback').innerText = "You are a Decimal Master!";
-            document.getElementById('game-toast-feedback').style.color = "#fcd34d";
-            
-            const lever = document.querySelector('.submit-lever');
-            lever.disabled = false;
-            lever.style.opacity = "1";
-            lever.innerText = "Play Again";
-            lever.onclick = () => location.reload();
-        }
-    </script>
-</body>
-</html>
