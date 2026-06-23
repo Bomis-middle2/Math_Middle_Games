@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Symmetrical Totem Temple</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Palatino', 'Georgia', serif;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #1c2321;
+            color: #f4f1de;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #viewport-root {
+            width: 100%;
+            max-width: 440px;
+            height: 100%;
+            max-height: 780px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: #2b3a36;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+            border: 4px solid #a3b18a;
+        }
+
+        /* --- STAGE 1: BRANDING-ONLY SPLASH (5 SECONDS) --- */
+        #branding-splash {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .branding-img {
+            max-width: 180px;
+            height: auto;
+        }
+
+        /* --- OVERLAY STAGES --- */
+        .stage-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 16px;
+            z-index: 10;
+        }
+
+        .temple-panel {
+            background: #e9c46a;
+            border: 3px solid #e76f51;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+            color: #264653;
+        }
+
+        .header-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #264653;
+            color: #e9c46a;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid #e76f51;
+        }
+        .header-title { font-weight: 800; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
+        .header-score { font-weight: 800; font-size: 0.85rem; background: #e76f51; color: #fff; padding: 4px 12px; border-radius: 6px; }
+
+        .instruction-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #264653;
+            margin-bottom: 20px;
+        }
+        .instruction-text ul { margin-left: 18px; margin-top: 8px; }
+        .instruction-text li { margin-bottom: 10px; font-weight: 600; color: #e76f51; }
+
+        .workspace-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            background: #f4f1de;
+            border-radius: 12px;
+            border: 2px solid #264653;
+            padding: 16px;
+        }
+
+        .clue-box {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #264653;
+            background: #f2cc8f;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #e76f51;
+            width: 100%;
+            text-align: center;
+            min-height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- GRAPHICS CANVAS --- */
+        .vector-canvas-box {
+            width: 100%;
+            height: 190px;
+            background: #3d5a80;
+            border-radius: 12px;
+            border: 2px solid #264653;
+            position: relative;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* --- ANCIENT COUNTER COMPONENT --- */
+        .counter-component {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            background: #264653;
+            border: 2px solid #e76f51;
+            padding: 10px 20px;
+            border-radius: 14px;
+        }
+
+        .counter-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .counter-btn {
+            background: #e76f51;
+            border: none;
+            color: white;
+            font-size: 0.9rem;
+            padding: 4px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .counter-btn:active { transform: scale(0.9); }
+
+        .counter-display-window {
+            width: 44px;
+            height: 44px;
+            background: #f4f1de;
+            border: 2px solid #e9c46a;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #264653;
+        }
+
+        /* --- LIFE TRACKING LIGHTS --- */
+        .strike-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .strike-cell {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #e76f51;
+            box-shadow: 0 0 6px #e76f51;
+            transition: all 0.3s ease;
+        }
+        .strike-cell.used {
+            background: #cbd5e1;
+            box-shadow: none;
+        }
+
+        .action-btn {
+            background: #e76f51;
+            color: #ffffff;
+            border: none;
+            border-bottom: 4px solid #b54930;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 800;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .action-btn:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+
+        .status-banner {
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            min-height: 22px;
+            color: #264653;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="viewport-root">
+        
+        <!-- STAGE 1: Branding Intro Splash -->
+        <div id="branding-splash">
+            <img src="assets/logo.png" class="branding-img" alt="Innovine Logo" onerror="this.src='https://placehold.co/180x60/ffffff/1c2321?text=INNOVINE';">
+        </div>
+
+        <!-- STAGE 2: Interactive Mission Rules Setup -->
+        <div id="instructions-screen" class="stage-overlay hidden">
+            <div class="temple-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
+                <div class="header-panel">
+                    <div class="header-title">🗿 Symmetrical Totem Temple</div>
+                </div>
+                <div class="instruction-text">
+                    <p>Help restore the stone carvings of the ancient temple by aligning the carving counts to match the rules of symmetry:</p>
+                    <ul>
+                        <li>1. Read the carvings clue scroll at the top of the interface.</li>
+                        <li>2. Use the **▲** and **▼** arrows to punch the magic number into the pillars.</li>
+                        <li>3. Press down the stone plate. You have **2 carving attempts** per puzzle!</li>
+                    </ul>
+                </div>
+                <button class="action-btn" onclick="startTempleSimulation()">Explore Ruins</button>
+            </div>
+        </div>
+
+        <!-- STAGE 3: Main Core Gameplay Viewport -->
+        <div id="gameplay-screen" class="stage-overlay hidden">
+            <div class="header-panel">
+                <div id="game-level-tag" class="header-title">Chamber: 01 / 06</div>
+                <div id="game-score-tag" class="header-score">Relics: 0</div>
+            </div>
+
+            <div class="workspace-area">
+                <!-- Instruction Clue Text -->
+                <div id="game-prompt" class="clue-box">Reading ancient symbols...</div>
+                
+                <!-- Graphic Vector Subsystem Frame -->
+                <div class="vector-canvas-box">
+                    <svg id="drawing-svg" width="100%" height="100%" style="position:absolute; pointer-events:none;"></svg>
+                </div>
+
+                <!-- Digital Combination Lock Stepper Wheels Module -->
+                <div class="counter-component">
+                    <div class="counter-column">
+                        <button class="counter-btn" onclick="stepCounter(0, 1)">▲</button>
+                        <div id="digit-display-0" class="counter-display-window">0</div>
+                        <button class="counter-btn" onclick="stepCounter(0, -1)">▼</button>
+                    </div>
+                    <div class="counter-column">
+                        <button class="counter-btn" onclick="stepCounter(1, 1)">▲</button>
+                        <div id="digit-display-1" class="counter-display-window">0</div>
+                        <button class="counter-btn" onclick="stepCounter(1, -1)">▼</button>
+                    </div>
+                    <div class="counter-column">
+                        <button class="counter-btn" onclick="stepCounter(2, 1)">▲</button>
+                        <div id="digit-display-2" class="counter-display-window">0</div>
+                        <button class="counter-btn" onclick="stepCounter(2, -1)">▼</button>
+                    </div>
+                </div>
+
+                <!-- Safety Bypass Attempt Lights -->
+                <div class="strike-container">
+                    <div id="strike-dot-1" class="strike-cell"></div>
+                    <div id="strike-dot-2" class="strike-cell"></div>
+                </div>
+
+                <button class="action-btn" onclick="verifyCarvingCode()">Press Stone Plate</button>
+            </div>
+
+            <div id="game-toast-feedback" class="status-banner">Change values on the stone pillars to match.</div>
+        </div>
+
+    </div>
+
+    <script>
+        // Media Sound Notification Tracks
+        const audioCorrect = new Audio('assets/correct.mp3');
+        const audioWrong = new Audio('assets/wrong.mp3');
+        const audioWin = new Audio('assets/freesound_community-claps-44774.mp3');
+
+        function playAudio(track) {
+            try {
+                track.currentTime = 0;
+                track.play();
+            } catch(e) { console.log("Audio routing handled safely."); }
+        }
+
+        // Active State Registers
+        let scoreCount = 0;
+        let taskIndex = 0;
+        let internalStrikeCounter = 0;
+        let selectedComboDigits = [0, 0, 0];
+        let dynamicShufflePool = [];
+
+        // SVG Dynamic Layout Generators
+        function buildElement(name) { return document.createElementNS("http://www.w3.org/2000/svg", name); }
+        
+        function setProperties(el, attrs) {
+            for (let k in attrs) { el.setAttribute(k, attrs[k]); }
+            return el;
+        }
+
+        function insertGraphicLabel(svg, x, y, msg, col = "#f4f1de", weight = "bold") {
+            let textNode = buildElement("text");
+            setProperties(textNode, { x: x, y: y, fill: col, "font-size": "11", "font-weight": weight, "text-anchor": "middle" });
+            textNode.textContent = msg;
+            svg.appendChild(textNode);
+        }
+
+        // Complete Symmetrical Geometry Curricular Database
+        const rawPuzzlesDefinition = [
+            {
+                q: "Look at the square carving grid. Count how many total valid Lines of Symmetry a perfect square has.",
+                correct: [0, 0, 4],
+                render: (svg) => {
+                    let r = buildElement("rect"); setProperties(r, { x: "145", y: "40", width: "100", height: "100", fill: "rgba(242,204,143,0.2)", stroke: "#f2cc8f", "stroke-width": "3" }); svg.appendChild(r);
+                    let l1 = buildElement("line"); setProperties(l1, { x1: "195", y1: "20", x2: "195", y2: "160", stroke: "#e76f51", "stroke-dasharray": "4 4" }); svg.appendChild(l1);
+                    let l2 = buildElement("line"); setProperties(l2, { x1: "125", y1: "90", x2: "265", y2: "90", stroke: "#e76f51", "stroke-dasharray": "4 4" }); svg.appendChild(l2);
+                }
+            },
+            {
+                q: "Look at this triangle carving. Enter the total number of lines of symmetry it contains.",
+                correct: [0, 0, 1],
+                render: (svg) => {
+                    let p = buildElement("polygon"); setProperties(p, { points: "195,30 135,140 255,140", fill: "rgba(242,204,143,0.2)", stroke: "#f2cc8f", "stroke-width": "3" }); svg.appendChild(p);
+                    let l = buildElement("line"); setProperties(l, { x1: "195", y1: "15", x2: "195", y2: "165", stroke: "#e76f51", "stroke-dasharray": "4 4" }); svg.appendChild(l);
+                }
+            },
+            {
+                q: "This stone plate must undergo a rotation pattern turn of exactly 180 DEGREES. Input the code 1-8-0 below to activate it.",
+                correct: [1, 8, 0],
+                render: (svg) => {
+                    let c = buildElement("circle"); setProperties(c, { cx: "195", cy: "95", r: "35", fill: "none", stroke: "#f2cc8f", "stroke-width": "2" }); svg.appendChild(c);
+                    let path = buildElement("path"); setProperties(path, { d: "M 160 95 A 35 35 0 0 1 230 95", fill: "none", stroke: "#e76f51", "stroke-width": "3" }); svg.appendChild(path);
+                    let head = buildElement("polygon"); setProperties(head, { points: "230,95 225,85 235,85", fill: "#e76f51" }); svg.appendChild(head);
+                    insertGraphicLabel(svg, "195", "155", "HALF FLIP ROTATION", "#e9c46a");
+                }
+            },
+            {
+                q: "A symbol tile shifts right along the hallway. If it moves by exactly 7 units, enter the code 0-0-7.",
+                correct: [0, 0, 7],
+                render: (svg) => {
+                    let r1 = buildElement("rect"); setProperties(r1, { x: "70", y: "65", width: "50", height: "50", fill: "none", stroke: "#f4f1de", "stroke-width": "2" }); svg.appendChild(r1);
+                    let r2 = buildElement("rect"); setProperties(r2, { x: "240", y: "65", width: "50", height: "50", fill: "rgba(233,196,106,0.2)", stroke: "#e9c46a", "stroke-width": "3" }); svg.appendChild(r2);
+                    let arr = buildElement("line"); setProperties(arr, { x1: "135", y1: "90", x2: "220", y2: "90", stroke: "#e76f51", "stroke-width": "3", "stroke-dasharray": "5 3" }); svg.appendChild(arr);
+                    insertGraphicLabel(svg, "175", "130", "TRANSLATION PATTERN", "#e76f51");
+                }
+            },
+            {
+                q: "Examine the un-folded net layout for a 3D tomb structure. How many total flat faces does a complete cube form?",
+                correct: [0, 0, 6],
+                render: (svg) => {
+                    let boxes = [
+                        {x: 175, y: 25}, {x: 175, y: 65}, {x: 175, y: 105}, {x: 175, y: 145},
+                        {x: 135, y: 65}, {x: 215, y: 65}
+                    ];
+                    boxes.forEach(b => {
+                        let r = buildElement("rect"); setProperties(r, { x: b.x, y: b.y, width: "32", height: "32", fill: "rgba(242,204,143,0.1)", stroke: "#f2cc8f", "stroke-width": "2" });
+                        svg.appendChild(r);
+                    });
+                    insertGraphicLabel(svg, "80", "95", "3D Shape Net Grid");
+                }
+            },
+            {
+                q: "A totem piece matches a sharp quarter-turn rotation layout of exactly 90 DEGREES. Input code 0-9-0.",
+                correct: [0, 9, 0],
+                render: (svg) => {
+                    let c = buildElement("circle"); setProperties(c, { cx: "195", cy: "95", r: "35", fill: "none", stroke: "#f2cc8f", "stroke-width": "2" }); svg.appendChild(c);
+                    let path = buildElement("path"); setProperties(path, { d: "M 195 60 A 35 35 0 0 1 230 95", fill: "none", stroke: "#e76f51", "stroke-width": "3" }); svg.appendChild(path);
+                    let head = buildElement("polygon"); setProperties(head, { points: "230,95 225,88 235,88", fill: "#e76f51" }); svg.appendChild(head);
+                    insertGraphicLabel(svg, "195", "155", "QUARTER TURN", "#e9c46a");
+                }
+            }
+        ];
+
+        // Knuth Shuffle Array Utility to Randomize Questions
+        function shuffleMasterPool(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Strict 5-Second Intro Splash Screen Transition Trigger
+        setTimeout(() => {
+            const splash = document.getElementById('branding-splash');
+            if (splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.remove();
+                    document.getElementById('instructions-screen').classList.remove('hidden');
+                }, 500);
+            }
+        }, 5000);
+
+        function startTempleSimulation() {
+            dynamicShufflePool = shuffleMasterPool([...rawPuzzlesDefinition]);
+            
+            document.getElementById('instructions-screen').classList.add('hidden');
+            document.getElementById('gameplay-screen').classList.remove('hidden');
+            loadNextTempleLevel();
+        }
+
+        function loadNextTempleLevel() {
+            if (taskIndex >= dynamicShufflePool.length) {
+                triggerTempleVictory();
+                return;
+            }
+
+            document.getElementById('game-level-tag').innerText = `Chamber: ${String(taskIndex + 1).padStart(2, '0')} / ${dynamicShufflePool.length}`;
+            document.getElementById('game-score-tag').innerText = `Relics: ${scoreCount}`;
+
+            internalStrikeCounter = 0;
+            document.getElementById('strike-dot-1').classList.remove('used');
+            document.getElementById('strike-dot-2').classList.remove('used');
+
+            selectedComboDigits = [0, 0, 0];
+            updateCounterUI();
+
+            const currentPuzzle = dynamicShufflePool[taskIndex];
+            document.getElementById('game-prompt').innerText = currentPuzzle.q;
+
+            const svg = document.getElementById('drawing-svg');
+            svg.innerHTML = '';
+            if (currentPuzzle.render) currentPuzzle.render(svg);
+
+            document.getElementById('game-toast-feedback').innerText = "Change values on the stone pillars to match.";
+            document.getElementById('game-toast-feedback').style.color = "#264653";
+        }
+
+        function stepCounter(columnIdx, directionalOffset) {
+            let val = selectedComboDigits[columnIdx] + directionalOffset;
+            if (val > 9) val = 0;
+            if (val < 0) val = 9;
+            selectedComboDigits[columnIdx] = val;
+            updateCounterUI();
+        }
+
+        function updateCounterUI() {
+            for (let i = 0; i < 3; i++) {
+                document.getElementById(`digit-display-${i}`).innerText = selectedComboDigits[i];
+            }
+        }
+
+        function verifyCarvingCode() {
+            const currentPuzzle = dynamicShufflePool[taskIndex];
+            const toast = document.getElementById('game-toast-feedback');
+
+            const behavesCorrectly = selectedComboDigits[0] === currentPuzzle.correct[0] &&
+                                     selectedComboDigits[1] === currentPuzzle.correct[1] &&
+                                     selectedComboDigits[2] === currentPuzzle.correct[2];
+
+            if (behavesCorrectly) {
+                scoreCount += 50;
+                playAudio(audioCorrect);
+                toast.innerText = "✔ SOLVED: Carving lights up and aligns!";
+                toast.style.color = "#2a9d8f";
+
+                taskIndex++;
+                setTimeout(() => loadNextTempleLevel(), 1500);
+            } else {
+                internalStrikeCounter++;
+                playAudio(audioWrong);
+
+                if (internalStrikeCounter === 1) {
+                    document.getElementById('strike-dot-1').classList.add('used');
+                    toast.innerText = "❌ MISALIGNMENT: Stone remains heavy. Try again!";
+                    toast.style.color = "#e76f51";
+                } else {
+                    document.getElementById('strike-dot-2').classList.add('used');
+                    toast.innerText = `Moving ahead. Correct sequence was: ${currentPuzzle.correct.join(" ")}`;
+                    toast.style.color = "#f4a261";
+
+                    taskIndex++;
+                    setTimeout(() => loadNextTempleLevel(), 3000);
+                }
+            }
+            document.getElementById('game-score-tag').innerText = `Relics: ${scoreCount}`;
+        }
+
+        function triggerTempleVictory() {
+            playAudio(audioWin);
+            document.getElementById('game-level-tag').innerText = "TEMPLE RESTORED";
+            document.getElementById('game-prompt').innerHTML = `
+                <div style="font-size: 1.15rem; color: #e76f51; margin-bottom: 4px;">🏆 TEMPLE APPRENTICE MASTER!</div>
+                <div style="font-size: 0.85rem; color: #2a9d8f; font-weight: 800;">All symmetrical puzzles solved. Total Relics: ${scoreCount}</div>
+            `;
+            document.getElementById('game-toast-feedback').innerText = "The temple glows with magical symmetry energy.";
+            document.getElementById('game-toast-feedback').style.color = "#264653";
+
+            document.getElementById('drawing-svg').parentElement.innerHTML = `
+                <div style="font-size:60px; text-align:center; width:100%; padding-top:45px;">🗿✨🏛️</div>
+            `;
+            
+            const moduleArea = document.querySelector('.counter-component');
+            moduleArea.style.display = "block";
+            moduleArea.innerHTML = `
+                <button class="action-btn" onclick="location.reload()">Explore Another Temple</button>
+            `;
+        }
+    </script>
+</body>
+</html>
