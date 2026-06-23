@@ -33,7 +33,6 @@
             max-width: 100%;
             max-height: 100%;
             aspect-ratio: 16 / 9;
-            cursor: none; /* Hide default cursor to use custom ship steering */
         }
         audio {
             display: none;
@@ -73,7 +72,7 @@ const audioCorrect = document.getElementById('snd-correct');
 const audioWrong = document.getElementById('snd-wrong');
 const audioWin = document.getElementById('snd-win');
 
-// --- DECIMALS LEARNING CURRICULUM DATA ---
+// --- DECIMALS LEARRICULUM DATA ---
 const dataset = [
     { id: 1, problem: "Collect the place value of 5 in 12.35", target: "Hundredths", options: ["Tenths", "Hundredths", "Ones", "Thousandths"], hint: "First spot right is tenths, second spot is..." },
     { id: 2, problem: "Find the simplest fraction form of 0.75", target: "3/4", options: ["75/10", "3/4", "1/2", "5/7"], hint: "Think of 75 cents out of 100 cents (3 quarters)." },
@@ -111,7 +110,7 @@ for (let i = 0; i < 40; i++) {
 
 // --- INITIALIZE GAME SESSION ---
 function initGame() {
-    gameQuestions = [...dataset].sort(() => Math.random() - 0.5).slice(0, 10); // Pick 10 randomized non-repetitive tasks
+    gameQuestions = [...dataset].sort(() => Math.random() - 0.5).slice(0, 10);
     score = 0;
     currentQIndex = 0;
     loadQuestion();
@@ -131,13 +130,12 @@ function loadQuestion() {
 
     const q = gameQuestions[currentQIndex];
     
-    // Distribute answer option asteroids down along the top line evenly
     const laneWidth = 1024 / q.options.length;
     q.options.forEach((opt, idx) => {
         asteroids.push({
             text: opt.toString(),
             x: (laneWidth * idx) + (laneWidth / 2),
-            y: -60 - (Math.random() * 40), // slightly staggered launch
+            y: -60 - (Math.random() * 40),
             r: 45,
             speed: 1.5,
             isCorrect: opt.toString() === q.target.toString()
@@ -163,12 +161,14 @@ function spawnExplosion(x, y, color) {
 
 // --- LOOP RENDERING LOGIC ---
 function drawBranding() {
-    ctx.fillStyle = "#ffffff";
+    // FIX: Changed branding screen background color from white to space theme dark
+    canvas.style.cursor = "default"; 
+    ctx.fillStyle = "#020208";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     if (logoImg.complete && logoImg.naturalWidth !== 0) {
         ctx.drawImage(logoImg, canvas.width / 2 - logoImg.width / 2, canvas.height / 2 - logoImg.height / 2);
     } else {
-        ctx.fillStyle = "#0a0a23";
+        ctx.fillStyle = "#38bdf8";
         ctx.font = "bold 45px Arial";
         ctx.textAlign = "center";
         ctx.fillText("INNOVINE", canvas.width / 2, canvas.height / 2);
@@ -176,10 +176,11 @@ function drawBranding() {
 }
 
 function drawInstructions() {
+    // FIX: Ensure cursor is visible on instructions screen
+    canvas.style.cursor = "default";
     ctx.fillStyle = "#030312";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Dynamic space aesthetic accents
     ctx.fillStyle = "#38bdf8";
     ctx.font = "bold 40px 'Comic Sans MS'";
     ctx.textAlign = "center";
@@ -205,7 +206,6 @@ function drawInstructions() {
 }
 
 function drawHUD() {
-    // Top control banner strip
     ctx.fillStyle = "rgba(10, 10, 35, 0.8)";
     ctx.fillRect(0, 0, canvas.width, 70);
     ctx.strokeStyle = "#38bdf8";
@@ -225,7 +225,9 @@ function drawHUD() {
 }
 
 function drawPlayingState() {
-    // Background Starfield Move Engine
+    // FIX: Hide cursor only during the actual shooter gameplay to make it immersive
+    canvas.style.cursor = "none";
+
     stars.forEach(s => {
         s.y += s.speed;
         if (s.y > canvas.height) s.y = 0;
@@ -236,7 +238,6 @@ function drawPlayingState() {
     drawHUD();
     const q = gameQuestions[currentQIndex];
 
-    // Main HUD Mission Display Panel
     ctx.fillStyle = "#0f172a";
     ctx.beginPath();
     ctx.roundRect(120, 90, 784, 65, 12);
@@ -249,20 +250,16 @@ function drawPlayingState() {
     ctx.textAlign = "center";
     ctx.fillText(q.problem, canvas.width / 2, 130);
 
-    // Multi-Attempt Trigger Prompt Processing Hint
     if (hintActive) {
         ctx.fillStyle = "#f43f5e";
         ctx.font = "bold 18px 'Comic Sans MS'";
         ctx.fillText(`⚠️ Ship Computer Hint: ${q.hint}`, canvas.width / 2, 190);
     }
 
-    // Ship Target Smooth Interpolation Physics
     ship.x += (ship.targetX - ship.x) * 0.15;
     
-    // Render Spaceship Model Vector Geometry
     ctx.save();
     ctx.translate(ship.x, ship.y);
-    // Draw Engine fire pulse
     let thrustGlow = Math.random() * 15 + 10;
     ctx.fillStyle = "#f97316";
     ctx.beginPath();
@@ -270,19 +267,17 @@ function drawPlayingState() {
     ctx.closePath();
     ctx.fill();
 
-    // Main Ship Hull
     ctx.fillStyle = "#38bdf8";
     ctx.beginPath();
-    ctx.moveTo(0, -30); // nose cone
-    ctx.lineTo(-22, 25); // wings left
-    ctx.lineTo(0, 12);  // core rear inward indent
-    ctx.lineTo(22, 25);  // wings right
+    ctx.moveTo(0, -30);
+    ctx.lineTo(-22, 25);
+    ctx.lineTo(0, 12);
+    ctx.lineTo(22, 25);
     ctx.closePath();
     ctx.fill();
     ctx.strokeStyle = "#ffffff";
     ctx.stroke();
 
-    // Cockpit windshield accent
     ctx.fillStyle = "#ffffff";
     ctx.beginPath();
     ctx.moveTo(0, -15); ctx.lineTo(-7, 5); ctx.lineTo(7, 5);
@@ -290,17 +285,14 @@ function drawPlayingState() {
     ctx.fill();
     ctx.restore();
 
-    // Engine Tick Processing for falling Asteroids
     asteroids.forEach(a => {
         a.y += a.speed;
         
-        // Loop position wrapping back to screen top edge if it falls past bounds
         if (a.y - a.r > canvas.height) {
             a.y = -60;
             a.x = Math.random() * (canvas.width - 100) + 50;
         }
 
-        // Vector circle canvas draw for space asteroids
         ctx.fillStyle = "#475569";
         ctx.beginPath();
         ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
@@ -309,19 +301,16 @@ function drawPlayingState() {
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // Print mathematical choices centered on asteroid surface bodies
         ctx.fillStyle = "#ffffff";
         ctx.font = "bold 18px 'Comic Sans MS'";
         ctx.textAlign = "center";
         ctx.fillText(a.text, a.x, a.y + 6);
 
-        // Core Circle Boundary Box Collision Checks
         let dx = a.x - ship.x;
         let dy = a.y - ship.y;
         let gapDistance = Math.sqrt(dx * dx + dy * dy);
 
         if (gapDistance < a.r + ship.r - 5) {
-            // Evaluated Hit Mechanics triggered!
             if (a.isCorrect) {
                 spawnExplosion(a.x, a.y, "#10b981");
                 audioCorrect.currentTime = 0;
@@ -342,13 +331,13 @@ function drawPlayingState() {
 }
 
 function drawFeedbackState() {
-    // Keep space scene executing smoothly underneath transparency mask
+    // FIX: Bring back cursor for the pop-up screens
+    canvas.style.cursor = "default";
     drawPlayingState();
 
     ctx.fillStyle = "rgba(2, 2, 10, 0.8)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Particle execution update processing loops
     for (let i = particles.length - 1; i >= 0; i--) {
         let p = particles[i];
         p.x += p.vx; p.y += p.vy;
@@ -379,14 +368,13 @@ function drawFeedbackState() {
         ctx.fillText("Re-engaging shields... Deflectors resetting!", canvas.width / 2, canvas.height / 2 + 35);
     }
 
-    if (Date.now() - feedbackTimer > 2000) { // Keep display freeze localized to 2 seconds
+    if (Date.now() - feedbackTimer > 2000) {
         if (feedbackType === "correct") {
             currentQIndex++;
             loadQuestion();
             currentState = STATES.PLAYING;
         } else {
             if (attempts >= 2) hintActive = true;
-            // Respawn all tumbling items immediately above viewable viewport
             asteroids.forEach(a => a.y = -60 - (Math.random() * 40));
             currentState = STATES.PLAYING;
         }
@@ -394,6 +382,8 @@ function drawFeedbackState() {
 }
 
 function drawGameOverState() {
+    // FIX: Make cursor visible on game over screen
+    canvas.style.cursor = "default";
     ctx.fillStyle = "#030312";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -411,7 +401,6 @@ function drawGameOverState() {
     ctx.fillStyle = "#38bdf8";
     ctx.fillText(badge, canvas.width / 2, 330);
 
-    // Interactive Core Return Loop Trigger Interface
     ctx.fillStyle = "#6366f1";
     ctx.beginPath();
     ctx.roundRect(canvas.width / 2 - 120, 420, 240, 60, 20);
@@ -429,7 +418,7 @@ function updateAndRender() {
     switch (currentState) {
         case STATES.BRANDING:
             drawBranding();
-            if (Date.now() - stateStartTime > 5000) { // Enforces strict 5-second lock
+            if (Date.now() - stateStartTime > 5000) {
                 currentState = STATES.INSTRUCTIONS;
             }
             break;
@@ -470,7 +459,6 @@ function calculateScaleCoords(e) {
 function processPointerMovement(coords) {
     mouseInputX = coords.x;
     if (currentState === STATES.PLAYING) {
-        // Constrain the ship within the inner field margins safely
         if (mouseInputX < 30) mouseInputX = 30;
         if (mouseInputX > 994) mouseInputX = 994;
         ship.targetX = mouseInputX;
