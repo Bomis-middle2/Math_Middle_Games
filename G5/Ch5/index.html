@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background-color: #022c22;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -38,7 +38,7 @@
             overflow: hidden;
         }
 
-        /* --- STAGE 1: FIXED 5-SECOND LOGO DISPLAY --- */
+        /* --- STAGE 1: CORRECTED NO-FLASH LOGO SPLASH SCREEN --- */
         #hard-splash {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -48,34 +48,47 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 20px;
-            transition: opacity 0.5s ease;
+            gap: 24px;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .splash-logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: pulseSplashLogo 2.5s infinite ease-in-out;
         }
         .splash-img {
-            max-width: 160px;
+            max-width: 140px;
             height: auto;
+            margin-bottom: 10px;
         }
         .splash-title {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 900;
             color: #34d399;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
+            text-shadow: 0 0 12px rgba(52, 211, 153, 0.3);
         }
         .loader-track {
-            width: 180px;
+            width: 200px;
             height: 6px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
             overflow: hidden;
+            border: 1px solid rgba(52, 211, 153, 0.2);
         }
         .loader-fill {
             width: 0%;
             height: 100%;
-            background: #34d399;
-            animation: lockFiveSeconds 5s linear forwards;
+            background: linear-gradient(90deg, #34d399, #059669);
+            animation: lockFiveSeconds 4.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
         @keyframes lockFiveSeconds {
             to { width: 100%; }
+        }
+        @keyframes pulseSplashLogo {
+            0%, 100% { transform: scale(1); opacity: 0.95; }
+            50% { transform: scale(1.03); opacity: 1; }
         }
 
         /* --- OVERLAY INTERFACES --- */
@@ -129,7 +142,7 @@
         }
 
         .question-box {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 800;
             color: #064e3b;
             background: #f0fdf4;
@@ -138,6 +151,10 @@
             border: 2px dashed #059669;
             width: 100%;
             text-align: center;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* --- THE LOCK DIAL INTERFACE --- */
@@ -265,8 +282,10 @@
     <div id="viewport-root">
         
         <div id="hard-splash">
-            <img src="assets/logo.png" class="splash-img" alt="Jungle Crest Logo" onerror="this.style.display='none';">
-            <div class="splash-title">DECIMAL VAULT</div>
+            <div class="splash-logo-container">
+                <img src="assets/logo.png" class="splash-img" alt="Innovine Logo" onerror="this.src='https://placehold.co/140x140/064e3b/34d399?text=INNOVINE';">
+                <div class="splash-title">DECIMAL VAULT</div>
+            </div>
             <div class="loader-track">
                 <div class="loader-fill"></div>
             </div>
@@ -362,10 +381,10 @@
         let taskIndex = 0;
         let internalStrikeCounter = 0;
 
-        // Current dial integer arrays
+        // Current dial integers
         let currentLockState = { whole: 0, t1: 0, t2: 0, t3: 0 };
 
-        // 5-Level Problem Matrix mapping your provided worksheet exactly
+        // 5-Level Problem Matrix
         const puzzleDatabase = {
             1: [
                 { q: "In the number 5.372, look at the tenths place. Set the lock values to isolate just that place value digit (e.g. 0.300).", target: {whole:0, t1:3, t2:0, t3:0} },
@@ -389,15 +408,18 @@
             ]
         };
 
-        // Strict 5-Second Delay Window for Splash Screen 
+        // Timing engine for splash fade
         setTimeout(() => {
             const splash = document.getElementById('hard-splash');
-            if (splash) splash.style.opacity = '0';
-            setTimeout(() => {
-                if (splash && splash.parentNode) splash.parentNode.removeChild(splash);
-                document.getElementById('instructions-screen').classList.remove('hidden');
-            }, 500);
-        }, 5000);
+            if (splash) {
+                splash.style.opacity = '0';
+                splash.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    if (splash && splash.parentNode) splash.parentNode.removeChild(splash);
+                    document.getElementById('instructions-screen').classList.remove('hidden');
+                }, 500);
+            }
+        }, 4600);
 
         function engageSimulationMatrix() {
             document.getElementById('instructions-screen').classList.add('hidden');
@@ -411,27 +433,16 @@
                 return;
             }
 
-            const levelData = puzzleDatabase[currentLevel];
-
-            if (taskIndex >= levelData.length) {
-                currentLevel++;
-                taskIndex = 0;
-                if (currentLevel > 5) {
-                    triggerSanctuaryVictory();
-                    return;
-                }
-            }
-
             const levelTitles = { 1: "Level 1: Places", 2: "Level 2: Fractions", 3: "Level 3: Expansions", 4: "Level 4: Decimal Types", 5: "Level 5: Arithmetic" };
             document.getElementById('game-level-tag').innerText = levelTitles[currentLevel];
             document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
 
-            // Reset UI Parameters per level change
+            // Clean UI parameters
             internalStrikeCounter = 0;
             document.getElementById('strike-dot-1').classList.remove('used');
             document.getElementById('strike-dot-2').classList.remove('used');
 
-            // Reset Tumbler positions
+            // Reset Tumblers
             currentLockState = { whole: 0, t1: 0, t2: 0, t3: 0 };
             updateLockDisplay();
 
@@ -464,7 +475,6 @@
             const item = puzzleDatabase[currentLevel][taskIndex];
             const feedback = document.getElementById('game-toast-feedback');
 
-            // Match all object properties
             const isMatch = currentLockState.whole === item.target.whole &&
                             currentLockState.t1 === item.target.t1 &&
                             currentLockState.t2 === item.target.t2 &&
@@ -472,11 +482,18 @@
 
             if (isMatch) {
                 scoreCount += 20;
-                taskIndex++;
                 feedback.innerText = "🎯 Lock Clicked! Core segment aligned.";
                 feedback.style.color = "#34d399";
                 playAssetSound('correct');
                 document.querySelector('.submit-lever').disabled = true;
+                
+                // Advance counters safely AFTER matching is confirmed
+                taskIndex++;
+                if (taskIndex >= puzzleDatabase[currentLevel].length) {
+                    currentLevel++;
+                    taskIndex = 0;
+                }
+                
                 setTimeout(() => loadActivePuzzleNode(), 1500);
             } else {
                 internalStrikeCounter++;
@@ -495,8 +512,13 @@
                     feedback.innerText = `❌ Lockout! Correct frequency code was: ${answerString}`;
                     feedback.style.color = "#ef4444";
                     
-                    // Force progress to teach the correction
+                    // Advance counters on failure to show correction and avoid infinite loops
                     taskIndex++;
+                    if (taskIndex >= puzzleDatabase[currentLevel].length) {
+                        currentLevel++;
+                        taskIndex = 0;
+                    }
+                    
                     setTimeout(() => loadActivePuzzleNode(), 3500);
                 }
             }
@@ -507,7 +529,7 @@
             playAssetSound('correct');
             document.getElementById('game-level-tag').innerText = "Vault Unlocked!";
             document.getElementById('game-prompt').innerHTML = `
-                <div style="font-size: 1.35rem; margin-bottom: 6px;">🎉 Ancient Temple Decoded!</div>
+                <div style="font-size: 1.25rem; margin-bottom: 6px;">🎉 Ancient Temple Decoded!</div>
                 <div style="font-size: 0.95rem; color: #047857; font-weight: 600;">All decimal locks overridden completely. Great job!</div>
             `;
             document.getElementById('game-toast-feedback').innerText = "Ultimate Mathematical Explorer!";
