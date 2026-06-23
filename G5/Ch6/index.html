@@ -2,276 +2,555 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeoQuest: Grade 5 Geometry Adventure</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Geometry Quest: Laser Reflect Protocol</title>
     <style>
         * {
             box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
             user-select: none;
             -webkit-user-select: none;
         }
+
         body, html {
-            margin: 0;
-            padding: 0;
             width: 100%;
             height: 100%;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Ubuntu', sans-serif;
-            background-color: #2c3e50;
+            background-color: #0f172a;
+            color: #f8fafc;
             overflow: hidden;
-            color: #ffffff;
-        }
-        .screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            transition: opacity 0.5s ease-in-out;
-            z-index: 1;
         }
-        .hidden {
-            display: none !important;
-            opacity: 0;
+
+        #viewport-root {
+            width: 100%;
+            max-width: 440px;
+            height: 100%;
+            max-height: 780px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3);
+            overflow: hidden;
+            border: 1px solid #312e81;
         }
-        /* Logo Screen Styles */
-        #logo-screen {
-            background-color: #ffffff; /* Explicitly white only for corporate branding identity screen */
+
+        /* --- STAGE 1: BRANDING-ONLY LOGO SCREEN (5 SECONDS STRICT) --- */
+        #branding-splash {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .branding-img {
+            max-width: 180px;
+            height: auto;
+        }
+
+        /* --- OVERLAY INTERFACES --- */
+        .stage-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            gap: 16px;
             z-index: 10;
         }
-        #logo-screen img {
-            max-width: 80%;
-            max-height: 60vh;
-            object-fit: contain;
-            animation: pulse 2s infinite alternate;
-        }
-        @keyframes pulse {
-            0% { transform: scale(0.95); }
-            100% { transform: scale(1.05); }
-        }
-        /* Child-friendly backgrounds for gameplay elements */
-        #instruction-screen, #game-screen, #completion-screen {
-            background: linear-gradient(135deg, #2980b9, #6dd5fa, #ffffff);
-            background-attachment: fixed;
-            color: #1a252f;
-        }
-        .panel {
-            background: rgba(255, 255, 255, 0.92);
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid #3b82f6;
             border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
-            text-align: center;
-            max-width: 650px;
-            width: 100%;
-            border: 4px solid #f39c12;
+            padding: 24px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
-        h1 {
-            color: #d35400;
-            margin-top: 0;
-            font-size: 2.2rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-        p {
-            font-size: 1.2rem;
-            line-height: 1.6;
-            color: #2c3e50;
-        }
-        .btn {
-            background-color: #e67e22;
-            color: white;
-            border: none;
-            padding: 15px 35px;
-            font-size: 1.4rem;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 6px #d35400;
-            transition: all 0.1s ease;
-            margin-top: 20px;
-            display: inline-block;
-        }
-        .btn:active {
-            box-shadow: 0 2px #d35400;
-            transform: translateY(4px);
-        }
-        /* Top HUD Navbar */
-        #hud {
-            width: 100%;
-            max-width: 900px;
+
+        .header-panel {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 12px 25px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            border: 3px solid #3498db;
-            font-weight: bold;
-            font-size: 1.1rem;
+            background: rgba(59, 130, 246, 0.2);
+            color: #38bdf8;
+            padding: 12px 18px;
+            border-radius: 16px;
+            border: 1px solid #3b82f6;
         }
-        .hud-item {
-            color: #2c3e50;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .header-title { font-weight: 800; font-size: 0.95rem; letter-spacing: 0.5px; }
+        .header-score { font-weight: 800; font-size: 0.9rem; background: #3b82f6; color: #fff; padding: 4px 14px; border-radius: 20px; }
+
+        .instruction-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            margin-bottom: 20px;
         }
-        /* Main Interactive Game Container */
-        #interactive-container {
-            width: 100%;
-            max-width: 900px;
-            height: 60vh;
-            background: #ffffff;
-            border-radius: 20px;
-            position: relative;
-            border: 5px solid #f1c40f;
-            overflow: hidden;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.15);
-        }
-        #game-canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-        /* Task Instruction Header Banner */
-        #task-bar {
-            background: #f1c40f;
-            color: #2c3e50;
-            width: 100%;
-            padding: 12px;
-            text-align: center;
-            font-size: 1.3rem;
-            font-weight: bold;
-            border-bottom: 3px solid #f39c12;
-        }
-        /* Interactive Feedback Overlay Banner */
-        #feedback-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255,255,255,0.85);
+        .instruction-text ul { margin-left: 18px; margin-top: 8px; }
+        .instruction-text li { margin-bottom: 10px; font-weight: 600; color: #38bdf8; }
+
+        .workspace-area {
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .question-box {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #f8fafc;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 14px;
+            border-radius: 16px;
+            border: 1px solid #475569;
+            width: 100%;
+            text-align: center;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.4;
+        }
+
+        /* --- THE GRID GRAPHICS MATRIX --- */
+        .geometry-canvas-area {
+            width: 100%;
+            height: 160px;
+            background: #020617;
+            border-radius: 16px;
+            border: 1px solid #1e293b;
+            display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 5;
-            font-size: 2.5rem;
-            font-weight: bold;
-            transform: scale(0);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
         }
-        #feedback-overlay.show {
-            transform: scale(1);
+
+        /* --- LASER CONTROL TOLD DIALS (NO PLACE VALUE MARKS) --- */
+        .laser-dial-chassis {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            background: #0f172a;
+            padding: 16px 20px;
+            border-radius: 20px;
+            border: 2px solid #334155;
+            width: 100%;
         }
-        #feedback-overlay.correct { color: #27ae60; }
-        #feedback-overlay.wrong { color: #c0392b; }
-        #hint-text {
-            font-size: 1.2rem;
-            color: #d35400;
-            margin-top: 10px;
-            background: #fff3cd;
-            padding: 8px 15px;
+
+        .dial-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dial-spinner {
+            width: 46px;
+            height: 32px;
+            background: #1e293b;
+            color: #38bdf8;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .dial-spinner:active { 
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        .dial-screen {
+            width: 52px;
+            height: 58px;
+            background: #020617;
+            border: 2px solid #3b82f6;
+            color: #f8fafc;
             border-radius: 10px;
-            border: 1px dashed #ffeba8;
-            max-width: 80%;
-            text-align: center;
+            font-family: monospace, sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
         }
+
+        .chance-counter-tray {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .chance-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ef4444;
+            border: 2px solid #fecaca;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+            transition: all 0.3s;
+        }
+        .chance-dot.used {
+            background: #475569;
+            border-color: #64748b;
+            box-shadow: none;
+        }
+
+        .action-btn {
+            background: #3b82f6;
+            color: #ffffff;
+            border: none;
+            border-bottom: 4px solid #1d4ed8;
+            padding: 14px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            border-radius: 16px;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .action-btn:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+        .action-btn.submit-lever {
+            background: #10b981;
+            border-color: #047857;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .status-banner {
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            min-height: 24px;
+            color: #94a3b8;
+        }
+
+        @keyframes beamPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        .laser-beam-effect {
+            animation: beamPulse 0.2s ease infinite;
+        }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <!-- SCREEN 1: BRANDING LOGO SCREEN -->
-    <div id="logo-screen" class="screen">
-        <img src="assets/logo.png" alt="Innovine Solutions Logo" onerror="this.src='https://placehold.co'">
-    </div>
-
-    <!-- SCREEN 2: INSTRUCTIONS SCREEN -->
-    <div id="instruction-screen" class="screen hidden">
-        <div class="panel">
-            <h1>📐 GeoQuest Lab! 🎒</h1>
-            <p>Welcome, young Mathematician! Explore, sort, and identify points, lines, figures, and angles to complete your geometry quest.</p>
-            <p style="font-weight: bold; color: #2980b9;">How to Play: Read the goal at the top of the canvas, then click on the correct geometric element or shape directly on the workspace.</p>
-            <button class="btn" id="start-btn">Start Adventure 🚀</button>
-        </div>
-    </div>
-
-    <!-- SCREEN 3: GAME SCREEN -->
-    <div id="game-screen" class="screen hidden">
-        <div id="hud">
-            <div class="hud-item">🎯 Score: <span id="score-val">0</span></div>
-            <div class="hud-item">🧩 Task: <span id="progress-val">1/12</span></div>
-            <div class="hud-item">❤️ Attempts Left: <span id="attempts-val">2</span></div>
+    <div id="viewport-root">
+        
+        <div id="branding-splash">
+            <img src="assets/logo.png" class="branding-img" alt="Innovine" onerror="this.src='https://placehold.co/180x60/ffffff/0f172a?text=INNOVINE';">
         </div>
 
-        <div id="interactive-container">
-            <div id="task-bar">Loading task...</div>
-            <canvas id="game-canvas"></canvas>
-            
-            <div id="feedback-overlay">
-                <span id="feedback-text">Correct!</span>
-                <span id="hint-text" class="hidden"></span>
+        <div id="instructions-screen" class="stage-overlay hidden">
+            <div class="glass-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
+                <div class="header-panel">
+                    <div class="header-title">📡 Laser Grid Calibration</div>
+                </div>
+                <div class="instruction-text">
+                    <p>Align the dynamic optical reflectors to match geometric properties and fire the core beam energy:</p>
+                    <ul>
+                        <li>1. Read the system geometric target telemetry data rules carefully.</li>
+                        <li>2. Use the <strong>▲ and ▼ spin vectors</strong> to match the target degrees or item quantities.</li>
+                        <li>3. Press Fire to ignite the line arrays. You have exactly <strong>2 attempts</strong> per segment!</li>
+                    </ul>
+                </div>
+                <button class="action-btn" onclick="igniteGameplaySystem()">Load Laser Protocols</button>
             </div>
         </div>
-    </div>
 
-    <!-- SCREEN 4: COMPLETION SCREEN -->
-    <div id="completion-screen" class="screen hidden">
-        <div class="panel">
-            <h1>🏆 Quest Accomplished! 🎉</h1>
-            <p>Fantastic job! You've mastered Grade 5 geometry basics like an absolute pro.</p>
-            <h2 style="font-size: 2.5rem; color: #27ae60; margin: 15px 0;">Final Score: <span id="final-score">0</span> / 120</h2>
-            <button class="btn" id="restart-btn">Play Again 🔄</button>
+        <div id="gameplay-screen" class="stage-overlay hidden">
+            <div class="header-panel">
+                <div id="game-level-tag" class="header-title">Sector Track 1 / 15</div>
+                <div id="game-score-tag" class="header-score">Score: 0</div>
+            </div>
+
+            <div class="glass-panel workspace-area">
+                <div id="game-prompt" class="question-box">Initializing optical calculation modules...</div>
+                
+                <div class="geometry-canvas-area">
+                    <svg id="laser-vector-hub" width="100%" height="100%" style="overflow: visible;"></svg>
+                </div>
+                
+                <div class="laser-dial-chassis">
+                    <div class="dial-column">
+                        <button class="dial-spinner" onclick="adjustValue(0, 1)">▲</button>
+                        <div class="dial-screen">0</div>
+                        <button class="dial-spinner" onclick="adjustValue(0, -1)">▼</button>
+                    </div>
+                    <div class="dial-column">
+                        <button class="dial-spinner" onclick="adjustValue(1, 1)">▲</button>
+                        <div class="dial-screen">0</div>
+                        <button class="dial-spinner" onclick="adjustValue(1, -1)">▼</button>
+                    </div>
+                    <div class="dial-column">
+                        <button class="dial-spinner" onclick="adjustValue(2, 1)">▲</button>
+                        <div class="dial-screen">0</div>
+                        <button class="dial-spinner" onclick="adjustValue(2, -1)">▼</button>
+                    </div>
+                </div>
+
+                <div class="chance-counter-tray">
+                    <div id="strike-dot-1" class="chance-dot"></div>
+                    <div id="strike-dot-2" class="chance-dot"></div>
+                </div>
+
+                <button class="action-btn submit-lever" onclick="fireLaserReflector()">Engage Beam Core</button>
+            </div>
+
+            <div id="game-toast-feedback" class="status-banner">Tune dials and click engage to test ray alignment!</div>
         </div>
-    </div>
 
-    <!-- Audio Elements -->
-    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
-    <audio id="audio-win" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+    </div>
 
     <script>
-        // DOM Elements
-        const screens = {
-            logo: document.getElementById('logo-screen'),
-            instruction: document.getElementById('instruction-screen'),
-            game: document.getElementById('game-screen'),
-            completion: document.getElementById('completion-screen')
-        };
-        const startBtn = document.getElementById('start-btn');
-        const restartBtn = document.getElementById('restart-btn');
-        const canvas = document.getElementById('game-canvas');
-        const ctx = canvas.getContext('2d');
-        const taskBar = document.getElementById('task-bar');
-        const scoreVal = document.getElementById('score-val');
-        const progressVal = document.getElementById('progress-val');
-        const attemptsVal = document.getElementById('attempts-val');
-        const feedbackOverlay = document.getElementById('feedback-overlay');
-        const feedbackText = document.getElementById('feedback-text');
-        const hintText = document.getElementById('hint-text');
+        // Media Sound Elements
+        const audioCorrect = new Audio('assets/correct.mp3');
+        const audioWrong = new Audio('assets/wrong.mp3');
+        const audioWin = new Audio('assets/freesound_community-claps-44774.mp3');
 
-        // Audio Objects
-        const sounds = {
-            correct: document.getElementById('audio-correct'),
-            wrong: document.getElementById('audio-wrong'),
-            win: document.getElementById('audio-win')
-        };
+        function playSoundNotification(asset) {
+            try {
+                asset.currentTime = 0;
+                asset.play();
+            } catch(e) { console.log("Sound bypassed safely."); }
+        }
 
-        // Game State Variables
-        let score = 0;
-        let currentTaskIndex = 0;
-        let attemptsLeft = 2;
-        let activeElements = [];
-        let canClick = true;
+        // State Engines
+        let scoreCount = 0;
+        let taskIndex = 0;
+        let internalStrikeCounter = 0;
+        let currentDialValues = [0, 0, 0];
 
-        // Task Database (12 Unique Application-Based Interactive Non-MCQ Tasks)
-        const tasksData = [
-            {
-                instruction: "Click on the COLLINEAR points (the line path where 3 points sit perfectly straight together).",
-                hint: "Collinear points are three or more points that lie on a single straight line.",
-                generate: () => [
-                    { id: 'correct', type: 'collinear_set', x1: 150, y1: 150, x2: 450, y2: 150, points: [{x:200,y:150}, {x:300,y:150}, {x:400,y:150}], clickZone: {x:300, y:150, r:160} },
+        // 15 Progressive Core Geometry Tasks
+        const laserPuzzles = [
+            { q: "Count the total number of collinear points located strictly inside the tracking line.", solution: [0, 0, 4], render: (svg) => drawPointsLine(svg, 4) },
+            { q: "Identify the configuration: How many non-collinear points sit completely off the baseline path?", solution: [0, 0, 3], render: (svg) => drawMixedPoints(svg, 3) },
+            { q: "Scan the sector grid layout. How many open paths are currently detected?", solution: [0, 0, 2], render: (svg) => drawPathsSet(svg, true) },
+            { q: "Identify and count all fully closed geometric figures in this matrix loop zone.", solution: [0, 0, 3], render: (svg) => drawPathsSet(svg, false) },
+            { q: "Telemetry analysis: How many definite endpoints are found on a single finite line segment?", solution: [0, 0, 2], render: (svg) => drawSegmentComponent(svg) },
+            { q: "Calculate ray data: How many endpoints are present on an infinite directional ray element?", solution: [0, 0, 1], render: (svg) => drawRayComponent(svg) },
+            { q: "Set the reflector array to create a perfect right angle matching alignment.", solution: [0, 9, 0], render: (svg) => drawBeamAngle(svg, 90) },
+            { q: "Calibrate the laser reflector vector line to create an exact acute path of 45 degrees.", solution: [0, 4, 5], render: (svg) => drawBeamAngle(svg, 45) },
+            { q: "Calibrate the beam node to target an obtuse threshold alignment path at exactly 135 degrees.", solution: [1, 3, 5], render: (svg) => drawBeamAngle(svg, 135) },
+            { q: "An angle reflector matches two right angles added together. Input its total degree value.", solution: [1, 8, 0], render: (svg) => drawBeamAngle(svg, 180) },
+            { q: "Calibrate a sharp acute path that measures exactly 30 degrees less than a right angle frame.", solution: [0, 6, 0], render: (svg) => drawBeamAngle(svg, 60) },
+            { q: "How many tracking lines run perfectly parallel to each other in this system vector segment?", solution: [0, 0, 2], render: (svg) => drawParallelArrays(svg) },
+            { q: "Count the total number of individual crossing lines meeting concurrently at center hub point P.", solution: [0, 0, 3], render: (svg) => drawConcurrentArrays(svg) },
+            { q: "Perpendicular lines cross and lock together at what exact trajectory intersection degree value?", solution: [0, 9, 0], render: (svg) => drawPerpArrays(svg) },
+            { q: "How many single unique intersection meeting hubs exist on this perpendicular line layout?", solution: [0, 0, 1], render: (svg) => drawPerpArrays(svg) }
+        ];
+
+        // Strict 5-Second Branding Screen Fade Out
+        setTimeout(() => {
+            const logoSplash = document.getElementById('branding-splash');
+            if (logoSplash) {
+                logoSplash.style.opacity = '0';
+                setTimeout(() => {
+                    logoSplash.remove();
+                    document.getElementById('instructions-screen').classList.remove('hidden');
+                }, 500);
+            }
+        }, 5000);
+
+        function igniteGameplaySystem() {
+            document.getElementById('instructions-screen').classList.add('hidden');
+            document.getElementById('gameplay-screen').classList.remove('hidden');
+            loadPuzzleLayer();
+        }
+
+        function loadPuzzleLayer() {
+            if (taskIndex >= laserPuzzles.length) {
+                triggerVictoryScreen();
+                return;
+            }
+
+            document.getElementById('game-level-tag').innerText = `Sector Track ${taskIndex + 1} / ${laserPuzzles.length}`;
+            document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
+
+            internalStrikeCounter = 0;
+            document.getElementById('strike-dot-1').classList.remove('used');
+            document.getElementById('strike-dot-2').classList.remove('used');
+
+            currentDialValues = [0, 0, 0];
+            refreshUI();
+
+            const item = laserPuzzles[taskIndex];
+            document.getElementById('game-prompt').innerText = item.q;
+
+            const svgHub = document.getElementById('laser-vector-hub');
+            svgHub.innerHTML = '';
+            if (item.render) item.render(svgHub);
+
+            const toast = document.getElementById('game-toast-feedback');
+            toast.innerText = "Tune dials and click engage to test ray alignment!";
+            toast.style.color = "#94a3b8";
+            document.querySelector('.submit-lever').disabled = false;
+        }
+
+        function adjustValue(col, delta) {
+            currentDialValues[col] += delta;
+            if (currentDialValues[col] > 9) currentDialValues[col] = 0;
+            if (currentDialValues[col] < 0) currentDialValues[col] = 9;
+            refreshUI();
+        }
+
+        function refreshUI() {
+            const screens = document.querySelectorAll('.dial-screen');
+            screens[0].innerText = currentDialValues[0];
+            screens[1].innerText = currentDialValues[1];
+            screens[2].innerText = currentDialValues[2];
+        }
+
+        function fireLaserReflector() {
+            const activePuzzle = laserPuzzles[taskIndex];
+            const toast = document.getElementById('game-toast-feedback');
+            const svgHub = document.getElementById('laser-vector-hub');
+
+            const match = currentDialValues[0] === activePuzzle.solution[0] &&
+                          currentDialValues[1] === activePuzzle.solution[1] &&
+                          currentDialValues[2] === activePuzzle.solution[2];
+
+            if (match) {
+                scoreCount += 20;
+                toast.innerText = "⚡ Core Beam Connected! Alignment Confirmed.";
+                toast.style.color = "#10b981";
+                playSoundNotification(audioCorrect);
+
+                // Add a dynamic glowing success line across the screen to signify completion
+                let beam = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                beam.setAttribute("x1", "0"); beam.setAttribute("y1", "80"); beam.setAttribute("x2", "400"); beam.setAttribute("y2", "80");
+                beam.setAttribute("stroke", "#10b981"); beam.setAttribute("stroke-width", "6");
+                beam.setAttribute("class", "laser-beam-effect");
+                svgHub.appendChild(beam);
+
+                document.querySelector('.submit-lever').disabled = true;
+                taskIndex++;
+                setTimeout(() => loadPuzzleLayer(), 1500);
+            } else {
+                internalStrikeCounter++;
+                playSoundNotification(audioWrong);
+
+                if (internalStrikeCounter === 1) {
+                    document.getElementById('strike-dot-1').classList.add('used');
+                    toast.innerText = "❌ Deflection Error! Laser misfired. 1 attempt remains.";
+                    toast.style.color = "#f43f5e";
+                } else {
+                    document.getElementById('strike-dot-2').classList.add('used');
+                    document.querySelector('.submit-lever').disabled = true;
+
+                    const solutionString = `${activePuzzle.solution[0]}${activePuzzle.solution[1]}${activePuzzle.solution[2]}`;
+                    toast.innerText = `Re-routing matrix! The correct required key index was: ${solutionString}`;
+                    toast.style.color = "#f43f5e";
+
+                    taskIndex++;
+                    setTimeout(() => loadPuzzleLayer(), 3500);
+                }
+            }
+            document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
+        }
+
+        function triggerVictoryScreen() {
+            playSoundNotification(audioWin);
+            document.getElementById('game-level-tag').innerText = "Grid Fully Secured!";
+            document.getElementById('game-prompt').innerHTML = `
+                <div style="font-size: 1.2rem; color: #38bdf8; margin-bottom: 4px;">🏆 Master Laser Engineer!</div>
+                <div style="font-size: 0.9rem; color: #10b981; font-weight: 600;">You navigated and aligned every grid vector module perfectly. Final Score: ${scoreCount}</div>
+            `;
+            document.getElementById('game-toast-feedback').innerText = "All laser optical array vectors stabilized.";
+            document.getElementById('game-toast-feedback').style.color = "#fbbf24";
+
+            document.getElementById('laser-vector-hub').innerHTML = `
+                <text x="50%" y="60%" font-size="44" text-anchor="middle">⚡👑⚡</text>
+            `;
+
+            const btn = document.querySelector('.submit-lever');
+            btn.disabled = false;
+            btn.innerText = "Reboot Laser Core Grid";
+            btn.style.backgroundColor = "#3b82f6";
+            btn.style.borderBottomColor = "#1d4ed8";
+            btn.onclick = () => location.reload();
+        }
+
+        /* --- VECTOR DRAWING COMPONENT UTILITIES --- */
+        function makeSVG(tag) { return document.createElementNS("http://www.w3.org/2000/svg", tag); }
+
+        function drawPointsLine(svg, count) {
+            let l = makeSVG("line"); l.setAttribute("x1", "20"); l.setAttribute("y1", "80"); l.setAttribute("x2", "360"); l.setAttribute("y2", "80"); l.setAttribute("stroke", "#6366f1"); l.setAttribute("stroke-width", "4"); svg.appendChild(l);
+            for(let i=0; i<count; i++) {
+                let c = makeSVG("circle"); c.setAttribute("cx", 50 + i*85); c.setAttribute("cy", "80"); c.setAttribute("r", "6"); c.setAttribute("fill", "#38bdf8"); svg.appendChild(c);
+            }
+        }
+        function drawMixedPoints(svg, outside) {
+            drawPointsLine(svg, 2);
+            for(let i=0; i<outside; i++) {
+                let c = makeSVG("circle"); c.setAttribute("cx", 80 + i*100); c.setAttribute("cy", "35"); c.setAttribute("r", "6"); c.setAttribute("fill", "#f43f5e"); svg.appendChild(c);
+            }
+        }
+        function drawPathsSet(svg, showOpen) {
+            // Open lines
+            let paths = showOpen ? ["M 30,110 L 80,40 L 130,110", "M 150,40 L 190,110"] : ["M 30,110 L 80,40 L 130,110 Z"];
+            // Closed loops
+            let closed = ["M 220,50 L 270,50 L 245,105 Z", "M 300,45 L 350,45 L 350,105 L 300,105 Z"];
+            if(!showOpen) paths = paths.concat(closed);
+            
+            paths.forEach((d, idx) => {
+                let p = makeSVG("path"); p.setAttribute("d", d); p.setAttribute("stroke", idx==0 && showOpen ? "#f43f5e" : "#38bdf8"); p.setAttribute("stroke-width", "3"); p.setAttribute("fill", "none"); svg.appendChild(p);
+            });
+        }
+        function drawSegmentComponent(svg) {
+            let l = makeSVG("line"); l.setAttribute("x1", "100"); l.setAttribute("y1", "80"); l.setAttribute("x2", "280"); l.setAttribute("y2", "80"); l.setAttribute("stroke", "#10b981"); l.setAttribute("stroke-width", "5"); svg.appendChild(l);
+            let c1 = makeSVG("circle"); c1.setAttribute("cx", "100"); c1.setAttribute("cy", "80"); c1.setAttribute("r", "7"); c1.setAttribute("fill", "#f8fafc"); svg.appendChild(c1);
+            let c2 = makeSVG("circle"); c2.setAttribute("cx", "280"); c2.setAttribute("cy", "80"); c2.setAttribute("r", "7"); c2.setAttribute("fill", "#f8fafc"); svg.appendChild(c2);
+        }
+        function drawRayComponent(svg) {
+            let l = makeSVG("line"); l.setAttribute("x1", "100"); l.setAttribute("y1", "80"); l.setAttribute("x2", "270"); l.setAttribute("y2", "80"); l.setAttribute("stroke", "#a855f7"); l.setAttribute("stroke-width", "4"); svg.appendChild(l);
+            let c = makeSVG("circle"); c.setAttribute("cx", "100"); c.setAttribute("cy", "80"); c.setAttribute("r", "7"); c.setAttribute("fill", "#f8fafc"); svg.appendChild(c);
+            let arr = makeSVG("path"); arr.setAttribute("d", "M 265,72 L 282,80 L 265,88 Z"); arr.setAttribute("fill", "#a855f7"); svg.appendChild(arr);
+        }
+        function drawBeamAngle(svg, degrees) {
+            let rad = -degrees * Math.PI / 180;
+            let x2 = 190 + 90 * Math.cos(rad); let y2 = 120 + 90 * Math.sin(rad);
+            let b = makeSVG("line"); b.setAttribute("x1", "190"); b.setAttribute("y1", "120"); b.setAttribute("x2", "300"); b.setAttribute("y2", "120"); b.setAttribute("stroke", "#475569"); b.setAttribute("stroke-width", "4"); svg.appendChild(b);
+            let a = makeSVG("line"); a.setAttribute("x1", "190"); a.setAttribute("y1", "120"); a.setAttribute("x2", x2); a.setAttribute("y2", y2); a.setAttribute("stroke", "#f43f5e"); a.setAttribute("stroke-width", "4"); svg.appendChild(a);
+        }
+        function drawParallelArrays(svg) {
+            for(let i=0; i<2; i++) {
+                let l = makeSVG("line"); l.setAttribute("x1", "60"); l.setAttribute("y1", 55 + i*40); l.setAttribute("x2", "320"); l.setAttribute("y2", 55 + i*40); l.setAttribute("stroke", "#38bdf8"); l.setAttribute("stroke-width", "4"); svg.appendChild(l);
+            }
+        }
+        function drawConcurrentArrays(svg) {
+            for(let i=0; i<3; i++) {
+                let angle = i * 60; let r = angle * Math.PI / 180;
+                let x1 = 190 - 90*Math.cos(r); let y1 = 80 - 90*Math.sin(r);
+                let x2 = 190 + 90*Math.cos(r); let y2 = 80 + 90*Math.sin(r);
+                let l = makeSVG("line"); l.setAttribute("x1", x1); l.setAttribute("y1", y1); l.setAttribute("x2", x2); l.setAttribute("y2", y2); l.setAttribute("stroke", "#fbbf24"); l.setAttribute("stroke-width", "3"); svg.appendChild(l);
+            }
+        }
+        function drawPerpArrays(svg) {
+            let h = makeSVG("line"); h.setAttribute("x1", "60"); h.setAttribute("y1", "80"); h.setAttribute("x2", "320"); h.setAttribute("y2", "80"); h.setAttribute("stroke", "#64748b"); h.setAttribute("stroke-width", "4"); svg.appendChild(h);
+            let v = makeSVG("line"); v.setAttribute("x1", "190"); v.setAttribute("y1", "15"); v.setAttribute("x2", "190"); v.setAttribute("y2", "145"); v.setAttribute("stroke", "#f43f5e"); v.setAttribute("stroke-width", "4"); svg.appendChild(v);
+        }
+    </script>
+</body>
+</html>
