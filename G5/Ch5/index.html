@@ -151,7 +151,7 @@
         }
 
         .question-box {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 700;
             color: #2c7a7b;
             background: #e6fffa;
@@ -160,7 +160,7 @@
             border: 2px dashed #4fd1c5;
             width: 100%;
             text-align: center;
-            min-height: 90px;
+            min-height: 100px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -306,6 +306,7 @@
 
     <div id="viewport-root">
         
+        <!-- STAGE 1: Splash Screen -->
         <div id="hard-splash">
             <div class="splash-logo-container">
                 <img src="assets/logo.png" class="splash-img" alt="Logo" onerror="this.src='https://placehold.co/130x130/b2f5ea/234e52?text=%F0%9F%93%90';">
@@ -317,23 +318,25 @@
             </div>
         </div>
 
+        <!-- STAGE 2: Guide View -->
         <div id="instructions-screen" class="stage-overlay hidden">
             <div class="glass-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
                 <div class="header-panel">
                     <div class="header-title">📝 How to Play</div>
                 </div>
                 <div class="instruction-text">
-                    <p>Welcome! Solve the decimal puzzle on each level by rolling the place value boxes to the right numbers:</p>
+                    <p>Welcome! Solve the randomized decimal puzzle on each level by rolling the place value boxes to the correct answers:</p>
                     <ul>
                         <li>1. Use the soft blue <strong>▲ and ▼ arrows</strong> above and below each box to change the digit.</li>
-                        <li>2. Match your number to answer the question exactly!</li>
-                        <li>3. Be careful: You have <strong>2 tries per question</strong> before the game moves on!</li>
+                        <li>2. Read each problem carefully to answer exactly.</li>
+                        <li>3. Be careful: You have <strong>2 tries per question</strong> before the game automatically moves forward!</li>
                     </ul>
                 </div>
-                <button class="action-btn" onclick="engageSimulationMatrix()">Start Math Challenge</button>
+                <button class="action-btn" onclick="engageSimulationMatrix()">Start Random Challenge</button>
             </div>
         </div>
 
+        <!-- STAGE 3: Core Gameplay View -->
         <div id="gameplay-screen" class="stage-overlay hidden">
             <div class="header-panel">
                 <div id="game-level-tag" class="header-title">Level 1: Places</div>
@@ -341,9 +344,12 @@
             </div>
 
             <div class="glass-panel workspace-area">
+                <!-- Question Prompt -->
                 <div id="game-prompt" class="question-box">Loading question...</div>
                 
+                <!-- Place Value Roller Board -->
                 <div class="lock-container">
+                    <!-- Ones Column -->
                     <div class="dial-column">
                         <div class="column-label">Ones</div>
                         <button class="dial-spinner" onclick="spinDigit('whole', 1)">▲</button>
@@ -353,6 +359,7 @@
                     
                     <div class="decimal-separator">.</div>
                     
+                    <!-- Tenths Column -->
                     <div class="dial-column">
                         <div class="column-label">Tenths</div>
                         <button class="dial-spinner" onclick="spinDigit('t1', 1)">▲</button>
@@ -360,6 +367,7 @@
                         <button class="dial-spinner" onclick="spinDigit('t1', -1)">▼</button>
                     </div>
                     
+                    <!-- Hundredths Column -->
                     <div class="dial-column">
                         <div class="column-label">Hund.</div>
                         <button class="dial-spinner" onclick="spinDigit('t2', 1)">▲</button>
@@ -367,6 +375,7 @@
                         <button class="dial-spinner" onclick="spinDigit('t2', -1)">▼</button>
                     </div>
                     
+                    <!-- Thousandths Column -->
                     <div class="dial-column">
                         <div class="column-label">Thous.</div>
                         <button class="dial-spinner" onclick="spinDigit('t3', 1)">▲</button>
@@ -375,6 +384,7 @@
                     </div>
                 </div>
 
+                <!-- Two-Chance Track Dots -->
                 <div class="chance-counter-tray">
                     <div id="strike-dot-1" class="chance-dot"></div>
                     <div id="strike-dot-2" class="chance-dot"></div>
@@ -413,29 +423,53 @@
 
         let currentLockState = { whole: 0, t1: 0, t2: 0, t3: 0 };
 
-        // Problem Matrix mapped precisely
+        // EXPANDED Problem Matrix
         const puzzleDatabase = {
             1: [
                 { q: "In the number 5.372, look at the tenths place. Set the boxes to show just that place value (Example: 0.300).", target: {whole:0, t1:3, t2:0, t3:0} },
-                { q: "In the number 5.372, show just the value of the digit located in the hundredths place.", target: {whole:0, t1:0, t2:7, t3:0} }
+                { q: "In the number 5.372, show just the value of the digit located in the hundredths place.", target: {whole:0, t1:0, t2:7, t3:0} },
+                { q: "What is the value of the 9 in the decimal number 2.049?", target: {whole:0, t1:0, t2:0, t3:9} },
+                { q: "Identify the value of the digit in the ones place for the number 7.813.", target: {whole:7, t1:0, t2:0, t3:0} }
             ],
             2: [
                 { q: "Convert the fraction 3/4 into its decimal equivalent.", target: {whole:0, t1:7, t2:5, t3:0} },
-                { q: "Convert the fraction 2/5 into its decimal form.", target: {whole:0, t1:4, t2:0, t3:0} }
+                { q: "Convert the fraction 2/5 into its decimal form.", target: {whole:0, t1:4, t2:0, t3:0} },
+                { q: "Write the fraction 1/8 as a three-place decimal value.", target: {whole:0, t1:1, t2:2, t3:5} },
+                { q: "Convert the mixed number 3 and 1/2 into its decimal equivalent.", target: {whole:3, t1:5, t2:0, t3:0} }
             ],
             3: [
                 { q: "Add this expanded expression together: 5 + 0.3 + 0.07 + 0.002", target: {whole:5, t1:3, t2:7, t3:2} },
-                { q: "Solve for the missing number: 0.52 = 0.5 + [ ? ]", target: {whole:0, t1:0, t2:2, t3:0} }
+                { q: "Solve for the missing number: 0.52 = 0.5 + [ ? ]", target: {whole:0, t1:0, t2:2, t3:0} },
+                { q: "Put together this expanded form value: 0.9 + 0.004", target: {whole:0, t1:9, t2:0, t3:4} },
+                { q: "Find the total sum: 1 + 0.05 + 0.008", target: {whole:1, t1:0, t2:5, t3:8} }
             ],
             4: [
                 { q: "Convert the decimal value 0.5 into an equivalent form containing 3 decimal places.", target: {whole:0, t1:5, t2:0, t3:0} },
-                { q: "Find the size difference between the decimals 3.67 and 2.50.", target: {whole:1, t1:1, t2:7, t3:0} }
+                { q: "Find the size difference between the decimals 3.67 and 2.50.", target: {whole:1, t1:1, t2:7, t3:0} },
+                { q: "Round the decimal number 0.473 to the nearest tenth place value.", target: {whole:0, t1:5, t2:0, t3:0} },
+                { q: "Round the decimal number 1.258 to the nearest hundredth place.", target: {whole:1, t1:2, t2:6, t3:0} }
             ],
             5: [
                 { q: "Solve the decimal addition problem: 1.2 + 2.35 (Tip: Align your place values!)", target: {whole:3, t1:5, t2:5, t3:0} },
-                { q: "Solve the decimal multiplication problem: 0.3 × 0.2", target: {whole:0, t1:0, t2:6, t3:0} }
+                { q: "Solve the decimal multiplication problem: 0.3 × 0.2", target: {whole:0, t1:0, t2:6, t3:0} },
+                { q: "Subtract these two decimals: 4.5 - 1.25", target: {whole:3, t1:2, t2:5, t3:0} },
+                { q: "A string is 0.8 meters long. If you cut it exactly in half, how long is each piece?", target: {whole:0, t1:4, t2:0, t3:0} }
             ]
         };
+
+        // Fisher-Yates Randomizer Utility
+        function randomizeDatabaseNodes() {
+            for (let level in puzzleDatabase) {
+                const array = puzzleDatabase[level];
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+        }
+
+        // Trigger Randomization on startup
+        randomizeDatabaseNodes();
 
         // Splash controller
         setTimeout(() => {
@@ -462,7 +496,13 @@
                 return;
             }
 
-            const levelTitles = { 1: "Level 1: Place Values", 2: "Level 2: Fractions to Decimals", 3: "Level 3: Expanded Form", 4: "Level 4: Comparing Decimals", 5: "Level 5: Math Arithmetic" };
+            const levelTitles = { 
+                1: "Level 1: Place Values", 
+                2: "Level 2: Fractions to Decimals", 
+                3: "Level 3: Expanded Form", 
+                4: "Level 4: Comparing & Rounding", 
+                5: "Level 5: Math Arithmetic" 
+            };
             document.getElementById('game-level-tag').innerText = levelTitles[currentLevel];
             document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
 
@@ -555,9 +595,9 @@
             document.getElementById('game-level-tag').innerText = "Game Completed!";
             document.getElementById('game-prompt').innerHTML = `
                 <div style="font-size: 1.3rem; margin-bottom: 6px; color: #2c7a7b;">🏆 Amazing Job!</div>
-                <div style="font-size: 0.95rem; color: #2f855a; font-weight: 600;">You solved all the decimal problems perfectly!</div>
+                <div style="font-size: 0.95rem; color: #2f855a; font-weight: 600;">You solved all the randomized decimal sets!</div>
             `;
-            document.getElementById('game-toast-feedback').innerText = "You are a Decimal Master!";
+            document.getElementById('game-toast-feedback').innerText = "You are a True Decimal Master!";
             document.getElementById('game-toast-feedback').style.color = "#dd6b20";
             
             const lever = document.querySelector('.submit-lever');
