@@ -140,7 +140,7 @@
             text-align: center;
         }
 
-        /* --- THE NEW NON-MCQ LOCK DIAL INTERFACE --- */
+        /* --- THE LOCK DIAL INTERFACE --- */
         .lock-container {
             display: flex;
             align-items: center;
@@ -264,7 +264,6 @@
 
     <div id="viewport-root">
         
-        <!-- STAGE 1: Pure 5-Second Asset Splash Screen -->
         <div id="hard-splash">
             <img src="assets/logo.png" class="splash-img" alt="Jungle Crest Logo" onerror="this.style.display='none';">
             <div class="splash-title">DECIMAL VAULT</div>
@@ -273,7 +272,6 @@
             </div>
         </div>
 
-        <!-- STAGE 2: Interactive Quest Rules Guide -->
         <div id="instructions-screen" class="stage-overlay hidden">
             <div class="glass-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 12px;">
                 <div class="header-panel" style="background: #047857;">
@@ -291,7 +289,6 @@
             </div>
         </div>
 
-        <!-- STAGE 3: Core Mechanical Vault Gameplay View -->
         <div id="gameplay-screen" class="stage-overlay hidden">
             <div class="header-panel">
                 <div id="game-level-tag" class="header-title">Level 1: Places</div>
@@ -299,12 +296,9 @@
             </div>
 
             <div class="glass-panel workspace-area">
-                <!-- Question Prompt -->
                 <div id="game-prompt" class="question-box">Decoding encryption parameters...</div>
                 
-                <!-- Physical Custom Cylinder Lock Assembly -->
                 <div class="lock-container">
-                    <!-- Whole Number Column -->
                     <div class="dial-column">
                         <button class="dial-spinner" onclick="spinDigit('whole', 1)">▲</button>
                         <div id="digit-whole" class="dial-screen">0</div>
@@ -313,21 +307,18 @@
                     
                     <div class="decimal-separator">.</div>
                     
-                    <!-- Tenths Column -->
                     <div class="dial-column">
                         <button class="dial-spinner" onclick="spinDigit('t1', 1)">▲</button>
                         <div id="digit-t1" class="dial-screen">0</div>
                         <button class="dial-spinner" onclick="spinDigit('t1', -1)">▼</button>
                     </div>
                     
-                    <!-- Hundredths Column -->
                     <div class="dial-column">
                         <button class="dial-spinner" onclick="spinDigit('t2', 1)">▲</button>
                         <div id="digit-t2" class="dial-screen">0</div>
                         <button class="dial-spinner" onclick="spinDigit('t2', -1)">▼</button>
                     </div>
                     
-                    <!-- Thousandths Column -->
                     <div class="dial-column">
                         <button class="dial-spinner" onclick="spinDigit('t3', 1)">▲</button>
                         <div id="digit-t3" class="dial-screen">0</div>
@@ -335,7 +326,6 @@
                     </div>
                 </div>
 
-                <!-- Two-Chance Visual Track Dots -->
                 <div class="chance-counter-tray">
                     <div id="strike-dot-1" class="chance-dot"></div>
                     <div id="strike-dot-2" class="chance-dot"></div>
@@ -416,6 +406,11 @@
         }
 
         function loadActivePuzzleNode() {
+            if (currentLevel > 5) {
+                triggerSanctuaryVictory();
+                return;
+            }
+
             const levelData = puzzleDatabase[currentLevel];
 
             if (taskIndex >= levelData.length) {
@@ -440,7 +435,7 @@
             currentLockState = { whole: 0, t1: 0, t2: 0, t3: 0 };
             updateLockDisplay();
 
-            const item = levelData[taskIndex];
+            const item = puzzleDatabase[currentLevel][taskIndex];
             document.getElementById('game-prompt').innerText = item.q;
 
             const feedback = document.getElementById('game-toast-feedback');
