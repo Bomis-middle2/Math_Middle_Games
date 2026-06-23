@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Deep Space Cargo Bay: Volume Logistics</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #05070a;
+            color: #00ffcc;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #viewport-root {
+            width: 100%;
+            max-width: 440px;
+            height: 100%;
+            max-height: 780px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: #0d131a;
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.3);
+            overflow: hidden;
+            border: 3px solid #00ffcc;
+        }
+
+        /* --- STAGE 1: BRANDING SPLASH SCREEN (5 SECONDS STRICT) --- */
+        #branding-splash {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .branding-img {
+            max-width: 180px;
+            height: auto;
+        }
+
+        /* --- STAGE MODAL OVERLAYS --- */
+        .stage-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 16px;
+            z-index: 10;
+        }
+
+        .freighter-panel {
+            background: rgba(16, 26, 36, 0.95);
+            border: 2px solid #00ffcc;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.1);
+        }
+
+        .header-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #111e29;
+            color: #00ffcc;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid #00a680;
+        }
+        .header-title { font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; }
+        .header-score { font-weight: 800; font-size: 0.85rem; background: #00a680; color: #000; padding: 4px 12px; border-radius: 4px; }
+
+        .instruction-text {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #8ab4ae;
+        }
+        .instruction-text ul { margin-left: 18px; margin-top: 10px; }
+        .instruction-text li { margin-bottom: 12px; font-weight: bold; color: #00ffcc; }
+
+        .workspace-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            background: #090e14;
+            border-radius: 8px;
+            border: 1px solid #111e29;
+            padding: 14px;
+        }
+
+        .manifest-scroll-box {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #a3e6da;
+            background: #101921;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #00a680;
+            width: 100%;
+            text-align: center;
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.4;
+        }
+
+        /* --- VISUAL GRAPHICS DRAWING FRAME --- */
+        .vector-canvas-box {
+            width: 100%;
+            height: 170px;
+            background: #05080c;
+            border-radius: 8px;
+            border: 1px solid #172a3a;
+            position: relative;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- DIGITAL STEPS COUNTER ASSEMBLY --- */
+        .logistics-counter-chassis {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            background: #111e29;
+            border: 1px solid #00a680;
+            padding: 10px 14px;
+            border-radius: 8px;
+        }
+
+        .counter-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .counter-btn {
+            background: #172a3a;
+            border: 1px solid #00a680;
+            color: #00ffcc;
+            font-size: 1rem;
+            padding: 2px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .counter-btn:active { background: #00ffcc; color: #000; }
+
+        .counter-display-window {
+            width: 38px;
+            height: 44px;
+            background: #05080c;
+            border: 1px solid #00a680;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #00ffcc;
+            text-shadow: 0 0 5px #00ffcc;
+        }
+
+        .unit-lbl {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #8ab4ae;
+            margin-left: 8px;
+            align-self: center;
+        }
+
+        /* --- CORE SYSTEM INTEGRITY LIGHTS --- */
+        .strike-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .strike-cell {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff3366;
+            box-shadow: 0 0 8px #ff3366;
+            transition: all 0.3s ease;
+        }
+        .strike-cell.used {
+            background: #1a232d;
+            box-shadow: none;
+        }
+
+        .action-btn {
+            background: #00ffcc;
+            color: #05070a;
+            border: none;
+            border-bottom: 4px solid #00a680;
+            padding: 14px;
+            font-size: 0.95rem;
+            font-weight: 900;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .action-btn:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+
+        .status-banner {
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            min-height: 22px;
+            color: #5f837e;
+            letter-spacing: 0.5px;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div id="viewport-root">
+        
+        <!-- STAGE 1: Dynamic Splash Placeholder Screen -->
+        <div id="branding-splash">
+            <img src="assets/logo.png" class="branding-img" alt="Innovine Logo" onerror="this.src='https://placehold.co/180x60/ffffff/05070a?text=INNOVINE';">
+        </div>
+
+        <!-- STAGE 2: Game Mission Briefing Overlay -->
+        <div id="instructions-screen" class="stage-overlay hidden">
+            <div class="freighter-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
+                <div class="header-panel">
+                    <div class="header-title">🛸 Cargo Bay Logistics Control</div>
+                </div>
+                <div class="instruction-text">
+                    <p>Load master freight vectors accurately by validating volumetric space values on the cargo bay scales:</p>
+                    <ul>
+                        <li>1. Evaluate the object's cubic space, capacity, or liquid metric properties.</li>
+                        <li>2. Use formula: $Volume = Length \times Width \times Height$.</li>
+                        <li>3. Set your numeric sequence and engage the loader matrix.</li>
+                    </ul>
+                </div>
+                <button class="action-btn" onclick="initializeFreighterSystem()">Engage Systems</button>
+            </div>
+        </div>
+
+        <!-- STAGE 3: Active Simulation Matrix Panel -->
+        <div id="gameplay-screen" class="stage-overlay hidden">
+            <div class="header-panel">
+                <div id="game-level-tag" class="header-title">Bay Sector: 01 / 06</div>
+                <div id="game-score-tag" class="header-score">Data: 0 XP</div>
+            </div>
+
+            <div class="workspace-area">
+                <!-- Data Manifest Specification Readout -->
+                <div id="game-prompt" class="manifest-scroll-box">Accessing freighter flight logs...</div>
+                
+                <!-- Dynamic SVG Geometry Rendering Box -->
+                <div class="vector-canvas-box">
+                    <svg id="drawing-svg" width="100%" height="100%" style="position:absolute; pointer-events:none;"></svg>
+                </div>
+
+                <!-- Input Steppers Tuning Module -->
+                <div class="logistics-counter-chassis">
+                    <div class="counter-column">
+                        <button class="counter-btn" onclick="tuneDigit(0, 1)">▲</button>
+                        <div id="digit-display-0" class="counter-display-window">0</div>
+                        <button class="counter-btn" onclick="tuneDigit(0, -1)">▼</button>
+                    </div>
+                    <div class="counter-column">
+                        <button class="counter-btn" onclick="tuneDigit(1, 1)">▲</button>
+                        <div id="digit-display-1" class="counter-display-window">0</div>
+                        <button class="counter-btn" onclick="tuneDigit(1, -1)">▼</button>
+                    </div>
+                    <div class="counter-column">
+                        <button class="counter-btn" onclick="tuneDigit(2, 1)">▲</button>
+                        <div id="digit-display-2" class="counter-display-window">0</div>
+                        <button class="counter-btn" onclick="tuneDigit(2, -1)">▼</button>
+                    </div>
+                    <div class="counter-column">
+                        <button class="counter-btn" onclick="tuneDigit(3, 1)">▲</button>
+                        <div id="digit-display-3" class="counter-display-window">0</div>
+                        <button class="counter-btn" onclick="tuneDigit(3, -1)">▼</button>
+                    </div>
+                    
+                    <div id="ui-unit-label" class="unit-lbl">cm³</div>
+                </div>
+
+                <!-- System Core Safety Fault Lights -->
+                <div class="strike-container">
+                    <div id="strike-dot-1" class="strike-cell"></div>
+                    <div id="strike-dot-2" class="strike-cell"></div>
+                </div>
+
+                <button class="action-btn" onclick="validateCargoManifest()">Activate Load Matrix</button>
+            </div>
+
+            <div id="game-toast-feedback" class="status-banner">Ready for payload measurements calibration.</div>
+        </div>
+
+    </div>
+
+    <script>
+        // Interactive Sound Elements Register
+        const audioCorrect = new Audio('assets/correct.mp3');
+        const audioWrong = new Audio('assets/wrong.mp3');
+        const audioWin = new Audio('assets/freesound_community-claps-44774.mp3');
+
+        function fireAudioTrack(track) {
+            try {
+                track.currentTime = 0;
+                track.play();
+            } catch(e) { console.log("Audio pipeline safely handled."); }
+        }
+
+        // Internal Game State Tracking Registers
+        let accumulatedXP = 0;
+        let currentLevelIdx = 0;
+        let manifestOverloadStrikes = 0;
+        let currentDigitArrays = [0, 0, 0, 0];
+        let finalizedRandomizedPool = [];
+
+        function generateSVGNode(type) { return document.createElementNS("http://www.w3.org/2000/svg", type); }
+        
+        function appendAttributes(node, obj) {
+            for (let prop in obj) { node.setAttribute(prop, obj[prop]); }
+            return node;
+        }
+
+        // Comprehensive Dataset Mapping directly to image_33f888.png Outcomes
+        const masterVolumeScenarios = [
+            {
+                q: "[Outcome: Cube Volume] An isometric storage cube has side dimensions equal to exactly 4 cm. Compute its total space volume capacity.",
+                correct: [0, 0, 6, 4],
+                unit: "cm³",
+                render: (svg) => {
+                    // Render 3D Wireframe Box Concept
+                    let p1 = generateSVGNode("polygon"); appendAttributes(p1, { points: "140,90 190,90 190,140 140,140", fill: "rgba(0, 255, 204, 0.15)", stroke: "#00ffcc", "stroke-width": "2" }); svg.appendChild(p1);
+                    let p2 = generateSVGNode("polygon"); appendAttributes(p2, { points: "160,70 210,70 210,120 160,120", fill: "none", stroke: "#00ffcc", "stroke-width": "1", "stroke-dasharray": "3 2" }); svg.appendChild(p2);
+                    let l1 = generateSVGNode("line"); appendAttributes(l1, { x1: "140", y1: "90", x2: "160", y2: "70", stroke: "#00ffcc", "stroke-width": "1.5" }); svg.appendChild(l1);
+                    let l2 = generateSVGNode("line"); appendAttributes(l2, { x1: "190", y1: "90", x2: "210", y2: "70", stroke: "#00ffcc", "stroke-width": "1.5" }); svg.appendChild(l2);
+                    let l3 = generateSVGNode("line"); appendAttributes(l3, { x1: "190", y1: "140", x2: "210", y2: "120", stroke: "#00ffcc", "stroke-width": "1.5" }); svg.appendChild(l3);
+                    let l4 = generateSVGNode("line"); appendAttributes(l4, { x1: "140", y1: "140", x2: "160", y2: "120", stroke: "#00ffcc", "stroke-width": "1.5" }); svg.appendChild(l4);
+                    
+                    let txt = generateSVGNode("text"); appendAttributes(txt, { x: "165", y: "158", fill: "#8ab4ae", "font-size": "11", "text-anchor": "middle" });
+                    txt.textContent = "Each Side = 4 cm"; svg.appendChild(txt);
+                }
+            },
+            {
+                q: "[Outcome: Cuboid Volume] Determine the exact space occupied by a container unit measuring 6 meters long, 3 meters wide, and 2 meters tall.",
+                correct: [0, 0, 3, 6],
+                unit: "m³",
+                render: (svg) => {
+                    let box = generateSVGNode("rect"); appendAttributes(box, { x: "110", y: "60", width: "130", height: "70", fill: "rgba(0, 166, 128, 0.1)", stroke: "#00a680", "stroke-width": "2.5" }); svg.appendChild(box);
+                    let label = generateSVGNode("text"); appendAttributes(label, { x: "175", y: "100", fill: "#00ffcc", "font-size": "12", "text-anchor": "middle" });
+                    label.textContent = "6m x 3m x 2m"; svg.appendChild(label);
+                }
+            },
+            {
+                q: "[Outcome: Volume Conversions] A high-pressure cell holds exactly 5 liters of radioactive liquid fuel. Convert this volume into millilitres (ml).",
+                correct: [5, 0, 0, 0],
+                unit: "ml",
+                render: (svg) => {
+                    let outer = generateSVGNode("rect"); appendAttributes(outer, { x: "135", y: "40", width: "70", height: "100", rx: "10", fill: "rgba(239, 51, 102, 0.05)", stroke: "#ff3366", "stroke-width": "2" }); svg.appendChild(outer);
+                    let core = generateSVGNode("rect"); appendAttributes(core, { x: "139", y: "70", width: "62", height: "66", rx: "6", fill: "rgba(239, 51, 102, 0.4)" }); svg.appendChild(core);
+                    let lbl = generateSVGNode("text"); appendAttributes(lbl, { x: "170", y: "105", fill: "#fff", "font-size": "11", "font-weight": "bold", "text-anchor": "middle" });
+                    lbl.textContent = "5 LITERS"; svg.appendChild(lbl);
+                }
+            },
+            {
+                q: "[Outcome: Concept Interpretation] Volume is defined as the total amount of space filled by an object. If a base structure takes up exactly 125 units of space, input 0-1-2-5 below.",
+                correct: [0, 1, 2, 5],
+                unit: "units",
+                render: (svg) => {
+                    for (let x = 0; x < 3; x++) {
+                        for (let y = 0; y < 2; y++) {
+                            let block = generateSVGNode("rect"); appendAttributes(block, { x: 130 + (x * 30), y: 70 + (y * 30), width: "24", height: "24", fill: "#111e29", stroke: "#00ffcc", "stroke-width": "1" });
+                            svg.appendChild(block);
+                        }
+                    }
+                }
+            },
+            {
+                q: "[Outcome: Real-life Situations] A primary supply vessel needs to fill a freshwater container. If the container requires 2400 ml of fluid, how many liters (L) and ml does it represent? Input the value in total millilitres (2400).",
+                correct: [2, 4, 0, 0],
+                unit: "ml",
+                render: (svg) => {
+                    let line = generateSVGNode("path"); appendAttributes(line, { d: "M 90 110 Q 170 40 250 110", fill: "none", stroke: "#00ffcc", "stroke-width": "2", "stroke-dasharray": "4 4" }); svg.appendChild(line);
+                    let label = generateSVGNode("text"); appendAttributes(label, { x: "170", y: "135", fill: "#8ab4ae", "font-size": "12", "text-anchor": "middle" });
+                    label.textContent = "Capacity Target: 2400 ml"; svg.appendChild(label);
+                }
+            },
+            {
+                q: "[Outcome: Word Problems] A shipping terminal stores cuboid modules of length 10m, width 2m, and height 4m. What is the container's final volume payload status?",
+                correct: [0, 0, 8, 0],
+                unit: "m³",
+                render: (svg) => {
+                    let panel = generateSVGNode("rect"); appendAttributes(panel, { x: "90", y: "55", width: "160", height: "70", fill: "rgba(0,255,204,0.05)", stroke: "#00ffcc", "stroke-width": "1.5" }); svg.appendChild(panel);
+                    let l1 = generateSVGNode("text"); appendAttributes(l1, { x: "170", y: "85", fill: "#fff", "font-size": "11", "text-anchor": "middle" });
+                    l1.textContent = "Length: 10m | Width: 2m"; svg.appendChild(l1);
+                    let l2 = generateSVGNode("text"); appendAttributes(l2, { x: "170", y: "105", fill: "#00ffcc", "font-size": "11", "text-anchor": "middle" });
+                    l2.textContent = "Height: 4m"; svg.appendChild(l2);
+                }
+            }
+        ];
+
+        // Fisher-Yates Array Shuffling Protocol
+        function secureShuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Strict 5-Second Brand Window Hold Setup
+        setTimeout(() => {
+            const element = document.getElementById('branding-splash');
+            if (element) {
+                element.style.opacity = '0';
+                setTimeout(() => {
+                    element.remove();
+                    document.getElementById('instructions-screen').classList.remove('hidden');
+                }, 500);
+            }
+        }, 5000);
+
+        function initializeFreighterSystem() {
+            finalizedRandomizedPool = secureShuffleArray([...masterVolumeScenarios]);
+            document.getElementById('instructions-screen').classList.add('hidden');
+            document.getElementById('gameplay-screen').classList.remove('hidden');
+            loadBaySectorConfiguration();
+        }
+
+        function loadBaySectorConfiguration() {
+            if (currentLevelIdx >= finalizedRandomizedPool.length) {
+                triggerSimulationComplete();
+                return;
+            }
+
+            document.getElementById('game-level-tag').innerText = `Bay Sector: ${String(currentLevelIdx + 1).padStart(2, '0')} / ${finalizedRandomizedPool.length}`;
+            document.getElementById('game-score-tag').innerText = `Data: ${accumulatedXP} XP`;
+
+            manifestOverloadStrikes = 0;
+            document.getElementById('strike-dot-1').classList.remove('used');
+            document.getElementById('strike-dot-2').classList.remove('used');
+
+            currentDigitArrays = [0, 0, 0, 0];
+            refreshCounterUI();
+
+            const task = finalizedRandomizedPool[currentLevelIdx];
+            document.getElementById('game-prompt').innerText = task.q;
+            document.getElementById('ui-unit-label').innerText = task.unit;
+
+            const svgFrame = document.getElementById('drawing-svg');
+            svgFrame.innerHTML = '';
+            if (task.render) task.render(svgFrame);
+
+            document.getElementById('game-toast-feedback').innerText = "Ready for payload measurements calibration.";
+            document.getElementById('game-toast-feedback').style.color = "#5f837e";
+        }
+
+        function tuneDigit(colIdx, increment) {
+            let value = currentDigitArrays[colIdx] + increment;
+            if (value > 9) value = 0;
+            if (value < 0) value = 9;
+            currentDigitArrays[colIdx] = value;
+            refreshCounterUI();
+        }
+
+        function refreshCounterUI() {
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`digit-display-${i}`).innerText = currentDigitArrays[i];
+            }
+        }
+
+        function validateCargoManifest() {
+            const activeTask = finalizedRandomizedPool[currentLevelIdx];
+            const banner = document.getElementById('game-toast-feedback');
+
+            let verificationPass = true;
+            for (let i = 0; i < 4; i++) {
+                if (currentDigitArrays[i] !== activeTask.correct[i]) {
+                    verificationPass = false;
+                    break;
+                }
+            }
+
+            if (verificationPass) {
+                accumulatedXP += 100;
+                fireAudioTrack(audioCorrect);
+                banner.innerText = "✔ CRITICAL: Volumetric capacity verified. Load secure!";
+                banner.style.color = "#00ffcc";
+
+                currentLevelIdx++;
+                setTimeout(() => loadBaySectorConfiguration(), 1600);
+            } else {
+                manifestOverloadStrikes++;
+                fireAudioTrack(audioWrong);
+
+                if (manifestOverloadStrikes === 1) {
+                    document.getElementById('strike-dot-1').classList.add('used');
+                    banner.innerText = "❌ FAULT: Volume space mismatch! Calibration failed.";
+                    banner.style.color = "#ff3366";
+                } else {
+                    document.getElementById('strike-dot-2').classList.add('used');
+                    
+                    const numericAnswer = parseInt(activeTask.correct.join(""), 10);
+                    banner.innerText = `Bypassing lock... Calibrated Value was: ${numericAnswer} ${activeTask.unit}`;
+                    banner.style.color = "#ffaa00";
+
+                    currentLevelIdx++;
+                    setTimeout(() => loadBaySectorConfiguration(), 3500);
+                }
+            }
+            document.getElementById('game-score-tag').innerText = `Data: ${accumulatedXP} XP`;
+        }
+
+        function triggerSimulationComplete() {
+            fireAudioTrack(audioWin);
+            document.getElementById('game-level-tag').innerText = "LAUNCH READY";
+            document.getElementById('game-prompt').innerHTML = `
+                <div style="font-size: 1rem; color: #00ffcc; margin-bottom: 4px;">🏆 FLEET LOGISTICS COMMANDER!</div>
+                <div style="font-size: 0.8rem; color: #8ab4ae; font-weight: bold;">All dimensional sectors calibrated. Logged: ${accumulatedXP} XP</div>
+            `;
+            document.getElementById('game-toast-feedback').innerText = "Hyper-drive core fully optimized with volumetric logs.";
+            document.getElementById('game-toast-feedback').style.color = "#00ffcc";
+
+            document.getElementById('drawing-svg').parentElement.innerHTML = `
+                <div style="font-size:48px; text-align:center; width:100%; padding-top:45px; letter-spacing:8px;">🛸📦✨</div>
+            `;
+            
+            const interactiveBlock = document.querySelector('.logistics-counter-chassis');
+            interactiveBlock.style.display = "block";
+            interactiveBlock.innerHTML = `
+                <button class="action-btn" onclick="location.reload()">Recalibrate Alternative Flight</button>
+            `;
+        }
+    </script>
+</body>
+</html>
