@@ -1,90 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Innovine Number Kingdom - Integers Quest</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Grade 6 Integers - Integer Racing Rally</title>
 <style>
-body{margin:0;font-family:Arial;background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff;overflow-x:hidden}
-#splash{position:fixed;inset:0;background:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999}
-#splash img{width:220px}
-.screen{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
-.card{max-width:900px;width:100%;background:rgba(255,255,255,.12);backdrop-filter:blur(10px);border-radius:25px;padding:25px}
-.hidden{display:none}
-.option,.drag{background:#fff;color:#222;padding:14px;border-radius:14px;margin:10px 0;cursor:pointer}
-.correct{background:#06d6a0!important;color:#fff}
-.wrong{background:#ef476f!important;color:#fff}
-.top{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}
-.badge{background:rgba(255,255,255,.2);padding:10px;border-radius:10px}
-.dropzone{border:3px dashed gold;padding:20px;border-radius:12px;margin:10px 0;text-align:center}
-button{padding:12px 20px;border:none;border-radius:12px;background:#ffd166;font-weight:bold}
+:root{
+  --navy:#0b163f;--panel:#10264d;--sky:#8ee4ff;--grass:#4ade80;--road:#2f3545;
+  --gold:#ffd166;--green:#22c55e;--red:#ef4444;--ink:#10233c;--card:#fff7df;
+  --shadow:0 16px 34px rgba(0,0,0,.22)
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#0b163f;color:#fff;overflow-x:hidden}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:8px}
+.app{width:min(1120px,100%);height:min(740px,calc(100vh - 16px));min-height:560px;border-radius:26px;border:4px solid #2d5ca8;box-shadow:var(--shadow);overflow:hidden;position:relative;background:linear-gradient(180deg,#61d6ff 0%,#b9f7ff 36%,#78d65f 37%,#3cab4c 100%)}
+.screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:18px}.screen.active{display:flex}
+#splash{background:#fff;z-index:30}.logo{max-width:min(360px,72vw);max-height:45vh;object-fit:contain;animation:pop .9s ease both}@keyframes pop{from{transform:scale(.8);opacity:.2}to{transform:scale(1);opacity:1}}
+.panel{width:min(780px,94%);background:rgba(11,22,63,.92);border:3px solid #ffd166;border-radius:26px;text-align:center;padding:clamp(18px,3vw,30px);box-shadow:var(--shadow)}
+h1{font-size:clamp(30px,5vw,54px);margin:0 0 10px;color:#ffd166}.panel p{font-size:clamp(15px,2vw,19px);line-height:1.45}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px auto;max-width:620px;text-align:left}.rules div{background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25);border-radius:16px;padding:11px;font-weight:800}
+.btn{border:0;border-radius:18px;padding:13px 24px;background:linear-gradient(180deg,#ffd166,#fb8500);color:#1a1200;font-weight:900;font-size:clamp(16px,2.2vw,20px);cursor:pointer;box-shadow:0 7px 0 #a95500;transition:.15s}.btn:active{transform:translateY(5px);box-shadow:0 2px 0 #a95500}.btn.next{background:linear-gradient(180deg,#a7f3d0,#22c55e);box-shadow:0 7px 0 #15803d}
+.game{position:absolute;inset:0;display:none;grid-template-rows:auto 1fr auto;gap:8px;padding:10px}.game.active{display:grid}
+.topbar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;z-index:3}.stat{background:rgba(11,22,63,.92);border:2px solid #4ea8ff;border-radius:18px;padding:8px 10px;text-align:center;font-weight:950;color:#fff;font-size:clamp(13px,2vw,18px)}
+.scene{position:relative;border:3px solid #35517d;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#8ee4ff 0%,#dffbff 45%,#7bd66c 46%,#48b957 100%);min-height:0}
+.sun{position:absolute;right:7%;top:8%;width:58px;height:58px;border-radius:50%;background:#ffd166;box-shadow:0 0 28px #ffd166}
+.hill{position:absolute;bottom:35%;width:42%;height:26%;background:#3cb371;border-radius:50% 50% 0 0;opacity:.9}.h1{left:-8%}.h2{right:-8%;background:#2fa565}.tree{position:absolute;bottom:35%;font-size:48px}.t1{left:5%}.t2{right:8%}.t3{left:82%;bottom:40%;font-size:38px}
+.track{position:absolute;left:4%;right:4%;bottom:9%;height:28%;background:#2f3545;border:6px solid #fff;border-radius:70px;box-shadow:inset 0 0 0 8px #d92b2b}
+.track:after{content:"";position:absolute;left:5%;right:5%;top:48%;border-top:6px dashed #fff8d6}
+.finish{position:absolute;right:5%;bottom:9%;height:28%;width:22px;background:repeating-linear-gradient(0deg,#fff 0 12px,#111 12px 24px);border:2px solid #111;z-index:5}
+.car{position:absolute;left:7%;bottom:17%;width:96px;height:54px;z-index:6;transition:none}
+.carBody{position:absolute;left:0;right:0;bottom:10px;height:34px;background:linear-gradient(180deg,#ef4444,#b91c1c);border-radius:18px 24px 10px 10px;border:3px solid #7f1d1d}
+.carTop{position:absolute;left:27px;top:0;width:42px;height:28px;background:#ef4444;border-radius:18px 18px 4px 4px;border:3px solid #7f1d1d}.window{position:absolute;left:8px;top:6px;width:24px;height:14px;background:#90e0ef;border-radius:5px}.wheel{position:absolute;bottom:0;width:24px;height:24px;border-radius:50%;background:#111827;border:5px solid #9ca3af}.w1{left:13px}.w2{right:13px}
+.car.drive{animation:carStep .95s ease forwards}.car.drive .wheel{animation:spin .35s linear infinite}@keyframes carStep{0%{transform:translateX(var(--start))}100%{transform:translateX(var(--end))}}@keyframes spin{to{transform:rotate(360deg)}}.car.wrong{animation:carShake .38s ease}@keyframes carShake{25%{transform:translateX(calc(var(--start) - 8px))}50%{transform:translateX(calc(var(--start) + 8px))}75%{transform:translateX(calc(var(--start) - 4px))}100%{transform:translateX(var(--start))}}
+.challenge{position:absolute;left:50%;top:8%;transform:translateX(-50%);width:min(620px,88%);background:rgba(255,247,223,.96);color:var(--ink);border:4px solid #ffd166;border-radius:28px;padding:14px;text-align:center;box-shadow:var(--shadow);z-index:8}
+.question{font-size:clamp(20px,3vw,34px);font-weight:950;margin-bottom:8px}.slot{width:150px;min-height:62px;margin:8px auto 0;border:3px dashed #10233c;border-radius:18px;background:#fff;display:grid;place-items:center;font-size:clamp(24px,4vw,38px);font-weight:950;color:#777}.slot.filled{border-style:solid;background:#fff7cc;color:#10233c}.slot.correct{background:#dcfce7;border-color:#22c55e}.slot.wrong{background:#fee2e2;border-color:#ef4444}
+.options{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:rgba(11,22,63,.92);border:3px solid #35517d;border-radius:24px;padding:12px;z-index:4}
+.option{min-height:70px;border:3px solid #4b658d;background:#fff7df;color:#10233c;border-radius:18px;font-size:clamp(22px,3.5vw,34px);font-weight:950;cursor:pointer;box-shadow:0 7px 0 rgba(0,0,0,.35);transition:.15s}.option:active{transform:translateY(5px);box-shadow:0 2px 0 rgba(0,0,0,.35)}.option.selected{border-color:#ffd166;background:#fff2b8;transform:translateY(-3px)}.option.correct{background:#dcfce7;border-color:#22c55e;color:#14532d}.option.wrong{background:#fee2e2;border-color:#ef4444;color:#991b1b}.option:disabled{opacity:.78;cursor:not-allowed}
+.feedback{position:absolute;left:50%;bottom:40%;transform:translateX(-50%);background:rgba(11,22,63,.92);border:2px solid #4ea8ff;border-radius:18px;color:#fff;padding:9px 16px;min-width:min(560px,88%);text-align:center;font-size:clamp(14px,2vw,18px);font-weight:850;z-index:9}.feedback.good{border-color:#22c55e;color:#bbf7d0}.feedback.bad{border-color:#ef4444;color:#fecaca}
+.finalScore{font-size:clamp(38px,8vw,76px);font-weight:950;color:#ffd166}.badge{display:inline-block;background:#fff;color:#10233c;border:2px solid #ffd166;border-radius:18px;padding:10px 16px;margin:6px;font-weight:900}
+.confetti{position:absolute;pointer-events:none;font-size:24px;animation:spark .85s ease forwards;z-index:20}@keyframes spark{0%{opacity:1;transform:translateY(0) scale(.8)}100%{opacity:0;transform:translateY(-95px) scale(1.3)}}
+@media(max-width:760px){body{padding:5px}.app{height:calc(100vh - 10px);min-height:540px;border-radius:18px}.game{padding:7px}.topbar{gap:5px}.stat{padding:7px 5px;border-radius:13px}.challenge{top:7%;padding:10px;border-radius:20px}.slot{width:112px;min-height:48px}.options{grid-template-columns:1fr 1fr;gap:8px;padding:9px}.option{min-height:54px}.car{width:72px;height:43px;bottom:18%}.carBody{height:27px}.carTop{left:20px;width:32px;height:22px}.window{width:18px;height:10px}.wheel{width:19px;height:19px;border-width:4px}.feedback{bottom:39%;padding:7px 10px}.rules{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div id="splash"><img src="assets/innovine-logo.png"><h2 style="color:#1e3c72">Innovine Number Kingdom</h2></div>
+<div class="app" id="app">
+<section class="screen active" id="splash"><img class="logo" src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'"></section>
 
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+<section class="screen" id="intro">
+  <div class="panel">
+    <h1>Integer Racing Rally</h1>
+    <p>Tap the correct integer. The answer fits into the question box, and the car moves ahead on every correct answer.</p>
+    <div class="rules">
+      <div>🏁 Complete 10 integer challenges.</div>
+      <div>🚗 Car moves only on correct answers.</div>
+      <div>✌️ Two attempts for each question.</div>
+      <div>🏆 Final score appears at the end.</div>
+    </div>
+    <button class="btn" id="startBtn">Start Race</button>
+  </div>
+</section>
 
-<div id="intro" class="screen">
-<div class="card"><h1>Grade 6 - Integers Quest</h1><p>Answer all 10 challenges.</p><button onclick="startGame()">Start Adventure</button></div>
+<main class="game" id="game">
+  <div class="topbar">
+    <div class="stat">🏁 Progress: <span id="count">1</span>/10</div>
+    <div class="stat">⭐ Score: <span id="score">0</span></div>
+    <div class="stat">❤️ Attempts: <span id="attempts">2</span></div>
+  </div>
+  <div class="scene" id="scene">
+    <div class="sun"></div><div class="hill h1"></div><div class="hill h2"></div>
+    <div class="tree t1">🌲</div><div class="tree t2">🌳</div><div class="tree t3">🌲</div>
+    <div class="track"></div><div class="finish"></div>
+    <div class="challenge">
+      <div class="question" id="question"></div>
+      <div class="slot" id="slot">?</div>
+    </div>
+    <div class="feedback" id="feedback">Tap the correct answer.</div>
+    <div class="car" id="car" style="--start:0px;--end:0px">
+      <div class="carTop"><div class="window"></div></div><div class="carBody"></div><div class="wheel w1"></div><div class="wheel w2"></div>
+    </div>
+  </div>
+  <div class="options" id="options"></div>
+</main>
+
+<section class="screen" id="final">
+  <div class="panel">
+    <h1>🎉 Race Complete!</h1>
+    <p>You completed the Grade 6 Integers rally.</p>
+    <div class="finalScore"><span id="finalScore">0</span>/10</div>
+    <p id="finalMsg" style="font-weight:900;color:#ffd166"></p>
+    <button class="btn" onclick="location.reload()">Play Again</button>
+  </div>
+</section>
 </div>
 
-<div id="quiz" class="screen hidden">
-<div class="card">
-<div class="top">
-<div class="badge">Score <span id="score">0</span></div>
-<div class="badge">Q <span id="qnum">1</span>/10</div>
-<div class="badge">Time <span id="time">45</span>s</div>
-</div>
-<h2 id="question"></h2>
-<div id="area"></div>
-<p id="feedback"></p>
-<button id="nextBtn" class="hidden" onclick="nextQ()">Next</button>
-</div>
-</div>
-
-<div id="result" class="screen hidden">
-<div class="card"><h1>Quest Complete</h1><h2 id="final"></h2><button onclick="location.reload()">Play Again</button></div>
-</div>
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
 
 <script>
-setTimeout(()=>document.getElementById('splash').style.display='none',5000);
-
-const qs=[
-{t:'mcq',q:'Which number is an integer?',o:['3.5','-4','1/2','0.8'],a:'-4',e:'Integers include negative whole numbers.'},
-{t:'mcq',q:'Which is the greatest negative integer?',o:['-10','-1','-5','-9'],a:'-1',e:'Closest to zero.'},
-{t:'mcq',q:'What is the opposite of -7?',o:['-7','0','7','1'],a:'7',e:'Opposite means additive inverse.'},
-{t:'mcq',q:'What is the sum of -4 and 9?',o:['-13','5','-5','13'],a:'5',e:'9-4=5.'},
-{t:'tf',q:'Zero is neither positive nor negative.',o:['True','False'],a:'True',e:'Correct.'},
-{t:'tf',q:'-8 is greater than -2.',o:['True','False'],a:'False',e:'-8 is smaller.'},
-{t:'tf',q:'The predecessor of 0 is -1.',o:['True','False'],a:'True',e:'One less than 0.'},
-{t:'drag',q:'Drag integer between -3 and -1.',i:['-4','-2','0','1'],a:'-2',e:'-2 lies between.'},
-{t:'drag',q:'Drag increase from -2°C to 5°C.',i:['3°C','5°C','7°C','-7°C'],a:'7°C',e:'Increase is 7.'},
-{t:'drag',q:'Drag result of -6 + (-3).',i:['9','-9','-3','3'],a:'-9',e:'Sum is -9.'}
+const tasks=[
+{q:'What is (−8) + (+15)?',opts:['7','−7','23','−23'],ans:'7',ex:'−8 + 15 = 7.'},
+{q:'What is (−15) − (−6)?',opts:['−9','9','−21','21'],ans:'−9',ex:'Subtracting −6 means adding 6: −15 + 6 = −9.'},
+{q:'A lift is at floor −3. It moves up 7 floors. Where is it now?',opts:['4','−4','10','−10'],ans:'4',ex:'−3 + 7 = 4.'},
+{q:'A diver is at −12 m. He rises 5 m. What is his new position?',opts:['−7 m','7 m','−17 m','17 m'],ans:'−7 m',ex:'−12 + 5 = −7 m.'},
+{q:'Which integer is greater: −4 or −9?',opts:['−4','−9','0','4'],ans:'−4',ex:'On the number line, −4 is to the right of −9.'},
+{q:'What is the opposite of −11?',opts:['11','−11','0','1'],ans:'11',ex:'The opposite of −11 is 11.'},
+{q:'What is the predecessor of 0?',opts:['−1','1','0','10'],ans:'−1',ex:'The predecessor is one less than the number.'},
+{q:'Temperature changed from −2°C to 6°C. What was the increase?',opts:['8°C','4°C','−8°C','−4°C'],ans:'8°C',ex:'6 − (−2) = 8°C.'},
+{q:'A team loses 6 points and then gains 10 points. What is the final change?',opts:['4','−4','16','−16'],ans:'4',ex:'−6 + 10 = 4.'},
+{q:'Which integer lies between −3 and −1?',opts:['−2','2','0','−4'],ans:'−2',ex:'−2 lies between −3 and −1.'}
 ];
-let c=0,s=0,a=0,tm=45,intv;
-
-function play(id){let x=document.getElementById(id);x.currentTime=0;x.play().catch(()=>{});}
-function startGame(){intro.classList.add('hidden');quiz.classList.remove('hidden');load();}
-function load(){
-a=0;clearInterval(intv);tm=45;time.innerText=tm;feedback.innerHTML='';nextBtn.classList.add('hidden');
-let q=qs[c];qnum.innerText=c+1;question.innerText=q.q;area.innerHTML='';
-intv=setInterval(()=>{tm--;time.innerText=tm;if(tm<=0){showAns();}},1000);
-if(q.t!='drag'){q.o.forEach(v=>{let d=document.createElement('div');d.className='option';d.innerText=v;d.onclick=()=>check(v,d);area.appendChild(d);});}
-else{
-let dz=document.createElement('div');dz.className='dropzone';dz.innerText='Drop Here';dz.ondragover=e=>e.preventDefault();dz.ondrop=e=>{e.preventDefault();check(e.dataTransfer.getData('text'),dz)};area.appendChild(dz);
-q.i.forEach(v=>{let d=document.createElement('div');d.className='drag';d.draggable=true;d.innerText=v;d.ondragstart=e=>e.dataTransfer.setData('text',v);d.onclick=()=>check(v,d);area.appendChild(d);});
+let order=[],idx=0,score=0,attempts=2,locked=false,carStep=0;
+const $=id=>document.getElementById(id);
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$('game').classList.remove('active');if(id==='game')$('game').classList.add('active');else $(id).classList.add('active')}
+setTimeout(()=>show('intro'),5000);
+$('startBtn').onclick=()=>{order=shuffle(tasks).map(t=>({...t,opts:shuffle(t.opts)}));idx=0;score=0;carStep=0;show('game');loadQ()}
+function loadQ(){
+  locked=false;attempts=2;
+  $('count').textContent=idx+1;$('score').textContent=score;$('attempts').textContent=attempts;
+  $('question').textContent=order[idx].q;$('slot').textContent='?';$('slot').className='slot';
+  $('feedback').textContent='Tap the correct answer.';$('feedback').className='feedback';
+  $('options').innerHTML='';
+  $('car').classList.remove('drive','wrong');
+  $('car').style.transform=`translateX(${carStep}px)`;
+  $('car').style.setProperty('--start',carStep+'px');
+  $('car').style.setProperty('--end',carStep+'px');
+  order[idx].opts.forEach(o=>{
+    const b=document.createElement('button');b.className='option';b.textContent=o;b.onclick=()=>choose(b,o);$('options').appendChild(b);
+  });
 }
+function play(id){const a=$(id);try{a.currentTime=0;a.play()}catch(e){}}
+function choose(btn,val){
+  if(locked||btn.disabled)return;
+  document.querySelectorAll('.option').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  $('slot').textContent=val;$('slot').className='slot filled';
+  const q=order[idx];
+  if(val===q.ans){
+    locked=true;score++;$('score').textContent=score;
+    btn.classList.add('correct');$('slot').classList.add('correct');
+    document.querySelectorAll('.option').forEach(b=>b.disabled=true);
+    $('feedback').textContent='Correct! The car moves ahead.';$('feedback').className='feedback good';
+    moveCar();play('correctSound');setTimeout(()=>play('clapSound'),160);confetti();
+    setTimeout(()=>{idx++;idx>=order.length?finish():loadQ()},1250);
+  }else{
+    attempts--;$('attempts').textContent=attempts;btn.classList.add('wrong');btn.disabled=true;$('slot').classList.add('wrong');
+    $('car').classList.remove('wrong');void $('car').offsetWidth;$('car').classList.add('wrong');
+    play('wrongSound');
+    if(attempts>0){
+      $('feedback').textContent='Try once more.';$('feedback').className='feedback bad';
+      setTimeout(()=>{$('slot').textContent='?';$('slot').className='slot'},550);
+    }else{
+      locked=true;document.querySelectorAll('.option').forEach(b=>{b.disabled=true;if(b.textContent===q.ans)b.classList.add('correct')});
+      $('slot').textContent=q.ans;$('slot').className='slot correct';
+      $('feedback').innerHTML=`Correct answer: <b>${q.ans}</b><br>${q.ex}`;$('feedback').className='feedback bad';
+      setTimeout(()=>{idx++;idx>=order.length?finish():loadQ()},2200);
+    }
+  }
 }
-function check(v,el){
-let q=qs[c];
-if(v==q.a){clearInterval(intv);s++;score.innerText=s;el.classList.add('correct');play('correctSound');setTimeout(()=>play('clapSound'),250);feedback.innerHTML='Excellent! '+q.e;nextBtn.classList.remove('hidden');}
-else{a++;play('wrongSound');el.classList.add('wrong');if(a<2)feedback.innerHTML='Try Again';else showAns();}
+function moveCar(){
+  const scene=$('scene'); const car=$('car');
+  const maxMove=Math.max(220,scene.clientWidth-car.clientWidth-90);
+  const next=Math.round(maxMove*((idx+1)/order.length));
+  car.classList.remove('drive');void car.offsetWidth;
+  car.style.setProperty('--start',carStep+'px');car.style.setProperty('--end',next+'px');
+  car.style.transform=`translateX(${carStep}px)`;
+  car.classList.add('drive');carStep=next;
+  setTimeout(()=>{car.style.transform=`translateX(${carStep}px)`;car.classList.remove('drive')},980);
 }
-function showAns(){clearInterval(intv);feedback.innerHTML='Correct Answer: '+qs[c].a+'<br>'+qs[c].e;nextBtn.classList.remove('hidden');}
-function nextQ(){c++; if(c<qs.length)load(); else{quiz.classList.add('hidden');result.classList.remove('hidden');final.innerText='Score: '+s+'/10'; if(s>=8)play('clapSound');}}
+function confetti(){
+  const icons=['✨','🎉','⭐','🏁'];
+  for(let i=0;i<14;i++){const s=document.createElement('span');s.className='confetti';s.textContent=icons[Math.floor(Math.random()*icons.length)];s.style.left=(35+Math.random()*35)+'%';s.style.top=(38+Math.random()*22)+'%';s.style.animationDelay=(Math.random()*.2)+'s';$('app').appendChild(s);setTimeout(()=>s.remove(),900)}
+}
+function finish(){
+  show('final');$('finalScore').textContent=score;$('finalMsg').textContent=score>=8?'Integer Racing Champion!':'Good effort! Replay to improve your score.';play('clapSound');
+}
 </script>
 </body>
 </html>
