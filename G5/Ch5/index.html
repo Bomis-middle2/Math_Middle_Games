@@ -39,68 +39,6 @@
             border: 1px solid #cbd5e1;
         }
 
-        /* --- STAGE 1: PASTEL SPLASH SCREEN --- */
-        #hard-splash {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #f0fdf4;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 24px;
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-        .splash-logo-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            animation: bounceLogo 2s infinite ease-in-out;
-        }
-        .splash-img {
-            max-width: 130px;
-            height: auto;
-            margin-bottom: 12px;
-        }
-        .splash-title {
-            font-size: 28px;
-            font-weight: 900;
-            color: #2c7a7b;
-            letter-spacing: 2px;
-            text-align: center;
-        }
-        .splash-subtitle {
-            font-size: 14px;
-            font-weight: 600;
-            color: #718096;
-            margin-top: 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .loader-track {
-            width: 220px;
-            height: 8px;
-            background: #e2e8f0;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid #cbd5e1;
-        }
-        .loader-fill {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #81e6d9, #4fd1c5);
-            animation: lockFiveSeconds 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        @keyframes lockFiveSeconds {
-            to { width: 100%; }
-        }
-        @keyframes bounceLogo {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-
-        /* --- OVERLAY INTERFACES --- */
         .stage-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -132,11 +70,24 @@
         .header-title { font-weight: 800; font-size: 1rem; }
         .header-score { font-weight: 800; font-size: 0.9rem; background: #e6fffa; padding: 4px 14px; border-radius: 20px; border: 1px solid #4fd1c5; }
 
+        /* --- INNOVINE START SCREEN LOGO --- */
+        .innovine-logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+        .innovine-logo {
+            max-width: 150px;
+            height: auto;
+        }
+
         .instruction-text {
             font-size: 1rem;
             line-height: 1.6;
             color: #2d3748;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
         .instruction-text ul { margin-left: 20px; margin-top: 10px; }
         .instruction-text li { margin-bottom: 10px; font-weight: 600; color: #4a5568; }
@@ -167,7 +118,7 @@
             line-height: 1.4;
         }
 
-        /* --- THE DIGILOCKER VAULT INTERFACE --- */
+        /* --- DIGILOCKER VAULT INTERFACE --- */
         .vault-lock-chassis {
             display: flex;
             align-items: center;
@@ -298,22 +249,19 @@
 
     <div id="viewport-root">
         
-        <div id="hard-splash">
-            <div class="splash-logo-container">
-                <img src="assets/logo.png" class="splash-img" alt="Logo" onerror="this.src='https://placehold.co/130x130/b2f5ea/234e52?text=%F0%9F%94%92';">
-                <div class="splash-title">DECIMAL QUEST</div>
-                <div class="splash-subtitle">Vault Breaker Edition</div>
-            </div>
-            <div class="loader-track">
-                <div class="loader-fill"></div>
-            </div>
-        </div>
-
-        <div id="instructions-screen" class="stage-overlay hidden">
+        <!-- DIRECT START SCREEN: Innovine Logo + Instruction Panels Only -->
+        <div id="instructions-screen" class="stage-overlay">
             <div class="glass-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
+                
+                <!-- Only Innovine Logo at Start -->
+                <div class="innovine-logo-container">
+                    <img src="assets/logo.png" class="innovine-logo" alt="Innovine" onerror="this.src='https://placehold.co/150x50/b2f5ea/234e52?text=INNOVINE';">
+                </div>
+
                 <div class="header-panel">
                     <div class="header-title">🔒 Locker Security Guide</div>
                 </div>
+                
                 <div class="instruction-text">
                     <p>Crack open the vault code by aligning the tumbler digits to solve the decimal puzzles:</p>
                     <ul>
@@ -322,40 +270,49 @@
                         <li>3. Careful: You only get <strong>2 attempts per combination lock</strong> before security rolls over!</li>
                     </ul>
                 </div>
+                
                 <button class="action-btn" onclick="engageSimulationMatrix()">Initialize Vault Access</button>
             </div>
         </div>
 
+        <!-- CORE GAMEPLAY VIEW -->
         <div id="gameplay-screen" class="stage-overlay hidden">
             <div class="header-panel">
-                <div id="game-level-tag" class="header-title">Vault Level 1</div>
+                <div id="game-level-tag" class="header-title">Lock Block Level 1</div>
                 <div id="game-score-tag" class="header-score">Score: 0</div>
             </div>
 
             <div class="glass-panel workspace-area">
+                <!-- Question Prompt -->
                 <div id="game-prompt" class="question-box">Loading security puzzle...</div>
                 
+                <!-- DIGILOCKER ENTRY CHASSIS -->
                 <div class="vault-lock-chassis">
+                    <!-- Column 1 (Whole Number) -->
                     <div class="dial-column">
                         <button class="dial-spinner" onclick="spinDigit('whole', 1)">▲</button>
                         <div id="digit-whole" class="dial-screen">0</div>
                         <button class="dial-spinner" onclick="spinDigit('whole', -1)">▼</button>
                     </div>
                     
+                    <!-- Code Decimals Hub Separator -->
                     <div class="decimal-separator">.</div>
                     
+                    <!-- Column 2 (Tenths) -->
                     <div class="dial-column">
                         <button class="dial-spinner" onclick="spinDigit('t1', 1)">▲</button>
                         <div id="digit-t1" class="dial-screen">0</div>
                         <button class="dial-spinner" onclick="spinDigit('t1', -1)">▼</button>
                     </div>
                     
+                    <!-- Column 3 (Hundredths) -->
                     <div class="dial-column">
                         <button class="dial-spinner" onclick="spinDigit('t2', 1)">▲</button>
                         <div id="digit-t2" class="dial-screen">0</div>
                         <button class="dial-spinner" onclick="spinDigit('t2', -1)">▼</button>
                     </div>
                     
+                    <!-- Column 4 (Thousandths) -->
                     <div class="dial-column">
                         <button class="dial-spinner" onclick="spinDigit('t3', 1)">▲</button>
                         <div id="digit-t3" class="dial-screen">0</div>
@@ -363,6 +320,7 @@
                     </div>
                 </div>
 
+                <!-- Two-Chance Track Dots -->
                 <div class="chance-counter-tray">
                     <div id="strike-dot-1" class="chance-dot"></div>
                     <div id="strike-dot-2" class="chance-dot"></div>
@@ -421,4 +379,156 @@
                 { q: "Put together this expanded form value into a clean decimal entry: 0.9 + 0.004", target: {whole:0, t1:9, t2:0, t3:4} },
                 { q: "Find the total sum matrix value: 1 + 0.05 + 0.008", target: {whole:1, t1:0, t2:5, t3:8} }
             ],
-            4:
+            4: [
+                { q: "Convert the decimal value 0.5 into an equivalent form containing 3 decimal places.", target: {whole:0, t1:5, t2:0, t3:0} },
+                { q: "Find the structural difference interval between the decimals 3.67 and 2.50.", target: {whole:1, t1:1, t2:7, t3:0} },
+                { q: "Round the decimal reading 0.473 to its nearest single tenth point configuration.", target: {whole:0, t1:5, t2:0, t3:0} },
+                { q: "Round the decimal string 1.258 to its nearest hundredth dial frame point.", target: {whole:1, t1:2, t2:6, t3:0} }
+            ],
+            5: [
+                { q: "Compute the decimal sum operation accurately: 1.2 + 2.35", target: {whole:3, t1:5, t2:5, t3:0} },
+                { q: "Compute the decimal product challenge verification code: 0.3 × 0.2", target: {whole:0, t1:0, t2:6, t3:0} },
+                { q: "Perform subtraction optimization code computations: 4.5 - 1.25", target: {whole:3, t1:2, t2:5, t3:0} },
+                { q: "A secure wire is 0.8 meters long. If cut into two perfectly equal parts, how long is one segment?", target: {whole:0, t1:4, t2:0, t3:0} }
+            ]
+        };
+
+        // Fisher-Yates Randomizer Utility
+        function randomizeDatabaseNodes() {
+            for (let level in puzzleDatabase) {
+                const array = puzzleDatabase[level];
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+            }
+        }
+
+        // Initialize Random Question Mix
+        randomizeDatabaseNodes();
+
+        function engageSimulationMatrix() {
+            document.getElementById('instructions-screen').classList.add('hidden');
+            document.getElementById('gameplay-screen').classList.remove('hidden');
+            loadActivePuzzleNode();
+        }
+
+        function loadActivePuzzleNode() {
+            if (currentLevel > 5) {
+                triggerSanctuaryVictory();
+                return;
+            }
+
+            const levelTitles = { 
+                1: "Lock Block Level 1", 
+                2: "Lock Block Level 2", 
+                3: "Lock Block Level 3", 
+                4: "Lock Block Level 4", 
+                5: "Lock Block Level 5" 
+            };
+            document.getElementById('game-level-tag').innerText = levelTitles[currentLevel];
+            document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
+
+            internalStrikeCounter = 0;
+            document.getElementById('strike-dot-1').classList.remove('used');
+            document.getElementById('strike-dot-2').classList.remove('used');
+
+            currentLockState = { whole: 0, t1: 0, t2: 0, t3: 0 };
+            updateLockDisplay();
+
+            const item = puzzleDatabase[currentLevel][taskIndex];
+            document.getElementById('game-prompt').innerText = item.q;
+
+            const feedback = document.getElementById('game-toast-feedback');
+            feedback.innerText = "Spin the lock dials to set your code combination!";
+            feedback.style.color = "#4a5568";
+            
+            document.querySelector('.submit-lever').disabled = false;
+            document.querySelector('.submit-lever').style.opacity = "1";
+        }
+
+        function spinDigit(key, change) {
+            currentLockState[key] += change;
+            if (currentLockState[key] > 9) currentLockState[key] = 0;
+            if (currentLockState[key] < 0) currentLockState[key] = 9;
+            updateLockDisplay();
+        }
+
+        function updateLockDisplay() {
+            document.getElementById('digit-whole').innerText = currentLockState.whole;
+            document.getElementById('digit-t1').innerText = currentLockState.t1;
+            document.getElementById('digit-t2').innerText = currentLockState.t2;
+            document.getElementById('digit-t3').innerText = currentLockState.t3;
+        }
+
+        function evaluateCombinationSubmission() {
+            const item = puzzleDatabase[currentLevel][taskIndex];
+            const feedback = document.getElementById('game-toast-feedback');
+
+            const isMatch = currentLockState.whole === item.target.whole &&
+                            currentLockState.t1 === item.target.t1 &&
+                            currentLockState.t2 === item.target.t2 &&
+                            currentLockState.t3 === item.target.t3;
+
+            if (isMatch) {
+                scoreCount += 20;
+                feedback.innerText = "🔓 Access Granted! Combination correct.";
+                feedback.style.color = "#2f855a";
+                playAssetSound('correct');
+                document.querySelector('.submit-lever').disabled = true;
+                
+                taskIndex++;
+                if (taskIndex >= puzzleDatabase[currentLevel].length) {
+                    currentLevel++;
+                    taskIndex = 0;
+                }
+                
+                setTimeout(() => loadActivePuzzleNode(), 1500);
+            } else {
+                internalStrikeCounter++;
+                playAssetSound('wrong');
+                
+                if (internalStrikeCounter === 1) {
+                    document.getElementById('strike-dot-1').classList.add('used');
+                    feedback.innerText = "🔒 Combination Refused! Lock Jammed. 1 try left.";
+                    feedback.style.color = "#c53030";
+                } else {
+                    document.getElementById('strike-dot-2').classList.add('used');
+                    document.querySelector('.submit-lever').disabled = true;
+                    document.querySelector('.submit-lever').style.opacity = "0.4";
+                    
+                    const answerString = `${item.target.whole}.${item.target.t1}${item.target.t2}${item.target.t3}`;
+                    feedback.innerText = `Bypassing Lock! Proper code layout was: ${answerString}`;
+                    feedback.style.color = "#c53030";
+                    
+                    taskIndex++;
+                    if (taskIndex >= puzzleDatabase[currentLevel].length) {
+                        currentLevel++;
+                        taskIndex = 0;
+                    }
+                    
+                    setTimeout(() => loadActivePuzzleNode(), 3500);
+                }
+            }
+            document.getElementById('game-score-tag').innerText = `Score: ${scoreCount}`;
+        }
+
+        function triggerSanctuaryVictory() {
+            playAssetSound('correct');
+            document.getElementById('game-level-tag').innerText = "System Unlocked!";
+            document.getElementById('game-prompt').innerHTML = `
+                <div style="font-size: 1.3rem; margin-bottom: 6px; color: #2c7a7b;">🏆 Master Safe Cracker!</div>
+                <div style="font-size: 0.95rem; color: #2f855a; font-weight: 600;">You decrypted every security configuration node perfectly.</div>
+            `;
+            document.getElementById('game-toast-feedback').innerText = "Main Vault Integrity Fully Deployed!";
+            document.getElementById('game-toast-feedback').style.color = "#dd6b20";
+            
+            const lever = document.querySelector('.submit-lever');
+            lever.disabled = false;
+            lever.style.opacity = "1";
+            lever.innerText = "Reset & Re-Lock Vault";
+            lever.onclick = () => location.reload();
+        }
+    </script>
+</body>
+</html>
