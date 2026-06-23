@@ -3,88 +3,475 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grade 6 Angles Adventure</title>
+<title>Grade 6 Basics of Geometry Route Game</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;min-height:100vh;background:linear-gradient(#63cfff 0%,#bff5ff 34%,#65bd65 35%,#1f6f3f 100%);color:#17304a;overflow-x:hidden}
-button{font-family:inherit;cursor:pointer;border:0}.screen{display:none;min-height:100vh;padding:16px}.active{display:flex}
-#splash{justify-content:center;align-items:center;flex-direction:column;background:linear-gradient(#ecfbff,#ffffff,#e5ffd9)}
-#splash img{max-width:420px;width:75vw}.timer{margin-top:20px;background:#123b66;color:white;padding:12px 24px;border-radius:20px;font-weight:bold;box-shadow:0 10px 24px rgba(0,0,0,.25)}
-#intro,#result{justify-content:center;align-items:center}.card{width:min(850px,94vw);background:#fff1cb;border:5px solid white;color:#123b66;border-radius:28px;padding:28px;text-align:center;box-shadow:0 12px 28px rgba(0,0,0,.25)}
-h1{font-size:clamp(32px,6vw,56px);margin:0 0 12px}.rules{text-align:left;margin:20px auto;max-width:650px;counter-reset:step;display:grid;gap:10px}
-.rule{background:white;border-radius:15px;padding:14px;font-size:clamp(16px,2.5vw,20px);font-weight:bold}.rule:before{counter-increment:step;content:counter(step) ". ";color:#0072bc;margin-right:8px}
-.play,.next,.restart{background:linear-gradient(#50dc65,#149a3c);color:white;font-size:22px;font-weight:bold;padding:14px 30px;border-radius:30px;box-shadow:0 7px 0 #0b6a2b}
-#game{flex-direction:column;gap:10px;background:radial-gradient(circle at 15% 15%,rgba(255,255,255,.42),transparent 14%),linear-gradient(#66d8ff 0%,#b6efff 31%,#6fca6e 32%,#257742 100%)}
-.top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;width:min(1120px,97vw);margin:auto;font-weight:bold}.box{background:#5a3416;color:white;padding:10px;border-radius:14px;text-align:center;border:3px solid #c8893f;box-shadow:0 7px 18px rgba(0,0,0,.25)}
-.scene{width:min(1120px,97vw);margin:auto;min-height:680px;position:relative;overflow:hidden;border-radius:28px;border:4px solid rgba(255,255,255,.38);box-shadow:0 12px 28px rgba(0,0,0,.28);background:radial-gradient(circle at 80% 20%,#fff 0 4%,transparent 5%),linear-gradient(#68d9ff 0%,#b8efff 35%,#5fc45d 36%,#1f6f3f 100%)}
-.mountain{position:absolute;bottom:47%;width:330px;height:210px;background:#76acc8;clip-path:polygon(50% 0,100% 100%,0 100%);opacity:.7}.m1{left:4%}.m2{left:28%;transform:scale(.72);opacity:.55}.m3{right:2%;transform:scale(.9)}
-.water{position:absolute;left:0;right:0;top:310px;height:160px;background:linear-gradient(90deg,#0c8dd6,#36bcff,#0c8dd6);opacity:.8}.water:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(160deg,rgba(255,255,255,.25) 0 20px,transparent 20px 52px)}
-.waterfall{position:absolute;right:7%;top:95px;width:75px;height:205px;background:linear-gradient(#dff,#3dbbff,#0d8fd2);border-radius:0 0 45px 45px;opacity:.75;z-index:1}.chest{position:absolute;right:45px;bottom:108px;font-size:82px;filter:drop-shadow(0 0 14px #ffd75b);z-index:4}
-.questBoard{position:absolute;top:15px;left:50%;transform:translateX(-50%);background:#fff1cb;color:#163253;border:5px solid #8a4f20;border-radius:18px;padding:10px 32px;font-size:clamp(22px,4vw,42px);font-weight:bold;z-index:7;box-shadow:0 8px 18px rgba(0,0,0,.25)}
-.questionCard{position:absolute;top:82px;left:50%;transform:translateX(-50%);z-index:6;width:min(760px,92vw);background:#fff1cb;border:5px solid #8a4f20;border-radius:24px;padding:18px;text-align:center;box-shadow:0 8px 18px rgba(0,0,0,.23)}
-.qtext{font-size:clamp(19px,3vw,30px);font-weight:bold;margin-bottom:12px}.angleDraw{margin:auto;width:min(280px,74vw);height:150px;position:relative}.angleSvg{position:absolute;inset:0;width:100%;height:100%;z-index:1}.ray,.vertex{z-index:2}
-.ray{position:absolute;left:52px;bottom:28px;height:5px;background:#111;transform-origin:left center;border-radius:99px}.ray:after{content:"";position:absolute;right:-2px;top:50%;transform:translateY(-50%);border-left:15px solid #111;border-top:9px solid transparent;border-bottom:9px solid transparent}.baseRay{width:190px;transform:rotate(0deg)}.angleRay{width:160px}.vertex{position:absolute;left:45px;bottom:12px;font-weight:bold;font-size:26px}.arc{position:absolute;left:58px;bottom:31px;width:46px;height:46px;border-radius:50%;border:8px solid #49a9ff;border-right-color:transparent;border-top-color:transparent}
-.pathArea{position:absolute;left:5%;right:5%;top:330px;height:125px;z-index:5}.stonePath{position:absolute;left:0;right:0;top:48px;height:42px;background:#cfa66e;border:5px solid #8b6233;border-radius:999px;box-shadow:0 8px 16px rgba(0,0,0,.25)}.stonePath:after{content:"";position:absolute;left:5%;right:5%;top:50%;transform:translateY(-50%);height:6px;background:repeating-linear-gradient(90deg,#fff 0 22px,transparent 22px 42px);opacity:.8}
-.step{position:absolute;top:20px;width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;color:white;font-weight:bold;border:4px solid rgba(255,255,255,.6);box-shadow:0 8px 16px rgba(0,0,0,.25)}.s1{left:5%;background:#b05ac4}.s2{left:25%;background:#258bd8}.s3{left:45%;background:#61b52d}.s4{left:65%;background:#f0c220}.s5{left:85%;background:#e8751e}
-.jeep{position:absolute;left:2%;top:390px;font-size:64px;z-index:8;transition:left .75s ease,top .75s ease}.vehicle{display:inline-block;transform:scaleX(-1)}.answerBoard{position:absolute;left:50%;bottom:42px;transform:translateX(-50%);width:min(760px,92vw);background:#8a4f20;border-radius:18px;padding:14px;z-index:7;box-shadow:0 8px 18px rgba(0,0,0,.3)}
-.answerTitle{color:#ffd75b;font-weight:bold;text-align:center;font-size:clamp(15px,2.5vw,21px);margin-bottom:10px}.options{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.opt{min-height:92px;border-radius:16px;background:#fff1cb;color:#123b66;border:4px solid transparent;font-size:clamp(18px,3vw,30px);font-weight:bold;box-shadow:0 6px 0 rgba(0,0,0,.25)}
-.opt:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.25)}.opt.chosen{border-color:#ffe100;background:#fff5a8}.opt.correct{border-color:#15bd51;background:#caffd9}.opt.wrong{border-color:#e74c3c;background:#ffd4cd;animation:shake .25s}
-.msg{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:min(650px,88vw);min-height:36px;background:#2b211c;color:white;border-radius:14px;padding:8px 12px;text-align:center;font-weight:bold;z-index:9}.next{display:none;position:absolute;right:28px;bottom:42px;z-index:10}
-.finalScore{font-size:64px;font-weight:bold;color:#7b3fd1}.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:20}.piece{position:absolute;top:-20px;width:12px;height:18px;animation:fall 1.5s linear forwards}
-@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}@keyframes fall{to{transform:translateY(110vh) rotate(500deg)}}
-@media(max-width:800px){.top{grid-template-columns:1fr 1fr}.top .box:nth-child(2){grid-column:1/3;order:-1}.scene{min-height:760px}.questBoard{top:10px}.questionCard{top:76px;padding:14px}.water{top:360px}.pathArea{top:410px}.jeep{top:470px;font-size:50px}.chest{right:16px;bottom:158px;font-size:56px}.answerBoard{bottom:62px}.options{grid-template-columns:repeat(2,1fr)}.opt{min-height:62px}.msg{bottom:8px}.next{right:14px;bottom:8px;padding:10px 18px}}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  color:#172b43;
+  background:linear-gradient(#83dcff 0%,#c9f4ff 34%,#72c767 35%,#2f8447 100%);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+button{font-family:inherit;cursor:pointer;border:0}
+.screen{display:none;min-height:100vh;padding:16px}
+.active{display:flex}
+#splash{
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  background:linear-gradient(#eefcff,#ffffff,#e6ffd9);
+}
+#splash img{max-width:420px;width:75vw}
+.timer{
+  margin-top:20px;
+  background:#123b66;
+  color:white;
+  padding:12px 24px;
+  border-radius:20px;
+  font-weight:bold;
+  box-shadow:0 10px 24px rgba(0,0,0,.25);
+}
+#intro,#result{justify-content:center;align-items:center}
+.card{
+  width:min(850px,94vw);
+  background:#fff1cb;
+  color:#123b66;
+  border-radius:28px;
+  padding:28px;
+  text-align:center;
+  box-shadow:0 12px 28px rgba(0,0,0,.25);
+  border:5px solid white;
+}
+h1{font-size:clamp(32px,6vw,56px);margin:0 0 12px}
+.rules{
+  text-align:left;
+  margin:20px auto;
+  max-width:650px;
+  counter-reset:step;
+  display:grid;
+  gap:10px;
+}
+.rule{
+  background:white;
+  border-radius:15px;
+  padding:14px;
+  font-size:clamp(16px,2.5vw,20px);
+  font-weight:bold;
+}
+.rule:before{
+  counter-increment:step;
+  content:counter(step) ". ";
+  color:#0072bc;
+  margin-right:8px;
+}
+.play,.next,.restart{
+  background:linear-gradient(#50dc65,#149a3c);
+  color:white;
+  font-size:22px;
+  font-weight:bold;
+  padding:14px 30px;
+  border-radius:30px;
+  box-shadow:0 7px 0 #0b6a2b;
+}
+#game{
+  flex-direction:column;
+  gap:10px;
+  background:
+    radial-gradient(circle at 18% 12%,rgba(255,255,255,.45),transparent 14%),
+    linear-gradient(#7edfff 0%,#beefff 32%,#72ca6e 33%,#2d874b 100%);
+}
+.top{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  width:min(1100px,96vw);
+  margin:auto;
+  font-weight:bold;
+}
+.box{
+  background:#513218;
+  color:white;
+  padding:10px;
+  border-radius:14px;
+  text-align:center;
+  border:3px solid #c8893f;
+  box-shadow:0 7px 18px rgba(0,0,0,.25);
+}
+.scene{
+  width:min(1100px,96vw);
+  margin:auto;
+  background:rgba(255,255,255,.24);
+  border-radius:28px;
+  padding:16px;
+  box-shadow:0 10px 24px rgba(0,0,0,.25);
+  position:relative;
+  min-height:640px;
+  overflow:hidden;
+  border:4px solid rgba(255,255,255,.38);
+}
+.mountain{
+  position:absolute;
+  bottom:45%;
+  width:330px;
+  height:210px;
+  background:#70abc9;
+  clip-path:polygon(50% 0,100% 100%,0 100%);
+  opacity:.75;
+}
+.m1{left:4%}
+.m2{left:28%;transform:scale(.75);opacity:.6}
+.m3{right:2%;transform:scale(.9)}
+.camp{
+  position:absolute;
+  right:35px;
+  bottom:220px;
+  font-size:64px;
+  z-index:3;
+}
+.campSign{
+  position:absolute;
+  right:28px;
+  bottom:190px;
+  background:#6b3a17;
+  color:white;
+  padding:8px 18px;
+  border-radius:10px;
+  border:3px solid #d99b44;
+  font-weight:bold;
+  z-index:4;
+}
+.questionCard{
+  position:relative;
+  z-index:5;
+  background:#fff1cb;
+  border:4px dashed #c78c50;
+  border-radius:22px;
+  width:min(680px,94%);
+  margin:0 auto 22px;
+  padding:22px;
+  text-align:center;
+}
+.qtext{
+  font-size:clamp(20px,3.1vw,32px);
+  font-weight:bold;
+  min-height:84px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.paths{
+  position:relative;
+  z-index:4;
+  height:300px;
+  margin:8px auto;
+}
+.path{
+  position:absolute;
+  left:8%;
+  right:8%;
+  height:62px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  border:5px solid rgba(255,255,255,.7);
+  box-shadow:0 8px 18px rgba(0,0,0,.24);
+}
+.path:after{
+  content:"";
+  position:absolute;
+  left:5%;
+  right:5%;
+  top:50%;
+  height:6px;
+  transform:translateY(-50%);
+  background:repeating-linear-gradient(90deg,#fff 0 25px,transparent 25px 45px);
+  opacity:.9;
+  pointer-events:none;
+}
+.p1{top:0;background:#d98a29}
+.p2{top:105px;background:#3489d8}
+.p3{top:210px;background:#904ec9}
+.routeBtn{
+  position:relative;
+  z-index:2;
+  min-width:130px;
+  min-height:52px;
+  border-radius:16px;
+  background:#fff7e6;
+  color:#123b66;
+  font-size:clamp(17px,2.8vw,24px);
+  font-weight:bold;
+  border:4px solid transparent;
+  box-shadow:0 6px 0 rgba(0,0,0,.24);
+}
+.routeBtn:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.24)}
+.routeBtn.chosen{border-color:#ffe100;background:#fff5a8}
+.routeBtn.correct{border-color:#13bd51;background:#caffd9}
+.routeBtn.wrong{border-color:#e74c3c;background:#ffd4cd;animation:shake .25s}
+.jeep{
+  position:absolute;
+  left:2%;
+  top:338px;
+  font-size:56px;
+  z-index:8;
+  transition:all .8s ease;
+}
+.jeep.shake{animation:shake .25s}
+.feedback{
+  position:relative;
+  z-index:8;
+  margin:12px auto 0;
+  width:min(680px,94%);
+  min-height:58px;
+  background:#fff1cb;
+  border:4px solid white;
+  color:#123;
+  border-radius:18px;
+  padding:12px;
+  text-align:center;
+  font-weight:bold;
+  font-size:clamp(16px,2.4vw,21px);
+}
+.next{display:none;margin:12px auto 0}
+.finalScore{font-size:64px;color:#7b3fd1;font-weight:bold}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:20}
+.piece{position:absolute;top:-20px;width:12px;height:18px;animation:fall 1.5s linear forwards}
+@keyframes shake{
+  25%{transform:translateX(-5px)}
+  50%{transform:translateX(5px)}
+  75%{transform:translateX(-3px)}
+}
+@keyframes fall{
+  to{transform:translateY(110vh) rotate(500deg)}
+}
+@media(max-width:760px){
+  .top{grid-template-columns:1fr 1fr}
+  .top .box:nth-child(2){grid-column:1/3;order:-1}
+  .scene{min-height:720px}
+  .paths{height:360px}
+  .path{left:2%;right:2%;height:82px;gap:8px;padding:0 8px}
+  .p1{top:0}.p2{top:135px}.p3{top:270px}
+  .routeBtn{min-width:30%;font-size:16px}
+  .jeep{font-size:46px;top:375px}
+  .camp{right:15px;bottom:255px;font-size:44px}
+  .campSign{right:10px;bottom:225px}
+}
 </style>
 </head>
 <body>
-<audio id="correctSound" src="assets/correct.mp3"></audio><audio id="wrongSound" src="assets/wrong.mp3"></audio><audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
-<section id="splash" class="screen active"><img src="assets/innovine-logo.png" alt="Innovine Logo"><div class="timer">Starting in <span id="count">5</span>s</div></section>
-<section id="intro" class="screen"><div class="card"><h1>Angle Quest</h1><p><b>Help the explorer reach the treasure chest by solving angle challenges.</b></p><div class="rules"><div class="rule">Read the angle question carefully.</div><div class="rule">Tap the correct answer card.</div><div class="rule">You have 2 attempts for each challenge.</div><div class="rule">The explorer moves ahead after every correct answer.</div><div class="rule">Complete all 10 challenges to open the treasure chest.</div></div><button class="play" onclick="startGame()">LET’S PLAY</button></div></section>
-<section id="game" class="screen"><div class="top"><div class="box">Score: <span id="score">0</span> ⭐</div><div class="box">Adventure: <span id="adv">1</span>/10</div><div class="box">Attempts: <span id="hearts">❤️❤️</span></div></div><main class="scene"><div class="mountain m1"></div><div class="mountain m2"></div><div class="mountain m3"></div><div class="waterfall"></div><div class="water"></div><div class="questBoard">ANGLE QUEST</div><div class="chest">🧰</div><section class="questionCard"><div class="qtext" id="qtext"></div><div class="angleDraw" id="angleDraw"></div></section><div class="pathArea"><div class="stonePath"></div><div class="step s1">1</div><div class="step s2">2</div><div class="step s3">3</div><div class="step s4">4</div><div class="step s5">5</div></div><div class="jeep" id="jeep"><span class="vehicle">🚗</span></div><section class="answerBoard"><div class="answerTitle">TAP THE CORRECT ANSWER CARD</div><div class="options" id="options"></div></section><div class="msg" id="msg">Tap the correct answer card.</div><button class="next" id="nextBtn" onclick="nextQuestion()">NEXT ➜</button></main></section>
-<section id="result" class="screen"><div class="card"><h1>Treasure Unlocked!</h1><p>You completed all 10 angle challenges.</p><div class="finalScore" id="finalScore">0</div><div style="font-size:50px" id="stars">⭐⭐⭐</div><button class="restart" onclick="startGame()">PLAY AGAIN</button></div></section><div class="confetti" id="confetti"></div>
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<section id="splash" class="screen active">
+  <img src="assets/innovine-logo.png" alt="Innovine Logo">
+  <div class="timer">Starting in <span id="count">5</span>s</div>
+</section>
+
+<section id="intro" class="screen">
+  <div class="card">
+    <h1>Geometry Route Adventure</h1>
+    <p><b>Help the explorer reach the camp by choosing the correct path.</b></p>
+    <div class="rules">
+      <div class="rule">Read the geometry question carefully.</div>
+      <div class="rule">Tap the correct path sign.</div>
+      <div class="rule">You have 2 attempts for each challenge.</div>
+      <div class="rule">The jeep follows the correct path only after a correct answer.</div>
+      <div class="rule">Complete all 10 challenges to reach the camp.</div>
+    </div>
+    <button class="play" onclick="startGame()">LET’S PLAY</button>
+  </div>
+</section>
+
+<section id="game" class="screen">
+  <div class="top">
+    <div class="box">Score: <span id="score">0</span> ⭐</div>
+    <div class="box">Level: <span id="level">1</span>/10</div>
+    <div class="box">Attempts: <span id="hearts">❤️❤️</span></div>
+  </div>
+
+  <main class="scene">
+    <div class="mountain m1"></div><div class="mountain m2"></div><div class="mountain m3"></div>
+    <div class="camp">⛺</div>
+    <div class="campSign">CAMP</div>
+
+    <section class="questionCard">
+      <div class="qtext" id="qtext"></div>
+    </section>
+
+    <div class="jeep" id="jeep">🚙</div>
+
+    <section class="paths">
+      <div class="path p1" id="path0"></div>
+      <div class="path p2" id="path1"></div>
+      <div class="path p3" id="path2"></div>
+    </section>
+
+    <div class="feedback" id="msg">Tap the correct path sign.</div>
+    <button class="next" id="nextBtn" onclick="nextQuestion()">NEXT ➜</button>
+  </main>
+</section>
+
+<section id="result" class="screen">
+  <div class="card">
+    <h1>You Reached the Geometry Camp!</h1>
+    <p>You completed all 10 geometry challenges.</p>
+    <div class="finalScore" id="finalScore">0</div>
+    <div style="font-size:50px" id="stars">⭐⭐⭐</div>
+    <button class="restart" onclick="startGame()">PLAY AGAIN</button>
+  </div>
+</section>
+
+<div class="confetti" id="confetti"></div>
+
 <script>
 const questions=[
-{text:"The measure of this angle is",deg:45,answer:"45°",opts:["45°","90°","120°","180°","270°"],explain:"This is an acute angle, smaller than 90°."},
-{text:"The measure of this angle is",deg:90,answer:"90°",opts:["45°","90°","120°","180°","270°"],explain:"This is a right angle."},
-{text:"The measure of this angle is",deg:120,answer:"120°",opts:["60°","90°","120°","180°","270°"],explain:"This is an obtuse angle, greater than 90° and less than 180°."},
-{text:"The measure of this angle is",deg:180,answer:"180°",opts:["90°","120°","180°","270°","360°"],explain:"This is a straight angle."},
-{text:"The measure of this angle is",deg:270,answer:"270°",opts:["90°","180°","270°","360°","45°"],explain:"This is a reflex angle."},
-{text:"Which angle is smaller than a right angle?",deg:60,answer:"Acute angle",opts:["Acute angle","Right angle","Obtuse angle","Straight angle","Reflex angle"],explain:"An acute angle is less than 90°."},
-{text:"Which angle is exactly 90°?",deg:90,answer:"Right angle",opts:["Acute angle","Right angle","Obtuse angle","Straight angle","Reflex angle"],explain:"A right angle measures exactly 90°."},
-{text:"Which angle is greater than 90° but less than 180°?",deg:135,answer:"Obtuse angle",opts:["Acute angle","Right angle","Obtuse angle","Straight angle","Zero angle"],explain:"An obtuse angle is more than 90° and less than 180°."},
-{text:"Which angle makes a straight line?",deg:180,answer:"Straight angle",opts:["Right angle","Straight angle","Acute angle","Reflex angle","Complete angle"],explain:"A straight angle measures 180°."},
-{text:"Which angle is greater than 180° but less than 360°?",deg:240,answer:"Reflex angle",opts:["Right angle","Acute angle","Obtuse angle","Straight angle","Reflex angle"],explain:"A reflex angle is more than 180° and less than 360°."}
+{text:"I have 4 equal sides and 4 right angles. What am I?",answer:"Square",opts:["Square","Rectangle","Triangle","Circle"],explain:"A square has 4 equal sides and 4 right angles."},
+{text:"A road starts at point A and goes endlessly in one direction. What is it?",answer:"Ray",opts:["Ray","Line segment","Line","Angle"],explain:"A ray has one fixed endpoint and extends endlessly in one direction."},
+{text:"Which figure has two fixed endpoints?",answer:"Line segment",opts:["Line segment","Ray","Line","Curve"],explain:"A line segment has two fixed endpoints."},
+{text:"Two rays meet at one common endpoint. What is formed?",answer:"Angle",opts:["Angle","Circle","Line","Point"],explain:"An angle is formed when two rays meet at a common endpoint."},
+{text:"Which shape has 3 sides?",answer:"Triangle",opts:["Triangle","Square","Circle","Rectangle"],explain:"A triangle has 3 sides."},
+{text:"Which shape has no sides and no corners?",answer:"Circle",opts:["Circle","Triangle","Square","Rectangle"],explain:"A circle has no sides and no corners."},
+{text:"What is the common endpoint of the arms of an angle called?",answer:"Vertex",opts:["Vertex","Side","Ray","Segment"],explain:"The common endpoint of the two arms of an angle is called the vertex."},
+{text:"Which instrument is used to draw a circle?",answer:"Compass",opts:["Compass","Ruler","Protractor","Divider only"],explain:"A compass is used to draw circles."},
+{text:"A straight path extends endlessly in both directions. What is it?",answer:"Line",opts:["Line","Ray","Line segment","Angle"],explain:"A line extends endlessly in both directions."},
+{text:"Which instrument is used to measure an angle?",answer:"Protractor",opts:["Protractor","Compass","Scale only","Set square only"],explain:"A protractor is used to measure angles."}
 ];
-let order=[],current=0,score=0,attempts=0,locked=false;
+
+let order=[],current=0,score=0,attempts=0,locked=false,correctPath=0;
 function $(id){return document.getElementById(id)}
-function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active")}
-let c=5;let splash=setInterval(()=>{c--;$("count").textContent=c;if(c<=0){clearInterval(splash);show("intro")}},1000);
-function sound(id){const a=$(id);a.currentTime=0;a.play().catch(()=>{})}
-function startGame(){["correctSound","wrongSound","clapSound"].forEach(id=>{const a=$(id);a.volume=.75;a.play().then(()=>{a.pause();a.currentTime=0}).catch(()=>{})});order=[...questions].sort(()=>Math.random()-.5);current=0;score=0;loadQuestion();show("game")}
-function loadQuestion(){locked=false;attempts=0;const q=order[current];$("score").textContent=score;$("adv").textContent=current+1;$("hearts").textContent="❤️❤️";$("qtext").textContent=q.text;$("msg").textContent="Tap the correct answer card.";$("nextBtn").style.display="none";positionJeep(current);drawAngle(q.deg);makeOptions(q)}
-function drawAngle(deg){
-  const d=$("angleDraw");
-  const rayAngle=-deg;
-  const r=42, cx=52, cy=122;
-  const endX=cx + r*Math.cos(-deg*Math.PI/180);
-  const endY=cy + r*Math.sin(-deg*Math.PI/180);
-  const largeArc = deg>180 ? 1 : 0;
-  d.innerHTML=`
-    <svg class="angleSvg" viewBox="0 0 280 150" aria-hidden="true">
-      <path d="M ${cx+r} ${cy} A ${r} ${r} 0 ${largeArc} 0 ${endX} ${endY}"
-            fill="none" stroke="#49a9ff" stroke-width="10" stroke-linecap="round"/>
-    </svg>
-    <div class="ray baseRay"></div>
-    <div class="ray angleRay" style="transform:rotate(${rayAngle}deg)"></div>
-    <div class="vertex">O</div>
-  `;
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  $(id).classList.add("active");
 }
-function makeOptions(q){const box=$("options");box.innerHTML="";[...q.opts].sort(()=>Math.random()-.5).forEach(opt=>{const b=document.createElement("button");b.className="opt";b.textContent=opt;b.onclick=()=>choose(b,opt);box.appendChild(b)})}
-function positionJeep(pos){$("jeep").style.left=Math.min(82,3+pos*8.2)+"%"}
-function choose(btn,val){if(locked)return;document.querySelectorAll(".opt").forEach(t=>t.classList.remove("chosen","wrong","correct"));btn.classList.add("chosen");const q=order[current];if(val===q.answer){locked=true;btn.classList.add("correct");score+=attempts===0?100:60;$("score").textContent=score;$("msg").textContent="Correct! Keep going. "+q.explain;moveJeep();sound("correctSound");sound("clapSound");confetti();$("nextBtn").style.display="block"}else{attempts++;btn.classList.add("wrong");$("jeep").style.animation="shake .25s";setTimeout(()=>$("jeep").style.animation="",300);sound("wrongSound");$("hearts").textContent=attempts===1?"❤️🤎":"🤎🤎";if(attempts>=2){locked=true;$("msg").textContent="Correct answer: "+q.answer+". "+q.explain;document.querySelectorAll(".opt").forEach(t=>{if(t.textContent===q.answer)t.classList.add("correct")});$("nextBtn").style.display="block"}else{$("msg").textContent="Not quite. Try one more time."}}}
-function moveJeep(){$("jeep").style.left=Math.min(86,3+(current+1)*8.2)+"%"}
-function nextQuestion(){current++;if(current>=10){endGame()}else loadQuestion()}
-function endGame(){$("finalScore").textContent=score;$("stars").textContent=score>=850?"⭐⭐⭐":score>=650?"⭐⭐":"⭐";confetti(70);show("result")}
-function confetti(n=30){const wrap=$("confetti");for(let i=0;i<n;i++){const p=document.createElement("div");p.className="piece";p.style.left=Math.random()*100+"vw";p.style.background=["#ffd75b","#ff6b6b","#38a9ff","#55df75","#b369ff"][Math.floor(Math.random()*5)];p.style.animationDelay=Math.random()*.4+"s";wrap.appendChild(p);setTimeout(()=>p.remove(),1700)}}
+let c=5;
+let splash=setInterval(()=>{
+  c--;
+  $("count").textContent=c;
+  if(c<=0){clearInterval(splash);show("intro")}
+},1000);
+
+function sound(id){
+  const a=$(id);
+  a.currentTime=0;
+  a.play().catch(()=>{});
+}
+function startGame(){
+  ["correctSound","wrongSound","clapSound"].forEach(id=>{
+    const a=$(id);
+    a.volume=.75;
+    a.play().then(()=>{a.pause();a.currentTime=0}).catch(()=>{});
+  });
+  order=[...questions].sort(()=>Math.random()-.5);
+  current=0;
+  score=0;
+  loadQuestion();
+  show("game");
+}
+function loadQuestion(){
+  locked=false;
+  attempts=0;
+  const q=order[current];
+  $("score").textContent=score;
+  $("level").textContent=current+1;
+  $("hearts").textContent="❤️❤️";
+  $("qtext").textContent=q.text;
+  $("msg").textContent="Tap the correct path sign.";
+  $("nextBtn").style.display="none";
+  positionJeep();
+  makeRoutes(q);
+}
+function makeRoutes(q){
+  ["path0","path1","path2"].forEach(id=>$(id).innerHTML="");
+  const opts=[...q.opts].sort(()=>Math.random()-.5);
+  opts.forEach((opt,i)=>{
+    const b=document.createElement("button");
+    b.className="routeBtn";
+    b.textContent=opt;
+    const pathNo=i%3;
+    if(opt===q.answer) correctPath=pathNo;
+    b.onclick=()=>choose(b,opt,pathNo);
+    $("path"+pathNo).appendChild(b);
+  });
+}
+function positionJeep(){
+  const startPath = $("path1");
+  const pathsBox = document.querySelector(".paths");
+  const sceneBox = document.querySelector(".scene");
+  const topValue = pathsBox.offsetTop + startPath.offsetTop + (startPath.offsetHeight/2) - 28;
+  $("jeep").style.left="2%";
+  $("jeep").style.top=topValue+"px";
+}
+function choose(btn,val,pathNo){
+  if(locked)return;
+  document.querySelectorAll(".routeBtn").forEach(t=>t.classList.remove("chosen","wrong","correct"));
+  btn.classList.add("chosen");
+  const q=order[current];
+
+  if(val===q.answer){
+    locked=true;
+    btn.classList.add("correct");
+    score+=attempts===0?100:60;
+    $("score").textContent=score;
+    $("msg").textContent="Correct! The jeep followed the correct path. "+q.explain;
+    moveJeepToCorrectPath(correctPath);
+    sound("correctSound");
+    sound("clapSound");
+    confetti();
+    $("nextBtn").style.display="block";
+  }else{
+    attempts++;
+    btn.classList.add("wrong");
+    $("jeep").classList.add("shake");
+    setTimeout(()=>$("jeep").classList.remove("shake"),300);
+    sound("wrongSound");
+    $("hearts").textContent=attempts===1?"❤️🤎":"🤎🤎";
+
+    if(attempts>=2){
+      locked=true;
+      $("msg").textContent="Correct answer: "+q.answer+". "+q.explain;
+      document.querySelectorAll(".routeBtn").forEach(t=>{
+        if(t.textContent===q.answer)t.classList.add("correct");
+      });
+      $("nextBtn").style.display="block";
+    }else{
+      $("msg").textContent="Not quite. Try one more time.";
+    }
+  }
+}
+function moveJeepToCorrectPath(pathNo){
+  const targetPath = $("path"+pathNo);
+  const pathsBox = document.querySelector(".paths");
+  const topValue = pathsBox.offsetTop + targetPath.offsetTop + (targetPath.offsetHeight/2) - 28;
+  $("jeep").style.left="78%";
+  $("jeep").style.top=topValue+"px";
+}
+function nextQuestion(){
+  current++;
+  if(current>=10){endGame()}
+  else loadQuestion();
+}
+function endGame(){
+  $("finalScore").textContent=score;
+  $("stars").textContent=score>=850?"⭐⭐⭐":score>=650?"⭐⭐":"⭐";
+  confetti(70);
+  show("result");
+}
+function confetti(n=30){
+  const wrap=$("confetti");
+  for(let i=0;i<n;i++){
+    const p=document.createElement("div");
+    p.className="piece";
+    p.style.left=Math.random()*100+"vw";
+    p.style.background=["#ffd75b","#ff6b6b","#38a9ff","#55df75","#b369ff"][Math.floor(Math.random()*5)];
+    p.style.animationDelay=Math.random()*.4+"s";
+    wrap.appendChild(p);
+    setTimeout(()=>p.remove(),1700);
+  }
+}
 </script>
 </body>
 </html>
