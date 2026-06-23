@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Geometry Sandbox Constructor</title>
+    <title>Geometry Blueprint Connector</title>
     <style>
         * {
             box-sizing: border-box;
@@ -16,7 +16,7 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #080a14;
+            background-color: #0b0e14;
             font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial', sans-serif;
         }
         #game-container {
@@ -26,10 +26,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #03050a;
+            background-color: #04060a;
         }
         canvas {
-            box-shadow: 0 0 35px rgba(0,0,0,0.9);
+            box-shadow: 0 0 40px rgba(0,0,0,0.9);
             max-width: 100%;
             max-height: 100%;
             aspect-ratio: 16 / 9;
@@ -59,8 +59,7 @@ const STATES = {
     BRANDING: 0,
     INSTRUCTIONS: 1,
     PLAYING: 2,
-    FEEDBACK: 3,
-    GAMEOVER: 4
+    GAMEOVER: 3
 };
 let currentState = STATES.BRANDING;
 let stateStartTime = Date.now();
@@ -73,60 +72,50 @@ const audioCorrect = document.getElementById('snd-correct');
 const audioWrong = document.getElementById('snd-wrong');
 const audioWin = document.getElementById('snd-win');
 
-// --- GEOMETRY SYLLABUS CHALLENGES ---
-const dataset = [
-    { id: 1, problem: "Slide the controls to make an Equilateral Triangle (3 equal sides & angles)", check: (v1, v2) => Math.abs(v1 - 60) < 5 && Math.abs(v2 - 60) < 5, s1Name: "Base Width", s2Name: "Corner Angle", s1Min: 30, s1Max: 90, s2Min: 30, s2Max: 90, s1Start: 40, s2Start: 45, hint: "An equilateral shape requires a corner angle adjusted exactly around 60 degrees." },
-    { id: 2, problem: "Adjust the constructor to form a Right-Angled Triangle (exactly 90° corner)", check: (v1, v2) => Math.abs(v2 - 90) < 4, s1Name: "Base Width", s2Name: "Corner Angle", s1Min: 40, s1Max: 100, s2Min: 40, s2Max: 120, s1Start: 70, s2Start: 60, hint: "Move the angle control right until it hits a vertical 90-degree box edge layout." },
-    { id: 3, problem: "Scale up a Circle so that its complete Diameter is exactly equal to 80 units", check: (v1, v2) => Math.abs(v1 - 40) < 3, s1Name: "Radius Size", s2Name: "Rotation Axis", s1Min: 20, s1Max: 70, s2Min: 0, s2Max: 100, s1Start: 25, s2Start: 10, hint: "Diameter = 2 × Radius! So set your Radius scale perfectly to 40." },
-    { id: 4, problem: "Shape a Rectangle with opposite sides matching (Width: 80, Height: 40)", check: (v1, v2) => Math.abs(v1 - 80) < 5 && Math.abs(v2 - 40) < 4, s1Name: "Shape Width", s2Name: "Shape Height", s1Min: 30, s1Max: 120, s2Min: 20, s2Max: 80, s1Start: 50, s2Start: 65, hint: "Increase your shape width towards 80 while keeping height short at 40." },
-    { id: 5, problem: "Construct an Isosceles Triangle (Make 2 side lengths exactly match)", check: (v1, v2) => Math.abs(v2 - 72) < 4, s1Name: "Base Split", s2Name: "Roof Pitch Angle", s1Min: 30, s1Max: 90, s2Min: 40, s2Max: 90, s1Start: 60, s2Start: 50, hint: "Tweak the roof angle control until it scales perfectly to 72 degrees." }
+// --- THE GEOMETRY SCHEMATIC MAP DATA ---
+const shapeNodes = [
+    { id: "equilateral", name: "Equilateral Triangle", matchId: "prop1", x: 200, y: 150, r: 50, color: "#38bdf8" },
+    { id: "rightangle", name: "Right-Angled Triangle", matchId: "prop2", x: 200, y: 255, r: 50, color: "#a855f7" },
+    { id: "circle", name: "Perfect Circle", matchId: "prop3", x: 200, y: 360, r: 50, color: "#06b6d4" },
+    { id: "rectangle", name: "Rectangle Quadrilateral", matchId: "prop4", x: 200, y: 465, r: 50, color: "#f43f5e" }
 ];
 
-let gameQuestions = [];
-let currentQIndex = 0;
-let score = 0;
-let feedbackType = "";
+const propertyTokens = [
+    { id: "prop3", label: "Diameter = 2 × Radius", matchId: "circle", x: 800, y: 150, w: 280, h: 60, color: "#06b6d4" },
+    { id: "prop1", label: "3 Equal Sides & Angles", matchId: "equilateral", x: 800, y: 255, w: 280, h: 60, color: "#38bdf8" },
+    { id: "prop4", label: "Opposite Sides Match (90°)", matchId: "rectangle", x: 800, y: 360, w: 280, h: 60, color: "#f43f5e" },
+    { id: "prop2", label: "Contains a 90° Corner Angle", matchId: "rightangle", x: 800, y: 465, w: 280, h: 60, color: "#a855f7" }
+];
+
+// --- INTERACTION REGISTERS ---
+let selectedShape = null;
+let selectedProperty = null;
+let connections = []; // Tracks locked configuration links
+let gameScore = 0;
+let feedbackMessage = "Connect the shapes to their mathematical law profiles!";
+let feedbackColor = "#94a3b8";
 let feedbackTimer = 0;
-let hintActive = false;
-let wrongAttempts = 0;
 
-// --- INTERACTIVE SLIDERS OBJECTS ---
-let slider1 = { x: 220, y: 490, w: 220, h: 10, val: 50, min: 0, max: 100, name: "Scale A", dragging: false };
-let slider2 = { x: 580, y: 490, w: 220, h: 10, val: 50, min: 0, max: 100, name: "Scale B", dragging: false };
-
-// Submit Button bounds
-const submitBtn = { x: 870, y: 470, w: 120, h: 48 };
-
-function initGame() {
-    gameQuestions = [...dataset].sort(() => Math.random() - 0.5);
-    score = 0;
-    currentQIndex = 0;
-    loadQuestion();
+function resetMatchLayout() {
+    connections = [];
+    selectedShape = null;
+    selectedProperty = null;
+    gameScore = 0;
+    feedbackMessage = "Connect the shapes to their mathematical law profiles!";
+    feedbackColor = "#94a3b8";
+    
+    // Scramble right-hand property locations dynamically to keep replays clever
+    const verticalSlots = [150, 255, 360, 465].sort(() => Math.random() - 0.5);
+    propertyTokens.forEach((token, idx) => {
+        token.y = verticalSlots[idx];
+    });
 }
 
-function loadQuestion() {
-    hintActive = false;
-    wrongAttempts = 0;
-    
-    if (currentQIndex >= gameQuestions.length) {
-        currentState = STATES.GAMEOVER;
-        audioWin.currentTime = 0;
-        audioWin.play().catch(() => {});
-        return;
-    }
-
-    const q = gameQuestions[currentQIndex];
-    
-    // Assign custom configurations based on problem criteria
-    slider1.name = q.s1Name; slider1.min = q.s1Min; slider1.max = q.s1Max; slider1.val = q.s1Start;
-    slider2.name = q.s2Name; slider2.min = q.s2Min; slider2.max = q.s2Max; slider2.val = q.s2Start;
-}
-
-// --- RENDERING VIEWS ---
+// --- RENDER VEHICLES ---
 
 function drawBranding() {
-    // Force direct black canvas paint to eradicate white screening completely
-    ctx.fillStyle = "#080a14";
+    // FIX: Tight background paint prevents all potential white screen leaks
+    ctx.fillStyle = "#0b0e14";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     if (logoImg.complete && logoImg.naturalWidth !== 0) {
@@ -140,337 +129,273 @@ function drawBranding() {
 }
 
 function drawInstructions() {
-    ctx.fillStyle = "#080a14";
+    ctx.fillStyle = "#0b0e14";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Grid blueprint theme accents
-    ctx.strokeStyle = "rgba(56, 189, 248, 0.05)";
+    // Decorative blue-grid lines
+    ctx.strokeStyle = "rgba(56, 189, 248, 0.04)";
     ctx.lineWidth = 1;
-    for(let i=0; i<canvas.width; i+=40) {
+    for (let i = 0; i < canvas.width; i += 40) {
         ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
     }
 
     ctx.fillStyle = "#38bdf8";
-    ctx.font = "bold 38px 'Comic Sans MS'";
+    ctx.font = "bold 40px 'Comic Sans MS'";
     ctx.textAlign = "center";
-    ctx.fillText("📐 GEOMETRY SANDBOX CONSTRUCTOR 📐", canvas.width / 2, 140);
+    ctx.fillText("📐 GEOMETRIC LINK ARCHITECT 📐", canvas.width / 2, 140);
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "20px 'Comic Sans MS'";
-    ctx.fillText("No multiple choice questions here! You are the builder.", canvas.width / 2, 240);
-    ctx.fillText("Read the geometry target prompt at the top of your layout matrix.", canvas.width / 2, 290);
-    ctx.fillText("Drag the dual calibration sliders to form, tilt, or reshape the item live!", canvas.width / 2, 340);
+    ctx.font = "21px 'Comic Sans MS'";
+    ctx.fillText("1. Tap a visual wireframe shape profile on the Left Board.", canvas.width / 2, 235);
+    ctx.fillText("2. Tap its matching textbook property token on the Right Board.", canvas.width / 2, 290);
+    ctx.fillText("Link all blueprints together correctly to construct the final architecture!", canvas.width / 2, 345);
 
-    let pulse = Math.sin(Date.now() / 150) * 4;
-    ctx.fillStyle = "#6366f1";
+    let pulse = Math.sin(Date.now() / 140) * 4;
+    ctx.fillStyle = "#10b981";
     ctx.beginPath();
-    ctx.roundRect(canvas.width / 2 - 130, 420 + pulse, 260, 60, 16);
+    ctx.roundRect(canvas.width / 2 - 130, 420 + pulse, 260, 60, 15);
     ctx.fill();
     ctx.strokeStyle = "#ffffff";
     ctx.stroke();
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 21px 'Comic Sans MS'";
-    ctx.fillText("LAUNCH BUILDER", canvas.width / 2, 456 + pulse);
+    ctx.fillText("OPEN MATRIX", canvas.width / 2, 456 + pulse);
 }
 
-function drawHUD() {
-    ctx.fillStyle = "rgba(10, 12, 26, 0.9)";
-    ctx.fillRect(0, 0, canvas.width, 70);
-    
-    ctx.fillStyle = "#fbbf24";
-    ctx.font = "bold 19px 'Comic Sans MS'";
-    ctx.textAlign = "left";
-    ctx.fillText(`Structure System: ${currentQIndex + 1} / ${gameQuestions.length}`, 30, 42);
-
-    ctx.textAlign = "right";
-    ctx.fillStyle = "#34d399";
-    ctx.fillText(`Accuracy Marks: ${score}`, canvas.width - 30, 42);
-}
-
-// Live procedural custom shape visualizer based on slider state parameters
-function drawLiveTargetShape(v1, v2, typeId) {
+function renderShapeVectorWireframe(id, x, y) {
     ctx.save();
-    ctx.translate(canvas.width / 2, 300); // Situate item squarely in mid-pad sandbox zone
-    ctx.strokeStyle = "#38bdf8";
-    ctx.lineWidth = 4;
-    ctx.fillStyle = "rgba(56, 189, 248, 0.15)";
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = "#38bdf8";
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 3;
+    ctx.fillStyle = "rgba(255, 255, 255, 0.06)";
 
-    if (typeId === 1 || typeId === 2 || typeId === 5) { // Triangle Engine Layouts
-        let baseHalf = v1 * 1.5;
-        let height = 120;
-        
-        if(typeId === 2) { // Angle based right triangle
-            let rad = (v2 * Math.PI) / 180;
-            let targetX = -60 + Math.cos(rad) * 130;
-            let targetY = 40 - Math.sin(rad) * 130;
-            ctx.beginPath();
-            ctx.moveTo(-60, 40);
-            ctx.lineTo(60, 40);
-            ctx.lineTo(targetX, targetY);
-            ctx.closePath();
-        } else if (typeId === 5) { // Isosceles Pitch Engine
-            let rad = (v2 * Math.PI) / 180;
-            ctx.beginPath();
-            ctx.moveTo(-70, 50);
-            ctx.lineTo(70, 50);
-            ctx.lineTo(0, 50 - Math.sin(rad) * 140);
-            ctx.closePath();
-        } else { // Equilateral search engine
-            let angleRad = (v2 * Math.PI) / 180;
-            ctx.beginPath();
-            ctx.moveTo(-baseHalf, 40);
-            ctx.lineTo(baseHalf, 40);
-            ctx.lineTo(0, 40 - Math.sin(angleRad) * (baseHalf * 2));
-            ctx.closePath();
-        }
+    if (id === "equilateral") {
+        ctx.beginPath();
+        ctx.moveTo(x, y - 24);
+        ctx.lineTo(x - 28, y + 22);
+        ctx.lineTo(x + 28, y + 22);
+        ctx.closePath();
         ctx.fill(); ctx.stroke();
     } 
-    else if (typeId === 3) { // Circle Geometry Builder
+    else if (id === "rightangle") {
         ctx.beginPath();
-        ctx.arc(0, 0, v1, 0, Math.PI * 2);
+        ctx.moveTo(x - 20, y - 24);
+        ctx.lineTo(x - 20, y + 22);
+        ctx.lineTo(x + 25, y + 22);
+        ctx.closePath();
         ctx.fill(); ctx.stroke();
-
-        // Draw active tracking radius segment indicator line
-        ctx.strokeStyle = "#fbbf24";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.lineTo(v1, 0);
-        ctx.stroke();
-
-        ctx.fillStyle = "#fbbf24";
-        ctx.font = "bold 14px Arial";
-        ctx.fillText(`R: ${Math.round(v1)}`, v1/2, -10);
-        ctx.fillText(`D: ${Math.round(v1 * 2)}`, -10, v1 + 20);
+        // Little corner square box indicator
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(x - 20, y + 12, 10, 10);
     } 
-    else if (typeId === 4) { // Quadrilateral Box Builder
+    else if (id === "circle") {
         ctx.beginPath();
-        ctx.rect(-v1, -v2, v1 * 2, v2 * 2);
+        ctx.arc(x, y, 25, 0, Math.PI * 2);
+        ctx.fill(); ctx.stroke();
+        // Inner line indicator showing context rules
+        ctx.strokeStyle = "rgba(255,255,255,0.4)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(x - 25, y); ctx.lineTo(x + 25, y); ctx.stroke();
+    } 
+    else if (id === "rectangle") {
+        ctx.beginPath();
+        ctx.rect(x - 35, y - 20, 70, 40);
         ctx.fill(); ctx.stroke();
     }
-
     ctx.restore();
 }
 
-function drawSlider(s) {
-    // Slide track baseline trace
-    ctx.fillStyle = "#1e293b";
-    ctx.beginPath();
-    ctx.roundRect(s.x, s.y, s.w, s.h, 4);
-    ctx.fill();
-
-    // Fill line active value tracker gauge
-    let pct = (s.val - s.min) / (s.max - s.min);
-    ctx.fillStyle = "#a855f7";
-    ctx.beginPath();
-    ctx.roundRect(s.x, s.y, s.w * pct, s.h, 4);
-    ctx.fill();
-
-    // Knob button element circle bounds
-    let knobX = s.x + (s.w * pct);
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.arc(knobX, s.y + s.h/2, 11, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.strokeStyle = "#a855f7";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Labels
-    ctx.fillStyle = "#94a3b8";
-    ctx.font = "bold 15px 'Comic Sans MS'";
-    ctx.textAlign = "left";
-    ctx.fillText(`${s.name}: ${Math.round(s.val)}`, s.x, s.y - 12);
-}
-
 function drawPlayingState() {
-    ctx.fillStyle = "#0c0f1d";
+    ctx.fillStyle = "#0f121d";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const q = gameQuestions[currentQIndex];
-
-    // Core Instruction Board
+    // Render Status Task Bar
     ctx.fillStyle = "#1e293b";
-    ctx.beginPath();
-    ctx.roundRect(50, 90, 924, 70, 14);
-    ctx.fill();
-    ctx.strokeStyle = "#38bdf8";
-    ctx.stroke();
+    ctx.fillRect(0, 0, canvas.width, 80);
+    ctx.strokeStyle = "rgba(56, 189, 248, 0.3)";
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, 80); ctx.lineTo(canvas.width, 80); ctx.stroke();
 
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 20px 'Comic Sans MS'";
+    // Text instructions
+    if (Date.now() - feedbackTimer > 2000) {
+        feedbackMessage = "Tap a vector wireframe on the left, then link its match on the right.";
+        feedbackColor = "#94a3b8";
+    }
+    ctx.fillStyle = feedbackColor;
+    ctx.font = "bold 19px 'Comic Sans MS'";
     ctx.textAlign = "center";
-    ctx.fillText(q.problem, canvas.width / 2, 132);
+    ctx.fillText(feedbackMessage, canvas.width / 2, 46);
 
-    if (hintActive) {
-        ctx.fillStyle = "#fbbf24";
-        ctx.font = "bold 17px 'Comic Sans MS'";
-        ctx.fillText(`💡 Assistant Constructor Formula: ${q.hint}`, canvas.width / 2, 195);
+    // Draw active structural connections
+    connections.forEach(link => {
+        ctx.strokeStyle = "rgba(16, 185, 129, 0.65)";
+        ctx.lineWidth = 5;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "#10b981";
+        ctx.beginPath();
+        ctx.moveTo(link.sx, link.sy);
+        ctx.lineTo(link.px, link.py);
+        ctx.stroke();
+        ctx.shadowBlur = 0; // Clear blur immediately
+    });
+
+    // Draw active temporary tracking lines if elements are partially clicked
+    if (selectedShape) {
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath();
+        ctx.moveTo(selectedShape.x + 60, selectedShape.y);
+        ctx.lineTo(canvas.width / 2 + 100, canvas.height / 2 + 50);
+        ctx.stroke();
+        ctx.setLineDash([]); // clear dash lines mapping
     }
 
-    // Render workspace target graphic live matrix tracking metrics updates
-    drawLiveTargetShape(slider1.val, slider2.val, q.id);
+    // --- DRAW SHAPE CARDS (LEFT BOARD) ---
+    shapeNodes.forEach(node => {
+        let isLinked = connections.some(c => c.shapeId === node.id);
+        let isSelected = selectedShape && selectedShape.id === node.id;
 
-    // Draw control interfaces
-    drawSlider(slider1);
-    drawSlider(slider2);
+        // Interactive container pad housing shapes
+        ctx.fillStyle = isSelected ? "#1e293b" : "#111827";
+        ctx.beginPath();
+        ctx.roundRect(node.x - 140, node.y - 42, 280, 84, 12);
+        ctx.fill();
+        ctx.strokeStyle = isSelected ? "#38bdf8" : (isLinked ? "#10b981" : "#374151");
+        ctx.lineWidth = isSelected ? 3 : 1.5;
+        ctx.stroke();
 
-    // Draw Submit / Construct confirmation button
-    ctx.fillStyle = "#10b981";
-    ctx.beginPath();
-    ctx.roundRect(submitBtn.x, submitBtn.y, submitBtn.w, submitBtn.h, 12);
-    ctx.fill();
-    ctx.strokeStyle = "#ffffff";
-    ctx.stroke();
+        renderShapeVectorWireframe(node.id, node.x - 80, node.y);
 
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 16px 'Comic Sans MS'";
-    ctx.textAlign = "center";
-    ctx.fillText("SUBMIT", submitBtn.x + submitBtn.w/2, submitBtn.y + 29);
+        // Core descriptor title string
+        ctx.fillStyle = isLinked ? "#94a3b8" : "#ffffff";
+        ctx.font = "bold 16px 'Comic Sans MS'";
+        ctx.textAlign = "left";
+        ctx.fillText(node.name, node.x - 25, node.y + 6);
+    });
 
-    drawHUD();
-}
+    // --- DRAW RECTANGULAR TOKENS (RIGHT BOARD) ---
+    propertyTokens.forEach(token => {
+        let isLinked = connections.some(c => c.tokenId === token.id);
+        let isSelected = selectedProperty && selectedProperty.id === token.id;
 
-function drawFeedbackState() {
-    drawPlayingState();
+        ctx.fillStyle = isSelected ? "#2d1b4e" : "#111827";
+        ctx.beginPath();
+        ctx.roundRect(token.x - token.w/2, token.y - token.h/2, token.w, token.h, 12);
+        ctx.fill();
+        ctx.strokeStyle = isSelected ? "#a855f7" : (isLinked ? "#10b981" : "#374151");
+        ctx.lineWidth = isSelected ? 3 : 1.5;
+        ctx.stroke();
 
-    ctx.fillStyle = "rgba(8, 10, 20, 0.85)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.textAlign = "center";
-    if (feedbackType === "correct") {
-        ctx.fillStyle = "#34d399";
-        ctx.font = "bold 44px 'Comic Sans MS'";
-        ctx.fillText("🌟 STRUCTURE SECURED! 🌟", canvas.width / 2, canvas.height / 2 - 10);
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "20px 'Comic Sans MS'";
-        ctx.fillText("Angles and side vectors verify target parameters successfully.", canvas.width / 2, canvas.height / 2 + 40);
-    } else {
-        ctx.fillStyle = "#f43f5e";
-        ctx.font = "bold 44px 'Comic Sans MS'";
-        ctx.fillText("💥 PARAMETER MISMATCH 💥", canvas.width / 2, canvas.height / 2 - 10);
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "20px 'Comic Sans MS'";
-        ctx.fillText("Shape geometry variance too high! Tweak your controls and retry.", canvas.width / 2, canvas.height / 2 + 40);
-    }
-
-    if (Date.now() - feedbackTimer > 2500) {
-        if (feedbackType === "correct") {
-            currentQIndex++;
-            loadQuestion();
-            currentState = STATES.PLAYING;
-        } else {
-            if(wrongAttempts >= 2) hintActive = true;
-            currentState = STATES.PLAYING;
-        }
-    }
+        ctx.fillStyle = isLinked ? "#64748b" : "#ffffff";
+        ctx.font = "bold 15px 'Comic Sans MS'";
+        ctx.textAlign = "center";
+        ctx.fillText(token.label, token.x, token.y + 5);
+    });
 }
 
 function drawGameOverState() {
-    ctx.fillStyle = "#080a14";
+    ctx.fillStyle = "#0b0e14";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "#fbbf24";
     ctx.font = "bold 48px 'Comic Sans MS'";
     ctx.textAlign = "center";
-    ctx.fillText("SANDBOX MATRIX COMPLETE!", canvas.width / 2, 190);
+    ctx.fillText("SCHEMATICS UNLOCKED COMPLETELY!", canvas.width / 2, 200);
 
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "25px 'Comic Sans MS'";
-    ctx.fillText(`Total Engineering Score: ${score} Points`, canvas.width / 2, 275);
+    ctx.fillStyle = "#34d399";
+    ctx.font = "bold 24px 'Comic Sans MS'";
+    ctx.fillText("All shape profiles verified successfully under standard law metrics.", canvas.width / 2, 280);
 
     ctx.fillStyle = "#6366f1";
     ctx.beginPath();
-    ctx.roundRect(canvas.width / 2 - 120, 390, 240, 60, 20);
+    ctx.roundRect(canvas.width / 2 - 120, 400, 240, 60, 20);
     ctx.fill();
     ctx.strokeStyle = "#ffffff";
     ctx.stroke();
 
     ctx.fillStyle = "#ffffff";
     ctx.font = "bold 21px 'Comic Sans MS'";
-    ctx.fillText("REBUILD SANDBOX", canvas.width / 2, 426);
+    ctx.fillText("RESET SCHEMATICS", canvas.width / 2, 436);
 }
 
-// --- INTERACTIVE EVENT MECHANICS ---
+// --- INTERACTIVE LINK EVALUATION PROCESS ---
 
-function checkSliderClick(s, mx, my) {
-    let pct = (s.val - s.min) / (s.max - s.min);
-    let knobX = s.x + (s.w * pct);
-    // Expand hit tolerance detection parameters for cleaner mobile touchscreen capture
-    if (mx >= s.x - 15 && mx <= s.x + s.w + 15 && my >= s.y - 15 && my <= s.y + s.h + 20) {
-        s.dragging = true;
-        updateSliderVal(s, mx);
-        return true;
+function evaluateSelections() {
+    if (selectedShape && selectedProperty) {
+        if (selectedShape.matchId === selectedProperty.id) {
+            // Lock connection mapping coordinate lines securely
+            connections.push({
+                shapeId: selectedShape.id,
+                tokenId: selectedProperty.id,
+                sx: selectedShape.x + 140, sy: selectedShape.y,
+                px: selectedProperty.x - selectedProperty.w/2, py: selectedProperty.y
+            });
+            audioCorrect.currentTime = 0;
+            audioCorrect.play().catch(() => {});
+            feedbackMessage = `🌟 Correct Link: ${selectedShape.name} locked!`;
+            feedbackColor = "#34d399";
+            gameScore += 25;
+        } else {
+            audioWrong.currentTime = 0;
+            audioWrong.play().catch(() => {});
+            feedbackMessage = "💥 Mismatch configuration! Laws do not match profile.";
+            feedbackColor = "#f43f5e";
+        }
+        feedbackTimer = Date.now();
+        selectedShape = null;
+        selectedProperty = null;
+
+        // Win Verification Boundary Check
+        if (connections.length === shapeNodes.length) {
+            setTimeout(() => {
+                currentState = STATES.GAMEOVER;
+                audioWin.currentTime = 0;
+                audioWin.play().catch(() => {});
+            }, 1200);
+        }
     }
-    return false;
 }
 
-function updateSliderVal(s, mx) {
-    let pct = (mx - s.x) / s.w;
-    if (pct < 0) pct = 0;
-    if (pct > 1) pct = 1;
-    s.val = s.min + pct * (s.max - s.min);
-}
-
-function processPointerDown(coords) {
+function handlePointerClick(coords) {
     if (currentState === STATES.INSTRUCTIONS) {
         if (coords.x > canvas.width/2 - 130 && coords.x < canvas.width/2 + 130 && coords.y > 420 && coords.y < 480) {
-            initGame();
+            resetMatchLayout();
             currentState = STATES.PLAYING;
         }
     } 
     else if (currentState === STATES.PLAYING) {
-        // Trigger drag checks
-        if (!checkSliderClick(slider1, coords.x, coords.y)) {
-            checkSliderClick(slider2, coords.x, coords.y);
-        }
-
-        // Handle active Submit verification node click tracking
-        if (coords.x >= submitBtn.x && coords.x <= submitBtn.x + submitBtn.w &&
-            coords.y >= submitBtn.y && coords.y <= submitBtn.y + submitBtn.h) {
-            
-            const currentTask = gameQuestions[currentQIndex];
-            let passed = currentTask.check(slider1.val, slider2.val);
-
-            if (passed) {
-                audioCorrect.currentTime = 0;
-                audioCorrect.play().catch(() => {});
-                score += 20;
-                feedbackType = "correct";
-            } else {
-                audioWrong.currentTime = 0;
-                audioWrong.play().catch(() => {});
-                wrongAttempts++;
-                feedbackType = "wrong";
+        // Evaluate left board clicks
+        shapeNodes.forEach(node => {
+            if (!connections.some(c => c.shapeId === node.id)) {
+                if (coords.x >= node.x - 140 && coords.x <= node.x + 140 &&
+                    coords.y >= node.y - 42 && coords.y <= node.y + 42) {
+                    selectedShape = node;
+                }
             }
-            feedbackTimer = Date.now();
-            currentState = STATES.FEEDBACK;
-        }
+        });
+
+        // Evaluate right board tokens clicks
+        propertyTokens.forEach(token => {
+            if (!connections.some(c => c.tokenId === token.id)) {
+                if (coords.x >= token.x - token.w/2 && coords.x <= token.x + token.w/2 &&
+                    coords.y >= token.y - token.h/2 && coords.y <= token.y + token.h/2) {
+                    selectedProperty = token;
+                }
+            }
+        });
+
+        evaluateSelections();
     } 
     else if (currentState === STATES.GAMEOVER) {
-        if (coords.x > canvas.width/2 - 120 && coords.x < canvas.width/2 + 120 && coords.y > 390 && coords.y < 450) {
-            initGame();
+        if (coords.x > canvas.width/2 - 120 && coords.x < canvas.width/2 + 120 && coords.y > 400 && coords.y < 460) {
+            resetMatchLayout();
             currentState = STATES.PLAYING;
         }
     }
 }
 
-function processPointerMove(coords) {
-    if (currentState === STATES.PLAYING) {
-        if (slider1.dragging) updateSliderVal(slider1, coords.x);
-        if (slider2.dragging) updateSliderVal(slider2, coords.x);
-    }
-}
-
-function processPointerUp() {
-    slider1.dragging = false;
-    slider2.dragging = false;
-}
-
-function extractRelativeCoords(e) {
+function extractScaleCoords(e) {
     const bound = canvas.getBoundingClientRect();
     const multX = canvas.width / bound.width;
     const multY = canvas.height / bound.height;
@@ -486,23 +411,15 @@ function extractRelativeCoords(e) {
     };
 }
 
-// --- CONTROLLER EVENT CAPTURE ---
-canvas.addEventListener('mousedown', (e) => processPointerDown(extractRelativeCoords(e)));
-canvas.addEventListener('mousemove', (e) => processPointerMove(extractRelativeCoords(e)));
-window.addEventListener('mouseup', processPointerUp);
-
+// --- HARDWARE SYSTEM BINDINGS ---
+canvas.addEventListener('mousedown', (e) => handlePointerClick(extractScaleCoords(e)));
 canvas.addEventListener('touchstart', (e) => {
     e.preventDefault();
-    processPointerDown(extractRelativeCoords(e));
+    handlePointerClick(extractScaleCoords(e));
 }, { passive: false });
-canvas.addEventListener('touchmove', (e) => {
-    e.preventDefault();
-    processPointerMove(extractRelativeCoords(e));
-}, { passive: false });
-window.addEventListener('touchend', processPointerUp);
 
-// --- RUNTIME INITIATOR ---
-function engineLoop() {
+// Main Runtime Thread Loop
+function runningRuntimePipelineLoop() {
     switch (currentState) {
         case STATES.BRANDING:
             drawBranding();
@@ -516,17 +433,14 @@ function engineLoop() {
         case STATES.PLAYING:
             drawPlayingState();
             break;
-        case STATES.FEEDBACK:
-            drawFeedbackState();
-            break;
         case STATES.GAMEOVER:
             drawGameOverState();
             break;
     }
-    requestAnimationFrame(engineLoop);
+    requestAnimationFrame(runningRuntimePipelineLoop);
 }
 
-engineLoop();
+runningRuntimePipelineLoop();
 </script>
 
 </body>
