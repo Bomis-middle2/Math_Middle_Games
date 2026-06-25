@@ -68,21 +68,21 @@
             background: white;
             border: 2px dashed #cbd5e1;
             border-radius: 12px;
-            padding: 15px;
-            margin: 15px 0;
+            padding: 20px;
+            margin: 20px 0;
             width: 100%;
             text-align: left;
         }
         .scroll-box h3 {
-            font-size: 1rem;
+            font-size: 1.05rem;
             color: #1e293b;
             margin-bottom: 6px;
             border-bottom: 2px solid #cbd5e1;
             padding-bottom: 2px;
         }
         .scroll-box p {
-            font-size: 0.85rem;
-            margin-bottom: 10px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
             color: #475569;
             font-weight: bold;
         }
@@ -250,16 +250,13 @@
         </div>
 
         <div id="instruction-screen" class="hidden">
-            <h2 style="color: #475569; font-size: 1.3rem; margin-bottom: 5px;">📐 Symmetry Master Quest</h2>
+            <h2 style="color: #475569; font-size: 1.4rem; margin-bottom: 10px;">📐 Symmetry Master Quest</h2>
             <div class="scroll-box">
-                <h3>🔄 1. Reflection Mode</h3>
-                <p>Tap grids to perfectly mirror the blue patterns across the red line.</p>
+                <h3>🔄 1. Mirror Reflection</h3>
+                <p>Look at the blue pattern and tap empty cells to perfectly mirror its reflection across the red line.</p>
                 
-                <h3>✏️ 2. Line of Symmetry Mode</h3>
-                <p>Tap and paint the exact grids where a cutting fold line would split the grey shape in half perfectly.</p>
-                
-                <h3>📐 3. Turn & Rotation Mode</h3>
-                <p>Study the original blue layout, apply the requested directional turn angle, and plot the destination pattern blocks.</p>
+                <h3>✏️ 2. Lines of Symmetry</h3>
+                <p>Look at the solid grey shape. Tap and paint the exact path where a folding line would cut the shape into two matching mirror halves.</p>
             </div>
             <button class="action-submit-btn" onclick="startAdventure()">Enter Game</button>
         </div>
@@ -272,7 +269,7 @@
 
             <div id="quest-txt-box" class="quest-container">
                 <span class="mode-badge" id="mode-badge-lbl">Mode</span>
-                <span id="instruction-txt">Loading challenge data...</span>
+                <span id="instruction-txt">Loading matrix layout...</span>
             </div>
 
             <div class="grid-viewport-area">
@@ -294,7 +291,7 @@
     </div>
 
     <script>
-        // Sound Engine
+        // Sound System
         const soundCorrect = new Audio('assets/correct.mp3');
         const soundWrong = new Audio('assets/wrong.mp3');
 
@@ -302,7 +299,7 @@
             try {
                 audioObj.currentTime = 0;
                 audioObj.play();
-            } catch(e) { console.log("Audio pipeline buffered safely."); }
+            } catch(e) { console.log("Audio pipeline loaded."); }
         }
 
         let currentActiveQuestions = [];
@@ -310,47 +307,47 @@
         let totalXp = 0;
         let attemptCount = 0;
 
-        // Balanced chapter curriculum dataset including Reflection, Line Splitting, and Turns
-        const comprehensiveQuestPool = [
+        // Linear Symmetry and Mirror Reflection Question Pool
+        const reflectionQuestPool = [
             {
                 mode: "Reflection",
-                question: "Reflect the blocks perfectly across the Vertical Mirror Line!",
+                question: "Reflect the blue pattern perfectly across the Vertical Mirror Line!",
                 type: 'V',
                 sourceBlocks: [[0,0], [1,1], [2,2]],
                 targetBlocks: [[0,5], [1,4], [2,3]],
-                hint: "💡 HINT: Count horizontal spaces outward away from the red line."
+                hint: "💡 HINT: Count horizontal blocks moving away from the red line to position your reflection."
             },
             {
                 mode: "Reflection",
-                question: "Flip the pattern downward across the Horizontal Mirror Line!",
+                question: "Flip the layout downward across the Horizontal Mirror Line!",
                 type: 'H',
                 sourceBlocks: [[0,1], [1,2], [2,3]],
                 targetBlocks: [[5,1], [4,2], [3,3]],
-                hint: "💡 HINT: Top row 0 mirrors straight into bottom row 5."
+                hint: "💡 HINT: Top row 0 reflects directly to the bottom row 5."
             },
             {
                 mode: "Symmetry Line",
-                question: "A rectangle has 2 lines of symmetry. Paint its Horizontal Line of symmetry!",
+                question: "A rectangle has 2 lines of symmetry. Find and paint its Horizontal Line of symmetry!",
                 type: 'None',
-                sourceBlocks: [[1,1],[1,2],[1,3],[1,4],[2,1],[2,2],[2,3],[2,4],[3,1],[3,2],[3,3],[3,4],[4,1],[4,2],[4,3],[4,4]], // The grey solid shape
-                targetBlocks: [[2,1],[2,2],[2,3],[2,4],[3,1],[3,2],[3,3],[3,4]], // Middle horizontal fold line pathway nodes
-                hint: "💡 HINT: Paint the exact horizontal row blocks that slice this solid card cleanly into two equal halves."
+                sourceBlocks: [[1,1],[1,2],[1,3],[1,4],[2,1],[2,2],[2,3],[2,4],[3,1],[3,2],[3,3],[3,4],[4,1],[4,2],[4,3],[4,4]],
+                targetBlocks: [[2,1],[2,2],[2,3],[2,4],[3,1],[3,2],[3,3],[3,4]], 
+                hint: "💡 HINT: Color the two rows in the exact middle that slice this shape into top and bottom mirror halves."
             },
             {
                 mode: "Symmetry Line",
-                question: "Paint the Vertical Line of symmetry through this balanced square block container!",
+                question: "Paint the Vertical Line of symmetry straight down through the center of this square!",
                 type: 'None',
                 sourceBlocks: [[1,1],[1,2],[1,3],[1,4], [2,1],[2,2],[2,3],[2,4], [3,1],[3,2],[3,3],[3,4], [4,1],[4,2],[4,3],[4,4]],
-                targetBlocks: [[1,2],[2,2],[3,2],[4,2],[1,3],[2,3],[3,3],[4,3]], // Middle vertical split columns
-                hint: "💡 HINT: Color the center columns where a vertical fold line makes the left side match the right."
+                targetBlocks: [[1,2],[2,2],[3,2],[4,2],[1,3],[2,3],[3,3],[4,3]], 
+                hint: "💡 HINT: Find the center columns where a fold splits the left side from the right side equally."
             },
             {
-                mode: "Rotation Turn",
-                question: "Rotate the single target corner block [0,0] by a half-turn (180 degrees) clockwise!",
-                type: 'None',
-                sourceBlocks: [[0,0]],
-                targetBlocks: [[5,5]],
-                hint: "💡 HINT: A 1/2 turn rotates a point from the far top-left corner completely into the opposite bottom-right corner."
+                mode: "Reflection",
+                question: "Reflect this corner block staircase across the vertical line!",
+                type: 'V',
+                sourceBlocks: [[5,0], [5,1], [4,2]],
+                targetBlocks: [[5,5], [5,4], [4,3]],
+                hint: "💡 HINT: Check the block at row 4, column 2. It sits one space away from the red axis."
             },
             {
                 mode: "Reflection",
@@ -358,43 +355,43 @@
                 type: 'V',
                 sourceBlocks: [[1,2], [2,1], [3,1], [4,2]],
                 targetBlocks: [[1,3], [2,4], [3,4], [4,3]],
-                hint: "💡 HINT: Blocks adjacent to the mirror divider stay directly next to it."
+                hint: "💡 HINT: Cells directly touching the red divider line must touch it on the reflection side too."
             },
             {
                 mode: "Symmetry Line",
-                question: "Identify the line of symmetry. Paint the vertical axis splitting this twin pillar structure!",
+                question: "Find the symmetry line. Paint the vertical center axis dividing these twin pillars!",
                 type: 'None',
                 sourceBlocks: [[1,0],[2,0],[3,0],[1,5],[2,5],[3,5]],
-                targetBlocks: [[1,2],[2,2],[3,2],[1,3],[2,3],[3,3]], // The empty central space columns tracking down the grid
-                hint: "💡 HINT: Find the dead center lines dividing the left pillar from the right pillar."
-            },
-            {
-                mode: "Rotation Turn",
-                question: "Rotate this top horizontal line block sequence [[0,2],[0,3]] by a 1/4 turn clockwise around the center grid point!",
-                type: 'None',
-                sourceBlocks: [[0,2], [0,3]],
-                targetBlocks: [[2,5], [3,5]],
-                hint: "💡 HINT: A 1/4 turn transforms a flat horizontal bar into a perfectly straight vertical line down the right side column."
+                targetBlocks: [[1,2],[2,2],[3,2],[1,3],[2,3],[3,3]], 
+                hint: "💡 HINT: Paint the central spaces that mark the exact midpoint line between both pillars."
             },
             {
                 mode: "Reflection",
-                question: "Complete the symmetric bridge system downward across the horizontal line!",
+                question: "Mirror this high corner block pattern straight down across the horizontal line!",
+                type: 'H',
+                sourceBlocks: [[0,0], [0,5], [1,2], [1,3]],
+                targetBlocks: [[5,0], [5,5], [4,2], [4,3]],
+                hint: "💡 HINT: Row 0 flips down to row 5, and row 1 flips down to row 4."
+            },
+            {
+                mode: "Reflection",
+                question: "Complete the symmetric bridge system downward across the horizontal axis!",
                 type: 'H',
                 sourceBlocks: [[2,0], [2,1], [2,4], [2,5]],
                 targetBlocks: [[3,0], [3,1], [3,4], [3,5]],
-                hint: "💡 HINT: Row 2 is exactly 1 step above the line, so paint row 3 exactly 1 step below it."
+                hint: "💡 HINT: Row 2 is right above the line, so paint row 3 right below it."
             },
             {
-                mode: "Rotation Turn",
-                question: "Final Challenge: Rotate the left side column vector [[2,0],[3,0]] by a 1/4 turn clockwise!",
-                type: 'None',
-                sourceBlocks: [[2,0], [3,0]],
-                targetBlocks: [[0,2], [0,3]],
-                hint: "💡 HINT: Rotating a left vertical edge clockwise turns it into a top horizontal bar position."
+                mode: "Reflection",
+                question: "Reflect this scattered checkerboard pattern across the vertical line!",
+                type: 'V',
+                sourceBlocks: [[1,0], [3,0], [2,2], [4,2]],
+                targetBlocks: [[1,5], [3,5], [2,3], [4,3]],
+                hint: "💡 HINT: Keep track of the grid gaps to ensure everything lines up accurately."
             }
         ];
 
-        // 5-Second Splash Fade Window Execution
+        // 5-Second Brand Splash Timeout Screen Trigger
         setTimeout(() => {
             const splash = document.getElementById("innovine-splash");
             if(splash) {
@@ -415,7 +412,7 @@
         }
 
         function startAdventure() {
-            currentActiveQuestions = shuffleArray([...comprehensiveQuestPool]).slice(0, 10);
+            currentActiveQuestions = shuffleArray([...reflectionQuestPool]).slice(0, 10);
             levelIdx = 0;
             totalXp = 0;
 
@@ -444,7 +441,6 @@
             const canvas = document.getElementById("matrix-canvas");
             canvas.innerHTML = "";
 
-            // Inject line dividers if explicitly needed for standard reflection challenges
             if (data.type === 'V') {
                 let vLine = document.createElement("div");
                 vLine.className = "mirror-line-v";
@@ -466,15 +462,12 @@
                     
                     if (isSource) {
                         if (data.mode === "Symmetry Line") {
-                            // In line of symmetry mode, the source blocks form the grey solid shape body
                             cell.classList.add("shape-body");
                         } else {
-                            // In standard mode, source blocks are the blue puzzle pattern pieces
                             cell.classList.add("source-active");
                         }
                     }
 
-                    // Toggling input paint states on click selection
                     cell.onclick = () => {
                         if (!cell.classList.contains("auto-revealed")) {
                             cell.classList.toggle("player-painted");
@@ -574,7 +567,7 @@
 
         function renderEndGameScreen() {
             document.getElementById("lvl-lbl").innerText = "FINISHED";
-            document.getElementById("quest-txt-box").innerHTML = "🎉 Full Geometric Symmetry Run Achieved!";
+            document.getElementById("quest-txt-box").innerHTML = "🎉 Linear Symmetry Challenge Completed!";
             
             let finalRank = totalXp >= 800 ? "Symmetry Matrix Master 👑" : "Spatial Geometry Apprentice 📐";
 
