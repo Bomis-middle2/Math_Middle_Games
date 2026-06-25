@@ -168,20 +168,42 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            gap: 15px;
         }
 
-        /* Tally Graphic Styles */
-        .tally-wrapper {
-            font-size: 2.2rem;
-            letter-spacing: 4px;
-            color: #4cc9f0;
-            text-shadow: 0 0 10px rgba(76, 201, 240, 0.5);
+        /* REAL CSS TALLY MARK GRAPHICS */
+        .tally-group {
+            position: relative;
+            display: inline-flex;
+            gap: 6px;
+            padding: 5px 10px;
+            height: 60px;
+            align-items: center;
+        }
+        .tally-stick {
+            width: 5px;
+            height: 45px;
+            background-color: #4cc9f0;
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(76, 201, 240, 0.6);
+        }
+        .tally-group .tally-diagonal-strike {
+            position: absolute;
+            top: 25px;
+            left: 2px;
+            width: 58px;
+            height: 5px;
+            background-color: #f72585;
+            border-radius: 2px;
+            transform: rotate(-30deg);
+            box-shadow: 0 0 8px rgba(247, 37, 133, 0.8);
+            transform-origin: left center;
         }
 
         /* Pictograph Grid Box Layout */
         .picto-grid-display {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 12px;
             padding: 10px;
         }
@@ -356,13 +378,13 @@
             <h1 class="game-title">COSMIC DEFENDER<br><span style="color:#ffd166; font-size:1.4rem;">Data Blaster Wave</span></h1>
             <div class="rules-card">
                 <h3>🛸 Level 1: Tally Trackers</h3>
-                <p>An alien scouting line appears as Tally Marks on your radar display console. Count them to target your laser cannon!</p>
+                <p>An alien scouting line appears as real Tally Groups on your radar. Count all lines to lock coordinates!</p>
                 
                 <h3>🛸 Level 2: Fleet Pictographs</h3>
-                <p>Elite carrier ships arrive in groups! Check the Key Rule block: each single star icon on your radar represents 4 ships.</p>
+                <p>Elite carrier ships arrive in clusters. Check the Key Rule block: each single icon represents 4 real spaceships.</p>
                 
                 <h3>🛸 Level 3: Bar Shield Matrix</h3>
-                <p>The Alien Flagship raises giant column shields! Track the high number line of the flashing purple column to breach their defense system.</p>
+                <p>The Alien Flagship raises energy columns. Target the exact line value height of the blinking track column to breach their core.</p>
             </div>
             <button class="fire-action-btn" style="background:#4cc9f0; color:#020c1b; box-shadow:0 6px #0077b6;" onclick="launchDefenseGrid()">Activate Weapons Console</button>
         </div>
@@ -414,19 +436,18 @@
         let selectedTargetInput = 0;
         let isBlasterFiring = false;
 
-        // Custom clean datasets built straight out of curriculum goals (without symbols, latex formulas or code tags)
         const textbookCleanSyllabus = [
-            // --- WAVE 1: TALLY MARK PROBLEMS ---
-            { level: 1, type: "TALLY", goalValue: 8, displayAsset: "IIII/  III", promptText: "Wave 1 Tally Radar: Enemy scouts detected in the lane! Count the tally marks on screen to set your blaster power level." },
-            { level: 1, type: "TALLY", goalValue: 13, displayAsset: "IIII/  IIII/  III", promptText: "Wave 1 Tally Radar: Fleet reinforcements arriving! Count the full group of tally ticks to confirm tracking coordinates." },
+            // --- WAVE 1: REAL TALLY MARK SCENARIOS ---
+            { level: 1, type: "TALLY", goalValue: 8, promptText: "Wave 1 Tally Radar: Enemy scouts detected! Count the tally marks below to configure blaster coordinates." },
+            { level: 1, type: "TALLY", goalValue: 14, promptText: "Wave 1 Tally Radar: Heavy fleet lines scanning! Count the full set of tally mark entries to clear the sector." },
             
-            // --- WAVE 2: PICTOGRAPH PROBLEMS ---
-            { level: 2, type: "PICTO", goalValue: 12, itemMultiplierCount: 3, promptText: "Wave 2 Pictograph Beam: Alien ships detected. Each star icon counts as 4 actual enemy fighters. Check your display grid!" },
-            { level: 2, type: "PICTO", goalValue: 20, itemMultiplierCount: 5, promptText: "Wave 2 Pictograph Beam: Heavy fighter ships incoming! Each star icon counts as 4 units. Multiply carefully to target!" },
+            // --- WAVE 2: PICTOGRAPH SCENARIOS ---
+            { level: 2, type: "PICTO", goalValue: 12, itemMultiplierCount: 3, promptText: "Wave 2 Pictograph Beam: Alien ships incoming. Each star icon counts as 4 ships. Calculate total strength!" },
+            { level: 2, type: "PICTO", goalValue: 24, itemMultiplierCount: 6, promptText: "Wave 2 Pictograph Beam: Cargo pods arriving! Each star icon counts as 4 units. Multiply to track!" },
             
-            // --- WAVE 3: BAR CHART PROBLEMS ---
-            { level: 3, type: "BAR", goalValue: 40, primaryTargetValue: 40, barValuesSet: [20, 40, 10, 30], promptText: "Wave 3 Shield Matrix: The flagship raised protective columns! Find the value level height of the blinking bright red column." },
-            { level: 3, type: "BAR", goalValue: 55, primaryTargetValue: 55, barValuesSet: [15, 30, 55, 45], promptText: "Wave 3 Shield Matrix Final Wave: Find the height value marker point of the highest blinking purple column block to clear the space lanes!" }
+            // --- WAVE 3: BAR CHART SCENARIOS ---
+            { level: 3, type: "BAR", goalValue: 40, primaryTargetValue: 40, barValuesSet: [20, 40, 10, 30], promptText: "Wave 3 Shield Matrix: Flagship shields are active! Identify the value height of the blinking bright red bar column." },
+            { level: 3, type: "BAR", goalValue: 55, primaryTargetValue: 55, barValuesSet: [15, 30, 55, 45], promptText: "Wave 3 Shield Matrix Final Wave: Find the value height marker of the highest blinking column block to win the game!" }
         ];
 
         // Splash screen 5-second automatic timeout loop
@@ -451,6 +472,39 @@
             deployNextRadarTarget();
         }
 
+        // Engine helper function to build authentic textbook CSS Tally marks dynamically
+        function renderRealTallyMarks(targetContainer, totalCount) {
+            let fullGroupsOfFive = Math.floor(totalCount / 5);
+            let remainingSticks = totalCount % 5;
+
+            // Generate groups of 5 with the cross diagonal slash bars
+            for (let g = 0; g < fullGroupsOfFive; g++) {
+                let groupDiv = document.createElement("div");
+                groupDiv.className = "tally-group";
+                for (let s = 0; s < 4; s++) {
+                    let stick = document.createElement("div");
+                    stick.className = "tally-stick";
+                    groupDiv.appendChild(stick);
+                }
+                let slash = document.createElement("div");
+                slash.className = "tally-diagonal-strike";
+                groupDiv.appendChild(slash);
+                targetContainer.appendChild(groupDiv);
+            }
+
+            // Generate remaining loose individual tally lines
+            if (remainingSticks > 0) {
+                let looseDiv = document.createElement("div");
+                looseDiv.className = "tally-group";
+                for (let r = 0; r < remainingSticks; r++) {
+                    let stick = document.createElement("div");
+                    stick.className = "tally-stick";
+                    looseDiv.appendChild(stick);
+                }
+                targetContainer.appendChild(looseDiv);
+            }
+        }
+
         function deployNextRadarTarget() {
             if (activeWaveIndex >= radarCampaignQueue.length) {
                 concludeSpaceCampaign();
@@ -468,19 +522,14 @@
 
             let currentMissionTask = radarCampaignQueue[activeWaveIndex];
             
-            // Render labels across interface systems
             document.getElementById("level-badge-txt").innerText = `WAVE ${currentMissionTask.level} [Sector ${activeWaveIndex + 1}/6]`;
             document.getElementById("hud-system-text").innerText = currentMissionTask.promptText;
 
-            // Generate graphic visual representations based on current task models
             const renderingScreenDeck = document.getElementById("active-data-screen");
             renderingScreenDeck.innerHTML = "";
 
             if (currentMissionTask.type === "TALLY") {
-                let layoutBoxElement = document.createElement("div");
-                layoutBoxElement.className = "tally-wrapper";
-                layoutBoxElement.innerText = currentMissionTask.displayAsset;
-                renderingScreenDeck.appendChild(layoutBoxElement);
+                renderRealTallyMarks(renderingScreenDeck, currentMissionTask.goalValue);
             } 
             else if (currentMissionTask.type === "PICTO") {
                 let gridContainerBox = document.createElement("div");
@@ -502,7 +551,7 @@
 
                 currentMissionTask.barValuesSet.forEach((columnValue) => {
                     let isMainTargetColumn = (columnValue === currentMissionTask.primaryTargetValue);
-                    let computedHeightScale = Math.floor(columnValue * 1.5); // Scaled cleanly for pixel workspace height bounding boxes
+                    let computedHeightScale = Math.floor(columnValue * 1.5);
                     
                     chartFrameWrapper.innerHTML += `
                         <div class="chart-bar-pillar ${isMainTargetColumn ? 'target-pillar' : ''}" style="height:${computedHeightScale}px;">
@@ -512,7 +561,6 @@
                 renderingScreenDeck.appendChild(chartFrameWrapper);
             }
 
-            // Adjust defending spaceship model animation positions
             const heroShipActor = document.getElementById("defender-ship-avatar");
             heroShipActor.style.transform = "scale(1) rotate(0deg)";
         }
@@ -541,17 +589,14 @@
 
             let evaluatedMissionData = radarCampaignQueue[activeWaveIndex];
 
-            // Animate Laser Beam Core Bolt extending upwards towards center target radar elements workspace layout bounds
             elementLaserBolt.style.top = "70px";
             elementLaserBolt.style.height = "160px";
 
             setTimeout(() => {
-                // Reset laser beam asset geometry paths after impact animation cycles frame ticks completion
                 elementLaserBolt.style.top = "auto";
                 elementLaserBolt.style.height = "0px";
 
                 if (selectedTargetInput === evaluatedMissionData.goalValue) {
-                    // Direct target hit confirmation calculations match successfully
                     scoreCounterXp += (failedDefenses === 0) ? 200 : 100;
                     document.getElementById("xp-counter-txt").innerText = `${scoreCounterXp} XP`;
 
@@ -561,7 +606,6 @@
                     elementFeedbackBanner.style.color = "#065f46";
                     elementFeedbackBanner.innerText = `DIRECT TARGET HIT! Data count verified at ${selectedTargetInput}. Sector cleared!`;
 
-                    // Subtle ship celebration jump spin visual animation effects
                     heroShipActor.style.transform = "translateY(-15px) scale(1.1)";
 
                     setTimeout(() => {
@@ -570,7 +614,6 @@
                     }, 1600);
 
                 } else {
-                    // Calibration error misalignment cycle trigger
                     failedDefenses++;
                     refreshShipHealthShieldSlots();
 
@@ -579,22 +622,21 @@
                     elementFeedbackBanner.style.borderColor = "#ef4444";
                     elementFeedbackBanner.style.color = "#991b1b";
 
-                    // Shake defending spacecraft engine visual nodes representation path strings layout properties
                     heroShipActor.style.transform = "translateX(-15px)";
                     setTimeout(() => heroShipActor.style.transform = "translateX(15px)", 80);
                     setTimeout(() => heroShipActor.style.transform = "none", 160);
 
                     if (failedDefenses === 1) {
-                        elementFeedbackBanner.innerText = `BLASTER MISALIGNED! Output level set to ${selectedTargetInput}. Shield absorption frequency variance detected!`;
+                        elementFeedbackBanner.innerText = `BLASTER MISALIGNED! Output level set to ${selectedTargetInput}. Shield variance detected!`;
                         isBlasterFiring = false;
                     } else {
-                        // Max attempts depleted for local area grid system sector node matrix
                         document.getElementById("fire-trigger-button").disabled = true;
-                        elementFeedbackBanner.innerText = `HULL DEFENSE BREACHED! Alien craft bypassed defensive vector paths. Adjusting tracking grids...`;
+                        elementFeedbackBanner.innerText = `HULL BREACHED! Alien wave bypassed lines. Adjusting tracking grids...`;
                         
                         heroShipActor.style.transform = "rotate(90deg) scale(0.8)";
 
                         setTimeout(() => {
+                            heroShipActor.style.transform = "none";
                             activeWaveIndex++;
                             deployNextRadarTarget();
                         }, 2200);
