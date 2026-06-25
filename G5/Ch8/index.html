@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade 5 Map Math Treasure Quest</title>
+    <title>Map Master Quest: 15 Challenges</title>
     <style>
         * {
             box-sizing: border-box;
@@ -26,7 +26,7 @@
         #game-window {
             width: 100%;
             max-width: 460px;
-            height: 720px;
+            height: 740px;
             background: #fbf4db;
             border: 6px solid #8b5a2b;
             border-radius: 16px;
@@ -37,7 +37,7 @@
             overflow: hidden;
         }
 
-        /* --- STAGE 1: 5-SECOND INVOVINE SPLASH SCREEN --- */
+        /* --- STAGE 1: 5-SECOND SPLASH SCREEN --- */
         #innovine-splash {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -53,7 +53,7 @@
             height: auto;
         }
 
-        /* --- STAGE 2: INSTRUCTIONS SCREEN --- */
+        /* --- STAGE 2: SIMPLE INSTRUCTIONS SCREEN --- */
         #instruction-screen {
             padding: 24px 20px;
             display: flex;
@@ -70,6 +70,7 @@
             border-radius: 12px;
             padding: 20px;
             margin: 20px 0;
+            width: 100%;
         }
         .scroll-box ol {
             text-align: left;
@@ -115,13 +116,13 @@
             text-align: center;
             background: #f5ecc8;
             border-bottom: 2px solid #dfd4a7;
-            min-height: 60px;
+            min-height: 75px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        /* --- ACCURATE TEXTBOOK TOWN MAP CANVAS --- */
+        /* --- MAP LAYOUT GRID --- */
         .map-viewport {
             flex-grow: 1;
             background: #e8dbb4;
@@ -179,7 +180,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* --- INTERACTIVE CONTROL INTERFACE --- */
+        /* --- CONTROLS AND INTERFACES --- */
         .interaction-panel {
             padding: 12px;
             background: #fbf4db;
@@ -269,11 +270,10 @@
         <div id="instruction-screen" class="hidden">
             <h2 style="color: #8b5a2b; font-size: 1.4rem;">🗺️ Map Master Quest</h2>
             <div class="scroll-box">
-                <p style="font-weight: bold; margin-bottom: 10px; color: #3e2723;">Rules of the Journey:</p>
                 <ol>
-                    <li>Analyze the textbook layout map icons carefully.</li>
-                    <li>Read scale definitions ($1\text{ cm} = \text{X kilometers}$).</li>
-                    <li>You have **2 chances max** per question. Missing the first reveals a helpful tracking hint!</li>
+                    <li>Look closely at the map grid items and signs.</li>
+                    <li>Read the scale rules to measure distances correctly.</li>
+                    <li>You have **2 chances max** per level. Miss once to view a helpful tracking hint!</li>
                 </ol>
             </div>
             <button class="action-submit-btn" onclick="startAdventure()">Enter Game</button>
@@ -281,11 +281,11 @@
 
         <div id="gameplay-screen" class="hidden">
             <div class="top-navbar">
-                <div id="lvl-lbl">Quest: 1 / 5</div>
+                <div id="lvl-lbl">Quest: 1 / 15</div>
                 <div id="xp-lbl" class="score-lbl">0 XP</div>
             </div>
 
-            <div id="quest-txt-box" class="quest-container">...</div>
+            <div id="quest-txt-box" class="quest-container">Loading challenge coordinates...</div>
 
             <div class="map-viewport" id="map-grid-view"></div>
 
@@ -306,7 +306,7 @@
     </div>
 
     <script>
-        // Assets Audio Registers
+        // Audio Controls
         const soundCorrect = new Audio('assets/correct.mp3');
         const soundWrong = new Audio('assets/wrong.mp3');
 
@@ -314,78 +314,131 @@
             try {
                 audioObj.currentTime = 0;
                 audioObj.play();
-            } catch(e) { console.log("Audio setup fallback caught securely."); }
+            } catch(e) { console.log("Audio check bypass active."); }
         }
 
-        // Complete Grade 5 Chapter Levels Matrix
+        let currentActiveQuestions = [];
         let levelIdx = 0;
         let totalXp = 0;
         let attemptCount = 0;
 
-        const levelData = [
+        // Shared standard layout across questions to prevent mismatched positions
+        const standardLayout = [
+            { label: "School", icon: "🏫" }, { label: "Fire Station", icon: "🚒" }, { label: "Park", icon: "🌳" },
+            { label: "Post Office", icon: "📮" }, { label: "House", icon: "🏡" }, { label: "Empty Space", icon: "🌾" },
+            { label: "Pond", icon: "💧" }, { label: "Mall", icon: "🛍️" }, { label: "Library", icon: "📚" }
+        ];
+
+        // 15 Fully Randomized Grade-5 friendly Map Questions
+        const rawQuestionBank = [
             {
-                question: "Look at the blueprint map. What building is located directly NORTH of the Post Office?",
+                question: "Look at the map. What building is directly NORTH of the Post Office?",
                 scaleText: "Orientation Blueprint Map",
-                choices: ["The School", "The Pond", "The Mall", "The Fire Station"],
-                correctAnswer: "The Mall",
-                hint: "💡 HINT: Find the Post Office 📮 in the center row. Look directly above it (Upwards is North!).",
-                mapLayout: [
-                    { label: "School", icon: "🏫" }, { label: "Pond", icon: "💧" }, { label: "Park", icon: "🌳" },
-                    { label: "Houses", icon: "🏡" }, { label: "Mall", icon: "🛍️" }, { label: "Fire Station", icon: "🚒" },
-                    { label: "Library", icon: "📚" }, { label: "Post Office", icon: "📮" }, { label: "Empty Field", icon: "🌾" }
-                ]
+                choices: ["School", "Mall", "Park", "Pond"],
+                correctAnswer: "Mall",
+                hint: "💡 HINT: Find the Post Office 📮 in the bottom row. Look directly above it (Up is North!)."
             },
             {
-                question: "If Isha steps out of the Park 🌳, moves West (left) and takes the first turning South (down), what building is she facing?",
-                scaleText: "Navigational Tracking Map",
-                choices: ["Post Office", "Fire Station", "The School", "The Library"],
-                correctAnswer: "Fire Station",
-                hint: "💡 HINT: Start at the top-right Park 🌳. Move left past the Pond to the School/Houses intersection, then turn down towards the fire truck icon!",
-                mapLayout: [
-                    { label: "School", icon: "🏫" }, { label: "Pond", icon: "💧" }, { label: "Park", icon: "🌳" },
-                    { label: "Houses", icon: "🏡" }, { label: "Mall", icon: "🛍️" }, { label: "Fire Station", icon: "🚒" },
-                    { label: "Library", icon: "📚" }, { label: "Post Office", icon: "📮" }, { label: "Empty Field", icon: "🌾" }
-                ]
+                question: "Step out of the Park 🌳, walk West (left) along the road, and take the first turn heading South (down). What building do you reach?",
+                scaleText: "Navigational Route Map",
+                choices: ["Library", "School", "Fire Station", "Pond"],
+                correctAnswer: "Library",
+                hint: "💡 HINT: Moving left from the Park leads to the central street. Turning South (downwards) points straight to the Library 📚."
             },
             {
-                question: "The map distance between the School and Mall measures 3 cm. If the scale is 1 cm = 4 km, what is the actual distance?",
+                question: "The map distance between the School and the House is 3 cm. If the scale is 1 cm = 4 km, what is the actual distance?",
                 scaleText: "Map Ratio Scale: 1 cm = 4 km",
-                choices: ["7 km", "12 km", "16 km", "20 km"],
+                choices: ["7 km", "12 km", "16 km", "24 km"],
                 correctAnswer: "12 km",
-                hint: "💡 HINT: Multiply the chart length by the scale value: 3 cm × 4 km.",
-                mapLayout: [
-                    { label: "School", icon: "🏫" }, { label: "Pond", icon: "💧" }, { label: "Park", icon: "🌳" },
-                    { label: "Houses", icon: "🏡" }, { label: "Mall", icon: "🛍️" }, { label: "Fire Station", icon: "🚒" },
-                    { label: "Library", icon: "📚" }, { label: "Post Office", icon: "📮" }, { label: "Empty Field", icon: "🌾" }
-                ]
+                hint: "💡 HINT: Multiply the map measurement by the scale factor: 3 cm × 4 km."
             },
             {
-                question: "Misha measures the highway from the Houses to the Library to be 5 cm long. If 1 cm = 10 km, how long is the real highway?",
+                question: "The distance from the Fire Station to the Library is 5 cm on paper. If 1 cm = 10 km, how long is the real journey?",
                 scaleText: "Map Ratio Scale: 1 cm = 10 km",
                 choices: ["15 km", "40 km", "50 km", "500 km"],
                 correctAnswer: "50 km",
-                hint: "💡 HINT: Take the 5 cm measurement and multiply it by 10.",
-                mapLayout: [
-                    { label: "School", icon: "🏫" }, { label: "Pond", icon: "💧" }, { label: "Park", icon: "🌳" },
-                    { label: "Houses", icon: "🏡" }, { label: "Mall", icon: "🛍️" }, { label: "Fire Station", icon: "🚒" },
-                    { label: "Library", icon: "📚" }, { label: "Post Office", icon: "📮" }, { label: "Empty Field", icon: "🌾" }
-                ]
+                hint: "💡 HINT: Take the 5 cm length and multiply it by 10."
             },
             {
-                question: "The real-world distance from the Pond 💧 to the Library 📚 is 45 kilometers. If our map scale is 1 cm = 9 km, how many cm long is this distance drawn on paper?",
+                question: "The real distance from the Pond to the Mall is 45 km. If our map scale is 1 cm = 9 km, how many cm is this distance drawn on paper?",
                 scaleText: "Reverse Scale Logic: 1 cm = 9 km",
                 choices: ["4 cm", "5 cm", "9 cm", "36 cm"],
                 correctAnswer: "5 cm",
-                hint: "💡 HINT: To find map centimeters from real kilometers, divide: 45 ÷ 9.",
-                mapLayout: [
-                    { label: "School", icon: "🏫" }, { label: "Pond", icon: "💧" }, { label: "Park", icon: "🌳" },
-                    { label: "Houses", icon: "🏡" }, { label: "Mall", icon: "🛍️" }, { label: "Fire Station", icon: "🚒" },
-                    { label: "Library", icon: "📚" }, { label: "Post Office", icon: "📮" }, { label: "Empty Field", icon: "🌾" }
-                ]
+                hint: "💡 HINT: To find map centimeters from real kilometers, divide: 45 ÷ 9."
+            },
+            {
+                question: "Which directional zone is the School located in relative to the central House?",
+                scaleText: "Intermediate Compass Directions",
+                choices: ["North-West", "North-East", "South-West", "South-East"],
+                correctAnswer: "North-West",
+                hint: "💡 HINT: Look from the central House 🏡 up and to the left to find the School 🏫. That is North-West!"
+            },
+            {
+                question: "If 1 cm on our map represents 25 meters, what real-world distance does a 4 cm line show?",
+                scaleText: "Scale Matrix: 1 cm = 25 m",
+                choices: ["50 m", "75 m", "100 m", "125 m"],
+                correctAnswer: "100 m",
+                hint: "💡 HINT: Calculate 4 cm multiplied by 25 meters per centimeter."
+            },
+            {
+                question: "What building occupies the coordinates directly SOUTH of the Fire Station?",
+                scaleText: "Compass Reading Challenge",
+                choices: ["House", "Mall", "School", "Library"],
+                correctAnswer: "House",
+                hint: "💡 HINT: Find the top-middle Fire Station 🚒 and move down (South) exactly one square."
+            },
+            {
+                question: "If you walk East (right) from the School, what is the first building or place you pass?",
+                scaleText: "Orientation and Pathways",
+                choices: ["Fire Station", "Park", "Post Office", "Mall"],
+                correctAnswer: "Fire Station",
+                hint: "💡 HINT: Start at the top-left School 🏫 and move right (East) along the top lane."
+            },
+            {
+                question: "A route from the House to the Mall is measured as 2 cm on paper. If the scale is 1 cm = 15 km, what is the real distance?",
+                scaleText: "Scale Calculation: 1 cm = 15 km",
+                choices: ["17 km", "30 km", "45 km", "60 km"],
+                correctAnswer: "30 km",
+                hint: "💡 HINT: Double the scale unit value: 2 cm × 15 km."
+            },
+            {
+                question: "The real highway distance between two cities is 80 km. If the blueprint scale is 1 cm = 20 km, how long should the line be on paper?",
+                scaleText: "Scale Division Practice",
+                choices: ["2 cm", "4 cm", "6 cm", "8 cm"],
+                correctAnswer: "4 cm",
+                hint: "💡 HINT: Divide the total real distance by the scale factor: 80 ÷ 20."
+            },
+            {
+                question: "What feature sits at the South-West corner of our map?",
+                scaleText: "Grid Coordinates & Corners",
+                choices: ["Pond", "Library", "School", "Park"],
+                correctAnswer: "Pond",
+                hint: "💡 HINT: South-West is the bottom-left corner of the grid map."
+            },
+            {
+                question: "What feature sits at the South-East corner of our map?",
+                scaleText: "Grid Coordinates & Corners",
+                choices: ["Library", "Pond", "Park", "Mall"],
+                correctAnswer: "Library",
+                hint: "💡 HINT: South-East is the bottom-right corner of the grid map."
+            },
+            {
+                question: "If the scale bar reads 1 cm = 50 meters, how many real meters does a 3 cm line show?",
+                scaleText: "Scale Expansion: 1 cm = 50 m",
+                choices: ["100 m", "150 m", "200 m", "250 m"],
+                correctAnswer: "150 m",
+                hint: "💡 HINT: Triple the value: 3 cm multiplied by 50 meters."
+            },
+            {
+                question: "You are at the Fire Station 🚒 and need to go to the Mall 🛍️. Which direction do you look?",
+                scaleText: "Cardinal Positioning Check",
+                choices: ["North", "South", "East", "West"],
+                correctAnswer: "South",
+                hint: "💡 HINT: The Fire Station is at the top row, and the Mall is directly underneath it in the bottom row."
             }
         ];
 
-        // 5-Second Brand Display Loop
+        // 5-Second Brand Delay
         setTimeout(() => {
             const splash = document.getElementById("innovine-splash");
             if(splash) {
@@ -397,14 +450,34 @@
             }
         }, 5000);
 
+        // Fisher-Yates Array Randomizer
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
         function startAdventure() {
+            // Select and completely randomize the questions order
+            currentActiveQuestions = shuffleArray([...rawQuestionBank]);
+            
+            // Randomize answer choice internal order inside each question
+            currentActiveQuestions.forEach(q => {
+                q.choices = shuffleArray([...q.choices]);
+            });
+
+            levelIdx = 0;
+            totalXp = 0;
+
             document.getElementById("instruction-screen").classList.add("hidden");
             document.getElementById("gameplay-screen").classList.remove("hidden");
             loadQuestData();
         }
 
         function loadQuestData() {
-            if (levelIdx >= levelData.length) {
+            if (levelIdx >= currentActiveQuestions.length) {
                 renderEndGameScreen();
                 return;
             }
@@ -413,29 +486,29 @@
             document.getElementById("hint-bubble").style.display = "none";
             updateHeartsUI();
 
-            let data = levelData[levelIdx];
-            document.getElementById("lvl-lbl").innerText = `Quest: ${levelIdx + 1} / ${levelData.length}`;
+            let data = currentActiveQuestions[levelIdx];
+            document.getElementById("lvl-lbl").innerText = `Quest: ${levelIdx + 1} / ${currentActiveQuestions.length}`;
             document.getElementById("xp-lbl").innerText = `${totalXp} XP`;
             document.getElementById("quest-txt-box").innerText = data.question;
-            document.getElementById("scale-indicator-bar").innerText = `📏 Scale Context: ${data.scaleText}`;
+            document.getElementById("scale-indicator-bar").innerText = `📏 ${data.scaleText}`;
 
-            // Build Textbook Precise Map Layout Elements
+            // Paint Grid System Map Layout
             const viewGrid = document.getElementById("map-grid-view");
             viewGrid.innerHTML = "";
-            data.mapLayout.forEach(item => {
+            standardLayout.forEach(item => {
                 let div = document.createElement("div");
                 div.className = "map-node";
                 div.innerHTML = `<span>${item.icon}</span> ${item.label}`;
                 viewGrid.appendChild(div);
             });
 
-            // Add standard layout directional rose overlay
+            // Add map layout compass rose overlay
             let compass = document.createElement("div");
             compass.className = "compass-overlay";
             compass.innerHTML = "N ⬆";
             viewGrid.appendChild(compass);
 
-            // Populate Answer Choice Buttons
+            // Populate choice triggers
             const choicesBox = document.getElementById("choices-box");
             choicesBox.innerHTML = "";
             data.choices.forEach(ans => {
@@ -461,14 +534,13 @@
         }
 
         function processAnswerSelection(selected, btnElement) {
-            let data = levelData[levelIdx];
+            let data = currentActiveQuestions[levelIdx];
 
             if (selected === data.correctAnswer) {
                 playSoundTrack(soundCorrect);
                 btnElement.style.background = "#c3e6cb";
                 btnElement.style.borderColor = "#28a745";
                 
-                // Reward XP based on attempts
                 totalXp += (attemptCount === 0) ? 100 : 50;
                 document.getElementById("xp-lbl").innerText = `${totalXp} XP`;
 
@@ -476,7 +548,7 @@
                 setTimeout(() => {
                     levelIdx++;
                     loadQuestData();
-                }, 1500);
+                }, 1400);
             } else {
                 attemptCount++;
                 playSoundTrack(soundWrong);
@@ -486,14 +558,12 @@
                 updateHeartsUI();
 
                 if (attemptCount === 1) {
-                    // Give Second Attempt Hint
                     let hintBox = document.getElementById("hint-bubble");
                     hintBox.innerText = data.hint;
                     hintBox.style.display = "block";
                 } else {
-                    // Out of attempts, show answer and move on
                     let hintBox = document.getElementById("hint-bubble");
-                    hintBox.innerText = `❌ Out of chances! Correct path was: ${data.correctAnswer}`;
+                    hintBox.innerText = `❌ Out of chances! Answer was: ${data.correctAnswer}`;
                     disableChoiceButtons();
                     setTimeout(() => {
                         levelIdx++;
@@ -511,31 +581,27 @@
         }
 
         function renderEndGameScreen() {
-            document.getElementById("lvl-lbl").innerText = "QUEST FINISHED";
-            document.getElementById("quest-txt-box").innerHTML = "🏆 Map Journey Completed!";
+            document.getElementById("lvl-lbl").innerText = "FINISHED";
+            document.getElementById("quest-txt-box").innerHTML = "🎉 Full 15-Level Map Run Complete!";
             
-            let evaluationRank = totalXp >= 400 ? "Grand Map Cartographer Master 👑" : "Junior Map Explorer 🧭";
+            let finalRank = totalXp >= 1200 ? "Grand Master Cartographer 👑" : "Elite Explorer Master 🧭";
 
-            const viewGrid = document.getElementById("map-grid-view");
-            viewGrid.style.display = "none";
+            document.getElementById("map-grid-view").style.display = "none";
             document.getElementById("scale-indicator-bar").style.display = "none";
             document.getElementById("hearts-box").style.display = "none";
             document.getElementById("hint-bubble").style.display = "none";
+            document.getElementById("choices-box").style.display = "none";
 
-            const choicesBox = document.getElementById("choices-box");
-            choicesBox.style.display = "none";
-
-            // Inject full interactive completion panel
             const mainWindow = document.getElementById("gameplay-screen");
             let summaryDiv = document.createElement("div");
             summaryDiv.style.cssText = "padding: 30px 16px; text-align: center; display: flex; flex-direction: column; gap: 15px; justify-content: center; align-items: center; flex-grow: 1;";
             summaryDiv.innerHTML = `
-                <div style="font-size: 4rem;">💎</div>
-                <h3 style="color:#8b5a2b; font-size:1.3rem;">Total Gold Score: ${totalXp} XP</h3>
+                <div style="font-size: 4rem;">🏆</div>
+                <h3 style="color:#8b5a2b; font-size:1.3rem;">Total Final Score: ${totalXp} / 1500 XP</h3>
                 <p style="font-size:0.95rem; font-weight:bold; background:#e6ccb2; padding:8px 14px; border-radius:8px;">
-                    Unlocked Rank: <br><span style="color:#3e2723; font-size:1.1rem;">${evaluationRank}</span>
+                    Rank Earned: <br><span style="color:#3e2723; font-size:1.1rem;">${finalRank}</span>
                 </p>
-                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Restart Journey</button>
+                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Restart New Run</button>
             `;
             mainWindow.appendChild(summaryDiv);
         }
