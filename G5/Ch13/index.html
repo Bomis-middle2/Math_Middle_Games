@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmic Defender: Data Blaster!</title>
+    <title>Data Constructor: Grid Architect!</title>
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Arial Black', 'Comic Sans MS', sans-serif;
+            font-family: 'Arial Black', sans-serif;
             margin: 0;
             padding: 0;
             user-select: none;
         }
 
         body {
-            background-color: #020617;
+            background-color: #0f172a;
             color: #ffffff;
             display: flex;
             justify-content: center;
@@ -25,13 +25,13 @@
 
         #game-window {
             width: 100%;
-            max-width: 440px;
-            height: 760px;
-            background: #0b132b;
-            border: 6px solid #48cae4;
+            max-width: 460px;
+            height: 780px;
+            background: #1e293b;
+            border: 6px solid #3b82f6;
             border-radius: 24px;
             position: relative;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -53,7 +53,7 @@
             height: auto;
         }
 
-        /* --- WELCOME SCREEN --- */
+        /* --- INSTRUCTIONS SCREEN --- */
         #instruction-screen {
             padding: 30px 24px;
             display: flex;
@@ -62,36 +62,36 @@
             align-items: center;
             height: 100%;
             text-align: center;
-            background: radial-gradient(circle at center, #1c2541 0%, #0b132b 100%);
+            background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
         }
         .game-title {
-            font-size: 2.3rem;
-            color: #48cae4;
-            text-shadow: 0 4px #0077b6;
+            font-size: 2.2rem;
+            color: #38bdf8;
+            text-shadow: 0 4px #1d4ed8;
             margin-bottom: 25px;
-            line-height: 1.1;
+            line-height: 1.2;
         }
         .rules-card {
             background: rgba(255, 255, 255, 0.05);
-            border: 2px solid #00b4d8;
+            border: 2px solid #3b82f6;
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 35px;
             text-align: left;
         }
         .rules-card h3 {
-            color: #ffd166;
+            color: #fde047;
             font-size: 1.1rem;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
         .rules-card p {
             font-size: 0.85rem;
-            color: #e2e8f0;
+            color: #cbd5e1;
             margin-bottom: 14px;
             line-height: 1.4;
         }
 
-        /* --- ACTIVE ARCADE STAGE --- */
+        /* --- GAMEPLAY SCREEN --- */
         #gameplay-screen {
             display: flex;
             flex-direction: column;
@@ -100,267 +100,209 @@
         }
 
         .header-bar {
-            background: #020c1b;
+            background: #0f172a;
             padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 4px solid #1c2541;
+            border-bottom: 4px solid #334155;
         }
         .level-badge {
-            background: #7209b7;
+            background: #a855f7;
             padding: 6px 14px;
             border-radius: 12px;
             font-size: 0.8rem;
             font-weight: bold;
-            letter-spacing: 1px;
         }
-        .hearts-line {
-            display: flex;
-            gap: 6px;
-        }
-        .heart-slot { font-size: 1.2rem; }
-        .heart-slot.empty { filter: grayscale(1) opacity(0.2); }
         .xp-badge {
-            background: #4cc9f0;
-            color: #0b132b;
+            background: #22c55e;
+            color: #0f172a;
             padding: 6px 12px;
             border-radius: 12px;
             font-size: 0.85rem;
             font-weight: bold;
         }
 
-        /* SPACE VIEWPORT SCREEN */
-        .space-battlefield {
-            flex-grow: 1;
-            background: radial-gradient(circle at center, #0b132b 0%, #030712 100%);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px;
-            overflow: hidden;
-        }
-
-        /* Mission HUD Overlay Box */
-        .hud-alert-prompt {
-            width: 100%;
-            background: rgba(11, 19, 43, 0.9);
-            border: 2px solid #00b4d8;
-            padding: 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
+        .prompt-container {
+            background: #0f172a;
+            padding: 14px;
+            font-size: 0.9rem;
             text-align: center;
-            color: #caf0f8;
-            line-height: 1.3;
-            z-index: 10;
+            color: #e2e8f0;
+            border-bottom: 2px solid #334155;
+            line-height: 1.4;
         }
 
-        /* CENTER DATA DECK GRAPHICS AREA */
-        .data-visual-arena {
-            width: 100%;
-            height: 150px;
-            background: rgba(2, 6, 23, 0.6);
-            border-radius: 16px;
-            border: 2px dashed #1e293b;
+        /* WORKSPACE INTERACTIVE GRAPHIC FIELD */
+        .graph-workspace {
+            flex-grow: 1;
+            background: #020617;
+            position: relative;
             display: flex;
             justify-content: center;
-            align-items: center;
-            position: relative;
-            gap: 15px;
-        }
-
-        /* REAL CSS TALLY MARK GRAPHICS */
-        .tally-group {
-            position: relative;
-            display: inline-flex;
-            gap: 6px;
-            padding: 5px 10px;
-            height: 60px;
-            align-items: center;
-        }
-        .tally-stick {
-            width: 5px;
-            height: 45px;
-            background-color: #4cc9f0;
-            border-radius: 2px;
-            box-shadow: 0 0 8px rgba(76, 201, 240, 0.6);
-        }
-        .tally-group .tally-diagonal-strike {
-            position: absolute;
-            top: 25px;
-            left: 2px;
-            width: 58px;
-            height: 5px;
-            background-color: #f72585;
-            border-radius: 2px;
-            transform: rotate(-30deg);
-            box-shadow: 0 0 8px rgba(247, 37, 133, 0.8);
-            transform-origin: left center;
-        }
-
-        /* Pictograph Grid Box Layout */
-        .picto-grid-display {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
-            padding: 10px;
-        }
-        .picto-ship-icon {
-            font-size: 1.8rem;
-            animation: bounceIdle 2s infinite ease-in-out alternate;
-        }
-        .picto-key-banner {
-            position: absolute;
-            bottom: 6px;
-            font-size: 0.7rem;
-            color: #ffd166;
-            background: rgba(0,0,0,0.5);
-            padding: 2px 8px;
-            border-radius: 4px;
-        }
-
-        /* Bar Chart Pure Style Columns */
-        .chart-bar-frame {
-            display: flex;
             align-items: flex-end;
-            gap: 20px;
-            height: 110px;
-            padding-bottom: 10px;
+            padding: 20px 20px 45px 50px;
         }
-        .chart-bar-pillar {
-            width: 34px;
-            background: linear-gradient(to top, #3a0ca3, #7209b7);
+
+        /* Y-Axis Line Guide Marks */
+        .y-axis-container {
+            position: absolute;
+            left: 0;
+            top: 20px;
+            bottom: 45px;
+            width: 50px;
+            display: flex;
+            flex-direction: column-reverse;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-right: 8px;
+            border-right: 3px solid #64748b;
+        }
+        .y-tick {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            position: relative;
+        }
+        .y-tick::after {
+            content: "";
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            width: 5px;
+            height: 2px;
+            background: #64748b;
+        }
+
+        /* Dynamic Columns Flex Container Box */
+        .bars-container-box {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            position: relative;
+        }
+
+        /* Grid Background Helper Lines */
+        .grid-bg-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(51, 65, 85, 0.4);
+            pointer-events: none;
+        }
+
+        .interactive-pillar {
+            width: 55px;
+            background: linear-gradient(to top, #2563eb, #60a5fa);
             border-radius: 6px 6px 0 0;
             position: relative;
-            display: flex;
-            justify-content: center;
+            cursor: ns-resize;
+            min-height: 5px;
+            transition: background 0.2s;
         }
-        .chart-bar-pillar.target-pillar {
-            background: linear-gradient(to top, #f72585, #b5179e);
-            box-shadow: 0 0 15px #f72585;
+        .interactive-pillar:hover {
+            filter: brightness(1.15);
         }
-        .pillar-axis-tag {
+        .interactive-pillar.active-drag {
+            background: linear-gradient(to top, #ea580c, #f97316) !important;
+            box-shadow: 0 0 15px rgba(249, 115, 22, 0.6);
+        }
+        .interactive-pillar.static-view {
+            background: linear-gradient(to top, #7c3aed, #a78bfa);
+            cursor: default;
+        }
+
+        .live-value-bubble {
             position: absolute;
-            bottom: -18px;
-            font-size: 0.65rem;
-            color: #94a3b8;
+            top: -32px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffff;
+            color: #0f172a;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 0.75rem;
             font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            pointer-events: none;
         }
-
-        @keyframes bounceIdle {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-6px); }
-        }
-
-        /* DEFENDER SPACE SHIP CANNON ACTOR OBJECT */
-        .defender-ship-base {
-            font-size: 3.5rem;
-            transition: transform 0.1s ease;
-            z-index: 5;
-            margin-bottom: -10px;
-        }
-
-        /* Laser Blast Effect Laser Bolt Line Graphic */
-        .laser-beam-bolt {
+        .x-label-tag {
             position: absolute;
-            bottom: 60px;
-            width: 6px;
-            height: 0px;
-            background: #f72585;
-            box-shadow: 0 0 12px #f72585;
-            border-radius: 4px;
-            transition: height 0.2s ease-out, top 0.2s ease-out;
-            z-index: 3;
+            bottom: -26px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #cbd5e1;
+            white-space: nowrap;
         }
 
-        /* --- DASHBOARD CONTROLS CONSOLE --- */
-        .dashboard-cockpit {
-            background: #020c1b;
-            padding: 14px;
-            border-top: 4px solid #1c2541;
+        /* --- INTERPRETATION MULTIPLE CHOICE RADAR MATRIX --- */
+        .interpretation-panel {
+            background: #0f172a;
+            padding: 16px;
+            border-top: 4px solid #334155;
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
-
-        .toast-popup-banner {
-            background: #ffd166;
-            border: 2px solid #f77f00;
-            color: #000000;
-            padding: 8px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            text-align: center;
-            display: none;
-            line-height: 1.3;
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
         }
-
-        .input-matrix-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            background: #0f172a;
-            padding: 12px;
-            border-radius: 16px;
-            border: 2px solid #1e293b;
-        }
-        .input-matrix-row label {
-            font-size: 0.75rem;
-            color: #4cc9f0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .arcade-button-group {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-        .btn-arcade-pad {
-            background: #4cc9f0;
-            color: #020c1b;
-            border: none;
-            width: 42px;
-            height: 42px;
+        .choice-btn {
+            background: #334155;
+            color: #ffffff;
+            border: 2px solid #475569;
+            padding: 14px;
             border-radius: 12px;
-            font-size: 1.5rem;
-            font-weight: bold;
+            font-size: 0.95rem;
             cursor: pointer;
-            box-shadow: 0 4px #0077b6;
+            transition: all 0.2s;
         }
-        .btn-arcade-pad:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px #0077b6;
-        }
-        .live-count-readout {
-            font-size: 2rem;
-            color: #ffd166;
-            width: 45px;
-            text-align: center;
-            text-shadow: 0 0 8px rgba(255, 209, 102, 0.4);
+        .choice-btn:hover {
+            background: #475569;
+            border-color: #3b82f6;
         }
 
-        /* Master Fire Laser Action Trigger Button */
-        .fire-action-btn {
-            background: #f72585;
-            color: white;
+        /* --- CREATION SUBMIT ACTIONS PANEL --- */
+        .submit-panel {
+            background: #0f172a;
+            padding: 16px;
+            border-top: 4px solid #334155;
+            display: flex;
+            flex-direction: column;
+        }
+        .action-submit-btn {
+            background: #22c55e;
+            color: #0f172a;
             border: none;
             padding: 16px;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: bold;
             border-radius: 16px;
             cursor: pointer;
             text-transform: uppercase;
-            box-shadow: 0 6px #7209b7;
-            letter-spacing: 1px;
-            text-shadow: 0 2px #7209b7;
+            box-shadow: 0 6px #16a34a;
         }
-        .fire-action-btn:active {
+        .action-submit-btn:active {
             transform: translateY(4px);
-            box-shadow: 0 2px #7209b7;
+            box-shadow: 0 2px #16a34a;
+        }
+
+        .toast-banner-alert {
+            background: #fde047;
+            border: 2px solid #ca8a04;
+            color: #713f12;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            text-align: center;
+            display: none;
+            margin-bottom: 10px;
+            line-height: 1.3;
         }
 
         .hidden { display: none !important; }
@@ -371,305 +313,398 @@
     <div id="game-window">
         
         <div id="innovine-splash">
-            <img src="assets/logo.png" class="splash-logo" alt="Innovine" onerror="this.src='https://placehold.co/180x60/ffffff/0b132b?text=INNOVINE';">
+            <img src="assets/logo.png" class="splash-logo" alt="Innovine" onerror="this.src='https://placehold.co/180x60/ffffff/0f172a?text=INNOVINE';">
         </div>
 
         <div id="instruction-screen" class="hidden">
-            <h1 class="game-title">COSMIC DEFENDER<br><span style="color:#ffd166; font-size:1.4rem;">Data Blaster Wave</span></h1>
+            <h1 class="game-title">GRID ARCHITECT<br><span style="color:#fde047; font-size:1.3rem;">Bar Creation & Analysis</span></h1>
             <div class="rules-card">
-                <h3>🛸 Level 1: Tally Trackers</h3>
-                <p>An alien scouting line appears as real Tally Groups on your radar. Count all lines to lock coordinates!</p>
+                <h3>📊 Mode 1: Graph Creation</h3>
+                <p>Read the source data target metrics card. Click and drag the columns up and down directly to match the correct numerical points!</p>
                 
-                <h3>🛸 Level 2: Fleet Pictographs</h3>
-                <p>Elite carrier ships arrive in clusters. Check the Key Rule block: each single icon represents 4 real spaceships.</p>
-                
-                <h3>🛸 Level 3: Bar Shield Matrix</h3>
-                <p>The Alien Flagship raises energy columns. Target the exact line value height of the blinking track column to breach their core.</p>
+                <h3>📊 Mode 2: Graph Interpretation</h3>
+                <p>Analyze the custom generated bars standing in the workspace. Instantly click the correct answer pad below without any typing or heavy clicking.</p>
             </div>
-            <button class="fire-action-btn" style="background:#4cc9f0; color:#020c1b; box-shadow:0 6px #0077b6;" onclick="launchDefenseGrid()">Activate Weapons Console</button>
+            <button class="action-submit-btn" style="width:100%;" onclick="initializeGraphEngine()">Launch Graph Deck</button>
         </div>
 
         <div id="gameplay-screen" class="hidden">
             <div class="header-bar">
-                <div class="level-badge" id="level-badge-txt">WAVE 1</div>
-                <div class="hearts-line" id="lives-box">
-                    <span class="heart-slot">❤️</span>
-                    <span class="heart-slot">❤️</span>
-                </div>
+                <div class="level-badge" id="level-badge-txt">MISSION 1</div>
                 <div class="xp-badge" id="xp-counter-txt">0 XP</div>
             </div>
 
-            <div class="space-battlefield">
-                <div class="hud-alert-prompt" id="hud-system-text">Radar locking target...</div>
+            <div class="prompt-container" id="mission-prompt-txt">Loading parameters...</div>
 
-                <div class="laser-beam-bolt" id="laser-bolt-graphic"></div>
-
-                <div class="data-visual-arena" id="active-data-screen"></div>
-
-                <div class="defender-ship-base" id="defender-ship-avatar">🚀</div>
+            <div class="graph-workspace" id="workspace-element">
+                <div class="y-axis-container" id="y-axis-ticks-frame"></div>
+                <div class="bars-container-box" id="bars-render-container"></div>
             </div>
 
-            <div class="dashboard-cockpit">
-                <div class="toast-popup-banner" id="console-toast-alert"></div>
+            <div class="submit-panel" id="creation-control-deck">
+                <div class="toast-banner-alert" id="creation-toast"></div>
+                <button class="action-submit-btn" onclick="verifyCreatedGraphStructure()">Verify Graph Columns</button>
+            </div>
 
-                <div class="input-matrix-row">
-                    <label>Target Value</label>
-                    <div class="arcade-button-group">
-                        <button class="btn-arcade-pad" onclick="tuneLaserTargetValue(-1)">-</button>
-                        <span class="live-count-readout" id="user-count-display">0</span>
-                        <button class="btn-arcade-pad" onclick="tuneLaserTargetValue(1)">+</button>
-                    </div>
-                </div>
-
-                <button class="fire-action-btn" id="fire-trigger-button" onclick="executeLaserCannonSequence()">Fire Data Blaster! 💥</button>
+            <div class="interpretation-panel hidden" id="interpretation-control-deck">
+                <div class="toast-banner-alert" id="interpretation-toast"></div>
+                <div class="options-grid" id="choices-pad-grid"></div>
             </div>
         </div>
 
     </div>
 
     <script>
-        let radarCampaignQueue = [];
-        let activeWaveIndex = 0;
-        let scoreCounterXp = 0;
-        let failedDefenses = 0;
+        let missionSequence = [];
+        let activePointerIndex = 0;
+        let cumulativeScoreXp = 0;
 
-        let selectedTargetInput = 0;
-        let isBlasterFiring = false;
+        // Interactive Drag Management Global Variables
+        let isDraggingPillar = false;
+        let currentTargetPillarElement = null;
+        let activeTargetPillarIndex = null;
+        const maxWorkspacePixelHeight = 440; // Clamped bounding height mapping frame
 
-        const textbookCleanSyllabus = [
-            // --- WAVE 1: REAL TALLY MARK SCENARIOS ---
-            { level: 1, type: "TALLY", goalValue: 8, promptText: "Wave 1 Tally Radar: Enemy scouts detected! Count the tally marks below to configure blaster coordinates." },
-            { level: 1, type: "TALLY", goalValue: 14, promptText: "Wave 1 Tally Radar: Heavy fleet lines scanning! Count the full set of tally mark entries to clear the sector." },
+        // Clean curriculum tasks completely free of latex code syntax or visual glitches
+        const gameSyllabusMap = [
+            // --- MODE 1: DYNAMIC CLICK-AND-DRAG CREATION MISSIONS ---
+            {
+                type: "CREATE",
+                maxAxisScale: 50,
+                axisInterval: 10,
+                items: ["Apples", "Bananas", "Oranges"],
+                targetValues: [40, 20, 50],
+                prompt: "📊 GRAPH CREATION: Drag the columns directly to match this data table: [Apples: 40, Bananas: 20, Oranges: 50]"
+            },
+            {
+                type: "CREATE",
+                maxAxisScale: 100,
+                axisInterval: 20,
+                items: ["Red Team", "Blue Team", "Green Team"],
+                targetValues: [60, 100, 40],
+                prompt: "📊 GRAPH CREATION: Adjust the team score columns to match: [Red Team: 60, Blue Team: 100, Green Team: 40]"
+            },
             
-            // --- WAVE 2: PICTOGRAPH SCENARIOS ---
-            { level: 2, type: "PICTO", goalValue: 12, itemMultiplierCount: 3, promptText: "Wave 2 Pictograph Beam: Alien ships incoming. Each star icon counts as 4 ships. Calculate total strength!" },
-            { level: 2, type: "PICTO", goalValue: 24, itemMultiplierCount: 6, promptText: "Wave 2 Pictograph Beam: Cargo pods arriving! Each star icon counts as 4 units. Multiply to track!" },
-            
-            // --- WAVE 3: BAR CHART SCENARIOS ---
-            { level: 3, type: "BAR", goalValue: 40, primaryTargetValue: 40, barValuesSet: [20, 40, 10, 30], promptText: "Wave 3 Shield Matrix: Flagship shields are active! Identify the value height of the blinking bright red bar column." },
-            { level: 3, type: "BAR", goalValue: 55, primaryTargetValue: 55, barValuesSet: [15, 30, 55, 45], promptText: "Wave 3 Shield Matrix Final Wave: Find the value height marker of the highest blinking column block to win the game!" }
+            // --- MODE 2: INSTANT CHOOSE INTERPRETATION MISSIONS ---
+            {
+                type: "INTERPRET",
+                maxAxisScale: 60,
+                axisInterval: 10,
+                items: ["Mon", "Tue", "Wed", "Thu"],
+                renderedValues: [30, 50, 20, 40],
+                question: "Which day has the highest bar value on the chart?",
+                choices: ["Mon", "Tue", "Wed", "Thu"],
+                correctAnswer: "Tue",
+                prompt: "🔍 GRAPH INTERPRETATION: Look at the purple bar chart columns and pick the matching answer block below."
+            },
+            {
+                type: "INTERPRET",
+                maxAxisScale: 80,
+                axisInterval: 20,
+                items: ["Cats", "Dogs", "Birds"],
+                renderedValues: [60, 40, 20],
+                question: "What is the combined value of Cats and Birds columns?",
+                choices: ["60", "80", "100", "120"],
+                correctAnswer: "80", // 60 + 20
+                prompt: "🔍 GRAPH INTERPRETATION: Calculate the combined heights of Cats and Birds columns."
+            },
+            {
+                type: "INTERPRET",
+                maxAxisScale: 50,
+                axisInterval: 10,
+                items: ["Class A", "Class B", "Class C"],
+                renderedValues: [40, 10, 30],
+                question: "How much greater is Class A than Class B?",
+                choices: ["10", "20", "30", "40"],
+                correctAnswer: "30", // 40 - 10
+                prompt: "🔍 FINAL MISSION: Find the difference between Class A and Class B."
+            }
         ];
 
-        // Splash screen 5-second automatic timeout loop
+        // Splash automatic timeout handler
         setTimeout(() => {
-            const elementSplash = document.getElementById("innovine-splash");
-            if(elementSplash) {
-                elementSplash.style.opacity = "0";
+            const splashNode = document.getElementById("innovine-splash");
+            if(splashNode) {
+                splashNode.style.opacity = "0";
                 setTimeout(() => {
-                    elementSplash.remove();
+                    splashNode.remove();
                     document.getElementById("instruction-screen").classList.remove("hidden");
                 }, 500);
             }
         }, 5000);
 
-        function launchDefenseGrid() {
-            radarCampaignQueue = [...textbookCleanSyllabus];
-            activeWaveIndex = 0;
-            scoreCounterXp = 0;
+        function initializeGraphEngine() {
+            missionSequence = [...gameSyllabusMap];
+            activePointerIndex = 0;
+            cumulativeScoreXp = 0;
 
             document.getElementById("instruction-screen").classList.add("hidden");
             document.getElementById("gameplay-screen").classList.remove("hidden");
-            deployNextRadarTarget();
+            
+            setupGlobalDragDropListeners();
+            buildActiveMissionLayout();
         }
 
-        // Engine helper function to build authentic textbook CSS Tally marks dynamically
-        function renderRealTallyMarks(targetContainer, totalCount) {
-            let fullGroupsOfFive = Math.floor(totalCount / 5);
-            let remainingSticks = totalCount % 5;
-
-            // Generate groups of 5 with the cross diagonal slash bars
-            for (let g = 0; g < fullGroupsOfFive; g++) {
-                let groupDiv = document.createElement("div");
-                groupDiv.className = "tally-group";
-                for (let s = 0; s < 4; s++) {
-                    let stick = document.createElement("div");
-                    stick.className = "tally-stick";
-                    groupDiv.appendChild(stick);
-                }
-                let slash = document.createElement("div");
-                slash.className = "tally-diagonal-strike";
-                groupDiv.appendChild(slash);
-                targetContainer.appendChild(groupDiv);
-            }
-
-            // Generate remaining loose individual tally lines
-            if (remainingSticks > 0) {
-                let looseDiv = document.createElement("div");
-                looseDiv.className = "tally-group";
-                for (let r = 0; r < remainingSticks; r++) {
-                    let stick = document.createElement("div");
-                    stick.className = "tally-stick";
-                    looseDiv.appendChild(stick);
-                }
-                targetContainer.appendChild(looseDiv);
-            }
-        }
-
-        function deployNextRadarTarget() {
-            if (activeWaveIndex >= radarCampaignQueue.length) {
-                concludeSpaceCampaign();
+        function buildActiveMissionLayout() {
+            if (activePointerIndex >= missionSequence.length) {
+                concludeGraphCampaign();
                 return;
             }
 
-            failedDefenses = 0;
-            isBlasterFiring = false;
-            selectedTargetInput = 0;
+            document.getElementById("creation-toast").style.display = "none";
+            document.getElementById("interpretation-toast").style.display = "none";
 
-            document.getElementById("console-toast-alert").style.display = "none";
-            document.getElementById("fire-trigger-button").disabled = false;
-            document.getElementById("user-count-display").innerText = selectedTargetInput;
-            refreshShipHealthShieldSlots();
+            let activeTask = missionSequence[activePointerIndex];
+            document.getElementById("level-badge-txt").innerText = `MISSION ${activePointerIndex + 1}/${missionSequence.length}`;
+            document.getElementById("mission-prompt-txt").innerText = activeTask.prompt;
 
-            let currentMissionTask = radarCampaignQueue[activeWaveIndex];
-            
-            document.getElementById("level-badge-txt").innerText = `WAVE ${currentMissionTask.level} [Sector ${activeWaveIndex + 1}/6]`;
-            document.getElementById("hud-system-text").innerText = currentMissionTask.promptText;
-
-            const renderingScreenDeck = document.getElementById("active-data-screen");
-            renderingScreenDeck.innerHTML = "";
-
-            if (currentMissionTask.type === "TALLY") {
-                renderRealTallyMarks(renderingScreenDeck, currentMissionTask.goalValue);
-            } 
-            else if (currentMissionTask.type === "PICTO") {
-                let gridContainerBox = document.createElement("div");
-                gridContainerBox.className = "picto-grid-display";
-                
-                for(let i = 0; i < currentMissionTask.itemMultiplierCount; i++) {
-                    gridContainerBox.innerHTML += `<span class="picto-ship-icon">🛸</span>`;
-                }
-                renderingScreenDeck.appendChild(gridContainerBox);
-
-                let keyBannerElement = document.createElement("div");
-                keyBannerElement.className = "picto-key-banner";
-                keyBannerElement.innerText = "Key Rule: 1 Icon = 4 Ships";
-                renderingScreenDeck.appendChild(keyBannerElement);
-            } 
-            else if (currentMissionTask.type === "BAR") {
-                let chartFrameWrapper = document.createElement("div");
-                chartFrameWrapper.className = "chart-bar-frame";
-
-                currentMissionTask.barValuesSet.forEach((columnValue) => {
-                    let isMainTargetColumn = (columnValue === currentMissionTask.primaryTargetValue);
-                    let computedHeightScale = Math.floor(columnValue * 1.5);
-                    
-                    chartFrameWrapper.innerHTML += `
-                        <div class="chart-bar-pillar ${isMainTargetColumn ? 'target-pillar' : ''}" style="height:${computedHeightScale}px;">
-                            <span class="pillar-axis-tag">${columnValue}</span>
-                        </div>`;
-                });
-                renderingScreenDeck.appendChild(chartFrameWrapper);
+            // Generate Y Axis Guide Tick labels
+            const yAxisFrame = document.getElementById("y-axis-ticks-frame");
+            yAxisFrame.innerHTML = "";
+            for (let val = 0; val <= activeTask.maxAxisScale; val += activeTask.axisInterval) {
+                let tick = document.createElement("div");
+                tick.className = "y-tick";
+                tick.innerText = val;
+                yAxisFrame.appendChild(tick);
             }
 
-            const heroShipActor = document.getElementById("defender-ship-avatar");
-            heroShipActor.style.transform = "scale(1) rotate(0deg)";
+            // Generate background grid guideline tracks
+            const workspace = document.getElementById("workspace-element");
+            document.querySelectorAll(".grid-bg-line").forEach(el => el.remove());
+            for (let val = 0; val <= activeTask.maxAxisScale; val += activeTask.axisInterval) {
+                let ratio = val / activeTask.maxAxisScale;
+                let bottomPixels = 45 + ratio * (maxWorkspacePixelHeight - 65);
+                let bgLine = document.createElement("div");
+                bgLine.className = "grid-bg-line";
+                bgLine.style.bottom = `${bottomPixels}px`;
+                workspace.appendChild(bgLine);
+            }
+
+            // Render Core Columns Area layout
+            const containerBox = document.getElementById("bars-render-container");
+            containerBox.innerHTML = "";
+
+            if (activeTask.type === "CREATE") {
+                document.getElementById("creation-control-deck").classList.remove("hidden");
+                document.getElementById("interpretation-control-deck").classList.add("hidden");
+
+                activeTask.items.forEach((label, idx) => {
+                    let pillarNode = document.createElement("div");
+                    pillarNode.className = "interactive-pillar";
+                    pillarNode.setAttribute("data-index", idx);
+                    
+                    // Initialize each bar at a starting value of 0
+                    let initialRatio = 0 / activeTask.maxAxisScale;
+                    pillarNode.style.height = `${initialRatio * 100}%`;
+
+                    pillarNode.innerHTML = `
+                        <div class="live-value-bubble">0</div>
+                        <div class="x-label-tag">${label}</div>
+                    `;
+                    
+                    // Touch start handling for mobile accessibility layout frames
+                    pillarNode.addEventListener("mousedown", startPillarDragSequence);
+                    pillarNode.addEventListener("touchstart", startPillarDragSequence, { passive: true });
+
+                    containerBox.appendChild(pillarNode);
+                });
+
+                // Set up default initial reference states array tracker values list
+                activeTask.userLiveValues = activeTask.items.map(() => 0);
+
+            } else if (activeTask.type === "INTERPRET") {
+                document.getElementById("creation-control-deck").classList.add("hidden");
+                document.getElementById("interpretation-control-deck").classList.remove("hidden");
+
+                activeTask.items.forEach((label, idx) => {
+                    let currentVal = activeTask.renderedValues[idx];
+                    let heightRatio = currentVal / activeTask.maxAxisScale;
+
+                    let pillarNode = document.createElement("div");
+                    pillarNode.className = "interactive-pillar static-view";
+                    pillarNode.style.height = `${heightRatio * 100}%`;
+
+                    pillarNode.innerHTML = `
+                        <div class="live-value-bubble">${currentVal}</div>
+                        <div class="x-label-tag">${label}</div>
+                    `;
+                    containerBox.appendChild(pillarNode);
+                });
+
+                // Display interpretation multiple choice selection buttons dynamically
+                document.getElementById("mission-prompt-txt").innerHTML = `<strong>${activeTask.question}</strong><br><span style="font-size:0.8rem; color:#94a3b8;">${activeTask.prompt}</span>`;
+                
+                const choicesPadContainer = document.getElementById("choices-pad-grid");
+                choicesPadContainer.innerHTML = "";
+                activeTask.choices.forEach(choiceText => {
+                    let choiceBtn = document.createElement("button");
+                    choiceBtn.className = "choice-btn";
+                    choiceBtn.innerText = choiceText;
+                    choiceBtn.onclick = () => verifyChosenInterpretationOption(choiceText, choiceBtn);
+                    choicesPadContainer.appendChild(choiceBtn);
+                });
+            }
         }
 
-        function tuneLaserTargetValue(stepValue) {
-            if(isBlasterFiring) return;
-            selectedTargetInput = Math.max(0, Math.min(99, selectedTargetInput + stepValue));
-            document.getElementById("user-count-display").innerText = selectedTargetInput;
+        // Mouse down/Touch start sequence activation anchor
+        function startPillarDragSequence(e) {
+            isDraggingPillar = true;
+            currentTargetPillarElement = e.currentTarget;
+            activeTargetPillarIndex = parseInt(currentTargetPillarElement.getAttribute("data-index"));
+            currentTargetPillarElement.classList.add("active-drag");
         }
 
-        function refreshShipHealthShieldSlots() {
-            const trackingHeartSlots = document.getElementById("lives-box").children;
-            trackingHeartSlots[0].classList.remove("empty");
-            trackingHeartSlots[1].classList.remove("empty");
-            if (failedDefenses === 1) trackingHeartSlots[1].classList.add("empty");
-            if (failedDefenses >= 2) trackingHeartSlots[0].classList.add("empty");
+        function setupGlobalDragDropListeners() {
+            // Bind global track event move handlers to document body elements
+            window.addEventListener("mousemove", executePillarDragMovement);
+            window.addEventListener("touchmove", executePillarDragMovement, { passive: false });
+
+            window.addEventListener("mouseup", concludePillarDragSequence);
+            window.addEventListener("touchend", concludePillarDragSequence);
         }
 
-        function executeLaserCannonSequence() {
-            if(isBlasterFiring) return;
-            isBlasterFiring = true;
+        function executePillarDragMovement(e) {
+            if (!isDraggingPillar || !currentTargetPillarElement) return;
 
-            const elementLaserBolt = document.getElementById("laser-bolt-graphic");
-            const elementFeedbackBanner = document.getElementById("console-toast-alert");
-            const heroShipActor = document.getElementById("defender-ship-avatar");
+            // Prevent scroll pull movements while actively sliding graph lines
+            if (e.type === "touchmove") e.preventDefault();
 
-            let evaluatedMissionData = radarCampaignQueue[activeWaveIndex];
+            const activeTask = missionSequence[activePointerIndex];
+            const containerBox = document.getElementById("bars-render-container");
+            const boxRect = containerBox.getBoundingClientRect();
 
-            elementLaserBolt.style.top = "70px";
-            elementLaserBolt.style.height = "160px";
+            let clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
+            
+            // Calculate height scalar ratio values cleanly
+            let relativePixelHeight = boxRect.bottom - clientY;
+            let ratioPercentage = Math.max(0, Math.min(1, relativePixelHeight / boxRect.height));
+            
+            // Snapping calculations mapped matching grid data intervals
+            let calculatedExactRawValue = ratioPercentage * activeTask.maxAxisScale;
+            let snappedCleanValue = Math.round(calculatedExactRawValue / 5) * 5; // Snaps seamlessly to intervals of 5
+            snappedCleanValue = Math.max(0, Math.min(activeTask.maxAxisScale, snappedCleanValue));
 
-            setTimeout(() => {
-                elementLaserBolt.style.top = "auto";
-                elementLaserBolt.style.height = "0px";
+            // Update local state models arrays and DOM nodes displays
+            activeTask.userLiveValues[activeTargetPillarIndex] = snappedCleanValue;
+            
+            let updatedHeightPercentage = (snappedCleanValue / activeTask.maxAxisScale) * 100;
+            currentTargetPillarElement.style.height = `${updatedHeightPercentage}%`;
+            currentTargetPillarElement.querySelector(".live-value-bubble").innerText = snappedCleanValue;
+        }
 
-                if (selectedTargetInput === evaluatedMissionData.goalValue) {
-                    scoreCounterXp += (failedDefenses === 0) ? 200 : 100;
-                    document.getElementById("xp-counter-txt").innerText = `${scoreCounterXp} XP`;
+        function concludePillarDragSequence() {
+            if (currentTargetPillarElement) {
+                currentTargetPillarElement.classList.remove("active-drag");
+            }
+            isDraggingPillar = false;
+            currentTargetPillarElement = null;
+            activeTargetPillarIndex = null;
+        }
 
-                    elementFeedbackBanner.style.display = "block";
-                    elementFeedbackBanner.style.background = "#d1fae5";
-                    elementFeedbackBanner.style.borderColor = "#10b981";
-                    elementFeedbackBanner.style.color = "#065f46";
-                    elementFeedbackBanner.innerText = `DIRECT TARGET HIT! Data count verified at ${selectedTargetInput}. Sector cleared!`;
+        function verifyCreatedGraphStructure() {
+            let activeTask = missionSequence[activePointerIndex];
+            let isCorrectMatch = true;
 
-                    heroShipActor.style.transform = "translateY(-15px) scale(1.1)";
-
-                    setTimeout(() => {
-                        activeWaveIndex++;
-                        deployNextRadarTarget();
-                    }, 1600);
-
-                } else {
-                    failedDefenses++;
-                    refreshShipHealthShieldSlots();
-
-                    elementFeedbackBanner.style.display = "block";
-                    elementFeedbackBanner.style.background = "#fee2e2";
-                    elementFeedbackBanner.style.borderColor = "#ef4444";
-                    elementFeedbackBanner.style.color = "#991b1b";
-
-                    heroShipActor.style.transform = "translateX(-15px)";
-                    setTimeout(() => heroShipActor.style.transform = "translateX(15px)", 80);
-                    setTimeout(() => heroShipActor.style.transform = "none", 160);
-
-                    if (failedDefenses === 1) {
-                        elementFeedbackBanner.innerText = `BLASTER MISALIGNED! Output level set to ${selectedTargetInput}. Shield variance detected!`;
-                        isBlasterFiring = false;
-                    } else {
-                        document.getElementById("fire-trigger-button").disabled = true;
-                        elementFeedbackBanner.innerText = `HULL BREACHED! Alien wave bypassed lines. Adjusting tracking grids...`;
-                        
-                        heroShipActor.style.transform = "rotate(90deg) scale(0.8)";
-
-                        setTimeout(() => {
-                            heroShipActor.style.transform = "none";
-                            activeWaveIndex++;
-                            deployNextRadarTarget();
-                        }, 2200);
-                    }
+            for (let i = 0; i < activeTask.targetValues.length; i++) {
+                if (activeTask.userLiveValues[i] !== activeTask.targetValues[i]) {
+                    isCorrectMatch = false;
+                    break;
                 }
-            }, 500);
+            }
+
+            const toast = document.getElementById("creation-toast");
+            toast.style.display = "block";
+
+            if (isCorrectMatch) {
+                cumulativeScoreXp += 200;
+                document.getElementById("xp-counter-txt").innerText = `${cumulativeScoreXp} XP`;
+
+                toast.style.background = "#d1fae5";
+                toast.style.borderColor = "#10b981";
+                toast.style.color = "#065f46";
+                toast.innerText = "🌟 PERFECT GRAPH COMPOSITION! All columns successfully match your source ledger data.";
+
+                setTimeout(() => {
+                    activePointerIndex++;
+                    buildActiveMissionLayout();
+                }, 1800);
+            } else {
+                toast.style.background = "#fee2e2";
+                toast.style.borderColor = "#ef4444";
+                toast.style.color = "#991b1b";
+                toast.innerText = "❌ ALIGNMENT MISMATCH! Check your bar column alignment values and try dragging them again.";
+            }
         }
 
-        function concludeSpaceCampaign() {
-            document.getElementById("level-badge-txt").innerText = "VICTORY";
-            document.getElementById("lives-box").style.display = "none";
-            document.getElementById("console-toast-alert").style.display = "none";
-            document.querySelector(".space-battlefield").style.display = "none";
-            document.querySelector(".input-matrix-row").style.display = "none";
-            document.getElementById("fire-trigger-button").style.display = "none";
+        function verifyChosenInterpretationOption(selectedOptionText, buttonElement) {
+            let activeTask = missionSequence[activePointerIndex];
+            const toast = document.getElementById("interpretation-toast");
+            toast.style.display = "block";
 
-            const gameplayScreenPanelContainer = document.getElementById("gameplay-screen");
-            let endMissionReportSummaryCard = document.createElement("div");
-            endMissionReportSummaryCard.style.cssText = "padding: 35px 16px; text-align: center; display: flex; flex-direction: column; gap: 20px; justify-content: center; align-items: center; flex-grow: 1; background: linear-gradient(180deg, #0b132b 0%, #030712 100%);";
+            // Disable adjacent option button elements to secure entry state logic loops
+            document.querySelectorAll(".choice-btn").forEach(btn => btn.style.pointerEvents = "none");
+
+            if (selectedOptionText === activeTask.correctAnswer) {
+                cumulativeScoreXp += 200;
+                document.getElementById("xp-counter-txt").innerText = `${cumulativeScoreXp} XP`;
+
+                buttonElement.style.background = "#22c55e";
+                buttonElement.style.borderColor = "#16a34a";
+                buttonElement.style.color = "#0f172a";
+
+                toast.style.background = "#d1fae5";
+                toast.style.borderColor = "#10b981";
+                toast.style.color = "#065f46";
+                toast.innerText = "🌟 CORRECT ANALYSIS! Data parsing complete.";
+
+                setTimeout(() => {
+                    document.querySelectorAll(".choice-btn").forEach(btn => btn.style.pointerEvents = "auto");
+                    activePointerIndex++;
+                    buildActiveMissionLayout();
+                }, 1600);
+            } else {
+                buttonElement.style.background = "#ef4444";
+                buttonElement.style.borderColor = "#dc2626";
+
+                toast.style.background = "#fee2e2";
+                toast.style.borderColor = "#ef4444";
+                toast.style.color = "#991b1b";
+                toast.innerText = "❌ INTERPRETATION VARIANCE! Look closer at the chart axes values.";
+
+                setTimeout(() => {
+                    document.querySelectorAll(".choice-btn").forEach(btn => btn.style.pointerEvents = "auto");
+                    toast.style.display = "none";
+                    buttonElement.style.background = "#334155";
+                    buttonElement.style.borderColor = "#475569";
+                    buttonElement.style.color = "#ffffff";
+                }, 1600);
+            }
+        }
+
+        function concludeGraphCampaign() {
+            document.getElementById("level-badge-txt").innerText = "COMPLETE";
+            document.getElementById("mission-prompt-txt").style.display = "none";
+            document.getElementById("workspace-element").style.display = "none";
+            document.getElementById("creation-control-deck").style.display = "none";
+            document.getElementById("interpretation-control-deck").style.display = "none";
+
+            const coreContainerLayoutHub = document.getElementById("gameplay-screen");
+            let finalSummaryReportElementCard = document.createElement("div");
+            finalSummaryReportElementCard.style.cssText = "padding: 40px 16px; text-align: center; display: flex; flex-direction: column; gap: 20px; justify-content: center; align-items: center; flex-grow: 1; background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);";
             
-            let descriptiveRankAwardedTitleTextString = scoreCounterXp >= 1000 ? "Supreme Cosmic Star Commander 👑" : "Elite System Defense Pilot 🚀";
+            let descriptiveAchievementTitleString = cumulativeScoreXp >= 1000 ? "Master Data Analyst 👑" : "Senior Grid Architect 📊";
             
-            endMissionReportSummaryCard.innerHTML = `
-                <div style="font-size: 5.5rem; filter: drop-shadow(0 0 15px #4cc9f0);">🏆</div>
-                <h2 style="color:#4cc9f0; font-size:1.6rem;">Space Quadrant Secured!</h2>
-                <h3 style="color:#ffffff; font-size:1.1rem;">Final Score: ${scoreCounterXp} / 1200 XP</h3>
-                <p style="font-size:0.9rem; font-weight:bold; background:rgba(255,255,255,0.04); padding:14px 20px; border-radius:14px; border: 2px solid #00b4d8; width:90%;">
-                    Earned Rank:<br><span style="color:#ffd166; font-size:1.15rem; display:block; margin-top:6px;">${descriptiveRankAwardedTitleTextString}</span>
+            finalSummaryReportElementCard.innerHTML = `
+                <div style="font-size: 5.5rem; filter: drop-shadow(0 0 15px #38bdf8);">🏆</div>
+                <h2 style="color:#38bdf8; font-size:1.7rem;">Graph Campaign Mastered!</h2>
+                <h3 style="color:#ffffff; font-size:1.1rem;">Final Score: ${cumulativeScoreXp} / 1000 XP</h3>
+                <p style="font-size:0.9rem; font-weight:bold; background:rgba(255,255,255,0.04); padding:14px 20px; border-radius:14px; border: 2px solid #3b82f6; width:92%;">
+                    Earned Title Rank:<br><span style="color:#fde047; font-size:1.2rem; display:block; margin-top:6px;">${descriptiveAchievementTitleString}</span>
                 </p>
-                <p style="font-size:0.85rem; color:#a7f3d0; font-weight:bold; padding: 0 10px; line-height:1.4;">🎉 Phenomenal job! You have fully completed the final level of your Grade 5 Mathematics journey!</p>
-                <button class="fire-action-btn" style="background:#4cc9f0; color:#020c1b; box-shadow:0 6px #0077b6; margin-top: 15px; width:85%;" onclick="location.reload()">Re-initialize Weapons Array</button>
+                <p style="font-size:0.85rem; color:#a7f3d0; font-weight:bold; padding:0 10px; line-height:1.4;">🎉 Phenomenal job! You have conquered graph creation and completed your fifth-grade math journey!</p>
+                <button class="action-submit-btn" style="margin-top: 15px; width:85%;" onclick="location.reload()">Re-open Layout Deck</button>
             `;
-            gameplayScreenPanelContainer.appendChild(endMissionReportSummaryCard);
+            coreContainerLayoutHub.appendChild(finalSummaryReportElementCard);
         }
     </script>
 </body>
