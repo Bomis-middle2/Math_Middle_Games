@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Symmetry Mirror Quest</title>
+    <title>Symmetry Mirror Matrix Quest</title>
     <style>
         * {
             box-sizing: border-box;
@@ -29,16 +29,16 @@
             height: 740px;
             background: #f8fafc;
             border: 6px solid #475569;
-            border-radius: 20px;
+            border-radius: 16px;
             position: relative;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
 
-        /* --- STAGE 1: SPLASH SCREEN --- */
-        #brand-splash {
+        /* --- STAGE 1: 5-SECOND SPLASH SCREEN --- */
+        #innovine-splash {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background: #ffffff;
@@ -46,16 +46,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .splash-logo {
             max-width: 200px;
             height: auto;
         }
 
-        /* --- STAGE 2: INSTRUCTIONS SCREEN --- */
+        /* --- STAGE 2: SIMPLE INSTRUCTIONS SCREEN --- */
         #instruction-screen {
-            padding: 25px;
+            padding: 24px 20px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -64,19 +64,19 @@
             text-align: center;
             background: #f1f5f9;
         }
-        .info-card {
+        .scroll-box {
             background: white;
-            border: 3px dashed #cbd5e1;
+            border: 2px dashed #cbd5e1;
             border-radius: 12px;
             padding: 20px;
             margin: 20px 0;
             width: 100%;
         }
-        .info-card ol {
+        .scroll-box ol {
             text-align: left;
             margin-left: 20px;
         }
-        .info-card li {
+        .scroll-box li {
             margin-bottom: 12px;
             font-size: 0.95rem;
             font-weight: bold;
@@ -100,11 +100,12 @@
             align-items: center;
             font-weight: bold;
             font-size: 0.9rem;
+            border-bottom: 4px solid #1e293b;
         }
         .score-lbl {
             background: #1e293b;
             color: white;
-            padding: 4px 12px;
+            padding: 4px 10px;
             border-radius: 20px;
         }
 
@@ -115,7 +116,7 @@
             text-align: center;
             background: #e2e8f0;
             border-bottom: 2px solid #cbd5e1;
-            min-height: 65px;
+            min-height: 75px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -129,7 +130,8 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            padding: 15px;
+            padding: 10px;
+            border-bottom: 3px solid #475569;
         }
 
         .matrix-grid {
@@ -149,26 +151,24 @@
             background: #f8fafc;
             border-radius: 2px;
             cursor: pointer;
-            transition: background 0.15s ease;
+            transition: background 0.1s ease;
         }
         
-        /* State Modifiers */
         .grid-cell.source-active {
-            background: #3b82f6 !important; /* Computer Pattern Color */
+            background: #3b82f6 !important;
             cursor: not-allowed;
         }
         .grid-cell.player-painted {
-            background: #ec4899; /* Player Answer Color */
+            background: #ec4899;
         }
         .grid-cell.auto-revealed {
-            background: #22c55e !important; /* Correct answer neon reveal */
-            animation: pulse 0.5s repeat(3);
+            background: #22c55e !important;
         }
 
-        /* Symmetric Divider Overlays */
+        /* Symmetric Overlay Red Mirror Lines */
         .mirror-line-v {
             position: absolute;
-            left: 50%; top: 0; bottom: 0;
+            left: calc(50% - 2px); top: 0; bottom: 0;
             width: 4px;
             background: #ef4444;
             z-index: 10;
@@ -176,58 +176,64 @@
         }
         .mirror-line-h {
             position: absolute;
-            top: 50%; left: 0; right: 0;
+            top: calc(50% - 2px); left: 0; right: 0;
             height: 4px;
             background: #ef4444;
             z-index: 10;
             box-shadow: 0 0 8px #ef4444;
         }
 
-        /* --- CONTROL INTERACTION BOTTOM TRAY --- */
+        /* --- CONTROL FOOTER INTERACTION TRAY --- */
         .interaction-panel {
-            padding: 14px;
+            padding: 12px;
             background: #f8fafc;
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
-        .chance-heart-row {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-        }
-        .heart { font-size: 1.1rem; color: #ef4444; }
-        .heart.lost { color: #94a3b8; }
-
         .hint-alert-box {
             background: #fef3c7;
             border: 1px solid #fde68a;
             color: #92400e;
             padding: 8px;
-            border-radius: 8px;
+            border-radius: 6px;
             font-size: 0.85rem;
             font-weight: bold;
             text-align: center;
             display: none;
         }
 
+        .chance-heart-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+        .heart {
+            font-size: 1.1rem;
+            color: #ef4444;
+        }
+        .heart.lost {
+            color: #cbd5e1;
+        }
+
         .action-submit-btn {
-            background: #3b82f6;
+            background: #e67e22;
             color: white;
             border: none;
             padding: 14px;
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
             text-transform: uppercase;
-            box-shadow: 0 4px #2563eb;
+            box-shadow: 0 4px #d35400;
             width: 100%;
         }
         .action-submit-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px #2563eb;
+            transform: translateY(4px);
+            box-shadow: none;
         }
 
         .hidden { display: none !important; }
@@ -237,34 +243,33 @@
 
     <div id="game-window">
         
-        <div id="brand-splash">
+        <div id="innovine-splash">
             <img src="assets/logo.png" class="splash-logo" alt="Innovine Logo" onerror="this.src='https://placehold.co/180x60/ffffff/0f172a?text=INNOVINE';">
         </div>
 
         <div id="instruction-screen" class="hidden">
             <h2 style="color: #475569; font-size: 1.4rem;">📐 Mirror Matrix Quest</h2>
-            <div class="info-card">
+            <div class="scroll-box">
                 <ol>
-                    <li>A red **Mirror Line** divides the grid canvas.</li>
-                    <li>Look at the blue pattern generated on one side.</li>
-                    <li>Tap on empty blocks to perfectly reflect it onto the opposite side!</li>
-                    <li>You have **2 attempts**. Missing the second auto-reveals the exact answer block array.</li>
+                    <li>Observe the red mirror line on the grid field.</li>
+                    <li>Look closely at the blue active source block layout pattern.</li>
+                    <li>Click on empty grids to paint them pink and mirror the reflection.</li>
+                    <li>You have **2 chances max**. Missing the second auto-paints the perfect answer array!</li>
                 </ol>
             </div>
-            <button class="action-submit-btn" onclick="startSymmetryAdventure()">Begin Challenge</button>
+            <button class="action-submit-btn" onclick="startAdventure()">Enter Game</button>
         </div>
 
         <div id="gameplay-screen" class="hidden">
             <div class="top-navbar">
-                <div id="lvl-lbl">Matrix Challenge: 1 / 10</div>
+                <div id="lvl-lbl">Quest: 1 / 10</div>
                 <div id="xp-lbl" class="score-lbl">0 XP</div>
             </div>
 
-            <div id="quest-txt-box" class="quest-container">Analyze the line of symmetry and match its reflection!</div>
+            <div id="quest-txt-box" class="quest-container">Loading symmetry coordinates...</div>
 
             <div class="grid-viewport-area">
-                <div class="matrix-grid" id="matrix-canvas">
-                    </div>
+                <div class="matrix-grid" id="matrix-canvas"></div>
             </div>
 
             <div class="interaction-panel">
@@ -275,121 +280,136 @@
                 
                 <div class="hint-alert-box" id="hint-bubble"></div>
                 
-                <button class="action-submit-btn" id="verify-action-btn" onclick="verifyPlayerSymmetry()">Check Alignment</button>
+                <button class="action-submit-btn" id="verify-action-btn" onclick="verifyPlayerSymmetry()">Check Reflection</button>
             </div>
         </div>
 
     </div>
 
     <script>
-        // Sound pipelines
+        // Sound Handles
         const soundCorrect = new Audio('assets/correct.mp3');
         const soundWrong = new Audio('assets/wrong.mp3');
 
-        function triggerAudioOutput(audioObj) {
+        function playSoundTrack(audioObj) {
             try {
                 audioObj.currentTime = 0;
                 audioObj.play();
-            } catch(e) { console.log("Audio asset buffered safely."); }
+            } catch(e) { console.log("Audio pipeline active."); }
         }
 
+        let currentActiveQuestions = [];
         let levelIdx = 0;
         let totalXp = 0;
         let attemptCount = 0;
-        let currentChallengeData = null;
-        let currentLevelPool = [];
 
-        // Definition Matrix (6x6 Grid indexing coordinates from 0 to 5)
-        // types: 'V' (Vertical Line between column 2 and 3), 'H' (Horizontal Line between row 2 and 3)
-        const symmetryLevelsBank = [
+        // Symmetric coordinates bank pool data (6x6 canvas grids)
+        const rawQuestionBank = [
             {
                 type: 'V',
-                instruction: "Reflect the pattern across the Vertical Line of Symmetry!",
-                sourceBlocks: [[0,0], [1,1], [2,2]], // [row, col]
-                targetBlocks: [[0,5], [1,4], [2,3]]  
+                question: "Reflect the blue pattern perfectly across the Vertical Mirror Line!",
+                sourceBlocks: [[0,0], [1,1], [2,2]],
+                targetBlocks: [[0,5], [1,4], [2,3]],
+                hint: "💡 HINT: Count grid distances straight outwards horizontally from the vertical line."
             },
             {
                 type: 'V',
-                instruction: "Complete the vertical window pane reflection!",
+                question: "Complete the vertical corner blueprint reflection matrix!",
                 sourceBlocks: [[5,0], [5,1], [4,2]],
-                targetBlocks: [[5,5], [5,4], [4,3]]
+                targetBlocks: [[5,5], [5,4], [4,3]],
+                hint: "💡 HINT: The blocks at row 5 must occupy the opposite outside edge spaces."
             },
             {
                 type: 'H',
-                instruction: "Reflect the pattern downwards across the Horizontal Line!",
+                question: "Flip the top block design downwards over the Horizontal Mirror Line!",
                 sourceBlocks: [[0,1], [1,2], [2,3]],
-                targetBlocks: [[5,1], [4,2], [3,3]]
+                targetBlocks: [[5,1], [4,2], [3,3]],
+                hint: "💡 HINT: Mirror vertically. Row 0 reflects straight down to the bottom Row 5."
             },
             {
                 type: 'H',
-                instruction: "Complete the inverted horizontal chevron!",
+                question: "Complete the inverted symmetric arrow peak layout down!",
                 sourceBlocks: [[1,1], [1,4], [2,2], [2,3]],
-                targetBlocks: [[4,1], [4,4], [3,2], [3,3]]
+                targetBlocks: [[4,1], [4,4], [3,2], [3,3]],
+                hint: "💡 HINT: Keep your column alignment exact as you reflect blocks below the bar."
             },
             {
                 type: 'V',
-                instruction: "Reflect this compound side structure horizontally!",
+                question: "Reflect this central step arrangement across the vertical divider!",
                 sourceBlocks: [[1,2], [2,1], [3,1], [4,2]],
-                targetBlocks: [[1,3], [2,4], [3,4], [4,3]]
+                targetBlocks: [[1,3], [2,4], [3,4], [4,3]],
+                hint: "💡 HINT: The blocks sitting right next to the red line remain right next to it on the other side."
             },
             {
                 type: 'H',
-                instruction: "Reflect the top corner block formations down!",
+                question: "Match the top corner blocks across the horizontal axis line!",
                 sourceBlocks: [[0,0], [0,5], [1,2], [1,3]],
-                targetBlocks: [[5,0], [5,5], [4,2], [4,3]]
+                targetBlocks: [[5,0], [5,5], [4,2], [4,3]],
+                hint: "💡 HINT: Top-left corner [0,0] flips straight into the bottom-left corner grid."
             },
             {
                 type: 'V',
-                instruction: "Match this column-centric vertical layout!",
+                question: "Balance the column alignment symmetrically over the vertical bar!",
                 sourceBlocks: [[0,1], [3,1], [5,1], [2,2]],
-                targetBlocks: [[0,4], [3,4], [5,4], [2,3]]
+                targetBlocks: [[0,4], [3,4], [5,4], [2,3]],
+                hint: "💡 HINT: Column index 1 shifts directly into column index 4 on the reflection side."
             },
             {
                 type: 'H',
-                instruction: "Reflect this high bar configuration downward!",
+                question: "Invert this crossbar pattern straight downwards!",
                 sourceBlocks: [[0,2], [0,3], [1,1], [1,4]],
-                targetBlocks: [[5,2], [5,3], [4,1], [4,4]]
+                targetBlocks: [[5,2], [5,3], [4,1], [4,4]],
+                hint: "💡 HINT: Match the exact gaps downward from the red dividing axis marker."
             },
             {
                 type: 'V',
-                instruction: "Reflect the checkerboard blocks across the line!",
+                question: "Complete the checkerboard grid design reflection layout!",
                 sourceBlocks: [[1,0], [3,0], [2,2], [4,2]],
-                targetBlocks: [[1,5], [3,5], [2,3], [4,3]]
+                targetBlocks: [[1,5], [3,5], [2,3], [4,3]],
+                hint: "💡 HINT: Watch the spacing gaps carefully as you duplicate blocks outward."
             },
             {
                 type: 'H',
-                instruction: "Final Master Challenge: Complete the symmetric bridge!",
+                question: "Final Challenge: Reflect the complete bridge matrix design downwards!",
                 sourceBlocks: [[2,0], [2,1], [2,4], [2,5]],
-                targetBlocks: [[3,0], [3,1], [3,4], [3,5]]
+                targetBlocks: [[3,0], [3,1], [3,4], [3,5]],
+                hint: "💡 HINT: Row 2 sits directly above the line, so row 3 must mirror it directly below."
             }
         ];
 
-        // 5-Second Brand Outgoing Fade Transition
+        // 5-Second Brand Splash Timeout Screen Trigger
         setTimeout(() => {
-            const splash = document.getElementById("brand-splash");
+            const splash = document.getElementById("innovine-splash");
             if(splash) {
                 splash.style.opacity = "0";
                 setTimeout(() => {
                     splash.remove();
                     document.getElementById("instruction-screen").classList.remove("hidden");
-                }, 500);
+                }, 600);
             }
         }, 5000);
 
-        function startSymmetryAdventure() {
-            // Pick and slice out 10 clean challenge layouts
-            currentLevelPool = [...symmetryLevelsBank];
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startAdventure() {
+            currentActiveQuestions = shuffleArray([...rawQuestionBank]).slice(0, 10);
             levelIdx = 0;
             totalXp = 0;
 
             document.getElementById("instruction-screen").classList.add("hidden");
             document.getElementById("gameplay-screen").classList.remove("hidden");
-            buildMatrixLevel();
+            loadQuestData();
         }
 
-        function buildMatrixLevel() {
-            if (levelIdx >= currentLevelPool.length) {
-                triggerVictoryScreen();
+        function loadQuestData() {
+            if (levelIdx >= currentActiveQuestions.length) {
+                renderEndGameScreen();
                 return;
             }
 
@@ -398,26 +418,24 @@
             document.getElementById("verify-action-btn").disabled = false;
             updateHeartsUI();
 
-            currentChallengeData = currentLevelPool[levelIdx];
-            document.getElementById("lvl-lbl").innerText = `Matrix Challenge: ${levelIdx + 1} / 10`;
+            let data = currentActiveQuestions[levelIdx];
+            document.getElementById("lvl-lbl").innerText = `Quest: ${levelIdx + 1} / 10`;
             document.getElementById("xp-lbl").innerText = `${totalXp} XP`;
-            document.getElementById("quest-txt-box").innerText = currentChallengeData.instruction;
+            document.getElementById("quest-txt-box").innerText = data.question;
 
             const canvas = document.getElementById("matrix-canvas");
-            canvas.innerHTML = ""; // Clear out previous layout
+            canvas.innerHTML = "";
 
-            // Inject line overlays based on symmetry rules
-            if (currentChallengeData.type === 'V') {
+            if (data.type === 'V') {
                 let vLine = document.createElement("div");
                 vLine.className = "mirror-line-v";
                 canvas.appendChild(vLine);
-            } else if (currentChallengeData.type === 'H') {
+            } else if (data.type === 'H') {
                 let hLine = document.createElement("div");
                 hLine.className = "mirror-line-h";
                 canvas.appendChild(hLine);
             }
 
-            // Generate 6x6 Matrix Cells
             for (let r = 0; r < 6; r++) {
                 for (let c = 0; c < 6; c++) {
                     let cell = document.createElement("div");
@@ -425,19 +443,16 @@
                     cell.dataset.row = r;
                     cell.dataset.col = c;
 
-                    // Evaluate if block belongs to computer preset puzzle group
-                    let matchesSource = currentChallengeData.sourceBlocks.some(b => b[0] === r && b[1] === c);
-                    if (matchesSource) {
+                    let isSource = data.sourceBlocks.some(b => b[0] === r && b[1] === c);
+                    if (isSource) {
                         cell.classList.add("source-active");
                     } else {
-                        // Let player toggle paint state upon click interaction
                         cell.onclick = () => {
                             if (!cell.classList.contains("auto-revealed")) {
                                 cell.classList.toggle("player-painted");
                             }
                         };
                     }
-
                     canvas.appendChild(cell);
                 }
             }
@@ -457,24 +472,23 @@
         }
 
         function verifyPlayerSymmetry() {
+            let data = currentActiveQuestions[levelIdx];
             const cells = document.querySelectorAll(".grid-cell");
-            let errorsDetected = false;
+            let containsError = false;
 
-            // Analyze every single block cell on the matrix sheet
             cells.forEach(cell => {
                 let r = parseInt(cell.dataset.row);
                 let c = parseInt(cell.dataset.col);
-                let shouldBePainted = currentChallengeData.targetBlocks.some(b => b[0] === r && b[1] === c);
+                let isTarget = data.targetBlocks.some(b => b[0] === r && b[1] === c);
                 let isPainted = cell.classList.contains("player-painted");
 
-                if (shouldBePainted !== isPainted) {
-                    errorsDetected = true;
+                if (isTarget !== isPainted) {
+                    containsError = true;
                 }
             });
 
-            if (!errorsDetected) {
-                // Correct Configuration!
-                triggerAudioOutput(soundCorrect);
+            if (!containsError) {
+                playSoundTrack(soundCorrect);
                 totalXp += (attemptCount === 0) ? 100 : 50;
                 document.getElementById("xp-lbl").innerText = `${totalXp} XP`;
                 document.getElementById("verify-action-btn").disabled = true;
@@ -484,82 +498,76 @@
                 hintBox.style.background = "#d1fae5";
                 hintBox.style.borderColor = "#10b981";
                 hintBox.style.color = "#065f46";
-                hintBox.innerHTML = "✨ Perfect Reflection Matrix Locked!";
+                hintBox.innerHTML = "✨ Alignment Verified Perfect!";
 
                 setTimeout(() => {
                     levelIdx++;
-                    buildMatrixLevel();
-                }, 1500);
-
+                    loadQuestData();
+                }, 1400);
             } else {
-                // Mismatch or mistake found
                 attemptCount++;
-                triggerAudioOutput(soundWrong);
+                playSoundTrack(soundWrong);
                 updateHeartsUI();
 
                 if (attemptCount === 1) {
                     let hintBox = document.getElementById("hint-bubble");
+                    hintBox.innerText = data.hint;
                     hintBox.style.display = "block";
                     hintBox.style.background = "#fef3c7";
                     hintBox.style.borderColor = "#fde68a";
                     hintBox.style.color = "#92400e";
-                    hintBox.innerText = "⚠️ Symmetric mismatch detected! Count carefully from the red line.";
                 } else {
-                    // Out of attempts: Flash and paint correct nodes dynamically
                     document.getElementById("verify-action-btn").disabled = true;
                     let hintBox = document.getElementById("hint-bubble");
                     hintBox.style.display = "block";
                     hintBox.style.background = "#fee2e2";
                     hintBox.style.borderColor = "#fca5a5";
                     hintBox.style.color = "#991b1b";
-                    hintBox.innerHTML = "❌ Incorrect. Auto-revealing the true reflection alignment...";
+                    hintBox.innerHTML = "❌ Out of attempts! Auto-aligning mirror blocks...";
 
-                    // Paint target nodes with neon green auto-reveal style sheet class rules
                     cells.forEach(cell => {
                         let r = parseInt(cell.dataset.row);
                         let c = parseInt(cell.dataset.col);
-                        let isTarget = currentChallengeData.targetBlocks.some(b => b[0] === r && b[1] === c);
+                        let isTarget = data.targetBlocks.some(b => b[0] === r && b[1] === c);
                         
+                        cell.classList.remove("player-painted");
                         if (isTarget) {
-                            cell.classList.remove("player-painted");
                             cell.classList.add("auto-revealed");
-                        } else {
-                            cell.classList.remove("player-painted");
                         }
                     });
 
-                    // Hold grid view static briefly before advancing forward seamlessly
                     setTimeout(() => {
                         levelIdx++;
-                        buildMatrixLevel();
-                    }, 3000);
+                        loadQuestData();
+                    }, 2600);
                 }
             }
         }
 
-        function triggerVictoryScreen() {
-            document.getElementById("lvl-lbl").innerText = "COMPLETED";
-            document.getElementById("quest-txt-box").innerHTML = "🎉 Run Complete! Excellent Spatial Alignment.";
+        function renderEndGameScreen() {
+            document.getElementById("lvl-lbl").innerText = "FINISHED";
+            document.getElementById("quest-txt-box").innerHTML = "🎉 Complete Symmetrical Run Achieved!";
+            
+            let finalRank = totalXp >= 800 ? "Symmetry Matrix Master 👑" : "Elite Explorer Architect 📐";
 
             document.getElementById("matrix-canvas").style.display = "none";
             document.getElementById("hearts-box").style.display = "none";
             document.getElementById("hint-bubble").style.display = "none";
             document.getElementById("verify-action-btn").style.display = "none";
+            document.querySelector(".grid-viewport-area").style.display = "none";
 
-            let rankTitle = totalXp >= 800 ? "Grand Symmetry Sage 👑" : "Spatial Geometry Apprentice 📐";
-
-            const screenHub = document.getElementById("gameplay-screen");
-            let endCard = document.createElement("div");
-            endCard.style.cssText = "padding: 40px 20px; text-align: center; display: flex; flex-direction: column; gap: 20px; justify-content: center; align-items: center; flex-grow: 1;";
-            endCard.innerHTML = `
-                <div style="font-size: 4.5rem; animation: pulse 1s infinite;">🏆</div>
-                <h3 style="color:#475569; font-size:1.35rem;">Total Spatial Score: ${totalXp} / 1000 XP</h3>
-                <p style="font-size:0.95rem; font-weight:bold; background:#e2e8f0; padding:10px 16px; border-radius:10px; color:#1e293b;">
-                    Title Earned: <br><span style="color:#2563eb; font-size:1.15rem;">${rankTitle}</span>
+            const mainWindow = document.getElementById("gameplay-screen");
+            let summaryDiv = document.createElement("div");
+            summaryDiv.style.cssText = "padding: 30px 16px; text-align: center; display: flex; flex-direction: column; gap: 15px; justify-content: center; align-items: center; flex-grow: 1;";
+            summaryDiv.innerHTML = `
+                <div style="font-size: 4rem;">🏆</div>
+                <h3 style="color:#475569; font-size:1.3rem;">Total Final Score: ${totalXp} / 1000 XP</h3>
+                <p style="font-size:0.95rem; font-weight:bold; background:#e2e8f0; padding:8px 14px; border-radius:8px;">
+                    Rank Earned: <br><span style="color:#1e293b; font-size:1.1rem;">${finalRank}</span>
                 </p>
-                <button class="action-submit-btn" style="margin-top: 15px;" onclick="location.reload()">Play Again</button>
+                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Play Again</button>
             `;
-            screenHub.appendChild(endCard);
+            mainWindow.appendChild(summaryDiv);
         }
     </script>
 </body>
