@@ -237,18 +237,18 @@
         </div>
 
         <div id="instruction-screen" class="hidden">
-            <h2 style="color: #475569; font-size: 1.4rem; margin-bottom: 10px;">🎨 Metric Grid Painter</h2>
+            <h2 style="color: #475569; font-size: 1.4rem; margin-bottom: 10px;">How To Play</h2>
             <div class="scroll-box">
-                <h3>🚫 Zero MCQ Text Options</h3>
-                <p>There are no text choices to pick from. You answer textbook conversion variables directly by painting a visual total on the canvas board.</p>
+                <h3>✏️ Paint the Grid</h3>
+                <p>Read the metric scale given in the prompt box (for example, 1 Block = 1 cm). Tap the squares directly on the board to paint your total answer.</p>
                 
-                <h3>✏️ Paint to Measure</h3>
-                <p>Check the custom scale given in the prompt box (e.g., 1 Grid Block = 1 cm) and click to fill the exact number of squares that complete the mathematical value.</p>
+                <h3>💡 Hints and Corrections</h3>
+                <p>If your painted total doesn't match the conversion, a hint will appear. You have two hearts per question. Losing the second heart automatically paints the correct layout in green.</p>
                 
-                <h3>❤️ 2 Hearts Per Mission</h3>
-                <p>Failing twice automatically triggers a structural safety override, instantly painting the correct geometric blocks for you in green.</p>
+                <h3>🏆 Confirm Answers</h3>
+                <p>Tap the verify button below the grid when you are satisfied with the number of blocks you have painted to lock in your score.</p>
             </div>
-            <button class="action-submit-btn" onclick="startAdventure()">Enter Game</button>
+            <button class="action-submit-btn" onclick="startAdventure()">Start Now</button>
         </div>
 
         <div id="gameplay-screen" class="hidden">
@@ -297,19 +297,19 @@
         let totalXp = 0;
         let attemptCount = 0;
 
-        // Custom Metric Sandbox Tasks
+        // Custom Metric Sandbox Tasks using UK English terminology
         const painterQuestPool = [
             {
                 category: "Length (mm ➔ cm)",
-                question: "Scale: 1 Block = 1 cm. Ria measures a coin's diameter as 30 millimeters (mm). Paint exactly how many centimeters that equals!",
+                question: "Scale: 1 Block = 1 cm. Ria measures a coin's diameter as 30 millimetres (mm). Paint exactly how many centimetres that equals!",
                 targetCount: 3,
                 hint: "💡 HINT: 10 mm = 1 cm. So 30 mm equals 3 cm. Paint exactly 3 blocks anywhere on the grid canvas!"
             },
             {
                 category: "Capacity (mL ➔ L)",
-                question: "Scale: 1 Block = 1 Liter. A container holds 4,000 milliliters (mL) of water. Paint its equivalent capacity value in Liters!",
+                question: "Scale: 1 Block = 1 Litre. A container holds 4,000 millilitres (mL) of water. Paint its equivalent capacity value in Litres!",
                 targetCount: 4,
-                hint: "💡 HINT: 1,000 mL makes 1 Liter. 4,000 mL means you must paint exactly 4 blocks."
+                hint: "💡 HINT: 1,000 mL makes 1 Litre. 4,000 mL means you must paint exactly 4 blocks."
             },
             {
                 category: "Mass (kg ➔ g)",
@@ -319,9 +319,9 @@
             },
             {
                 category: "Length (m ➔ cm)",
-                question: "Scale: 1 Block = 100 cm. Ria buys a decoration ribbon measuring 2 meters (m). Paint its total length value in centimeters!",
+                question: "Scale: 1 Block = 100 cm. Ria buys a decoration ribbon measuring 2 metres (m). Paint its total length value in centimetres!",
                 targetCount: 2,
-                hint: "💡 HINT: Each single meter contains 100 cm. 2 meters equals 200 cm, so paint exactly 2 grid blocks."
+                hint: "💡 HINT: Each single metre contains 100 cm. 2 metres equals 200 cm, so paint exactly 2 grid blocks."
             },
             {
                 category: "Mass Balance (g)",
@@ -331,15 +331,15 @@
             },
             {
                 category: "Length Comparison",
-                question: "Scale: 1 Block = 1 kilometer (km). Route A is 3 km long. Route B is 2,000 meters long. Paint the distance of Route B in kilometers!",
+                question: "Scale: 1 Block = 1 kilometre (km). Route A is 3 km long. Route B is 2,000 metres long. Paint the distance of Route B in kilometres!",
                 targetCount: 2,
-                hint: "💡 HINT: 2,000 meters translates to exactly 2 kilometers. Paint 2 blocks anywhere on the grid."
+                hint: "💡 HINT: 2,000 metres translates to exactly 2 kilometres. Paint 2 blocks anywhere on the grid."
             },
             {
                 category: "Capacity Fitment",
-                question: "Scale: 1 Block = 500 mL bottle. Ria needs to serve 3 Liters of juice. Paint the exact number of 500 mL bottles she must buy!",
+                question: "Scale: 1 Block = 500 mL bottle. Ria needs to serve 3.5 Litres of juice. How many 500 mL bottles make 3 Litres? Paint that amount!",
                 targetCount: 6,
-                hint: "💡 HINT: Two 500 mL bottles combine to make 1 full Liter. To get 3 Liters, you need 2 x 3 = 6 bottles. Fill 6 blocks!"
+                hint: "💡 HINT: Two 500 mL bottles combine to make 1 full Litre. To get 3 Litres, you need 2 x 3 = 6 bottles. Fill 6 blocks!"
             },
             {
                 category: "Mass Subtraction",
@@ -349,9 +349,9 @@
             },
             {
                 category: "Length (cm ➔ m)",
-                question: "Scale: 1 Block = 1 meter. An object is 600 centimeters (cm) wide. Paint its equivalent value in meters!",
+                question: "Scale: 1 Block = 1 metre. An object is 600 centimetres (cm) wide. Paint its equivalent value in metres!",
                 targetCount: 6,
-                hint: "💡 HINT: 100 centimeters equals 1 meter. 600 cm divided by 100 equals 6 meters. Paint 6 blocks."
+                hint: "💡 HINT: 100 centimetres equals 1 metre. 600 cm divided by 100 equals 6 metres. Paint 6 blocks."
             },
             {
                 category: "Capacity Accumulation",
