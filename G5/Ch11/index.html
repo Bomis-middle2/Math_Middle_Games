@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Area & Perimeter Balance Scale</title>
+    <title>The Geoboard Elastic Pull</title>
     <style>
         * {
             box-sizing: border-box;
@@ -88,7 +88,7 @@
             line-height: 1.4;
         }
 
-        /* --- STAGE 3: MAIN GAMEPLAY HUB --- */
+        /* --- STAGE 3: MAIN GEOBOARD WORKSPACE --- */
         #gameplay-screen {
             display: flex;
             flex-direction: column;
@@ -121,7 +121,7 @@
             text-align: center;
             background: #e2e8f0;
             border-bottom: 3px solid #cbd5e1;
-            min-height: 110px;
+            min-height: 115px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -130,111 +130,101 @@
         }
         .item-tag {
             font-size: 0.75rem;
-            background: #f59e0b;
-            color: #1e293b;
+            background: #6366f1;
+            color: white;
             padding: 3px 10px;
             border-radius: 12px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        /* --- BALANCE VISUALIZATION VIEWPORT --- */
+        /* --- INTERACTIVE RECTILINEAR GEOBOARD CANVAS --- */
         .workspace-viewport {
             flex-grow: 1;
-            background: #475569;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 15px;
-        }
-
-        /* Balance Scale Beam Mechanics */
-        .scale-container {
-            width: 100%;
-            height: 160px;
-            position: relative;
             background: #334155;
-            border-radius: 12px;
             display: flex;
             justify-content: center;
-            align-items: flex-end;
-            padding-bottom: 20px;
-            border: 2px solid #64748b;
-        }
-        .scale-beam {
-            width: 280px;
-            height: 8px;
-            background: #cbd5e1;
-            position: relative;
-            transform-origin: center;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            justify-content: space-between;
-        }
-        .scale-pan {
-            width: 90px;
-            height: 45px;
-            background: #f59e0b;
-            border: 3px solid #d97706;
-            border-top: none;
-            border-radius: 0 0 20px 20px;
-            position: absolute;
-            top: 4px;
-            display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 0.85rem;
-        }
-        .scale-pan.left { left: -40px; }
-        .scale-pan.right { right: -40px; }
-        
-        .scale-fulcrum {
-            position: absolute;
-            bottom: 0;
-            width: 0;
-            height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-bottom: 35px solid #cbd5e1;
+            padding: 15px;
+            position: relative;
         }
 
-        /* Weight Selector Blocks Tray */
-        .blocks-tray {
-            background: #1e293b;
-            border-radius: 10px;
-            padding: 12px;
+        .geoboard-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            background: #78350f; /* Wooden backing plate board */
+            border: 8px solid #451a03;
+            border-radius: 16px;
+            box-shadow: inset 0 4px 20px rgba(0,0,0,0.6);
+        }
+
+        /* SVG layer for vector drawing of elastic bands */
+        #elastic-svg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .peg-grid-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            padding: 15px;
+            z-index: 10;
+        }
+
+        .geoboard-peg {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        /* Metallic pins representing the geoboard physical pegs */
+        .geoboard-peg::before {
+            content: '';
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle at 30% 30%, #e2e8f0, #475569);
+            border: 2px solid #1e293b;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+            transition: transform 0.1s ease;
+        }
+        .geoboard-peg:hover::before {
+            transform: scale(1.2);
+            background: radial-gradient(circle at 30% 30%, #ffffff, #64748b);
+        }
+
+        /* Active selected vertex identifier glow */
+        .geoboard-peg.anchored-node::before {
+            background: radial-gradient(circle at 30% 30%, #a5b4fc, #4f46e5);
+            border-color: #312e81;
+            box-shadow: 0 0 10px #6366f1;
+        }
+
+        /* Realtime measurement indicator tags */
+        .live-telemetry-row {
             display: flex;
             justify-content: space-around;
-            gap: 10px;
-            border: 2px solid #0f172a;
+            width: 100%;
+            background: #1e293b;
+            padding: 6px;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            font-weight: bold;
         }
-        .weight-block {
-            background: #38bdf8;
-            border: 2px solid #0284c7;
-            border-radius: 8px;
-            color: #0f172a;
-            padding: 8px;
-            width: 85px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px #0284c7;
+        .telemetry-val {
+            color: #6366f1;
         }
-        .weight-block:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px #0284c7;
-        }
-        .weight-block.selected-on-scale {
-            background: #a855f7 !important;
-            border-color: #7e22ce !important;
-            box-shadow: 0 4px #7e22ce !important;
-            color: white;
-        }
-        .weight-title { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
-        .weight-value { font-size: 1rem; font-weight: bold; margin-top: 2px; }
 
         /* --- CONTROLS FOOTER PANEL --- */
         .footer-control-panel {
@@ -268,8 +258,8 @@
         .heart-icon.depleted { color: #cbd5e1; }
 
         .action-submit-btn {
-            background: #f59e0b;
-            color: #1e293b;
+            background: #6366f1;
+            color: white;
             border: none;
             padding: 14px;
             font-size: 1.05rem;
@@ -277,13 +267,25 @@
             border-radius: 10px;
             cursor: pointer;
             text-transform: uppercase;
-            box-shadow: 0 4px #d97706;
+            box-shadow: 0 4px #4338ca;
             width: 100%;
         }
         .action-submit-btn:active {
             transform: translateY(3px);
-            box-shadow: 0 1px #d97706;
+            box-shadow: 0 1px #4338ca;
         }
+        .clear-btn {
+            background: #e2e8f0;
+            color: #475569;
+            box-shadow: 0 3px #cbd5e1;
+            padding: 8px;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .clear-btn:active { transform: translateY(2px); box-shadow: 0 1px #cbd5e1; }
 
         .hidden { display: none !important; }
     </style>
@@ -299,56 +301,56 @@
         <div id="instruction-screen" class="hidden">
             <h2 style="color: #1e293b; font-size: 1.5rem; margin-bottom: 5px;">How To Play</h2>
             <div class="scroll-box">
-                <h3>⚖️ Observe Target Pan</h3>
-                <p>The left side of the balance scale holds a mathematical requirement item (e.g., target area or target perimeter).</p>
+                <h3>🪵 Anchor the Elastic</h3>
+                <p>Observe the target area and perimeter rules in the top bar. Tap individual metallic pegs on the wooden board to add elastic anchoring pins.</p>
                 
-                <h3>📦 Load Weight Blocks</h3>
-                <p>Tap the geometric shape block weights in the tray below to load or remove them from the right scale pan. Every block states its size values.</p>
+                <h3>📐 Stretch Out Layouts</h3>
+                <p>As you tap pegs sequentially, the elastic band automatically stretches to enclose a custom shape. Each step between pegs counts as 1 centimetre.</p>
                 
-                <h3>❤️ Balance & Verify</h3>
-                <p>Add up your selected blocks to find the total sum that perfectly matches the value on the left. Click verify to submit your balance configuration.</p>
+                <h3>❤️ Double Constraints</h3>
+                <p>Monitor your active telemetry parameters. Your custom shape must satisfy BOTH the requested area and perimeter values simultaneously before clicking verify!</p>
             </div>
-            <button class="action-submit-btn" onclick="startScaleStudio()">Start Balancing</button>
+            <button class="action-submit-btn" onclick="startGeoboardStudio()">Start Stretching</button>
         </div>
 
         <div id="gameplay-screen" class="hidden">
             <div class="top-navbar">
-                <div id="blueprint-counter-lbl">Scale Challenge: 1 / 5</div>
+                <div id="blueprint-counter-lbl">Elastic Task: 1 / 5</div>
                 <div id="xp-counter-lbl" class="score-lbl">0 XP</div>
             </div>
 
             <div id="quest-txt-box" class="blueprint-header">
-                <span class="item-tag" id="blueprint-tag-lbl">Perimeter Matching</span>
-                <span id="instruction-txt">Calibrating physical balance vectors...</span>
+                <span class="item-tag" id="blueprint-tag-lbl">Geoboard Vector</span>
+                <span id="instruction-txt">Formulating elastic line properties...</span>
+            </div>
+
+            <div class="live-telemetry-row">
+                <div>Enclosed Area: <span id="live-area-txt" class="telemetry-val">0 cm²</span></div>
+                <div>Total Perimeter: <span id="live-perimeter-txt" class="telemetry-val">0 cm</span></div>
             </div>
 
             <div class="workspace-viewport">
-                <div class="scale-container">
-                    <div class="scale-beam" id="interactive-beam">
-                        <div class="scale-pan left">
-                            <span style="font-size:0.7rem; text-transform:uppercase; color:#1e293b;">Target</span>
-                            <span id="left-target-val" style="color:#0f172a; font-size:1.1rem;">0</span>
-                        </div>
-                        <div class="scale-pan right">
-                            <span style="font-size:0.7rem; text-transform:uppercase;">Current</span>
-                            <span id="right-current-val" style="font-size:1.1rem;">0</span>
-                        </div>
-                    </div>
-                    <div class="scale-fulcrum"></div>
-                </div>
+                <div class="geoboard-container" id="board-frame">
+                    <svg id="elastic-svg-layer">
+                        <polygon id="elastic-polygon" points="" fill="rgba(99, 102, 241, 0.4)" stroke="#6366f1" stroke-width="5" stroke-linejoin="round" />
+                    </svg>
 
-                <div class="blocks-tray" id="tray-container"></div>
+                    <div class="peg-grid-overlay" id="peg-matrix-container"></div>
+                </div>
             </div>
 
             <div class="footer-control-panel">
-                <div class="hearts-row" id="hearts-container">
-                    <span class="heart-icon">❤️</span>
-                    <span class="heart-icon">❤️</span>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button class="clear-btn" onclick="clearActiveElasticBand()">Reset Elastic</button>
+                    <div class="hearts-row" id="hearts-container" style="flex-grow:1;">
+                        <span class="heart-icon">❤️</span>
+                        <span class="heart-icon">❤️</span>
+                    </div>
                 </div>
                 
                 <div class="realtime-alert-bubble" id="feedback-bubble"></div>
                 
-                <button class="action-submit-btn" id="confirm-build-btn" onclick="verifyScaleEquilibrium()">Verify Scale Equilibrium</button>
+                <button class="action-submit-btn" id="confirm-build-btn" onclick="verifyElasticMeasurements()">Verify Elastic Stretch</button>
             </div>
         </div>
 
@@ -362,87 +364,56 @@
             try {
                 audioTrack.currentTime = 0;
                 audioTrack.play();
-            } catch(error) { console.log("Sound effects loaded successfully."); }
+            } catch(error) { console.log("Audio track initialized successfully."); }
         }
 
-        let taskList = [];
+        let taskSequence = [];
         let taskPointer = 0;
         let cumulativeXp = 0;
         let localMistakes = 0;
-        let runningScaleSum = 0;
-        let selectedBlockIndices = new Set();
+        let anchoredVertices = []; // Array storing checked grid points {r, c}
 
-        // Level dataset explicitly focusing on Area and Perimeter conversions and calculations
-        const formulaScalePool = [
+        // Rigorous syllabus dataset combining dual targets for Area and Perimeter matching Grade 5 textbook standards
+        const geoboardSyllabusPool = [
             {
-                type: "PERIMETER",
-                tag: "Fencing Task",
-                prompt: "Ria is adding fencing around a custom square vegetable patch. Balance the scale to match a total target perimeter of 16 centimetres!",
-                targetValue: 16,
-                blocks: [
-                    { name: "Square 2x2", value: 8, label: "P = 8cm" },
-                    { name: "Rect 1x3", value: 8, label: "P = 8cm" },
-                    { name: "Triangle", value: 5, label: "P = 5cm" },
-                    { name: "Square 1x1", value: 4, label: "P = 4cm" }
-                ],
-                solutionIndices: [0, 1], // 8 + 8 = 16
-                helpHint: "💡 FORMULA HINT: Perimeter is the distance around! Try adding the 2x2 Square (P=8) and the 1x3 Rectangle (P=8) together."
+                tag: "Square Flowerbed",
+                prompt: "Stretch a perfect square elastic box that encloses an area of exactly 4 square centimetres and has a perimeter of 8 centimetres.",
+                targetArea: 4,
+                targetPerimeter: 8,
+                solutionPoints: [{r:1, c:1}, {r:1, c:3}, {r:3, c:3}, {r:3, c:1}],
+                helpHint: "💡 GEOBOARD HINT: Build a clean 2×2 square box. Anchor four corners that are separated by 2 spaces each!"
             },
             {
-                type: "AREA",
-                tag: "Tile Layout",
-                prompt: "A decorative pathway tile footprint covers an area of exactly 14 square centimetres. Combine blocks to balance this covered area!",
-                targetValue: 14,
-                blocks: [
-                    { name: "Rect 2x3", value: 6, label: "A = 6cm²" },
-                    { name: "Square 2x2", value: 4, label: "A = 4cm²" },
-                    { name: "Rect 1x4", value: 4, label: "A = 4cm²" },
-                    { name: "Triangle", value: 3, label: "A = 3cm²" }
-                ],
-                solutionIndices: [0, 1, 2], // 6 + 4 + 4 = 14
-                helpHint: "💡 FORMULA HINT: Area is length × width! Combine the 2x3 Rectangle (6), the 2x2 Square (4), and the 1x4 Rectangle (4)."
+                tag: "Rectangular Patch",
+                prompt: "Mischievous rabbits are near! Stretch a rectangular vegetable layout with an area of exactly 3 square centimetres and a perimeter of 8 centimetres.",
+                targetArea: 3,
+                targetPerimeter: 8,
+                solutionPoints: [{r:1, c:1}, {r:1, c:4}, {r:2, c:4}, {r:2, c:1}],
+                helpHint: "💡 GEOBOARD HINT: Think length × width! Form a 3×1 horizontal rectangle by selecting pins that stretch 3 units wide and 1 unit down."
             },
             {
-                type: "PERIMETER",
-                tag: "Compound Border",
-                prompt: "An irregular flowerbed requires border guards totaling a perimeter of 12 centimetres. Find the shapes that balance the scale!",
-                targetValue: 12,
-                blocks: [
-                    { name: "Triangle", value: 6, label: "P = 6cm" },
-                    { name: "Rect 1x2", value: 6, label: "P = 6cm" },
-                    { name: "Square 1x1", value: 4, label: "P = 4cm" },
-                    { name: "Triangle Small", value: 3, label: "P = 3cm" }
-                ],
-                solutionIndices: [0, 1], // 6 + 6 = 12
-                helpHint: "💡 FORMULA HINT: Look closely at the perimeter labels. Combine the Triangle (6) and the 1x2 Rectangle (6) to reach 12."
+                tag: "Tall Runway Tile",
+                prompt: "Ria needs to measure a narrow stone border tile path. Form a vertical layout with an area of exactly 2 square centimetres and a perimeter of 6 centimetres.",
+                targetArea: 2,
+                targetPerimeter: 6,
+                solutionPoints: [{r:1, c:2}, {r:1, c:3}, {r:3, c:3}, {r:3, c:2}],
+                helpHint: "💡 GEOBOARD HINT: Create a vertical rectangle block measuring 1 unit wide by 2 units tall."
             },
             {
-                type: "AREA",
-                tag: "Carpet Square",
-                prompt: "A small woven floor mat covers an internal surface space of exactly 11 square centimetres. Balance this area sum on the pan!",
-                targetValue: 11,
-                blocks: [
-                    { name: "Square 3x3", value: 9, label: "A = 9cm²" },
-                    { name: "Rect 1x2", value: 2, label: "A = 2cm²" },
-                    { name: "Square 2x2", value: 4, label: "A = 4cm²" },
-                    { name: "Triangle", value: 5, label: "A = 5cm²" }
-                ],
-                solutionIndices: [0, 1], // 9 + 2 = 11
-                helpHint: "💡 FORMULA HINT: Area measures total internal flat space. Place the 3x3 Square (9) and the 1x2 Rectangle (2) onto the pan."
+                tag: "Large Quad Plot",
+                prompt: "A decorative lawn courtyard space requires an area of exactly 9 square centimetres and a perimeter of 12 centimetres. Stretch the band!",
+                targetArea: 9,
+                targetPerimeter: 12,
+                solutionPoints: [{r:0, c:1}, {r:0, c:4}, {r:3, c:4}, {r:3, c:1}],
+                helpHint: "💡 GEOBOARD HINT: Expand outward to form a large 3×3 square box configuration on the board pins."
             },
             {
-                type: "PERIMETER",
-                tag: "Garden Enclosure",
-                prompt: "Final Project! Build an outer boundary fence loop with a target perimeter of exactly 15 centimetres. Balance the beam!",
-                targetValue: 15,
-                blocks: [
-                    { name: "Triangle A", value: 5, label: "P = 5cm" },
-                    { name: "Triangle B", value: 5, label: "P = 5cm" },
-                    { name: "Triangle C", value: 5, label: "P = 5cm" },
-                    { name: "Square base", value: 8, label: "P = 8cm" }
-                ],
-                solutionIndices: [0, 1, 2], // 5 + 5 + 5 = 15
-                helpHint: "💡 FORMULA HINT: Three identical boundary values can reach your goal! Activate all three Triangle block weights (5 + 5 + 5)."
+                tag: "Double-Block Mat",
+                prompt: "Final Project! Map out a compound footprint layout area matching exactly 6 square centimetres with a perimeter of 10 centimetres.",
+                targetArea: 6,
+                targetPerimeter: 10,
+                solutionPoints: [{r:1, c:1}, {r:1, c:4}, {r:3, c:4}, {r:3, c:1}],
+                helpHint: "💡 GEOBOARD HINT: Form a solid 3×2 rectangular block layout to instantly hit both metric parameters together."
             }
         ];
 
@@ -466,78 +437,129 @@
             return array;
         }
 
-        function startScaleStudio() {
-            taskList = shuffleList([...formulaScalePool]).slice(0, 5);
+        function startGeoboardStudio() {
+            taskSequence = shuffleList([...geoboardSyllabusPool]).slice(0, 5);
             taskPointer = 0;
             cumulativeXp = 0;
 
             document.getElementById("instruction-screen").classList.add("hidden");
             document.getElementById("gameplay-screen").classList.remove("hidden");
-            loadScaleLevel();
+            loadGeoboardLevel();
         }
 
-        function loadScaleLevel() {
-            if (taskPointer >= taskList.length) {
-                displayEndGameCertificate();
+        function loadGeoboardLevel() {
+            if (taskPointer >= taskSequence.length) {
+                renderEndGameCertificate();
                 return;
             }
 
             localMistakes = 0;
-            runningScaleSum = 0;
-            selectedBlockIndices.clear();
+            anchoredVertices = [];
             document.getElementById("feedback-bubble").style.display = "none";
             document.getElementById("confirm-build-btn").disabled = false;
             updateHeartsUI();
-            animateScaleBeam(0);
+            redrawElasticBandGraphics();
 
-            let currentLevel = taskList[taskPointer];
-            document.getElementById("blueprint-counter-lbl").innerText = `Scale Challenge: ${taskPointer + 1} / 5`;
+            let levelData = taskSequence[taskPointer];
+            document.getElementById("blueprint-counter-lbl").innerText = `Elastic Task: ${taskPointer + 1} / 5`;
             document.getElementById("xp-counter-lbl").innerText = `${cumulativeXp} XP`;
-            document.getElementById("instruction-txt").innerText = currentLevel.prompt;
-            document.getElementById("blueprint-tag-lbl").innerText = currentLevel.tag;
-            
-            document.getElementById("left-target-val").innerText = currentLevel.targetValue + (currentLevel.type === "AREA" ? " cm²" : " cm");
-            document.getElementById("right-current-val").innerText = "0" + (currentLevel.type === "AREA" ? " cm²" : " cm");
+            document.getElementById("instruction-txt").innerText = levelData.prompt;
+            document.getElementById("blueprint-tag-lbl").innerText = levelData.tag;
 
-            // Build weight selection tray blocks dynamically
-            const tray = document.getElementById("tray-container");
-            tray.innerHTML = "";
+            // Generate interactive layout pins
+            const matrixContainer = document.getElementById("peg-matrix-container");
+            matrixContainer.innerHTML = "";
 
-            currentLevel.blocks.forEach((block, idx) => {
-                let blockNode = document.createElement("div");
-                blockNode.className = "weight-block";
-                blockNode.innerHTML = `
-                    <div class="weight-title">${block.name}</div>
-                    <div class="weight-value">${block.label}</div>
-                `;
-
-                blockNode.onclick = () => toggleWeightOnScale(idx, block.value, blockNode);
-                tray.appendChild(blockNode);
-            });
+            for (let r = 0; r < 5; r++) {
+                for (let c = 0; c < 5; c++) {
+                    let peg = document.createElement("div");
+                    peg.className = "geoboard-peg";
+                    peg.dataset.row = r;
+                    peg.dataset.col = c;
+                    
+                    peg.onclick = () => handlePegInteraction(r, c, peg);
+                    matrixContainer.appendChild(peg);
+                }
+            }
         }
 
-        function toggleWeightOnScale(index, weightValue, element) {
-            let levelData = taskList[taskPointer];
-            if (selectedBlockIndices.has(index)) {
-                selectedBlockIndices.delete(index);
-                runningScaleSum -= weightValue;
-                element.classList.remove("selected-on-scale");
+        function handlePegInteraction(row, col, element) {
+            // Check if vertex is already present inside list to perform removal toggle
+            let matchIndex = anchoredVertices.findIndex(v => v.r === row && v.c === col);
+            
+            if (matchIndex > -1) {
+                anchoredVertices.splice(matchIndex, 1);
+                element.classList.remove("anchored-node");
             } else {
-                selectedBlockIndices.add(index);
-                runningScaleSum += weightValue;
-                element.classList.add("selected-on-scale");
+                anchoredVertices.push({ r: row, c: col });
+                element.classList.add("anchored-node");
             }
 
-            document.getElementById("right-current-val").innerText = runningScaleSum + (levelData.type === "AREA" ? " cm²" : " cm");
-            
-            // Calculate rotational shift angle for physical beam feedback
-            let differential = runningScaleSum - levelData.targetValue;
-            let tiltAngle = Math.max(-15, Math.min(15, differential * 1.5));
-            animateScaleBeam(tiltAngle);
+            redrawElasticBandGraphics();
         }
 
-        function animateScaleBeam(angle) {
-            document.getElementById("interactive-beam").style.transform = `rotate(${angle}deg)`;
+        function clearActiveElasticBand() {
+            anchoredVertices = [];
+            const pegs = document.querySelectorAll(".geoboard-peg");
+            pegs.forEach(p => p.classList.remove("anchored-node"));
+            redrawElasticBandGraphics();
+        }
+
+        function redrawElasticBandGraphics() {
+            const svgPoly = document.getElementById("elastic-polygon");
+            
+            if (anchoredVertices.length < 3) {
+                svgPoly.setAttribute("points", "");
+                document.getElementById("live-area-txt").innerText = "0 cm²";
+                document.getElementById("live-perimeter-txt").innerText = "0 cm";
+                return;
+            }
+
+            // Map grid indices down into exact localized absolute pixels inside the component
+            // 320px board size. Padding 15px inside container layout. Spacing step = (320 - 30) / 4 = 72.5px
+            const padding = 15;
+            const step = 72.5;
+
+            let pointsString = anchoredVertices.map(v => {
+                let pxX = padding + (v.c * step);
+                let pxY = padding + (v.r * step);
+                return `${pxX},${pxY}`;
+            }).join(" ");
+
+            svgPoly.setAttribute("points", pointsString);
+
+            // Compute current real-time structural calculations (Shoelace theorem for area and vector math for perimeter)
+            let calculatedArea = calculatePolygonArea();
+            let calculatedPerimeter = calculatePolygonPerimeter();
+
+            document.getElementById("live-area-txt").innerText = `${calculatedArea} cm²`;
+            document.getElementById("live-perimeter-txt").innerText = `${calculatedPerimeter} cm`;
+        }
+
+        function calculatePolygonArea() {
+            let n = anchoredVertices.length;
+            if (n < 3) return 0;
+            let area = 0;
+            for (let i = 0; i < n; i++) {
+                let j = (i + 1) % n;
+                area += anchoredVertices[i].c * anchoredVertices[j].r;
+                area -= anchoredVertices[i].r * anchoredVertices[j].c;
+            }
+            return Math.abs(area) / 2;
+        }
+
+        function calculatePolygonPerimeter() {
+            let n = anchoredVertices.length;
+            if (n < 3) return 0;
+            let perimeter = 0;
+            for (let i = 0; i < n; i++) {
+                let j = (i + 1) % n;
+                let dc = anchoredVertices[j].c - anchoredVertices[i].c;
+                let dr = anchoredVertices[j].r - anchoredVertices[i].r;
+                perimeter += Math.sqrt(dc * dc + dr * dr);
+            }
+            // Round nicely to one decimal place if fractions pop out
+            return Math.round(perimeter * 10) / 10;
         }
 
         function updateHeartsUI() {
@@ -553,26 +575,29 @@
             }
         }
 
-        function verifyScaleEquilibrium() {
-            let levelData = taskList[taskPointer];
+        function verifyElasticMeasurements() {
+            let levelData = taskSequence[taskPointer];
+            let currentArea = calculatePolygonArea();
+            let currentPerimeter = calculatePolygonPerimeter();
+
             let alertBox = document.getElementById("feedback-bubble");
             alertBox.style.display = "block";
 
-            if (runningScaleSum === levelData.targetValue) {
+            // Accept close decimals safely for floating hypothems
+            if (Math.abs(currentArea - levelData.targetArea) < 0.1 && Math.abs(currentPerimeter - levelData.targetPerimeter) < 0.1) {
                 triggerAudioAlert(trackSuccess);
                 cumulativeXp += (localMistakes === 0) ? 200 : 100;
                 document.getElementById("xp-counter-lbl").innerText = `${cumulativeXp} XP`;
                 document.getElementById("confirm-build-btn").disabled = true;
-                animateScaleBeam(0); // Perfect balance
 
                 alertBox.style.background = "#d1fae5";
                 alertBox.style.borderColor = "#10b981";
                 alertBox.style.color = "#065f46";
-                alertBox.innerHTML = "✨ Perfect Equilibrium! Geometric values match perfectly!";
+                alertBox.innerHTML = "✨ Elastic Vector Verified! Area and Perimeter criteria completely satisfied!";
 
                 setTimeout(() => {
                     taskPointer++;
-                    loadScaleLevel();
+                    loadGeoboardLevel();
                 }, 1800);
             } else {
                 localMistakes++;
@@ -589,53 +614,59 @@
                     alertBox.style.background = "#fee2e2";
                     alertBox.style.borderColor = "#fca5a5";
                     alertBox.style.color = "#991b1b";
-                    alertBox.innerHTML = `❌ Scale Imbalance! Calibrating automatic counterweights...`;
+                    alertBox.innerHTML = `❌ Constraint mismatch! Auto-snapping correct rubber band template parameters...`;
 
-                    // Highlight the correct weight solutions in green
-                    const blocks = document.querySelectorAll(".weight-block");
-                    blocks.forEach((b, idx) => {
-                        b.classList.remove("selected-on-scale");
-                        if (levelData.solutionIndices.includes(idx)) {
-                            b.style.background = "#10b981";
-                            b.style.borderColor = "#047857";
-                            b.style.color = "white";
+                    // Safety override auto-snaps target nodes safely in green
+                    anchoredVertices = [...levelData.solutionPoints];
+                    const allPegs = document.querySelectorAll(".geoboard-peg");
+                    allPegs.forEach(p => {
+                        let r = parseInt(p.dataset.row);
+                        let c = parseInt(p.dataset.col);
+                        let isMatch = anchoredVertices.some(v => v.r === r && v.c === c);
+                        if(isMatch) {
+                            p.classList.add("anchored-node");
+                        } else {
+                            p.classList.remove("anchored-node");
                         }
                     });
-                    
-                    animateScaleBeam(0);
-                    document.getElementById("right-current-val").innerText = levelData.targetValue + (levelData.type === "AREA" ? " cm²" : " cm");
+
+                    document.getElementById("elastic-polygon").setAttribute("stroke", "#10b981");
+                    document.getElementById("elastic-polygon").setAttribute("fill", "rgba(16, 185, 129, 0.4)");
+                    redrawElasticBandGraphics();
 
                     setTimeout(() => {
                         taskPointer++;
-                        loadScaleLevel();
+                        loadGeoboardLevel();
                     }, 3500);
                 }
             }
         }
 
-        function displayEndGameCertificate() {
-            document.getElementById("blueprint-counter-lbl").innerText = "BALANCED";
-            document.getElementById("quest-txt-box").innerHTML = "🎉 All Area and Perimeter Scales Balanced Safely!";
+        function renderEndGameCertificate() {
+            document.getElementById("blueprint-counter-lbl").innerText = "COMPLETED";
+            document.getElementById("quest-txt-box").innerHTML = "🎉 All Elastic Geoboard Spatial Blueprints Verified!";
             
-            let finalRank = cumulativeXp >= 800 ? "Master Equilibrium Planner 👑" : "Senior Geometric Appraiser 📐";
+            let descriptiveRank = cumulativeXp >= 800 ? "Master Vector Architect 👑" : "Senior Layout Draftsman 📐";
 
             document.getElementById("hearts-container").style.display = "none";
             document.getElementById("feedback-bubble").style.display = "none";
             document.getElementById("confirm-build-btn").style.display = "none";
+            document.querySelector(".live-telemetry-row").style.display = "none";
             document.querySelector(".workspace-viewport").style.display = "none";
+            document.querySelector(".clear-btn").style.display = "none";
 
-            const mainHub = document.getElementById("gameplay-screen");
-            let certificateCard = document.createElement("div");
-            certificateCard.style.cssText = "padding: 35px 16px; text-align: center; display: flex; flex-direction: column; gap: 16px; justify-content: center; align-items: center; flex-grow: 1;";
-            certificateCard.innerHTML = `
-                <div style="font-size: 4.5rem;">⚖️</div>
-                <h3 style="color:#1e293b; font-size:1.35rem;">Final Calculation Score: ${cumulativeXp} / 1000 XP</h3>
+            const coreWindow = document.getElementById("gameplay-screen");
+            let certificateBox = document.createElement("div");
+            certificateBox.style.cssText = "padding: 35px 16px; text-align: center; display: flex; flex-direction: column; gap: 16px; justify-content: center; align-items: center; flex-grow: 1;";
+            certificateBox.innerHTML = `
+                <div style="font-size: 4.5rem;">🪵</div>
+                <h3 style="color:#1e293b; font-size:1.35rem;">Total Geometry Score: ${cumulativeXp} / 1000 XP</h3>
                 <p style="font-size:0.95rem; font-weight:bold; background:#e2e8f0; padding:10px 16px; border-radius:10px; border: 1px solid #cbd5e1;">
-                    Earned Title: <br><span style="color:#d97706; font-size:1.15rem; display:block; margin-top:4px;">${finalRank}</span>
+                    Earned Title: <br><span style="color:#6366f1; font-size:1.15rem; display:block; margin-top:4px;">${descriptiveRank}</span>
                 </p>
-                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Balance New Shapes</button>
+                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Stretch Another Blueprint</button>
             `;
-            mainHub.appendChild(certificateCard);
+            coreWindow.appendChild(certificateBox);
         }
     </script>
 </body>
