@@ -26,7 +26,7 @@
         #game-window {
             width: 100%;
             max-width: 440px;
-            height: 740px;
+            height: 760px;
             background: #312e81;
             border: 6px solid #4338ca;
             border-radius: 24px;
@@ -85,9 +85,9 @@
             margin-bottom: 8px;
         }
         .rules-card p {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #e0e7ff;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             line-height: 1.4;
         }
 
@@ -108,11 +108,19 @@
             border-bottom: 4px solid #4338ca;
         }
         .level-badge {
-            background: #4338ca;
+            background: #ec4899;
             padding: 6px 12px;
             border-radius: 12px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
+            font-weight: bold;
         }
+        .hearts-line {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+        .heart-slot { font-size: 1.2rem; }
+        .heart-slot.empty { filter: grayscale(1) opacity(0.3); }
         .xp-badge {
             background: #f59e0b;
             color: #1e1b4b;
@@ -131,8 +139,24 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-end;
-            padding-bottom: 40px;
+            padding-bottom: 30px;
             overflow: hidden;
+        }
+
+        /* Text Prompt Box for Level 2 word items */
+        .problem-prompt-bubble {
+            position: absolute;
+            top: 110px;
+            width: 90%;
+            background: rgba(15, 23, 42, 0.85);
+            border: 2px solid #6366f1;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            text-align: center;
+            line-height: 1.3;
+            z-index: 12;
+            color: #e2e8f0;
         }
 
         /* Danger/Target Manifest Screen */
@@ -142,18 +166,19 @@
             background: #0f172a;
             border: 4px solid #f59e0b;
             border-radius: 12px;
-            padding: 10px 20px;
+            padding: 8px 16px;
             text-align: center;
-            box-shadow: 0 8px 0 #78350f;
+            box-shadow: 0 6px 0 #78350f;
             z-index: 10;
+            width: 80%;
         }
         .target-monitor h4 {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #94a3b8;
             text-transform: uppercase;
         }
         .target-monitor .volume-target {
-            font-size: 1.7rem;
+            font-size: 1.4rem;
             color: #f59e0b;
             text-shadow: 0 2px #000;
         }
@@ -161,9 +186,9 @@
         /* Hydraulic Crusher Plate */
         .hydraulic-press-plate {
             position: absolute;
-            top: 100px;
-            width: 200px;
-            height: 30px;
+            top: 175px;
+            width: 240px;
+            height: 35px;
             background: linear-gradient(180deg, #94a3b8 0%, #475569 100%);
             border: 4px solid #1e293b;
             border-radius: 6px;
@@ -173,43 +198,40 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
+            font-weight: bold;
             color: #f8fafc;
         }
 
-        /* Jiggly Slime Actor Object */
+        /* Animated Growing Slime Actor Object */
         .slime-container {
-            width: 160px;
-            height: 160px;
+            width: 200px;
+            height: 200px;
             position: relative;
             display: flex;
             justify-content: center;
             align-items: flex-end;
             z-index: 4;
+            margin-bottom: 5px;
         }
         .slime-blob {
-            width: 100px;
-            height: 100px;
+            width: 40px; /* Starts small and grows via JS scaling engine */
+            height: 40px;
             background: #10b981;
             border: 4px solid #047857;
-            border-radius: 24px 24px 12px 12px;
-            box-shadow: inset 0 -8px 0 #047857, 0 8px 16px rgba(0,0,0,0.3);
+            border-radius: 20px 20px 10px 10px;
+            box-shadow: inset 0 -6px 0 #047857, 0 8px 16px rgba(0,0,0,0.3);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             text-shadow: 0 2px #047857;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: slimeWobble 2s infinite ease-in-out;
-        }
-        @keyframes slimeWobble {
-            0%, 100% { transform: scaleX(1) scaleY(1); }
-            50% { transform: scaleX(1.08) scaleY(0.92); }
+            transition: transform 0.1s linear, background 0.3s ease;
         }
 
         /* Conveyor Belt Platform Graphic */
         .conveyor-belt {
-            width: 280px;
+            width: 320px;
             height: 20px;
             background: #334155;
             border: 4px solid #1e293b;
@@ -217,47 +239,60 @@
             box-shadow: 0 8px 0 #0f172a;
         }
 
+        /* Locked State Style Overlay for Tuning Wheels */
+        .tuner-pod.locked {
+            opacity: 0.4;
+            background: #1e1b4b !important;
+            border-color: #334155 !important;
+        }
+        .tuner-pod.locked .btn-arrow {
+            background: #334155 !important;
+            cursor: not-allowed;
+        }
+
         /* --- THE CONTROLS ARCADES DECK --- */
         .arcade-dashboard {
             background: #1e1b4b;
-            padding: 16px;
+            padding: 14px;
             border-top: 4px solid #4338ca;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .crusher-tuners {
             display: flex;
             justify-content: space-around;
-            gap: 10px;
+            gap: 8px;
         }
         .tuner-pod {
             background: #312e81;
             border: 2px solid #4338ca;
             border-radius: 14px;
-            padding: 8px;
+            padding: 6px;
             display: flex;
             flex-direction: column;
             align-items: center;
             flex-grow: 1;
+            transition: all 0.3s;
         }
         .tuner-pod label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: #c7d2fe;
             margin-bottom: 4px;
+            font-weight: bold;
         }
         .tuner-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         .btn-arrow {
             background: #4338ca;
             color: white;
             border: none;
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             font-size: 1.1rem;
             cursor: pointer;
@@ -268,9 +303,9 @@
             box-shadow: 0 1px #1e1b4b;
         }
         .pod-val {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: #fde047;
-            width: 30px;
+            width: 26px;
             text-align: center;
         }
 
@@ -279,8 +314,8 @@
             background: #ef4444;
             color: white;
             border: none;
-            padding: 16px;
-            font-size: 1.3rem;
+            padding: 14px;
+            font-size: 1.25rem;
             font-weight: bold;
             border-radius: 16px;
             cursor: pointer;
@@ -294,26 +329,18 @@
             box-shadow: 0 2px #b91c1c;
         }
 
-        /* Banner feedback box overlay */
         .toast-banner {
             background: #fde047;
             border: 2px solid #ca8a04;
             color: #713f12;
-            padding: 8px;
+            padding: 6px;
             border-radius: 8px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: bold;
             text-align: center;
             display: none;
+            line-height: 1.3;
         }
-
-        .hearts-line {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-        }
-        .heart-slot { font-size: 1.2rem; }
-        .heart-slot.empty { filter: grayscale(1) opacity(0.3); }
 
         .hidden { display: none !important; }
     </style>
@@ -327,23 +354,20 @@
         </div>
 
         <div id="instruction-screen" class="hidden">
-            <h1 class="game-title">SLIME CRUSHER<br><span style="color:#fde047; font-size:1.4rem;">Warehouse Panic</span></h1>
+            <h1 class="game-title">SLIME CRUSHER<br><span style="color:#fde047; font-size:1.3rem;">Warehouse Crisis!</span></h1>
             <div class="rules-card">
-                <h3>⚠️ ALERT: Slimes are growing!</h3>
-                <p>Jiggly slime blocks are blocking the warehouse conveyer belt lines! You need to crush them down into safe boxes.</p>
+                <h3>⚠️ LEVEL 1: Casual Squash</h3>
+                <p>The slimes start tiny but grow bigger every second! Match your crusher dials ($L \times W \times H$) to clear the target volume quickly.</p>
                 
-                <h3>🎛️ Tune the Press Dimensions</h3>
-                <p>Read the required Target Box Volume ($cm^3$) on the giant crane screen monitor. Use the arcade arrow pads to tune your crushing box Length, Width, and Height dimensions.</p>
-                
-                <h3>💥 SLAM IT!</h3>
-                <p>When your settings match the perfect capacity formula ($L \times W \times H$), slap the Big Red Slam Button to squash the slime block safely into space!</p>
+                <h3>🔥 LEVEL 2: Locked Matrix Panic!</h3>
+                <p>Advanced mode tracks real textbook challenges! Length and Width dials lock completely. You must divide to calculate and set the precise missing **Height** before the slime blows up!</p>
             </div>
-            <button class="slam-action-btn" style="background:#10b981; box-shadow:0 6px #047857;" onclick="launchSlimeFactory()">Start Crushing</button>
+            <button class="slam-action-btn" style="background:#10b981; box-shadow:0 6px #047857;" onclick="launchSlimeFactory()">Start Packing!</button>
         </div>
 
         <div id="gameplay-screen" class="hidden">
             <div class="header-bar">
-                <div class="level-badge" id="slime-counter-txt">Slime: 1 / 5</div>
+                <div class="level-badge" id="level-badge-txt">LEVEL 1</div>
                 <div class="hearts-line" id="lives-box">
                     <span class="heart-slot">❤️</span>
                     <span class="heart-slot">❤️</span>
@@ -353,11 +377,13 @@
 
             <div class="factory-floor">
                 <div class="target-monitor">
-                    <h4>Target Box Space</h4>
-                    <div class="volume-target" id="target-vol-readout">36 cm³</div>
+                    <h4 id="monitor-label-txt">Target Content Capacity</h4>
+                    <div class="volume-target" id="target-vol-readout">24 cm³</div>
                 </div>
 
-                <div class="hydraulic-press-plate" id="hydraulic-press">CRUSHER SHIELD</div>
+                <div class="problem-prompt-bubble" id="word-problem-txt">Slime incoming...</div>
+
+                <div class="hydraulic-press-plate" id="hydraulic-press">HYDRAULIC SHIELD ACTIVATED</div>
 
                 <div class="slime-container">
                     <div class="slime-blob" id="target-slime-actor">👾</div>
@@ -370,7 +396,7 @@
                 <div class="toast-banner" id="game-feedback-toast"></div>
 
                 <div class="crusher-tuners">
-                    <div class="tuner-pod">
+                    <div class="tuner-pod" id="pod-l">
                         <label>Length (L)</label>
                         <div class="tuner-controls">
                             <button class="btn-arrow" onclick="adjustTuner('l', -1)">-</button>
@@ -378,7 +404,7 @@
                             <button class="btn-arrow" onclick="adjustTuner('l', 1)">+</button>
                         </div>
                     </div>
-                    <div class="tuner-pod">
+                    <div class="tuner-pod" id="pod-w">
                         <label>Width (W)</label>
                         <div class="tuner-controls">
                             <button class="btn-arrow" onclick="adjustTuner('w', -1)">-</button>
@@ -386,7 +412,7 @@
                             <button class="btn-arrow" onclick="adjustTuner('w', 1)">+</button>
                         </div>
                     </div>
-                    <div class="tuner-pod">
+                    <div class="tuner-pod" id="pod-h">
                         <label>Height (H)</label>
                         <div class="tuner-controls">
                             <button class="btn-arrow" onclick="adjustTuner('h', -1)">-</button>
@@ -410,7 +436,7 @@
             try {
                 soundObj.currentTime = 0;
                 soundObj.play();
-            } catch(e) { console.log("Sound trigger engaged."); }
+            } catch(e) {}
         }
 
         let pipelineSequence = [];
@@ -418,22 +444,26 @@
         let runningScoreXp = 0;
         let failedAttempts = 0;
 
-        // Current user settings storage parameters
-        let userL = 2;
-        let userW = 2;
-        let userH = 2;
+        let userL = 2, userW = 2, userH = 2;
         let isAnimating = false;
 
-        // Vibrant levels tailored with perfect whole number answers for Grade 5 multiplication
-        const slimeConfigurations = [
-            { target: 24, hint: "💡 TIP: Try setting parameters to 4 × 3 × 2 to hit exactly 24!" },
-            { target: 60, hint: "💡 TIP: Max out coordinates! Try tuning lines to 5 × 4 × 3." },
-            { target: 8,  hint: "💡 TIP: A perfect cube slime block requires matching all sides to 2 × 2 × 2!" },
-            { target: 36, hint: "💡 TIP: Set parameters to 6 × 3 × 2 to cleanly smash this block." },
-            { target: 12, hint: "💡 TIP: Make a thin squish layer! Try tuning scales to 6 × 2 × 1." }
+        // Visual Growth Mechanics variables
+        let slimeGrowthInterval = null;
+        let slimeScaleFactor = 0.4; 
+
+        // Level 1 Puzzles (Volume target matching) & Level 2 Puzzles (Advanced Textbook questions)
+        const hybridSyllabusPool = [
+            // --- LEVEL 1 STAGES (Indices 0 to 2) ---
+            { level: 1, type: "NORMAL", target: 24, text: "Level 1: Quick! Calibrate crusher parameters to safely squash this standard 24 cm³ slime container!", lockedL: null, lockedW: null, hint: "💡 HINT: Tune dials to 4 × 3 × 2 to hit 24 exactly!" },
+            { level: 1, type: "NORMAL", target: 8,  text: "Level 1: A perfect Cube slime block is expanding! All sides must match perfectly to equal 8 cm³.", lockedL: null, lockedW: null, hint: "💡 HINT: Set all three dials exactly to 2 × 2 × 2." },
+            { level: 1, type: "NORMAL", target: 36, text: "Level 1: Container lines overflowing! Balance out a volume space of exactly 36 cm³.", lockedL: null, lockedW: null, hint: "💡 HINT: Try setting Length to 6, Width to 3, and Height to 2!" },
+            
+            // --- LEVEL 2 TEXTBOOK CHALLENGES (Indices 3 to 5) ---
+            { level: 2, type: "LOCKED_HEIGHT", target: 120, lockedL: 6, lockedW: 4, text: "Level 2: A container holds a total space of 120 cm³. Length is locked at 6 cm, Width at 4 cm. Calculate and set the missing Height variable!", hint: "💡 FORMULA HINT: Volume ÷ (Length × Width) = Height. Compute 120 ÷ (6 × 4) to find the answer!" },
+            { level: 2, type: "LOCKED_HEIGHT", target: 2000, lockedL: 20, lockedW: 10, text: "Level 2 Liquid Capacity Challenge: A laboratory tank holds exactly 2 Litres of slime liquid ($2,000\\text{ cm}^3$). Length is 20 cm, Width is 10 cm. Deduce the exact target Height!", hint: "💡 CONVERSION HINT: 2 Litres = 2,000 cm³. Divide 2,000 by (20 × 10) to secure the slider position." },
+            { level: 2, type: "LOCKED_HEIGHT", target: 90, lockedL: 5, lockedW: 3, text: "Final Boss Matchbox Rule: A presentation box maps a total volume of 90 cm³. Length is 5 cm and Width is 3 cm. Deduce the hidden Height variable!", hint: "💡 MATH HINT: Divide the full space by the base area: 90 ÷ (5 × 3)." }
         ];
 
-        // 5-Second Brand Splash Logic Setup
         setTimeout(() => {
             const splashScreen = document.getElementById("innovine-splash");
             if(splashScreen) {
@@ -445,12 +475,11 @@
             }
         }, 5000);
 
-        function randomizeArray(arr) {
-            return arr.sort(() => Math.random() - 0.5);
-        }
-
         function launchSlimeFactory() {
-            pipelineSequence = randomizeArray([...slimeConfigurations]);
+            // Organize game to always have 3 standard levels followed by the 3 advanced math levels
+            let lvl1 = hybridSyllabusPool.filter(q => q.level === 1).sort(() => Math.random() - 0.5);
+            let lvl2 = hybridSyllabusPool.filter(q => q.level === 2).sort(() => Math.random() - 0.5);
+            pipelineSequence = [...lvl1, ...lvl2];
             activePointer = 0;
             runningScoreXp = 0;
 
@@ -467,38 +496,68 @@
 
             failedAttempts = 0;
             isAnimating = false;
+            clearInterval(slimeGrowthInterval);
             document.getElementById("game-feedback-toast").style.display = "none";
             document.getElementById("slam-trigger-btn").disabled = false;
             refreshHeartSlots();
 
-            // Set reset configurations for tuning wheels
-            userL = 2; userW = 2; userH = 2;
+            let activeQuest = pipelineSequence[activePointer];
+            
+            // Set labels & level system markers
+            document.getElementById("level-badge-txt").innerText = `LEVEL ${activeQuest.level} [Slime ${activePointer + 1}/6]`;
+            document.getElementById("target-vol-readout").innerText = activeQuest.target === 2000 ? "2 Litres (2,000 cm³)" : `${activeQuest.target} cm³`;
+            document.getElementById("word-problem-txt").innerText = activeQuest.text;
+
+            // Engine Configurations for Level 2 locked modes
+            document.getElementById("pod-l").classList.remove("locked");
+            document.getElementById("pod-w").classList.remove("locked");
+
+            if(activeQuest.type === "LOCKED_HEIGHT") {
+                userL = activeQuest.lockedL;
+                userW = activeQuest.lockedW;
+                userH = 1; // User must guess this variable parameter
+                document.getElementById("pod-l").classList.add("locked");
+                document.getElementById("pod-w").classList.add("locked");
+            } else {
+                userL = 2; userW = 2; userH = 2;
+            }
+
             updateDashboardDisplays();
 
-            let activeSlime = pipelineSequence[activePointer];
-            document.getElementById("slime-counter-txt").innerText = `Slime: ${activePointer + 1} / 5`;
-            document.getElementById("target-vol-readout").innerText = `${activeSlime.target} cm³`;
-
-            // Reset visual elements
+            // Reset slime visual actor parameters
             const actor = document.getElementById("target-slime-actor");
-            actor.style.transform = "scale(1)";
-            actor.style.background = "#10b981";
-            actor.innerText = "👾";
+            actor.style.background = activeQuest.level === 2 ? "#ec4899" : "#10b981"; // Level 2 slimes turn angry magenta!
+            actor.innerText = activeQuest.level === 2 ? "😈" : "👾";
+            
+            // Trigger Visual Growth Core engine loops
+            slimeScaleFactor = 0.3; 
+            actor.style.transform = `scale(${slimeScaleFactor})`;
+
+            slimeGrowthInterval = setInterval(() => {
+                if (!isAnimating && slimeScaleFactor < 1.3) {
+                    slimeScaleFactor += 0.02; // Gradually swells in real time
+                    actor.style.transform = `scale(${slimeScaleFactor})`;
+                    
+                    // If slime gets way out of bounds, make it pulse red frantically
+                    if (slimeScaleFactor > 1.1) {
+                        actor.style.background = "#ef4444";
+                    }
+                }
+            }, 100);
         }
 
         function adjustTuner(dimension, step) {
             if(isAnimating) return;
+            let activeQuest = pipelineSequence[activePointer];
+
+            // Block tuning adjustments if coordinates match frozen layouts rules
+            if(activeQuest.type === "LOCKED_HEIGHT" && (dimension === 'l' || dimension === 'w')) return;
 
             if (dimension === 'l') userL = Math.max(1, Math.min(8, userL + step));
             if (dimension === 'w') userW = Math.max(1, Math.min(8, userW + step));
-            if (dimension === 'h') userH = Math.max(1, Math.min(8, userH + step));
+            if (dimension === 'h') userH = Math.max(1, Math.min(12, userH + step));
 
             updateDashboardDisplays();
-
-            // Slightly expand slime visually on tick adjustment to show responsive feedback
-            const slimeObj = document.getElementById("target-slime-actor");
-            slimeObj.style.width = (80 + (userL * 4)) + "px";
-            slimeObj.style.height = (80 + (userH * 4)) + "px";
         }
 
         function updateDashboardDisplays() {
@@ -518,6 +577,7 @@
         function executeCrusherSlamAnimation() {
             if(isAnimating) return;
             isAnimating = true;
+            clearInterval(slimeGrowthInterval); // Stop real-time expansion loops during mechanical drop
 
             const press = document.getElementById("hydraulic-press");
             const slimeObj = document.getElementById("target-slime-actor");
@@ -526,17 +586,15 @@
             let calculatedActiveVol = userL * userW * userH;
             let currentTargetData = pipelineSequence[activePointer];
 
-            // Trigger mechanical drop animation alignment frame
-            press.style.transform = "translateY(140px)";
+            // Drop hydraulic plate graphic frame down onto target element workspace
+            press.style.transform = "translateY(110px)";
 
             setTimeout(() => {
-                // Evaluate matching equations matrices outcome blocks
                 if (calculatedActiveVol === currentTargetData.target) {
                     playSoundSafe(audioHit);
-                    slimeObj.style.transform = "scaleX(1.4) scaleY(0.4)";
-                    slimeObj.style.background = "#f59e0b";
-                    slimeObj.innerText = "📦"; // Packed away safely!
-                    
+                    slimeObj.style.transform = "scaleX(1.5) scaleY(0.2)";
+                    slimeObj.innerText = "📦"; 
+
                     runningScoreXp += (failedAttempts === 0) ? 200 : 100;
                     document.getElementById("xp-counter-txt").innerText = `${runningScoreXp} XP`;
 
@@ -544,7 +602,7 @@
                     feedbackToast.style.background = "#d1fae5";
                     feedbackToast.style.borderColor = "#10b981";
                     feedbackToast.style.color = "#065f46";
-                    feedbackToast.innerText = `💥 BOOM! Perfect crush! Box volume matches exactly ${calculatedActiveVol} cm³!`;
+                    feedbackToast.innerText = `💥 SUCCESSFUL CRUSH! Box matrix calculated perfectly at ${calculatedActiveVol} cm³!`;
 
                     setTimeout(() => {
                         press.style.transform = "translateY(0px)";
@@ -559,26 +617,29 @@
                     failedAttempts++;
                     refreshHeartSlots();
                     
-                    slimeObj.style.animation = "none";
-                    slimeObj.style.transform = "shake";
-                    
                     feedbackToast.style.display = "block";
                     feedbackToast.style.background = "#fee2e2";
                     feedbackToast.style.borderColor = "#ef4444";
                     feedbackToast.style.color = "#991b1b";
 
                     if (failedAttempts === 1) {
-                        feedbackToast.innerText = `❌ WARNING: Dimensions set to ${calculatedActiveVol} cm³. Slime is unstable! ${currentTargetData.hint}`;
+                        feedbackToast.innerText = `❌ REJECTED! Dials calculated space as ${calculatedActiveVol} cm³. Slime keeps expanding! ${currentTargetData.hint}`;
                         setTimeout(() => {
                             press.style.transform = "translateY(0px)";
+                            // Resume growth matrix compression calculations parameters
                             isAnimating = false;
-                        }, 1200);
+                            slimeGrowthInterval = setInterval(() => {
+                                if (slimeScaleFactor < 1.3) {
+                                    slimeScaleFactor += 0.02;
+                                    slimeObj.style.transform = `scale(${slimeScaleFactor})`;
+                                }
+                            }, 100);
+                        }, 1800);
                     } else {
-                        // Max errors reached for this block
                         document.getElementById("slam-trigger-btn").disabled = true;
-                        feedbackToast.innerText = `💥 SPLAT! Slime exploded! Overriding grid systems to target ${currentTargetData.target} cm³...`;
+                        feedbackToast.innerText = `💥 CRITICAL OVERFLOW! Slime exploded! Emergency automated layout override engaged...`;
                         slimeObj.innerText = "💥";
-                        slimeObj.style.background = "#ef4444";
+                        slimeObj.style.transform = "scale(1.4)";
 
                         setTimeout(() => {
                             press.style.transform = "translateY(0px)";
@@ -589,31 +650,30 @@
                         }, 2200);
                     }
                 }
-            }, 1500);
+            }, 800);
         }
 
         function concludeWarehouseOperations() {
-            document.getElementById("slime-counter-txt").innerText = "CLEARED";
-            
-            let descriptiveRank = runningScoreXp >= 800 ? "Slime Master Eliminator 👑" : "Senior Crushing Operator 🚜";
-
+            document.getElementById("level-badge-txt").innerText = "CLEARED";
             document.getElementById("lives-box").style.display = "none";
             document.getElementById("game-feedback-toast").style.display = "none";
             document.querySelector(".factory-floor").style.display = "none";
-            document.querySelector(".crusher-tuners").style.display = "none";
-            document.getElementById("slam-trigger-btn").style.display = "none";
+            document.querySelector(".arcade-dashboard").style.display = "none";
 
             const coreScreen = document.getElementById("gameplay-screen");
             let certificateBox = document.createElement("div");
             certificateBox.style.cssText = "padding: 35px 16px; text-align: center; display: flex; flex-direction: column; gap: 20px; justify-content: center; align-items: center; flex-grow: 1; background: linear-gradient(180deg, #312e81 0%, #1e1b4b 100%);";
+            
+            let rank = runningScoreXp >= 1000 ? "Supreme Logistics Overlord 👑" : "Elite Packing Tech 📐";
+            
             certificateBox.innerHTML = `
-                <div style="font-size: 5rem; animation: slimeWobble 1s infinite ease-in-out;">📦</div>
-                <h2 style="color:#a7f3d0; font-size:1.6rem;">Warehouse Saved!</h2>
-                <h3 style="color:#ffffff; font-size:1.15rem;">Total Arcade Score: ${runningScoreXp} / 1000 XP</h3>
+                <div style="font-size: 5rem;">🏆</div>
+                <h2 style="color:#a7f3d0; font-size:1.6rem;">Warehouse Vector Secure!</h2>
+                <h3 style="color:#ffffff; font-size:1.15rem;">Final Combined Score: ${runningScoreXp} / 1200 XP</h3>
                 <p style="font-size:0.95rem; font-weight:bold; background:rgba(255,255,255,0.1); padding:12px 20px; border-radius:14px; border: 2px solid #6366f1;">
-                    Earned Title: <br><span style="color:#fde047; font-size:1.25rem; display:block; margin-top:6px;">${descriptiveRank}</span>
+                    Earned Ranking Title: <br><span style="color:#fde047; font-size:1.25rem; display:block; margin-top:6px;">${rank}</span>
                 </p>
-                <button class="slam-action-btn" style="background:#10b981; box-shadow:0 6px #047857; margin-top: 15px; width:80%;" onclick="location.reload()">Play Again</button>
+                <button class="slam-action-btn" style="background:#10b981; box-shadow:0 6px #047857; margin-top: 15px; width:80%;" onclick="location.reload()">Replay Factory Mode</button>
             `;
             coreScreen.appendChild(certificateBox);
         }
