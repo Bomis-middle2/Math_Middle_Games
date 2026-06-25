@@ -2,44 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Deep Space Cargo Bay: Volume Logistics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cuboid Cargo Loader</title>
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             user-select: none;
-            -webkit-user-select: none;
         }
-        body, html {
-            width: 100%;
-            height: 100%;
-            background-color: #05070a;
-            color: #00ffcc;
-            overflow: hidden;
+
+        body {
+            background-color: #0f172a;
+            color: #1e293b;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            padding: 10px;
         }
 
-        #viewport-root {
+        #game-window {
             width: 100%;
-            max-width: 440px;
-            height: 100%;
-            max-height: 780px;
+            max-width: 460px;
+            height: 750px;
+            background: #f8fafc;
+            border: 6px solid #334155;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
-            position: relative;
-            background: #0d131a;
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.3);
             overflow: hidden;
-            border: 3px solid #00ffcc;
         }
 
-        /* --- STAGE 1: BRANDING SPLASH SCREEN (5 SECONDS STRICT) --- */
-        #branding-splash {
+        /* --- STAGE 1: 5-SECOND BRAND SPLASH --- */
+        #innovine-splash {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background: #ffffff;
@@ -47,195 +46,240 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.6s ease;
         }
-        .branding-img {
-            max-width: 180px;
+        .splash-logo {
+            max-width: 200px;
             height: auto;
         }
 
-        /* --- STAGE MODAL OVERLAYS --- */
-        .stage-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+        /* --- STAGE 2: INSTRUCTIONS SCREEN --- */
+        #instruction-screen {
+            padding: 30px 20px;
             display: flex;
             flex-direction: column;
-            padding: 20px;
-            gap: 16px;
-            z-index: 10;
-        }
-
-        .freighter-panel {
-            background: rgba(16, 26, 36, 0.95);
-            border: 2px solid #00ffcc;
-            border-radius: 12px;
-            padding: 22px;
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.1);
-        }
-
-        .header-panel {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #111e29;
-            color: #00ffcc;
-            padding: 12px 16px;
-            border-radius: 8px;
-            border: 1px solid #00a680;
-        }
-        .header-title { font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; }
-        .header-score { font-weight: 800; font-size: 0.85rem; background: #00a680; color: #000; padding: 4px 12px; border-radius: 4px; }
-
-        .instruction-text {
-            font-size: 0.9rem;
-            line-height: 1.5;
-            color: #8ab4ae;
-        }
-        .instruction-text ul { margin-left: 18px; margin-top: 10px; }
-        .instruction-text li { margin-bottom: 12px; font-weight: bold; color: #00ffcc; }
-
-        .workspace-area {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            background: #090e14;
-            border-radius: 8px;
-            border: 1px solid #111e29;
-            padding: 14px;
-        }
-
-        .manifest-scroll-box {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #a3e6da;
-            background: #101921;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid #00a680;
-            width: 100%;
-            text-align: center;
-            min-height: 90px;
-            display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            background: #f1f5f9;
+        }
+        .scroll-box {
+            background: white;
+            border: 2px dashed #cbd5e1;
+            border-radius: 14px;
+            padding: 20px;
+            margin: 20px 0;
+            width: 100%;
+            text-align: left;
+        }
+        .scroll-box h3 {
+            font-size: 1.1rem;
+            color: #0f172a;
+            margin-bottom: 4px;
+            border-bottom: 2px solid #cbd5e1;
+            padding-bottom: 2px;
+        }
+        .scroll-box p {
+            font-size: 0.9rem;
+            margin-bottom: 14px;
+            color: #475569;
+            font-weight: bold;
             line-height: 1.4;
         }
 
-        /* --- VISUAL GRAPHICS DRAWING FRAME --- */
-        .vector-canvas-box {
+        /* --- STAGE 3: MAIN VOLUMETRIC HUD --- */
+        #gameplay-screen {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
             width: 100%;
-            height: 170px;
-            background: #05080c;
-            border-radius: 8px;
-            border: 1px solid #172a3a;
-            position: relative;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
-        /* --- DIGITAL STEPS COUNTER ASSEMBLY --- */
-        .logistics-counter-chassis {
+        .top-navbar {
+            background: #1e293b;
+            color: #f59e0b;
+            padding: 14px;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
-            background: #111e29;
-            border: 1px solid #00a680;
-            padding: 10px 14px;
-            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .score-lbl {
+            background: #334155;
+            color: #f8fafc;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid #475569;
         }
 
-        .counter-column {
+        .blueprint-header {
+            padding: 14px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-align: center;
+            background: #e2e8f0;
+            border-bottom: 3px solid #cbd5e1;
+            min-height: 115px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            justify-content: center;
+            gap: 4px;
+        }
+        .item-tag {
+            font-size: 0.75rem;
+            background: #10b981;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .counter-btn {
-            background: #172a3a;
-            border: 1px solid #00a680;
-            color: #00ffcc;
-            font-size: 1rem;
-            padding: 2px 12px;
-            border-radius: 4px;
-            cursor: pointer;
+        /* --- 3D INTERACTIVE PROJECTION VIEWPORT --- */
+        .workspace-viewport {
+            flex-grow: 1;
+            background: #1e293b;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            position: relative;
         }
-        .counter-btn:active { background: #00ffcc; color: #000; }
 
-        .counter-display-window {
-            width: 38px;
-            height: 44px;
-            background: #05080c;
-            border: 1px solid #00a680;
-            border-radius: 4px;
+        /* Target vs Active readout overlay */
+        .capacity-dashboard {
+            width: 100%;
+            background: #334155;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            display: flex;
+            justify-content: space-around;
+            color: white;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+        .dashboard-val {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        /* Pseudo-3D isometric box viewport renderer */
+        .box-projection-canvas {
+            width: 260px;
+            height: 180px;
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: #00ffcc;
-            text-shadow: 0 0 5px #00ffcc;
+            border: 2px dashed #475569;
+            border-radius: 12px;
+            background: #0f172a;
         }
 
-        .unit-lbl {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #8ab4ae;
-            margin-left: 8px;
-            align-self: center;
+        .isometric-prism {
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(-25deg) rotateY(45deg);
+            transition: width 0.2s, height 0.2s, depth 0.2s;
         }
 
-        /* --- CORE SYSTEM INTEGRITY LIGHTS --- */
-        .strike-container {
+        /* Prism individual surface facets */
+        .prism-face {
+            position: absolute;
+            border: 2px solid #10b981;
+            background: rgba(16, 185, 129, 0.25);
             display: flex;
-            gap: 12px;
             justify-content: center;
-        }
-        .strike-cell {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #ff3366;
-            box-shadow: 0 0 8px #ff3366;
-            transition: all 0.3s ease;
-        }
-        .strike-cell.used {
-            background: #1a232d;
-            box-shadow: none;
+            align-items: center;
+            color: #a7f3d0;
+            font-size: 0.75rem;
+            font-weight: bold;
         }
 
-        .action-btn {
-            background: #00ffcc;
-            color: #05070a;
-            border: none;
-            border-bottom: 4px solid #00a680;
-            padding: 14px;
-            font-size: 0.95rem;
-            font-weight: 900;
-            border-radius: 6px;
-            cursor: pointer;
+        /* --- INTERACTIVE LEVER VALVES (SLIDERS) --- */
+        .sliders-deck {
             width: 100%;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #334155;
+            padding: 12px;
+            border-radius: 10px;
         }
-        .action-btn:active {
-            transform: translateY(2px);
-            border-bottom-width: 2px;
+        .slider-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            color: #cbd5e1;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .slider-row label { width: 85px; }
+        .valve-slider {
+            flex-grow: 1;
+            accent-color: #10b981;
+            cursor: pointer;
+        }
+        .valve-lbl-readout {
+            width: 45px;
+            text-align: right;
+            color: #10b981;
         }
 
-        .status-banner {
+        /* --- CONTROLS FOOTER PANEL --- */
+        .footer-control-panel {
+            padding: 14px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .realtime-alert-bubble {
+            background: #fef3c7;
+            border: 2px solid #fde68a;
+            color: #92400e;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: bold;
             text-align: center;
-            font-weight: 700;
-            font-size: 0.8rem;
-            min-height: 22px;
-            color: #5f837e;
-            letter-spacing: 0.5px;
+            display: none;
+            line-height: 1.3;
+        }
+
+        .hearts-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        .heart-icon { font-size: 1.2rem; color: #ef4444; }
+        .heart-icon.depleted { color: #cbd5e1; }
+
+        .action-submit-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 4px #047857;
+            width: 100%;
+        }
+        .action-submit-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px #047857;
         }
 
         .hidden { display: none !important; }
@@ -243,322 +287,357 @@
 </head>
 <body>
 
-    <div id="viewport-root">
+    <div id="game-window">
         
-        <!-- STAGE 1: Dynamic Splash Placeholder Screen -->
-        <div id="branding-splash">
-            <img src="assets/logo.png" class="branding-img" alt="Innovine Logo" onerror="this.src='https://placehold.co/180x60/ffffff/05070a?text=INNOVINE';">
+        <div id="innovine-splash">
+            <img src="assets/logo.png" class="splash-logo" alt="Innovine" onerror="this.src='https://placehold.co/180x60/ffffff/0f172a?text=INNOVINE';">
         </div>
 
-        <!-- STAGE 2: Game Mission Briefing Overlay -->
-        <div id="instructions-screen" class="stage-overlay hidden">
-            <div class="freighter-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
-                <div class="header-panel">
-                    <div class="header-title">🛸 Cargo Bay Logistics Control</div>
-                </div>
-                <div class="instruction-text">
-                    <p>Load master freight vectors accurately by validating volumetric space values on the cargo bay scales:</p>
-                    <ul>
-                        <li>1. Evaluate the object's cubic space, capacity, or liquid metric properties.</li>
-                        <li>2. Use formula: $Volume = Length \times Width \times Height$.</li>
-                        <li>3. Set your numeric sequence and engage the loader matrix.</li>
-                    </ul>
-                </div>
-                <button class="action-btn" onclick="initializeFreighterSystem()">Engage Systems</button>
-            </div>
-        </div>
-
-        <!-- STAGE 3: Active Simulation Matrix Panel -->
-        <div id="gameplay-screen" class="stage-overlay hidden">
-            <div class="header-panel">
-                <div id="game-level-tag" class="header-title">Bay Sector: 01 / 06</div>
-                <div id="game-score-tag" class="header-score">Data: 0 XP</div>
-            </div>
-
-            <div class="workspace-area">
-                <!-- Data Manifest Specification Readout -->
-                <div id="game-prompt" class="manifest-scroll-box">Accessing freighter flight logs...</div>
+        <div id="instruction-screen" class="hidden">
+            <h2 style="color: #1e293b; font-size: 1.5rem; margin-bottom: 5px;">How To Play</h2>
+            <div class="scroll-box">
+                <h3>📦 Read Target Volume</h3>
+                <p>The cargo sheet requests an exact volume space allocation in cubic centimetres ($cm^3$). Pay close attention to whether it's a cube or cuboid structure.</p>
                 
-                <!-- Dynamic SVG Geometry Rendering Box -->
-                <div class="vector-canvas-box">
-                    <svg id="drawing-svg" width="100%" height="100%" style="position:absolute; pointer-events:none;"></svg>
-                </div>
+                <h3>🎛️ Tune Valve Sliders</h3>
+                <p>Drag the Length, Width, and Height sliders to adjust the dimensions of the isometric cargo crate wireframe in real time.</p>
+                
+                <h3>❤️ Safe Packing Bounds</h3>
+                <p>Multiply Length × Width × Height to calculate your active volume. When the active calculation exactly hits the target demand capacity, click verify to launch!</p>
+            </div>
+            <button class="action-submit-btn" onclick="startCargoStudio()">Start Cargo Loading</button>
+        </div>
 
-                <!-- Input Steppers Tuning Module -->
-                <div class="logistics-counter-chassis">
-                    <div class="counter-column">
-                        <button class="counter-btn" onclick="tuneDigit(0, 1)">▲</button>
-                        <div id="digit-display-0" class="counter-display-window">0</div>
-                        <button class="counter-btn" onclick="tuneDigit(0, -1)">▼</button>
-                    </div>
-                    <div class="counter-column">
-                        <button class="counter-btn" onclick="tuneDigit(1, 1)">▲</button>
-                        <div id="digit-display-1" class="counter-display-window">0</div>
-                        <button class="counter-btn" onclick="tuneDigit(1, -1)">▼</button>
-                    </div>
-                    <div class="counter-column">
-                        <button class="counter-btn" onclick="tuneDigit(2, 1)">▲</button>
-                        <div id="digit-display-2" class="counter-display-window">0</div>
-                        <button class="counter-btn" onclick="tuneDigit(2, -1)">▼</button>
-                    </div>
-                    <div class="counter-column">
-                        <button class="counter-btn" onclick="tuneDigit(3, 1)">▲</button>
-                        <div id="digit-display-3" class="counter-display-window">0</div>
-                        <button class="counter-btn" onclick="tuneDigit(3, -1)">▼</button>
-                    </div>
-                    
-                    <div id="ui-unit-label" class="unit-lbl">cm³</div>
-                </div>
-
-                <!-- System Core Safety Fault Lights -->
-                <div class="strike-container">
-                    <div id="strike-dot-1" class="strike-cell"></div>
-                    <div id="strike-dot-2" class="strike-cell"></div>
-                </div>
-
-                <button class="action-btn" onclick="validateCargoManifest()">Activate Load Matrix</button>
+        <div id="gameplay-screen" class="hidden">
+            <div class="top-navbar">
+                <div id="blueprint-counter-lbl">Cargo Manifest: 1 / 5</div>
+                <div id="xp-counter-lbl" class="score-lbl">0 XP</div>
             </div>
 
-            <div id="game-toast-feedback" class="status-banner">Ready for payload measurements calibration.</div>
+            <div id="quest-txt-box" class="blueprint-header">
+                <span class="item-tag" id="blueprint-tag-lbl">Cuboid Volume</span>
+                <span id="instruction-txt">Calibrating volumetric spacing matrices...</span>
+            </div>
+
+            <div class="workspace-viewport">
+                <div class="capacity-dashboard">
+                    <div>Target Space: <span id="target-space-txt" class="dashboard-val">0 cm³</span></div>
+                    <div>Crate Space: <span id="current-space-txt" class="dashboard-val" style="color: #f59e0b;">0 cm³</span></div>
+                </div>
+
+                <div class="box-projection-canvas">
+                    <div class="isometric-prism" id="prism-object">
+                        <div class="prism-face" id="f-front"></div>
+                        <div class="prism-face" id="f-back"></div>
+                        <div class="prism-face" id="f-top"></div>
+                        <div class="prism-face" id="f-bottom"></div>
+                        <div class="prism-face" id="f-left"></div>
+                        <div class="prism-face" id="f-right"></div>
+                    </div>
+                </div>
+
+                <div class="sliders-deck">
+                    <div class="slider-row">
+                        <label for="slide-l">Length (L):</label>
+                        <input type="range" min="1" max="6" value="1" class="valve-slider" id="slide-l" oninput="refreshIsometricPrismGeometry()">
+                        <span class="valve-lbl-readout" id="readout-l">1 cm</span>
+                    </div>
+                    <div class="slider-row" id="row-width">
+                        <label for="slide-w">Width (W):</label>
+                        <input type="range" min="1" max="6" value="1" class="valve-slider" id="slide-w" oninput="refreshIsometricPrismGeometry()">
+                        <span class="valve-lbl-readout" id="readout-w">1 cm</span>
+                    </div>
+                    <div class="slider-row" id="row-height">
+                        <label for="slide-h">Height (H):</label>
+                        <input type="range" min="1" max="6" value="1" class="valve-slider" id="slide-h" oninput="refreshIsometricPrismGeometry()">
+                        <span class="valve-lbl-readout" id="readout-h">1 cm</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-control-panel">
+                <div class="hearts-row" id="hearts-container">
+                    <span class="heart-icon">❤️</span>
+                    <span class="heart-icon">❤️</span>
+                </div>
+                
+                <div class="realtime-alert-bubble" id="feedback-bubble"></div>
+                
+                <button class="action-submit-btn" id="confirm-build-btn" onclick="verifyCargoVolumetricSpace()">Verify Cargo Volume</button>
+            </div>
         </div>
 
     </div>
 
     <script>
-        // Interactive Sound Elements Register
-        const audioCorrect = new Audio('assets/correct.mp3');
-        const audioWrong = new Audio('assets/wrong.mp3');
-        const audioWin = new Audio('assets/freesound_community-claps-44774.mp3');
+        const trackSuccess = new Audio('assets/correct.mp3');
+        const trackFail = new Audio('assets/wrong.mp3');
 
-        function fireAudioTrack(track) {
+        function triggerAudioAlert(audioTrack) {
             try {
-                track.currentTime = 0;
-                track.play();
-            } catch(e) { console.log("Audio pipeline safely handled."); }
+                audioTrack.currentTime = 0;
+                audioTrack.play();
+            } catch(error) { console.log("Sound effect loaded."); }
         }
 
-        // Internal Game State Tracking Registers
-        let accumulatedXP = 0;
-        let currentLevelIdx = 0;
-        let manifestOverloadStrikes = 0;
-        let currentDigitArrays = [0, 0, 0, 0];
-        let finalizedRandomizedPool = [];
+        let taskSequence = [];
+        let taskPointer = 0;
+        let cumulativeXp = 0;
+        let localMistakes = 0;
 
-        function generateSVGNode(type) { return document.createElementNS("http://www.w3.org/2000/svg", type); }
-        
-        function appendAttributes(node, obj) {
-            for (let prop in obj) { node.setAttribute(prop, obj[prop]); }
-            return node;
-        }
-
-        // Comprehensive Dataset Mapping directly to image_33f888.png Outcomes
-        const masterVolumeScenarios = [
+        // Dataset focusing fully on Cube and Cuboid volume math parameters directly mapped from Grade 5
+        const volumeSyllabusPool = [
             {
-                q: "[Outcome: Cube Volume] An isometric storage cube has side dimensions equal to exactly 4 cm. Compute its total space volume capacity.",
-                correct: [0, 0, 6, 4],
-                unit: "cm³",
-                render: (svg) => {
-                    // Render 3D Wireframe Box Concept
-                    let p1 = generateSVGNode("polygon"); appendAttributes(p1, { points: "140,90 190,90 190,140 140,140", fill: "rgba(0, 255, 204, 0.15)", stroke: "#00ffcc", "stroke-width": "2" }); svg.appendChild(p1);
-                    let p2 = generateSVGNode("polygon"); appendAttributes(p2, { points: "160,70 210,70 210,120 160,120", fill: "none", stroke: "#00ffcc", "stroke-width": "1", "stroke-dasharray": "3 2" }); svg.appendChild(p2);
-                    let l1 = generateSVGNode("line"); appendAttributes(l1, { x1: "140", y1: "90", x2: "160", y2: "70", stroke: "#00ffcc", "stroke-width": "1.5" }); svg.appendChild(l1);
-                    let l2 = generateSVGNode("line"); appendAttributes(l2, { x1: "190", y1: "90", x2: "210", y2: "70", stroke: "#00ffcc", "stroke-width": "1.5" }); svg.appendChild(l2);
-                    let l3 = generateSVGNode("line"); appendAttributes(l3, { x1: "190", y1: "140", x2: "210", y2: "120", stroke: "#00ffcc", "stroke-width": "1.5" }); svg.appendChild(l3);
-                    let l4 = generateSVGNode("line"); appendAttributes(l4, { x1: "140", y1: "140", x2: "160", y2: "120", stroke: "#00ffcc", "stroke-width": "1.5" }); svg.appendChild(l4);
-                    
-                    let txt = generateSVGNode("text"); appendAttributes(txt, { x: "165", y: "158", fill: "#8ab4ae", "font-size": "11", "text-anchor": "middle" });
-                    txt.textContent = "Each Side = 4 cm"; svg.appendChild(txt);
-                }
+                type: "CUBID",
+                tag: "Matchbox Cargo",
+                prompt: "Pack a custom cuboid matchbox parcel containing a target capacity space of exactly 24 cubic centimetres!",
+                targetVolume: 24,
+                solutionDimensions: { l: 4, w: 3, h: 2 },
+                helpHint: "💡 VOLUME HINT: Volume = Length × Width × Height. Try tuning Length to 4 cm, Width to 3 cm, and Height to 2 cm!"
             },
             {
-                q: "[Outcome: Cuboid Volume] Determine the exact space occupied by a container unit measuring 6 meters long, 3 meters wide, and 2 meters tall.",
-                correct: [0, 0, 3, 6],
-                unit: "m³",
-                render: (svg) => {
-                    let box = generateSVGNode("rect"); appendAttributes(box, { x: "110", y: "60", width: "130", height: "70", fill: "rgba(0, 166, 128, 0.1)", stroke: "#00a680", "stroke-width": "2.5" }); svg.appendChild(box);
-                    let label = generateSVGNode("text"); appendAttributes(label, { x: "175", y: "100", fill: "#00ffcc", "font-size": "12", "text-anchor": "middle" });
-                    label.textContent = "6m x 3m x 2m"; svg.appendChild(label);
-                }
+                type: "CUBE",
+                tag: "Ice Box Crate",
+                prompt: "Ria needs to pack a perfect ice box cube. In a cube, all edge sides must match perfectly. Reach a space volume of 27 cubic centimetres!",
+                targetVolume: 27,
+                solutionDimensions: { l: 3, w: 3, h: 3 },
+                helpHint: "💡 VOLUME HINT: For a cube, Volume = Side³. Match all three sliders exactly to 3 cm ($3 \\times 3 \\times 3 = 27$)."
             },
             {
-                q: "[Outcome: Volume Conversions] A high-pressure cell holds exactly 5 liters of radioactive liquid fuel. Convert this volume into millilitres (ml).",
-                correct: [5, 0, 0, 0],
-                unit: "ml",
-                render: (svg) => {
-                    let outer = generateSVGNode("rect"); appendAttributes(outer, { x: "135", y: "40", width: "70", height: "100", rx: "10", fill: "rgba(239, 51, 102, 0.05)", stroke: "#ff3366", "stroke-width": "2" }); svg.appendChild(outer);
-                    let core = generateSVGNode("rect"); appendAttributes(core, { x: "139", y: "70", width: "62", height: "66", rx: "6", fill: "rgba(239, 51, 102, 0.4)" }); svg.appendChild(core);
-                    let lbl = generateSVGNode("text"); appendAttributes(lbl, { x: "170", y: "105", fill: "#fff", "font-size": "11", "font-weight": "bold", "text-anchor": "middle" });
-                    lbl.textContent = "5 LITERS"; svg.appendChild(lbl);
-                }
+                type: "CUBOID",
+                tag: "Juice Pack Shipment",
+                prompt: "Load a long narrow composite juice box unit with a target holding space of exactly 12 cubic centimetres.",
+                targetVolume: 12,
+                solutionDimensions: { l: 6, w: 2, h: 1 },
+                helpHint: "💡 VOLUME HINT: Set your dimension valves to Length = 6 cm, Width = 2 cm, and Height = 1 cm to perfectly achieve 12 cm³."
             },
             {
-                q: "[Outcome: Concept Interpretation] Volume is defined as the total amount of space filled by an object. If a base structure takes up exactly 125 units of space, input 0-1-2-5 below.",
-                correct: [0, 1, 2, 5],
-                unit: "units",
-                render: (svg) => {
-                    for (let x = 0; x < 3; x++) {
-                        for (let y = 0; y < 2; y++) {
-                            let block = generateSVGNode("rect"); appendAttributes(block, { x: 130 + (x * 30), y: 70 + (y * 30), width: "24", height: "24", fill: "#111e29", stroke: "#00ffcc", "stroke-width": "1" });
-                            svg.appendChild(block);
-                        }
-                    }
-                }
+                type: "CUBE",
+                tag: "Solid Dice Block",
+                prompt: "Configure a giant wooden playing die cube model requiring an internal core capacity space of exactly 8 cubic centimetres.",
+                targetVolume: 8,
+                solutionDimensions: { l: 2, w: 2, h: 2 },
+                helpHint: "💡 VOLUME HINT: To form a uniform cube, adjust all three dimension slider scales straight to 2 cm ($2 \\times 2 \\times 2 = 8$)."
             },
             {
-                q: "[Outcome: Real-life Situations] A primary supply vessel needs to fill a freshwater container. If the container requires 2400 ml of fluid, how many liters (L) and ml does it represent? Input the value in total millilitres (2400).",
-                correct: [2, 4, 0, 0],
-                unit: "ml",
-                render: (svg) => {
-                    let line = generateSVGNode("path"); appendAttributes(line, { d: "M 90 110 Q 170 40 250 110", fill: "none", stroke: "#00ffcc", "stroke-width": "2", "stroke-dasharray": "4 4" }); svg.appendChild(line);
-                    let label = generateSVGNode("text"); appendAttributes(label, { x: "170", y: "135", fill: "#8ab4ae", "font-size": "12", "text-anchor": "middle" });
-                    label.textContent = "Capacity Target: 2400 ml"; svg.appendChild(label);
-                }
-            },
-            {
-                q: "[Outcome: Word Problems] A shipping terminal stores cuboid modules of length 10m, width 2m, and height 4m. What is the container's final volume payload status?",
-                correct: [0, 0, 8, 0],
-                unit: "m³",
-                render: (svg) => {
-                    let panel = generateSVGNode("rect"); appendAttributes(panel, { x: "90", y: "55", width: "160", height: "70", fill: "rgba(0,255,204,0.05)", stroke: "#00ffcc", "stroke-width": "1.5" }); svg.appendChild(panel);
-                    let l1 = generateSVGNode("text"); appendAttributes(l1, { x: "170", y: "85", fill: "#fff", "font-size": "11", "text-anchor": "middle" });
-                    l1.textContent = "Length: 10m | Width: 2m"; svg.appendChild(l1);
-                    let l2 = generateSVGNode("text"); appendAttributes(l2, { x: "170", y: "105", fill: "#00ffcc", "font-size": "11", "text-anchor": "middle" });
-                    l2.textContent = "Height: 4m"; svg.appendChild(l2);
-                }
+                type: "CUBOID",
+                tag: "Master Freight Hold",
+                prompt: "Final manifest task! Space out an expanded storage container layout with a full capacity totaling exactly 60 cubic centimetres.",
+                targetVolume: 60,
+                solutionDimensions: { l: 5, w: 4, h: 3 },
+                helpHint: "💡 VOLUME HINT: Maximize your grid lines! Set Length to 5 cm, Width to 4 cm, and Height to 3 cm ($5 \\times 4 \\times 3 = 60$)."
             }
         ];
 
-        // Fisher-Yates Array Shuffling Protocol
-        function secureShuffleArray(arr) {
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            return arr;
-        }
-
-        // Strict 5-Second Brand Window Hold Setup
+        // 5-Second Brand Splash Screen Timing Logic
         setTimeout(() => {
-            const element = document.getElementById('branding-splash');
-            if (element) {
-                element.style.opacity = '0';
+            const splashScreen = document.getElementById("innovine-splash");
+            if(splashScreen) {
+                splashScreen.style.opacity = "0";
                 setTimeout(() => {
-                    element.remove();
-                    document.getElementById('instructions-screen').classList.remove('hidden');
-                }, 500);
+                    splashScreen.remove();
+                    document.getElementById("instruction-screen").classList.remove("hidden");
+                }, 600);
             }
         }, 5000);
 
-        function initializeFreighterSystem() {
-            finalizedRandomizedPool = secureShuffleArray([...masterVolumeScenarios]);
-            document.getElementById('instructions-screen').classList.add('hidden');
-            document.getElementById('gameplay-screen').classList.remove('hidden');
-            loadBaySectorConfiguration();
+        function shuffleList(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
         }
 
-        function loadBaySectorConfiguration() {
-            if (currentLevelIdx >= finalizedRandomizedPool.length) {
-                triggerSimulationComplete();
+        function startCargoStudio() {
+            taskSequence = shuffleList([...volumeSyllabusPool]).slice(0, 5);
+            taskPointer = 0;
+            cumulativeXp = 0;
+
+            document.getElementById("instruction-screen").classList.add("hidden");
+            document.getElementById("gameplay-screen").classList.remove("hidden");
+            loadVolumeChallenge();
+        }
+
+        function loadVolumeChallenge() {
+            if (taskPointer >= taskSequence.length) {
+                renderEndGameCertificate();
                 return;
             }
 
-            document.getElementById('game-level-tag').innerText = `Bay Sector: ${String(currentLevelIdx + 1).padStart(2, '0')} / ${finalizedRandomizedPool.length}`;
-            document.getElementById('game-score-tag').innerText = `Data: ${accumulatedXP} XP`;
+            localMistakes = 0;
+            document.getElementById("feedback-bubble").style.display = "none";
+            document.getElementById("confirm-build-btn").disabled = false;
+            updateHeartsUI();
 
-            manifestOverloadStrikes = 0;
-            document.getElementById('strike-dot-1').classList.remove('used');
-            document.getElementById('strike-dot-2').classList.remove('used');
+            // Clear slider triggers back to initial parameters
+            document.getElementById("slide-l").value = 1;
+            document.getElementById("slide-w").value = 1;
+            document.getElementById("slide-h").value = 1;
 
-            currentDigitArrays = [0, 0, 0, 0];
-            refreshCounterUI();
+            let levelData = taskSequence[taskPointer];
+            document.getElementById("blueprint-counter-lbl").innerText = `Cargo Manifest: ${taskPointer + 1} / 5`;
+            document.getElementById("xp-counter-lbl").innerText = `${cumulativeXp} XP`;
+            document.getElementById("instruction-txt").innerText = levelData.prompt;
+            document.getElementById("blueprint-tag-lbl").innerText = levelData.tag;
+            document.getElementById("target-space-txt").innerText = `${levelData.targetVolume} cm³`;
 
-            const task = finalizedRandomizedPool[currentLevelIdx];
-            document.getElementById('game-prompt').innerText = task.q;
-            document.getElementById('ui-unit-label').innerText = task.unit;
-
-            const svgFrame = document.getElementById('drawing-svg');
-            svgFrame.innerHTML = '';
-            if (task.render) task.render(svgFrame);
-
-            document.getElementById('game-toast-feedback').innerText = "Ready for payload measurements calibration.";
-            document.getElementById('game-toast-feedback').style.color = "#5f837e";
+            refreshIsometricPrismGeometry();
         }
 
-        function tuneDigit(colIdx, increment) {
-            let value = currentDigitArrays[colIdx] + increment;
-            if (value > 9) value = 0;
-            if (value < 0) value = 9;
-            currentDigitArrays[colIdx] = value;
-            refreshCounterUI();
-        }
+        function refreshIsometricPrismGeometry() {
+            let activeTask = taskSequence[taskPointer];
 
-        function refreshCounterUI() {
-            for (let i = 0; i < 4; i++) {
-                document.getElementById(`digit-display-${i}`).innerText = currentDigitArrays[i];
-            }
-        }
+            let l = parseInt(document.getElementById("slide-l").value);
+            let w = parseInt(document.getElementById("slide-w").value);
+            let h = parseInt(document.getElementById("slide-h").value);
 
-        function validateCargoManifest() {
-            const activeTask = finalizedRandomizedPool[currentLevelIdx];
-            const banner = document.getElementById('game-toast-feedback');
-
-            let verificationPass = true;
-            for (let i = 0; i < 4; i++) {
-                if (currentDigitArrays[i] !== activeTask.correct[i]) {
-                    verificationPass = false;
-                    break;
+            // If question specifies a CUBE task, auto-bind matching sliders together for safe reinforcement
+            if (activeTask && activeTask.type === "CUBE") {
+                let primarySource = event ? event.target : null;
+                if (primarySource && primarySource.id === "slide-l") {
+                    w = l; h = l;
+                    document.getElementById("slide-w").value = l;
+                    document.getElementById("slide-h").value = l;
+                } else if (primarySource && primarySource.id === "slide-w") {
+                    l = w; h = w;
+                    document.getElementById("slide-l").value = w;
+                    document.getElementById("slide-h").value = w;
+                } else if (primarySource && primarySource.id === "slide-h") {
+                    l = h; w = h;
+                    document.getElementById("slide-l").value = h;
+                    document.getElementById("slide-w").value = h;
                 }
             }
 
-            if (verificationPass) {
-                accumulatedXP += 100;
-                fireAudioTrack(audioCorrect);
-                banner.innerText = "✔ CRITICAL: Volumetric capacity verified. Load secure!";
-                banner.style.color = "#00ffcc";
+            // Update user readouts text blocks labels
+            document.getElementById("readout-l").innerText = `${l} cm`;
+            document.getElementById("readout-w").innerText = `${w} cm`;
+            document.getElementById("readout-h").innerText = `${h} cm`;
 
-                currentLevelIdx++;
-                setTimeout(() => loadBaySectorConfiguration(), 1600);
+            let productVolume = l * w * h;
+            document.getElementById("current-space-txt").innerText = `${productVolume} cm³`;
+
+            // Adjust dimensions for visual CSS scaling
+            let scaleFactor = 22; 
+            let pxL = l * scaleFactor;
+            let pxW = w * scaleFactor;
+            let pxH = h * scaleFactor;
+
+            const prism = document.getElementById("prism-object");
+            prism.style.width = pxL + "px";
+            prism.style.height = pxH + "px";
+
+            // Map face structures into actual 3D translate coordinate styles
+            setupPrismFace("f-front", pxL, pxH, `translateZ(${pxW / 2}px)`);
+            setupPrismFace("f-back", pxL, pxH, `rotateY(180deg) translateZ(${pxW / 2}px)`);
+            setupPrismFace("f-top", pxL, pxW, `rotateX(90deg) translateZ(${pxW / 2}px)`);
+            setupPrismFace("f-bottom", pxL, pxW, `rotateX(-90deg) translateZ(${pxH - (pxW / 2)}px)`);
+            setupPrismFace("f-left", pxW, pxH, `rotateY(-90deg) translateZ(${pxW / 2}px)`);
+            setupPrismFace("f-right", pxW, pxH, `rotateY(90deg) translateZ(${pxL - (pxW / 2)}px)`);
+        }
+
+        function setupPrismFace(faceId, width, height, transformationStr) {
+            let faceNode = document.getElementById(faceId);
+            faceNode.style.width = width + "px";
+            faceNode.style.height = height + "px";
+            faceNode.style.transform = transformationStr;
+        }
+
+        function updateHeartsUI() {
+            const hearts = document.getElementById("hearts-container").children;
+            if (localMistakes === 0) {
+                hearts[0].classList.remove("depleted");
+                hearts[1].classList.remove("depleted");
+            } else if (localMistakes === 1) {
+                hearts[1].classList.add("depleted");
             } else {
-                manifestOverloadStrikes++;
-                fireAudioTrack(audioWrong);
-
-                if (manifestOverloadStrikes === 1) {
-                    document.getElementById('strike-dot-1').classList.add('used');
-                    banner.innerText = "❌ FAULT: Volume space mismatch! Calibration failed.";
-                    banner.style.color = "#ff3366";
-                } else {
-                    document.getElementById('strike-dot-2').classList.add('used');
-                    
-                    const numericAnswer = parseInt(activeTask.correct.join(""), 10);
-                    banner.innerText = `Bypassing lock... Calibrated Value was: ${numericAnswer} ${activeTask.unit}`;
-                    banner.style.color = "#ffaa00";
-
-                    currentLevelIdx++;
-                    setTimeout(() => loadBaySectorConfiguration(), 3500);
-                }
+                hearts[0].classList.add("depleted");
+                hearts[1].classList.add("depleted");
             }
-            document.getElementById('game-score-tag').innerText = `Data: ${accumulatedXP} XP`;
         }
 
-        function triggerSimulationComplete() {
-            fireAudioTrack(audioWin);
-            document.getElementById('game-level-tag').innerText = "LAUNCH READY";
-            document.getElementById('game-prompt').innerHTML = `
-                <div style="font-size: 1rem; color: #00ffcc; margin-bottom: 4px;">🏆 FLEET LOGISTICS COMMANDER!</div>
-                <div style="font-size: 0.8rem; color: #8ab4ae; font-weight: bold;">All dimensional sectors calibrated. Logged: ${accumulatedXP} XP</div>
-            `;
-            document.getElementById('game-toast-feedback').innerText = "Hyper-drive core fully optimized with volumetric logs.";
-            document.getElementById('game-toast-feedback').style.color = "#00ffcc";
+        function verifyCargoVolumetricSpace() {
+            let levelData = taskSequence[taskPointer];
+            let l = parseInt(document.getElementById("slide-l").value);
+            let w = parseInt(document.getElementById("slide-w").value);
+            let h = parseInt(document.getElementById("slide-h").value);
+            let activeVolume = l * w * h;
 
-            document.getElementById('drawing-svg').parentElement.innerHTML = `
-                <div style="font-size:48px; text-align:center; width:100%; padding-top:45px; letter-spacing:8px;">🛸📦✨</div>
-            `;
+            let alertBox = document.getElementById("feedback-bubble");
+            alertBox.style.display = "block";
+
+            if (activeVolume === levelData.targetVolume) {
+                triggerAudioAlert(trackSuccess);
+                cumulativeXp += (localMistakes === 0) ? 200 : 100;
+                document.getElementById("xp-counter-lbl").innerText = `${cumulativeXp} XP`;
+                document.getElementById("confirm-build-btn").disabled = true;
+
+                alertBox.style.background = "#d1fae5";
+                alertBox.style.borderColor = "#10b981";
+                alertBox.style.color = "#065f46";
+                alertBox.innerHTML = "✨ Volume Calibration Verified! Cargo fits safely within storage bounds!";
+
+                setTimeout(() => {
+                    taskPointer++;
+                    loadVolumeChallenge();
+                }, 1800);
+            } else {
+                localMistakes++;
+                triggerAudioAlert(trackFail);
+                updateHeartsUI();
+
+                if (localMistakes === 1) {
+                    alertBox.innerText = levelData.helpHint;
+                    alertBox.style.background = "#fef3c7";
+                    alertBox.style.borderColor = "#fde68a";
+                    alertBox.style.color = "#92400e";
+                } else {
+                    document.getElementById("confirm-build-btn").disabled = true;
+                    alertBox.style.background = "#fee2e2";
+                    alertBox.style.borderColor = "#fca5a5";
+                    alertBox.style.color = "#991b1b";
+                    alertBox.innerHTML = `❌ Loading error! Auto-tuning cargo parameters to target ${levelData.targetVolume} cm³...`;
+
+                    // Safety override pushes slide levels into perfect blueprint coordinates
+                    document.getElementById("slide-l").value = levelData.solutionDimensions.l;
+                    document.getElementById("slide-w").value = levelData.solutionDimensions.w;
+                    document.getElementById("slide-h").value = levelData.solutionDimensions.h;
+                    refreshIsometricPrismGeometry();
+
+                    setTimeout(() => {
+                        taskPointer++;
+                        loadVolumeChallenge();
+                    }, 3500);
+                }
+            }
+        }
+
+        function renderEndGameCertificate() {
+            document.getElementById("blueprint-counter-lbl").innerText = "MANIFEST CLEARED";
+            document.getElementById("quest-txt-box").innerHTML = "🎉 All Volumetric Logistics Operations Completed Safely!";
             
-            const interactiveBlock = document.querySelector('.logistics-counter-chassis');
-            interactiveBlock.style.display = "block";
-            interactiveBlock.innerHTML = `
-                <button class="action-btn" onclick="location.reload()">Recalibrate Alternative Flight</button>
+            let assignedRank = cumulativeXp >= 800 ? "Master Logistics Architect 👑" : "Senior Freight Assessor 📐";
+
+            document.getElementById("hearts-container").style.display = "none";
+            document.getElementById("feedback-bubble").style.display = "none";
+            document.getElementById("confirm-build-btn").style.display = "none";
+            document.querySelector(".capacity-dashboard").style.display = "none";
+            document.querySelector(".box-projection-canvas").style.display = "none";
+            document.querySelector(".sliders-deck").style.display = "none";
+
+            const coreScreen = document.getElementById("gameplay-screen");
+            let awardCard = document.createElement("div");
+            awardCard.style.cssText = "padding: 35px 16px; text-align: center; display: flex; flex-direction: column; gap: 16px; justify-content: center; align-items: center; flex-grow: 1;";
+            awardCard.innerHTML = `
+                <div style="font-size: 4.5rem;">📦</div>
+                <h3 style="color:#1e293b; font-size:1.35rem;">Final Calculation Score: ${cumulativeXp} / 1000 XP</h3>
+                <p style="font-size:0.95rem; font-weight:bold; background:#e2e8f0; padding:10px 16px; border-radius:10px; border: 1px solid #cbd5e1;">
+                    Earned Title: <br><span style="color:#10b981; font-size:1.15rem; display:block; margin-top:4px;">${assignedRank}</span>
+                </p>
+                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Load New Cargo Containers</button>
             `;
+            coreScreen.appendChild(awardCard);
         }
     </script>
 </body>
