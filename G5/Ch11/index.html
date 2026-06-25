@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perimeter Fence Tracker</title>
+    <title>Area & Perimeter Balance Scale</title>
     <style>
         * {
             box-sizing: border-box;
@@ -88,7 +88,7 @@
             line-height: 1.4;
         }
 
-        /* --- STAGE 3: MAIN TRACKER STUDIO --- */
+        /* --- STAGE 3: MAIN GAMEPLAY HUB --- */
         #gameplay-screen {
             display: flex;
             flex-direction: column;
@@ -130,74 +130,111 @@
         }
         .item-tag {
             font-size: 0.75rem;
-            background: #16a34a;
-            color: white;
+            background: #f59e0b;
+            color: #1e293b;
             padding: 3px 10px;
             border-radius: 12px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        /* --- EDGE-BASED FENCE INTERACTION FIELD --- */
+        /* --- BALANCE VISUALIZATION VIEWPORT --- */
         .workspace-viewport {
             flex-grow: 1;
-            background: #334155;
+            background: #475569;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
+            justify-content: space-between;
             padding: 15px;
         }
 
-        .tracker-board {
-            position: relative;
-            width: 320px;
-            height: 320px;
-            background: #1e293b;
-            border: 4px solid #0f172a;
-            border-radius: 8px;
-        }
-
-        /* Plotting background plot square grids safely */
-        .grid-bg-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(4, 1fr);
+        /* Balance Scale Beam Mechanics */
+        .scale-container {
             width: 100%;
-            height: 100%;
-            padding: 10px;
-            gap: 10px;
-        }
-        .grid-plot-cell {
-            background: #2d3748;
-            border-radius: 6px;
+            height: 160px;
+            position: relative;
+            background: #334155;
+            border-radius: 12px;
             display: flex;
             justify-content: center;
+            align-items: flex-end;
+            padding-bottom: 20px;
+            border: 2px solid #64748b;
+        }
+        .scale-beam {
+            width: 280px;
+            height: 8px;
+            background: #cbd5e1;
+            position: relative;
+            transform-origin: center;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            justify-content: space-between;
+        }
+        .scale-pan {
+            width: 90px;
+            height: 45px;
+            background: #f59e0b;
+            border: 3px solid #d97706;
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            position: absolute;
+            top: 4px;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            font-size: 1.2rem;
-            opacity: 0.5;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+        .scale-pan.left { left: -40px; }
+        .scale-pan.right { right: -40px; }
+        
+        .scale-fulcrum {
+            position: absolute;
+            bottom: 0;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 35px solid #cbd5e1;
         }
 
-        /* Absolute layered fence touch lines */
-        .fence-line {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.15);
+        /* Weight Selector Blocks Tray */
+        .blocks-tray {
+            background: #1e293b;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            border: 2px solid #0f172a;
+        }
+        .weight-block {
+            background: #38bdf8;
+            border: 2px solid #0284c7;
+            border-radius: 8px;
+            color: #0f172a;
+            padding: 8px;
+            width: 85px;
+            text-align: center;
             cursor: pointer;
-            transition: background 0.2s ease, box-shadow 0.2s ease;
-            border-radius: 4px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px #0284c7;
         }
-        .fence-line:hover {
-            background: rgba(255, 255, 255, 0.4);
+        .weight-block:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px #0284c7;
         }
-        
-        /* Interactive Toggle Styles */
-        .fence-line.active-fence {
-            background: #f59e0b !important;
-            box-shadow: 0 0 8px #fbbf24;
+        .weight-block.selected-on-scale {
+            background: #a855f7 !important;
+            border-color: #7e22ce !important;
+            box-shadow: 0 4px #7e22ce !important;
+            color: white;
         }
-        .fence-line.auto-reveal-fence {
-            background: #10b981 !important;
-            box-shadow: 0 0 8px #34d399;
-        }
+        .weight-title { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        .weight-value { font-size: 1rem; font-weight: bold; margin-top: 2px; }
 
         /* --- CONTROLS FOOTER PANEL --- */
         .footer-control-panel {
@@ -231,8 +268,8 @@
         .heart-icon.depleted { color: #cbd5e1; }
 
         .action-submit-btn {
-            background: #16a34a;
-            color: white;
+            background: #f59e0b;
+            color: #1e293b;
             border: none;
             padding: 14px;
             font-size: 1.05rem;
@@ -240,12 +277,12 @@
             border-radius: 10px;
             cursor: pointer;
             text-transform: uppercase;
-            box-shadow: 0 4px #15803d;
+            box-shadow: 0 4px #d97706;
             width: 100%;
         }
         .action-submit-btn:active {
             transform: translateY(3px);
-            box-shadow: 0 1px #15803d;
+            box-shadow: 0 1px #d97706;
         }
 
         .hidden { display: none !important; }
@@ -262,33 +299,45 @@
         <div id="instruction-screen" class="hidden">
             <h2 style="color: #1e293b; font-size: 1.5rem; margin-bottom: 5px;">How To Play</h2>
             <div class="scroll-box">
-                <h3>🪵 Build Along Edges</h3>
-                <p>Read the task details in the top bar. Instead of picking boxes, you are building fences along the edge segments between the plots.</p>
+                <h3>⚖️ Observe Target Pan</h3>
+                <p>The left side of the balance scale holds a mathematical requirement item (e.g., target area or target perimeter).</p>
                 
-                <h3>📐 Track Total Perimeter</h3>
-                <p>Tap any grey line on the workspace board to set up an active wooden fence segment. Each segment counts as exactly 1 centimetre of boundary length.</p>
+                <h3>📦 Load Weight Blocks</h3>
+                <p>Tap the geometric shape block weights in the tray below to load or remove them from the right scale pan. Every block states its size values.</p>
                 
-                <h3>❤️ Secure the Garden</h3>
-                <p>Add up the segments to match the requested perimeter limit precisely. Tap the verification button to verify. You have two hearts per level before the lines fill in automatically.</p>
+                <h3>❤️ Balance & Verify</h3>
+                <p>Add up your selected blocks to find the total sum that perfectly matches the value on the left. Click verify to submit your balance configuration.</p>
             </div>
-            <button class="action-submit-btn" onclick="startTrackingStudio()">Start Fencing</button>
+            <button class="action-submit-btn" onclick="startScaleStudio()">Start Balancing</button>
         </div>
 
         <div id="gameplay-screen" class="hidden">
             <div class="top-navbar">
-                <div id="blueprint-counter-lbl">Boundary: 1 / 5</div>
+                <div id="blueprint-counter-lbl">Scale Challenge: 1 / 5</div>
                 <div id="xp-counter-lbl" class="score-lbl">0 XP</div>
             </div>
 
             <div id="quest-txt-box" class="blueprint-header">
-                <span class="item-tag" id="blueprint-tag-lbl">Boundary Length</span>
-                <span id="instruction-txt">Calculating external fence paths...</span>
+                <span class="item-tag" id="blueprint-tag-lbl">Perimeter Matching</span>
+                <span id="instruction-txt">Calibrating physical balance vectors...</span>
             </div>
 
             <div class="workspace-viewport">
-                <div class="tracker-board" id="fence-canvas-area">
-                    <div class="grid-bg-container" id="grid-cell-bg"></div>
+                <div class="scale-container">
+                    <div class="scale-beam" id="interactive-beam">
+                        <div class="scale-pan left">
+                            <span style="font-size:0.7rem; text-transform:uppercase; color:#1e293b;">Target</span>
+                            <span id="left-target-val" style="color:#0f172a; font-size:1.1rem;">0</span>
+                        </div>
+                        <div class="scale-pan right">
+                            <span style="font-size:0.7rem; text-transform:uppercase;">Current</span>
+                            <span id="right-current-val" style="font-size:1.1rem;">0</span>
+                        </div>
                     </div>
+                    <div class="scale-fulcrum"></div>
+                </div>
+
+                <div class="blocks-tray" id="tray-container"></div>
             </div>
 
             <div class="footer-control-panel">
@@ -299,7 +348,7 @@
                 
                 <div class="realtime-alert-bubble" id="feedback-bubble"></div>
                 
-                <button class="action-submit-btn" id="confirm-build-btn" onclick="verifyFencePerimeter()">Verify Fence Perimeter</button>
+                <button class="action-submit-btn" id="confirm-build-btn" onclick="verifyScaleEquilibrium()">Verify Scale Equilibrium</button>
             </div>
         </div>
 
@@ -313,51 +362,87 @@
             try {
                 audioTrack.currentTime = 0;
                 audioTrack.play();
-            } catch(error) { console.log("Audio feedback loaded."); }
+            } catch(error) { console.log("Sound effects loaded successfully."); }
         }
 
-        let stageList = [];
-        let stagePointer = 0;
+        let taskList = [];
+        let taskPointer = 0;
         let cumulativeXp = 0;
         let localMistakes = 0;
-        let activeFenceIds = new Set();
+        let runningScaleSum = 0;
+        let selectedBlockIndices = new Set();
 
-        // Target layout parameters mapping to Grade 5 Perimeter tasks
-        const perimeterCoursePool = [
+        // Level dataset explicitly focusing on Area and Perimeter conversions and calculations
+        const formulaScalePool = [
             {
-                tag: "Rabbit Barrier",
-                prompt: "Keep mischievous rabbits out! Construct a small closed vegetable patch fence with a perimeter of exactly 4 centimetres.",
-                requiredLength: 4,
-                icon: "🥕",
-                helpHint: "💡 BOUNDARY HINT: Select exactly 4 horizontal or vertical fence tracks to create a tight 1x1 boundary box."
+                type: "PERIMETER",
+                tag: "Fencing Task",
+                prompt: "Ria is adding fencing around a custom square vegetable patch. Balance the scale to match a total target perimeter of 16 centimetres!",
+                targetValue: 16,
+                blocks: [
+                    { name: "Square 2x2", value: 8, label: "P = 8cm" },
+                    { name: "Rect 1x3", value: 8, label: "P = 8cm" },
+                    { name: "Triangle", value: 5, label: "P = 5cm" },
+                    { name: "Square 1x1", value: 4, label: "P = 4cm" }
+                ],
+                solutionIndices: [0, 1], // 8 + 8 = 16
+                helpHint: "💡 FORMULA HINT: Perimeter is the distance around! Try adding the 2x2 Square (P=8) and the 1x3 Rectangle (P=8) together."
             },
             {
-                tag: "Square Flowerbed",
-                prompt: "Ria needs to measure a fence boundary for a rectangular plot. Lay out a boundary line totaling exactly 8 centimetres.",
-                requiredLength: 8,
-                icon: "🌸",
-                helpHint: "💡 BOUNDARY HINT: Tap out exactly 8 segments along the path edges to meet the contract target size."
+                type: "AREA",
+                tag: "Tile Layout",
+                prompt: "A decorative pathway tile footprint covers an area of exactly 14 square centimetres. Combine blocks to balance this covered area!",
+                targetValue: 14,
+                blocks: [
+                    { name: "Rect 2x3", value: 6, label: "A = 6cm²" },
+                    { name: "Square 2x2", value: 4, label: "A = 4cm²" },
+                    { name: "Rect 1x4", value: 4, label: "A = 4cm²" },
+                    { name: "Triangle", value: 3, label: "A = 3cm²" }
+                ],
+                solutionIndices: [0, 1, 2], // 6 + 4 + 4 = 14
+                helpHint: "💡 FORMULA HINT: Area is length × width! Combine the 2x3 Rectangle (6), the 2x2 Square (4), and the 1x4 Rectangle (4)."
             },
             {
-                tag: "Patio Expansion",
-                prompt: "A decorative brick patio walkway is being tracked. Build a perimeter boundary line spanning exactly 6 centimetres.",
-                requiredLength: 6,
-                icon: "🧱",
-                helpHint: "💡 BOUNDARY HINT: Activate exactly 6 fence lines to satisfy the textbook structural blueprint."
+                type: "PERIMETER",
+                tag: "Compound Border",
+                prompt: "An irregular flowerbed requires border guards totaling a perimeter of 12 centimetres. Find the shapes that balance the scale!",
+                targetValue: 12,
+                blocks: [
+                    { name: "Triangle", value: 6, label: "P = 6cm" },
+                    { name: "Rect 1x2", value: 6, label: "P = 6cm" },
+                    { name: "Square 1x1", value: 4, label: "P = 4cm" },
+                    { name: "Triangle Small", value: 3, label: "P = 3cm" }
+                ],
+                solutionIndices: [0, 1], // 6 + 6 = 12
+                helpHint: "💡 FORMULA HINT: Look closely at the perimeter labels. Combine the Triangle (6) and the 1x2 Rectangle (6) to reach 12."
             },
             {
-                tag: "Compound Boundary",
-                prompt: "A larger perimeter loop is needed to safeguard the grass lawn. Create a barrier measuring exactly 10 centimetres.",
-                requiredLength: 10,
-                icon: "🏡",
-                helpHint: "💡 BOUNDARY HINT: Select 10 lines in total across the workspace board to complete the task requirements."
+                type: "AREA",
+                tag: "Carpet Square",
+                prompt: "A small woven floor mat covers an internal surface space of exactly 11 square centimetres. Balance this area sum on the pan!",
+                targetValue: 11,
+                blocks: [
+                    { name: "Square 3x3", value: 9, label: "A = 9cm²" },
+                    { name: "Rect 1x2", value: 2, label: "A = 2cm²" },
+                    { name: "Square 2x2", value: 4, label: "A = 4cm²" },
+                    { name: "Triangle", value: 5, label: "A = 5cm²" }
+                ],
+                solutionIndices: [0, 1], // 9 + 2 = 11
+                helpHint: "💡 FORMULA HINT: Area measures total internal flat space. Place the 3x3 Square (9) and the 1x2 Rectangle (2) onto the pan."
             },
             {
-                tag: "Grand Laboratory Yard",
-                prompt: "Final Project! Enclose the external perimeter of the new workstation site completely with exactly 12 centimetres of fence.",
-                requiredLength: 12,
-                icon: "🧪",
-                helpHint: "💡 BOUNDARY HINT: Form a large perimeter loop by activating exactly 12 edge segments on the layout frame."
+                type: "PERIMETER",
+                tag: "Garden Enclosure",
+                prompt: "Final Project! Build an outer boundary fence loop with a target perimeter of exactly 15 centimetres. Balance the beam!",
+                targetValue: 15,
+                blocks: [
+                    { name: "Triangle A", value: 5, label: "P = 5cm" },
+                    { name: "Triangle B", value: 5, label: "P = 5cm" },
+                    { name: "Triangle C", value: 5, label: "P = 5cm" },
+                    { name: "Square base", value: 8, label: "P = 8cm" }
+                ],
+                solutionIndices: [0, 1, 2], // 5 + 5 + 5 = 15
+                helpHint: "💡 FORMULA HINT: Three identical boundary values can reach your goal! Activate all three Triangle block weights (5 + 5 + 5)."
             }
         ];
 
@@ -381,102 +466,78 @@
             return array;
         }
 
-        function startTrackingStudio() {
-            stageList = shuffleList([...perimeterCoursePool]).slice(0, 5);
-            stagePointer = 0;
+        function startScaleStudio() {
+            taskList = shuffleList([...formulaScalePool]).slice(0, 5);
+            taskPointer = 0;
             cumulativeXp = 0;
 
             document.getElementById("instruction-screen").classList.add("hidden");
             document.getElementById("gameplay-screen").classList.remove("hidden");
-            loadFenceMapLevel();
+            loadScaleLevel();
         }
 
-        function loadFenceMapLevel() {
-            if (stagePointer >= stageList.length) {
-                renderEndGameCertificate();
+        function loadScaleLevel() {
+            if (taskPointer >= taskList.length) {
+                displayEndGameCertificate();
                 return;
             }
 
             localMistakes = 0;
-            activeFenceIds.clear();
+            runningScaleSum = 0;
+            selectedBlockIndices.clear();
             document.getElementById("feedback-bubble").style.display = "none";
             document.getElementById("confirm-build-btn").disabled = false;
             updateHeartsUI();
+            animateScaleBeam(0);
 
-            let levelData = stageList[stagePointer];
-            document.getElementById("blueprint-counter-lbl").innerText = `Boundary: ${stagePointer + 1} / 5`;
+            let currentLevel = taskList[taskPointer];
+            document.getElementById("blueprint-counter-lbl").innerText = `Scale Challenge: ${taskPointer + 1} / 5`;
             document.getElementById("xp-counter-lbl").innerText = `${cumulativeXp} XP`;
-            document.getElementById("instruction-txt").innerText = levelData.prompt;
-            document.getElementById("blueprint-tag-lbl").innerText = levelData.tag;
+            document.getElementById("instruction-txt").innerText = currentLevel.prompt;
+            document.getElementById("blueprint-tag-lbl").innerText = currentLevel.tag;
+            
+            document.getElementById("left-target-val").innerText = currentLevel.targetValue + (currentLevel.type === "AREA" ? " cm²" : " cm");
+            document.getElementById("right-current-val").innerText = "0" + (currentLevel.type === "AREA" ? " cm²" : " cm");
 
-            // Generate background imagery icon plots inside grid tiles
-            const bgContainer = document.getElementById("grid-cell-bg");
-            bgContainer.innerHTML = "";
-            for(let i=0; i<16; i++){
-                let plot = document.createElement("div");
-                plot.className = "grid-plot-cell";
-                plot.innerText = levelData.icon;
-                bgContainer.appendChild(plot);
-            }
+            // Build weight selection tray blocks dynamically
+            const tray = document.getElementById("tray-container");
+            tray.innerHTML = "";
 
-            // Clean down old absolute tracking line layers
-            const board = document.getElementById("fence-canvas-area");
-            const oldLines = board.querySelectorAll(".fence-line");
-            oldLines.forEach(l => l.remove());
+            currentLevel.blocks.forEach((block, idx) => {
+                let blockNode = document.createElement("div");
+                blockNode.className = "weight-block";
+                blockNode.innerHTML = `
+                    <div class="weight-title">${block.name}</div>
+                    <div class="weight-value">${block.label}</div>
+                `;
 
-            // Render interactive edge track line segments
-            // Grid has 5 lines horizontally and 5 lines vertically bounding the 4x4 squares
-            const padding = 10;
-            const step = 75; 
-            const thickness = 8;
-            const length = 75;
-
-            // Generate Horizontal Edge Layers
-            for (let r = 0; r < 5; r++) {
-                for (let c = 0; c < 4; c++) {
-                    let fence = document.createElement("div");
-                    fence.className = "fence-line";
-                    fence.dataset.type = "H";
-                    fence.id = `fence-h-${r}-${c}`;
-                    fence.style.left = `${padding + (c * step)}px`;
-                    fence.style.top = `${padding + (r * step) - (thickness / 2)}px`;
-                    fence.style.width = `${length}px`;
-                    fence.style.height = `${thickness}px`;
-                    
-                    fence.onclick = () => toggleFenceTrack(fence);
-                    board.appendChild(fence);
-                }
-            }
-
-            // Generate Vertical Edge Layers
-            for (let r = 0; r < 4; r++) {
-                for (let c = 0; c < 5; c++) {
-                    let fence = document.createElement("div");
-                    fence.className = "fence-line";
-                    fence.dataset.type = "V";
-                    fence.id = `fence-v-${r}-${c}`;
-                    fence.style.left = `${padding + (c * step) - (thickness / 2)}px`;
-                    fence.style.top = `${padding + (r * step)}px`;
-                    fence.style.width = `${thickness}px`;
-                    fence.style.height = `${length}px`;
-                    
-                    fence.onclick = () => toggleFenceTrack(fence);
-                    board.appendChild(fence);
-                }
-            }
+                blockNode.onclick = () => toggleWeightOnScale(idx, block.value, blockNode);
+                tray.appendChild(blockNode);
+            });
         }
 
-        function toggleFenceTrack(element) {
-            if (element.classList.contains("auto-reveal-fence")) return;
-            
-            const fid = element.id;
-            if (activeFenceIds.has(fid)) {
-                activeFenceIds.delete(fid);
-                element.classList.remove("active-fence");
+        function toggleWeightOnScale(index, weightValue, element) {
+            let levelData = taskList[taskPointer];
+            if (selectedBlockIndices.has(index)) {
+                selectedBlockIndices.delete(index);
+                runningScaleSum -= weightValue;
+                element.classList.remove("selected-on-scale");
             } else {
-                activeFenceIds.add(fid);
-                element.classList.add("active-fence");
+                selectedBlockIndices.add(index);
+                runningScaleSum += weightValue;
+                element.classList.add("selected-on-scale");
             }
+
+            document.getElementById("right-current-val").innerText = runningScaleSum + (levelData.type === "AREA" ? " cm²" : " cm");
+            
+            // Calculate rotational shift angle for physical beam feedback
+            let differential = runningScaleSum - levelData.targetValue;
+            let tiltAngle = Math.max(-15, Math.min(15, differential * 1.5));
+            animateScaleBeam(tiltAngle);
+        }
+
+        function animateScaleBeam(angle) {
+            document.getElementById("interactive-beam").style.transform = `rotate(${angle}deg)`;
         }
 
         function updateHeartsUI() {
@@ -492,34 +553,31 @@
             }
         }
 
-        function verifyFencePerimeter() {
-            let levelData = stageList[stagePointer];
-            let count = activeFenceIds.size;
+        function verifyScaleEquilibrium() {
+            let levelData = taskList[taskPointer];
+            let alertBox = document.getElementById("feedback-bubble");
+            alertBox.style.display = "block";
 
-            if (count === levelData.requiredLength) {
+            if (runningScaleSum === levelData.targetValue) {
                 triggerAudioAlert(trackSuccess);
                 cumulativeXp += (localMistakes === 0) ? 200 : 100;
                 document.getElementById("xp-counter-lbl").innerText = `${cumulativeXp} XP`;
                 document.getElementById("confirm-build-btn").disabled = true;
+                animateScaleBeam(0); // Perfect balance
 
-                let alertBox = document.getElementById("feedback-bubble");
-                alertBox.style.display = "block";
                 alertBox.style.background = "#d1fae5";
                 alertBox.style.borderColor = "#10b981";
                 alertBox.style.color = "#065f46";
-                alertBox.innerHTML = "✨ Perimeter Fence Verified Safely Secure!";
+                alertBox.innerHTML = "✨ Perfect Equilibrium! Geometric values match perfectly!";
 
                 setTimeout(() => {
-                    stagePointer++;
-                    loadFenceMapLevel();
+                    taskPointer++;
+                    loadScaleLevel();
                 }, 1800);
             } else {
                 localMistakes++;
                 triggerAudioAlert(trackFail);
                 updateHeartsUI();
-
-                let alertBox = document.getElementById("feedback-bubble");
-                alertBox.style.display = "block";
 
                 if (localMistakes === 1) {
                     alertBox.innerText = levelData.helpHint;
@@ -531,62 +589,53 @@
                     alertBox.style.background = "#fee2e2";
                     alertBox.style.borderColor = "#fca5a5";
                     alertBox.style.color = "#991b1b";
-                    alertBox.innerHTML = `❌ Boundary mismatch! Auto-installing correct ${levelData.requiredLength} cm perimeter tracker loops...`;
+                    alertBox.innerHTML = `❌ Scale Imbalance! Calibrating automatic counterweights...`;
 
-                    // Auto-draw a simple sequential square loop starting from the top horizontal line layers
-                    const lines = document.querySelectorAll(".fence-line");
-                    lines.forEach(l => l.classList.remove("active-fence"));
-
-                    let loopsToDraw = [];
-                    if (levelData.requiredLength === 4) {
-                        loopsToDraw = ["fence-h-0-0", "fence-h-1-0", "fence-v-0-0", "fence-v-0-1"];
-                    } else if (levelData.requiredLength === 6) {
-                        loopsToDraw = ["fence-h-0-0", "fence-h-0-1", "fence-h-1-0", "fence-h-1-1", "fence-v-0-0", "fence-v-0-2"];
-                    } else if (levelData.requiredLength === 8) {
-                        loopsToDraw = ["fence-h-0-0", "fence-h-0-1", "fence-h-2-0", "fence-h-2-1", "fence-v-0-0", "fence-v-0-2", "fence-v-1-0", "fence-v-1-2"];
-                    } else if (levelData.requiredLength === 10) {
-                        loopsToDraw = ["fence-h-0-0", "fence-h-0-2", "fence-h-2-0", "fence-h-2-2", "fence-v-0-0", "fence-v-0-3", "fence-v-1-0", "fence-v-1-3", "fence-h-0-1", "fence-h-2-1"];
-                    } else {
-                        loopsToDraw = ["fence-h-0-0", "fence-h-0-1", "fence-h-0-2", "fence-h-3-0", "fence-h-3-1", "fence-h-3-2", "fence-v-0-0", "fence-v-0-3", "fence-v-1-0", "fence-v-1-3", "fence-v-2-0", "fence-v-2-3"];
-                    }
-
-                    loopsToDraw.forEach(id => {
-                        let target = document.getElementById(id);
-                        if(target) target.classList.add("auto-reveal-fence");
+                    // Highlight the correct weight solutions in green
+                    const blocks = document.querySelectorAll(".weight-block");
+                    blocks.forEach((b, idx) => {
+                        b.classList.remove("selected-on-scale");
+                        if (levelData.solutionIndices.includes(idx)) {
+                            b.style.background = "#10b981";
+                            b.style.borderColor = "#047857";
+                            b.style.color = "white";
+                        }
                     });
+                    
+                    animateScaleBeam(0);
+                    document.getElementById("right-current-val").innerText = levelData.targetValue + (levelData.type === "AREA" ? " cm²" : " cm");
 
                     setTimeout(() => {
-                        stagePointer++;
-                        loadFenceMapLevel();
+                        taskPointer++;
+                        loadScaleLevel();
                     }, 3500);
                 }
             }
         }
 
-        function renderEndGameCertificate() {
-            document.getElementById("blueprint-counter-lbl").innerText = "SUCCESS";
-            document.getElementById("quest-txt-box").innerHTML = "🎉 All Perimeter Edge Frameworks Successfully Closed!";
+        function displayEndGameCertificate() {
+            document.getElementById("blueprint-counter-lbl").innerText = "BALANCED";
+            document.getElementById("quest-txt-box").innerHTML = "🎉 All Area and Perimeter Scales Balanced Safely!";
             
-            let rankTag = cumulativeXp >= 800 ? "Master Boundary Surveyor 👑" : "Senior Perimeter Draftsman 📐";
+            let finalRank = cumulativeXp >= 800 ? "Master Equilibrium Planner 👑" : "Senior Geometric Appraiser 📐";
 
-            document.getElementById("fence-canvas-area").style.display = "none";
             document.getElementById("hearts-container").style.display = "none";
             document.getElementById("feedback-bubble").style.display = "none";
             document.getElementById("confirm-build-btn").style.display = "none";
             document.querySelector(".workspace-viewport").style.display = "none";
 
-            const coreHub = document.getElementById("gameplay-screen");
-            let certificateBox = document.createElement("div");
-            certificateBox.style.cssText = "padding: 35px 16px; text-align: center; display: flex; flex-direction: column; gap: 16px; justify-content: center; align-items: center; flex-grow: 1;";
-            certificateBox.innerHTML = `
-                <div style="font-size: 4.5rem;">🪵</div>
-                <h3 style="color:#1e293b; font-size:1.35rem;">Final Inspection Score: ${cumulativeXp} / 1000 XP</h3>
+            const mainHub = document.getElementById("gameplay-screen");
+            let certificateCard = document.createElement("div");
+            certificateCard.style.cssText = "padding: 35px 16px; text-align: center; display: flex; flex-direction: column; gap: 16px; justify-content: center; align-items: center; flex-grow: 1;";
+            certificateCard.innerHTML = `
+                <div style="font-size: 4.5rem;">⚖️</div>
+                <h3 style="color:#1e293b; font-size:1.35rem;">Final Calculation Score: ${cumulativeXp} / 1000 XP</h3>
                 <p style="font-size:0.95rem; font-weight:bold; background:#e2e8f0; padding:10px 16px; border-radius:10px; border: 1px solid #cbd5e1;">
-                    Professional Title: <br><span style="color:#16a34a; font-size:1.15rem; display:block; margin-top:4px;">${rankTag}</span>
+                    Earned Title: <br><span style="color:#d97706; font-size:1.15rem; display:block; margin-top:4px;">${finalRank}</span>
                 </p>
-                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Map Another Layout</button>
+                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Balance New Shapes</button>
             `;
-            coreHub.appendChild(certificateBox);
+            mainHub.appendChild(certificateCard);
         }
     </script>
 </body>
