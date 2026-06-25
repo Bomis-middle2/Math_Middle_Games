@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Constructor: Grid Architect!</title>
+    <title>Data Architect: Grid Constructor!</title>
     <style>
         * {
             box-sizing: border-box;
@@ -320,10 +320,10 @@
             <h1 class="game-title">GRID ARCHITECT<br><span style="color:#fde047; font-size:1.3rem;">Bar Creation & Analysis</span></h1>
             <div class="rules-card">
                 <h3>📊 Mode 1: Graph Creation</h3>
-                <p>Read the source data target metrics card. Click and drag the columns up and down directly to match the correct numerical points!</p>
+                <p>Read the source data description box. Click and drag the columns directly up and down with your mouse or finger to match the numbers!</p>
                 
                 <h3>📊 Mode 2: Graph Interpretation</h3>
-                <p>Analyze the custom generated bars standing in the workspace. Instantly click the correct answer pad below without any typing or heavy clicking.</p>
+                <p>Analyze the purple columns rendered on the grid coordinates. Instantly click the correct answer pad below to clear the task.</p>
             </div>
             <button class="action-submit-btn" style="width:100%;" onclick="initializeGraphEngine()">Launch Graph Deck</button>
         </div>
@@ -359,22 +359,21 @@
         let activePointerIndex = 0;
         let cumulativeScoreXp = 0;
 
-        // Interactive Drag Management Global Variables
         let isDraggingPillar = false;
         let currentTargetPillarElement = null;
         let activeTargetPillarIndex = null;
-        const maxWorkspacePixelHeight = 440; // Clamped bounding height mapping frame
+        const maxWorkspacePixelHeight = 440; 
 
-        // Clean curriculum tasks completely free of latex code syntax or visual glitches
+        // --- EXPLICIT DATA SYLLABUS DATA-TABLE ---
         const gameSyllabusMap = [
-            // --- MODE 1: DYNAMIC CLICK-AND-DRAG CREATION MISSIONS ---
+            // MODE 1: DYNAMIC MOUSE/TOUCH DRAG CREATION TASKS
             {
                 type: "CREATE",
                 maxAxisScale: 50,
                 axisInterval: 10,
                 items: ["Apples", "Bananas", "Oranges"],
                 targetValues: [40, 20, 50],
-                prompt: "📊 GRAPH CREATION: Drag the columns directly to match this data table: [Apples: 40, Bananas: 20, Oranges: 50]"
+                prompt: "📊 GRAPH CREATION: Drag the columns directly on the screen to represent the dataset: [Apples: 40, Bananas: 20, Oranges: 50]"
             },
             {
                 type: "CREATE",
@@ -382,10 +381,10 @@
                 axisInterval: 20,
                 items: ["Red Team", "Blue Team", "Green Team"],
                 targetValues: [60, 100, 40],
-                prompt: "📊 GRAPH CREATION: Adjust the team score columns to match: [Red Team: 60, Blue Team: 100, Green Team: 40]"
+                prompt: "📊 GRAPH CREATION: Adjust the height of the team bars to match the scoreboard: [Red Team: 60, Blue Team: 100, Green Team: 40]"
             },
             
-            // --- MODE 2: INSTANT CHOOSE INTERPRETATION MISSIONS ---
+            // MODE 2: INSTANT MULTIPLE-CHOICE INTERPRETATION TASKS
             {
                 type: "INTERPRET",
                 maxAxisScale: 60,
@@ -395,7 +394,7 @@
                 question: "Which day has the highest bar value on the chart?",
                 choices: ["Mon", "Tue", "Wed", "Thu"],
                 correctAnswer: "Tue",
-                prompt: "🔍 GRAPH INTERPRETATION: Look at the purple bar chart columns and pick the matching answer block below."
+                prompt: "🔍 GRAPH INTERPRETATION: Look at the purple chart columns and pick the matching day button below."
             },
             {
                 type: "INTERPRET",
@@ -405,8 +404,8 @@
                 renderedValues: [60, 40, 20],
                 question: "What is the combined value of Cats and Birds columns?",
                 choices: ["60", "80", "100", "120"],
-                correctAnswer: "80", // 60 + 20
-                prompt: "🔍 GRAPH INTERPRETATION: Calculate the combined heights of Cats and Birds columns."
+                correctAnswer: "80", 
+                prompt: "🔍 GRAPH INTERPRETATION: Calculate the combined heights of Cats (60) and Birds (20)."
             },
             {
                 type: "INTERPRET",
@@ -416,8 +415,8 @@
                 renderedValues: [40, 10, 30],
                 question: "How much greater is Class A than Class B?",
                 choices: ["10", "20", "30", "40"],
-                correctAnswer: "30", // 40 - 10
-                prompt: "🔍 FINAL MISSION: Find the difference between Class A and Class B."
+                correctAnswer: "30", 
+                prompt: "🔍 FINAL MISSION: Compare heights and find the exact numerical difference between Class A and Class B."
             }
         ];
 
@@ -493,7 +492,6 @@
                     pillarNode.className = "interactive-pillar";
                     pillarNode.setAttribute("data-index", idx);
                     
-                    // Initialize each bar at a starting value of 0
                     let initialRatio = 0 / activeTask.maxAxisScale;
                     pillarNode.style.height = `${initialRatio * 100}%`;
 
@@ -502,14 +500,12 @@
                         <div class="x-label-tag">${label}</div>
                     `;
                     
-                    // Touch start handling for mobile accessibility layout frames
                     pillarNode.addEventListener("mousedown", startPillarDragSequence);
                     pillarNode.addEventListener("touchstart", startPillarDragSequence, { passive: true });
 
                     containerBox.appendChild(pillarNode);
                 });
 
-                // Set up default initial reference states array tracker values list
                 activeTask.userLiveValues = activeTask.items.map(() => 0);
 
             } else if (activeTask.type === "INTERPRET") {
@@ -531,7 +527,6 @@
                     containerBox.appendChild(pillarNode);
                 });
 
-                // Display interpretation multiple choice selection buttons dynamically
                 document.getElementById("mission-prompt-txt").innerHTML = `<strong>${activeTask.question}</strong><br><span style="font-size:0.8rem; color:#94a3b8;">${activeTask.prompt}</span>`;
                 
                 const choicesPadContainer = document.getElementById("choices-pad-grid");
@@ -546,7 +541,6 @@
             }
         }
 
-        // Mouse down/Touch start sequence activation anchor
         function startPillarDragSequence(e) {
             isDraggingPillar = true;
             currentTargetPillarElement = e.currentTarget;
@@ -555,7 +549,6 @@
         }
 
         function setupGlobalDragDropListeners() {
-            // Bind global track event move handlers to document body elements
             window.addEventListener("mousemove", executePillarDragMovement);
             window.addEventListener("touchmove", executePillarDragMovement, { passive: false });
 
@@ -565,8 +558,6 @@
 
         function executePillarDragMovement(e) {
             if (!isDraggingPillar || !currentTargetPillarElement) return;
-
-            // Prevent scroll pull movements while actively sliding graph lines
             if (e.type === "touchmove") e.preventDefault();
 
             const activeTask = missionSequence[activePointerIndex];
@@ -575,16 +566,15 @@
 
             let clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
             
-            // Calculate height scalar ratio values cleanly
             let relativePixelHeight = boxRect.bottom - clientY;
             let ratioPercentage = Math.max(0, Math.min(1, relativePixelHeight / boxRect.height));
             
-            // Snapping calculations mapped matching grid data intervals
             let calculatedExactRawValue = ratioPercentage * activeTask.maxAxisScale;
-            let snappedCleanValue = Math.round(calculatedExactRawValue / 5) * 5; // Snaps seamlessly to intervals of 5
+            
+            // Grid-snapping clean value calculation
+            let snappedCleanValue = Math.round(calculatedExactRawValue / 5) * 5; 
             snappedCleanValue = Math.max(0, Math.min(activeTask.maxAxisScale, snappedCleanValue));
 
-            // Update local state models arrays and DOM nodes displays
             activeTask.userLiveValues[activeTargetPillarIndex] = snappedCleanValue;
             
             let updatedHeightPercentage = (snappedCleanValue / activeTask.maxAxisScale) * 100;
@@ -622,7 +612,7 @@
                 toast.style.background = "#d1fae5";
                 toast.style.borderColor = "#10b981";
                 toast.style.color = "#065f46";
-                toast.innerText = "🌟 PERFECT GRAPH COMPOSITION! All columns successfully match your source ledger data.";
+                toast.innerText = "🌟 PERFECT GRAPH! All columns successfully match your source ledger data.";
 
                 setTimeout(() => {
                     activePointerIndex++;
@@ -641,7 +631,6 @@
             const toast = document.getElementById("interpretation-toast");
             toast.style.display = "block";
 
-            // Disable adjacent option button elements to secure entry state logic loops
             document.querySelectorAll(".choice-btn").forEach(btn => btn.style.pointerEvents = "none");
 
             if (selectedOptionText === activeTask.correctAnswer) {
