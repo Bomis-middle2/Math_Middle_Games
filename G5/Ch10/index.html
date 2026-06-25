@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Metric Explorer Quest</title>
+    <title>Metric Grid Painter</title>
     <style>
         * {
             box-sizing: border-box;
@@ -114,8 +114,8 @@
         }
 
         .quest-container {
-            padding: 14px;
-            font-size: 0.95rem;
+            padding: 12px;
+            font-size: 0.9rem;
             font-weight: bold;
             text-align: center;
             background: #e2e8f0;
@@ -125,18 +125,18 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 4px;
         }
         .mode-badge {
             font-size: 0.75rem;
-            background: #10b981;
+            background: #9d174d;
             color: white;
             padding: 2px 8px;
             border-radius: 10px;
             text-transform: uppercase;
         }
 
-        /* --- INTERACTIVE SELECTION GRID ENGINE --- */
+        /* --- QUANTITATIVE MATRIX GRID CANVAS --- */
         .grid-viewport-area {
             flex-grow: 1;
             background: #cbd5e1;
@@ -144,54 +144,41 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            padding: 15px;
+            padding: 10px;
             border-bottom: 3px solid #475569;
         }
 
         .matrix-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            width: 100%;
-            max-width: 360px;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            gap: 3px;
+            background: #94a3b8;
+            border: 4px solid #475569;
+            border-radius: 8px;
+            width: 320px;
+            height: 320px;
+            position: relative;
         }
 
         .grid-cell {
             background: #f8fafc;
-            border: 3px solid #94a3b8;
-            border-radius: 12px;
-            padding: 16px 10px;
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.1s ease;
+            transition: background 0.1s ease;
             display: flex;
             justify-content: center;
             align-items: center;
-            text-align: center;
+            font-size: 0.7rem;
+            color: #94a3b8;
             font-weight: bold;
-            font-size: 0.95rem;
-            box-shadow: 0 4px 0 #cbd5e1;
-            min-height: 75px;
-        }
-        .grid-cell:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #cbd5e1;
         }
         
-        /* Interactive Paint Modifications */
-        .grid-cell.player-painted {
-            background: #ec4899 !important;
-            border-color: #db2777 !important;
-            color: white !important;
-            box-shadow: 0 4px 0 #9d174d !important;
-        }
-        .grid-cell.auto-revealed {
-            background: #10b981 !important;
-            border-color: #059669 !important;
-            color: white !important;
-            box-shadow: 0 4px 0 #047857 !important;
-        }
+        /* State Modification Classes */
+        .grid-cell.player-painted { background: #ec4899 !important; }
+        .grid-cell.auto-revealed { background: #22c55e !important; }
 
-        /* --- INTERACTION FEEDBACK AND CONTROLS --- */
+        /* --- INTERACTION FOOTER PANEL --- */
         .interaction-panel {
             padding: 12px;
             background: #f8fafc;
@@ -204,7 +191,7 @@
             background: #fef3c7;
             border: 1px solid #fde68a;
             color: #92400e;
-            padding: 8px;
+            padding: 6px;
             border-radius: 6px;
             font-size: 0.8rem;
             font-weight: bold;
@@ -250,16 +237,16 @@
         </div>
 
         <div id="instruction-screen" class="hidden">
-            <h2 style="color: #475569; font-size: 1.4rem; margin-bottom: 10px;">⚖️ Metric Explorer Quest</h2>
+            <h2 style="color: #475569; font-size: 1.4rem; margin-bottom: 10px;">🎨 Metric Grid Painter</h2>
             <div class="scroll-box">
-                <h3>📏 Master Your Conversions</h3>
-                <p>Navigate dynamic challenges covering Length (mm, cm, m, km), Mass (g, kg), and Capacity (mL, L).</p>
+                <h3>🚫 Zero MCQ Text Options</h3>
+                <p>There are no text choices to pick from. You answer textbook conversion variables directly by painting a visual total on the canvas board.</p>
                 
-                <h3>👆 Interactive Grid Selection</h3>
-                <p>No typing numbers! Tap to paint the correct grid blocks that solve the metric puzzle or hold equivalent values.</p>
+                <h3>✏️ Paint to Measure</h3>
+                <p>Check the custom scale given in the prompt box (e.g., 1 Grid Block = 1 cm) and click to fill the exact number of squares that complete the mathematical value.</p>
                 
-                <h3>❤️ Two Match Attempts</h3>
-                <p>You have 2 hearts per level. Missing the second attempt will automatically paint and lock the accurate answers for you.</p>
+                <h3>❤️ 2 Hearts Per Mission</h3>
+                <p>Failing twice automatically triggers a structural safety override, instantly painting the correct geometric blocks for you in green.</p>
             </div>
             <button class="action-submit-btn" onclick="startAdventure()">Enter Game</button>
         </div>
@@ -271,8 +258,8 @@
             </div>
 
             <div id="quest-txt-box" class="quest-container">
-                <span class="mode-badge" id="mode-badge-lbl">Category</span>
-                <span id="instruction-txt">Loading metric variables...</span>
+                <span class="mode-badge" id="mode-badge-lbl">Scale Canvas</span>
+                <span id="instruction-txt">Loading metric dimensions...</span>
             </div>
 
             <div class="grid-viewport-area">
@@ -287,14 +274,14 @@
                 
                 <div class="hint-alert-box" id="hint-bubble"></div>
                 
-                <button class="action-submit-btn" id="verify-action-btn" onclick="verifyPlayerAnswer()">Verify Selection</button>
+                <button class="action-submit-btn" id="verify-action-btn" onclick="verifyPlayerPaint()">Verify Painted Total</button>
             </div>
         </div>
 
     </div>
 
     <script>
-        // Sound Pipelines
+        // Safe-Buffer Audio Tracks
         const soundCorrect = new Audio('assets/correct.mp3');
         const soundWrong = new Audio('assets/wrong.mp3');
 
@@ -302,7 +289,7 @@
             try {
                 audioObj.currentTime = 0;
                 audioObj.play();
-            } catch(e) { console.log("Audio pipeline status: Buffered."); }
+            } catch(e) { console.log("Audio systems standard alert buffered."); }
         }
 
         let currentActiveQuestions = [];
@@ -310,81 +297,71 @@
         let totalXp = 0;
         let attemptCount = 0;
 
-        // Structured Metric curriculum dataset covering Length, Mass, Capacity matching cards
-        const metricQuestPool = [
+        // Custom Metric Sandbox Tasks
+        const painterQuestPool = [
             {
                 category: "Length (mm ➔ cm)",
-                question: "Ria measured a coin diameter as 30 millimeters (mm). Select its exact equivalent in centimeters (cm)!",
-                options: ["3 cm", "300 cm", "0.3 cm", "30 cm"],
-                correctIndices: [0],
-                hint: "💡 HINT: Remember that 1 cm = 10 mm. Divide the millimeters by 10 to convert to cm!"
+                question: "Scale: 1 Block = 1 cm. Ria measures a coin's diameter as 30 millimeters (mm). Paint exactly how many centimeters that equals!",
+                targetCount: 3,
+                hint: "💡 HINT: 10 mm = 1 cm. So 30 mm equals 3 cm. Paint exactly 3 blocks anywhere on the grid canvas!"
             },
             {
                 category: "Capacity (mL ➔ L)",
-                question: "A standard jar holds 2,500 milliliters (mL) of water. Paint the correct equivalent value in liters (L)!",
-                options: ["25 L", "2.5 L", "0.25 L", "250 L"],
-                correctIndices: [1],
-                hint: "💡 HINT: There are 1,000 milliliters in 1 liter. Divide 2,500 by 1,000!"
-            },
-            {
-                category: "Mass (g ➔ kg)",
-                question: "A baking recipe requires 750 grams (g) of flour. Paint the correct equivalent in kilograms (kg)!",
-                options: ["7.5 kg", "75 kg", "0.75 kg", "0.075 kg"],
-                correctIndices: [2],
-                hint: "💡 HINT: 1 kg equals 1,000 grams. Shift the decimal point three spots to the left!"
-            },
-            {
-                category: "Length (m ➔ cm)",
-                question: "Select ALL options that show the correct equivalent of a 5-meter (m) piece of decoration ribbon!",
-                options: ["50 cm", "500 cm", "0.5 cm", "Five hundred cm"],
-                correctIndices: [1, 3],
-                hint: "💡 HINT: 1 meter = 100 centimeters. Multiply 5 by 100! Look carefully: there are TWO correct matches."
-            },
-            {
-                category: "Capacity (L ➔ mL)",
-                question: "Ria needs to serve 3.5 liters (L) of juice. Select the total capacity in milliliters (mL)!",
-                options: ["350 mL", "35,000 mL", "3,500 mL", "3.500 mL"],
-                correctIndices: [2],
-                hint: "💡 HINT: To go from liters to milliliters, multiply by 1,000!"
-            },
-            {
-                category: "Length (Route Comparison)",
-                question: "Route A is 3.2 km long. Route B is 2,800 m long. Paint the blocks that are TRUE about these routes!",
-                options: ["Route B is shorter", "Route A is shorter", "Route B = 2.8 km", "Route A = 320 m"],
-                correctIndices: [0, 2],
-                hint: "💡 HINT: Convert 2,800 meters into kilometers by dividing by 1,000 (2.8 km), then compare it to 3.2 km."
-            },
-            {
-                category: "Mass (Subtraction Matrix)",
-                question: "Ria buys a 5 kg bag of sugar and subtracts 750 grams for a cake. Paint the remaining balance left!",
-                options: ["4,250 g", "4.25 kg", "425 g", "4750 g"],
-                correctIndices: [0, 1],
-                hint: "💡 HINT: 5 kg is 5,000 grams. 5,000g minus 750g is 4,250g. Match both the grams and kilograms format!"
-            },
-            {
-                category: "Length (cm ➔ m)",
-                question: "An object is 450 centimeters (cm) long. Choose its proper conversion value in meters (m)!",
-                options: ["45 m", "4.5 m", "0.45 m", "4,500 m"],
-                correctIndices: [1],
-                hint: "💡 HINT: Convert cm to m by dividing by 100."
+                question: "Scale: 1 Block = 1 Liter. A container holds 4,000 milliliters (mL) of water. Paint its equivalent capacity value in Liters!",
+                targetCount: 4,
+                hint: "💡 HINT: 1,000 mL makes 1 Liter. 4,000 mL means you must paint exactly 4 blocks."
             },
             {
                 category: "Mass (kg ➔ g)",
-                question: "A parcel weighs exactly 8.54 kilograms. Select the block representing its value written out in grams (g)!",
-                options: ["854 g", "85,400 g", "8,540 g", "8.540 g"],
-                correctIndices: [2],
-                hint: "💡 HINT: Multiply kilograms by 1,000 to convert to grams."
+                question: "Scale: 1 Block = 1,000 grams. Paint the total metric balance matching a 5 kilogram (kg) package of flour!",
+                targetCount: 5,
+                hint: "💡 HINT: 1 kg = 1,000 grams. Therefore, a 5 kg parcel equals 5,000 grams. Fill exactly 5 boxes."
             },
             {
-                category: "Capacity (Multi-Bottle Fit)",
-                question: "Final Challenge: To get a total of 3.5 liters of juice, select the statements that accurately describe 500 mL bottles!",
-                options: ["Buy exactly 7 bottles", "Buy exactly 70 bottles", "7 bottles = 3,500 mL", "7 bottles = 35 L"],
-                correctIndices: [0, 2],
-                hint: "💡 HINT: Two 500 mL bottles make 1 Liter. So 7 bottles make 3.5 Liters (3,500 mL)!"
+                category: "Length (m ➔ cm)",
+                question: "Scale: 1 Block = 100 cm. Ria buys a decoration ribbon measuring 2 meters (m). Paint its total length value in centimeters!",
+                targetCount: 2,
+                hint: "💡 HINT: Each single meter contains 100 cm. 2 meters equals 200 cm, so paint exactly 2 grid blocks."
+            },
+            {
+                category: "Mass Balance (g)",
+                question: "Scale: 1 Block = 250 grams. A recipe needs 750 grams of sugar. Paint the exact weight quantity required!",
+                targetCount: 3,
+                hint: "💡 HINT: Count up by 250s! 250, 500, 750. You need to fill exactly 3 blocks."
+            },
+            {
+                category: "Length Comparison",
+                question: "Scale: 1 Block = 1 kilometer (km). Route A is 3 km long. Route B is 2,000 meters long. Paint the distance of Route B in kilometers!",
+                targetCount: 2,
+                hint: "💡 HINT: 2,000 meters translates to exactly 2 kilometers. Paint 2 blocks anywhere on the grid."
+            },
+            {
+                category: "Capacity Fitment",
+                question: "Scale: 1 Block = 500 mL bottle. Ria needs to serve 3 Liters of juice. Paint the exact number of 500 mL bottles she must buy!",
+                targetCount: 6,
+                hint: "💡 HINT: Two 500 mL bottles combine to make 1 full Liter. To get 3 Liters, you need 2 x 3 = 6 bottles. Fill 6 blocks!"
+            },
+            {
+                category: "Mass Subtraction",
+                question: "Scale: 1 Block = 1 kg. You have a 6 kg bag of flour and subtract 5,000 grams. Paint how many kilograms are left!",
+                targetCount: 1,
+                hint: "💡 HINT: 5,000 grams is 5 kg. 6 kg minus 5 kg leaves exactly 1 kg. Paint just 1 block."
+            },
+            {
+                category: "Length (cm ➔ m)",
+                question: "Scale: 1 Block = 1 meter. An object is 600 centimeters (cm) wide. Paint its equivalent value in meters!",
+                targetCount: 6,
+                hint: "💡 HINT: 100 centimeters equals 1 meter. 600 cm divided by 100 equals 6 meters. Paint 6 blocks."
+            },
+            {
+                category: "Capacity Accumulation",
+                question: "Final Challenge! Scale: 1 Block = 250 mL. A jar holds 1,250 mL of fluid. Paint how many 250 mL portions are inside!",
+                targetCount: 5,
+                hint: "💡 HINT: Divide 1,250 by 250. 250, 500, 750, 1000, 1250. That is exactly 5 blocks!"
             }
         ];
 
-        // 5-Second Splash Screen Timeout Execution
+        // 5-Second Brand Splash Screen Display Logic
         setTimeout(() => {
             const splash = document.getElementById("innovine-splash");
             if(splash) {
@@ -405,8 +382,7 @@
         }
 
         function startAdventure() {
-            // Keep the exact structural timeline, shuffling levels to make replays exciting
-            currentActiveQuestions = shuffleArray([...metricQuestPool]).slice(0, 10);
+            currentActiveQuestions = shuffleArray([...painterQuestPool]).slice(0, 10);
             levelIdx = 0;
             totalXp = 0;
 
@@ -435,13 +411,12 @@
             const canvas = document.getElementById("matrix-canvas");
             canvas.innerHTML = "";
 
-            // Populate the grid buttons dynamically
-            data.options.forEach((optionTxt, idx) => {
+            // Formulate standard blank 6x6 mathematical matrix block grid
+            for (let i = 0; i < 36; i++) {
                 let cell = document.createElement("div");
                 cell.className = "grid-cell";
-                cell.innerText = optionTxt;
-                cell.dataset.index = idx;
-
+                cell.innerText = "■";
+                
                 cell.onclick = () => {
                     if (!cell.classList.contains("auto-revealed")) {
                         cell.classList.toggle("player-painted");
@@ -449,7 +424,7 @@
                 };
                 
                 canvas.appendChild(cell);
-            });
+            }
         }
 
         function updateHeartsUI() {
@@ -465,22 +440,18 @@
             }
         }
 
-        function verifyPlayerAnswer() {
+        function verifyPlayerPaint() {
             let data = currentActiveQuestions[levelIdx];
             const cells = document.querySelectorAll(".grid-cell");
-            let containsError = false;
-
+            
+            let paintedCount = 0;
             cells.forEach(cell => {
-                let idx = parseInt(cell.dataset.index);
-                let shouldBeSelected = data.correctIndices.includes(idx);
-                let isSelected = cell.classList.contains("player-painted");
-
-                if (shouldBeSelected !== isSelected) {
-                    containsError = true;
+                if (cell.classList.contains("player-painted")) {
+                    paintedCount++;
                 }
             });
 
-            if (!containsError) {
+            if (paintedCount === data.targetCount) {
                 playSoundTrack(soundCorrect);
                 totalXp += (attemptCount === 0) ? 100 : 50;
                 document.getElementById("xp-lbl").innerText = `${totalXp} XP`;
@@ -491,7 +462,7 @@
                 hintBox.style.background = "#d1fae5";
                 hintBox.style.borderColor = "#10b981";
                 hintBox.style.color = "#065f46";
-                hintBox.innerHTML = "✨ Metric Conversion Verified Correct!";
+                hintBox.innerHTML = "✨ Unit Volume Balance Verified Correct!";
 
                 setTimeout(() => {
                     levelIdx++;
@@ -516,14 +487,12 @@
                     hintBox.style.background = "#fee2e2";
                     hintBox.style.borderColor = "#fca5a5";
                     hintBox.style.color = "#991b1b";
-                    hintBox.innerHTML = "❌ Out of attempts! Auto-revealing the equivalent values...";
+                    hintBox.innerHTML = `❌ Out of attempts! Auto-painting the correct ${data.targetCount} metric blocks...`;
 
-                    cells.forEach(cell => {
-                        let idx = parseInt(cell.dataset.index);
-                        let isCorrectTarget = data.correctIndices.includes(idx);
-                        
+                    // Safety auto-paint correct counts sequentially starting from block 1
+                    cells.forEach((cell, idx) => {
                         cell.classList.remove("player-painted");
-                        if (isCorrectTarget) {
+                        if (idx < data.targetCount) {
                             cell.classList.add("auto-revealed");
                         }
                     });
@@ -538,9 +507,9 @@
 
         function renderEndGameScreen() {
             document.getElementById("lvl-lbl").innerText = "FINISHED";
-            document.getElementById("quest-txt-box").innerHTML = "🎉 Metric Conversion Run Complete!";
+            document.getElementById("quest-txt-box").innerHTML = "🎉 Metric Painting Sandbox Run Completed!";
             
-            let finalRank = totalXp >= 800 ? "Grand Metric Master 👑" : "Senior Metric Explorer 📐";
+            let finalRank = totalXp >= 800 ? "Grand Metric Painter 👑" : "Senior Metric Scale Modeler 📐";
 
             document.getElementById("matrix-canvas").style.display = "none";
             document.getElementById("hearts-box").style.display = "none";
@@ -555,9 +524,9 @@
                 <div style="font-size: 4rem;">🏆</div>
                 <h3 style="color:#475569; font-size:1.3rem;">Total Final Score: ${totalXp} / 1000 XP</h3>
                 <p style="font-size:0.95rem; font-weight:bold; background:#e2e8f0; padding:8px 14px; border-radius:8px;">
-                    Rank Earned: <br><span style="color:#2563eb; font-size:1.1rem;">${finalRank}</span>
+                    Rank Metric: <br><span style="color:#db2777; font-size:1.1rem;">${finalRank}</span>
                 </p>
-                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Play Again</button>
+                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Restart Campaign</button>
             `;
             mainWindow.appendChild(summaryDiv);
         }
