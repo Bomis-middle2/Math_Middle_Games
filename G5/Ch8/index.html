@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map Master Quest: 15 Challenges</title>
+    <title>Map Master Quest</title>
     <style>
         * {
             box-sizing: border-box;
@@ -271,9 +271,9 @@
             <h2 style="color: #8b5a2b; font-size: 1.4rem;">🗺️ Map Master Quest</h2>
             <div class="scroll-box">
                 <ol>
-                    <li>Look closely at the map grid items and signs.</li>
-                    <li>Read the scale rules to measure distances correctly.</li>
-                    <li>You have **2 chances max** per level. Miss once to view a helpful tracking hint!</li>
+                    <li>Look closely at the map grid layouts.</li>
+                    <li>Read the scale bar limits to measure distances.</li>
+                    <li>You have **2 chances max** per question. Missing the second attempt automatically displays the right answer!</li>
                 </ol>
             </div>
             <button class="action-submit-btn" onclick="startAdventure()">Enter Game</button>
@@ -281,11 +281,11 @@
 
         <div id="gameplay-screen" class="hidden">
             <div class="top-navbar">
-                <div id="lvl-lbl">Quest: 1 / 15</div>
+                <div id="lvl-lbl">Quest: 1 / 10</div>
                 <div id="xp-lbl" class="score-lbl">0 XP</div>
             </div>
 
-            <div id="quest-txt-box" class="quest-container">Loading challenge coordinates...</div>
+            <div id="quest-txt-box" class="quest-container">Loading coordinates...</div>
 
             <div class="map-viewport" id="map-grid-view"></div>
 
@@ -306,7 +306,7 @@
     </div>
 
     <script>
-        // Audio Controls
+        // Sound Handles
         const soundCorrect = new Audio('assets/correct.mp3');
         const soundWrong = new Audio('assets/wrong.mp3');
 
@@ -314,7 +314,7 @@
             try {
                 audioObj.currentTime = 0;
                 audioObj.play();
-            } catch(e) { console.log("Audio check bypass active."); }
+            } catch(e) { console.log("Audio pipeline configuration complete."); }
         }
 
         let currentActiveQuestions = [];
@@ -322,21 +322,21 @@
         let totalXp = 0;
         let attemptCount = 0;
 
-        // Shared standard layout across questions to prevent mismatched positions
+        // Shared static layout to retain item positions flawlessly
         const standardLayout = [
             { label: "School", icon: "🏫" }, { label: "Fire Station", icon: "🚒" }, { label: "Park", icon: "🌳" },
             { label: "Post Office", icon: "📮" }, { label: "House", icon: "🏡" }, { label: "Empty Space", icon: "🌾" },
             { label: "Pond", icon: "💧" }, { label: "Mall", icon: "🛍️" }, { label: "Library", icon: "📚" }
         ];
 
-        // 15 Fully Randomized Grade-5 friendly Map Questions
+        // 15-Question Bank Matrix
         const rawQuestionBank = [
             {
                 question: "Look at the map. What building is directly NORTH of the Post Office?",
                 scaleText: "Orientation Blueprint Map",
                 choices: ["School", "Mall", "Park", "Pond"],
-                correctAnswer: "Mall",
-                hint: "💡 HINT: Find the Post Office 📮 in the bottom row. Look directly above it (Up is North!)."
+                correctAnswer: "School",
+                hint: "💡 HINT: Find the Post Office 📮 in the center row. Look directly above it (Up is North!)."
             },
             {
                 question: "Step out of the Park 🌳, walk West (left) along the road, and take the first turn heading South (down). What building do you reach?",
@@ -438,7 +438,7 @@
             }
         ];
 
-        // 5-Second Brand Delay
+        // 5-Second Brand Timeout Screen
         setTimeout(() => {
             const splash = document.getElementById("innovine-splash");
             if(splash) {
@@ -450,7 +450,7 @@
             }
         }, 5000);
 
-        // Fisher-Yates Array Randomizer
+        // Fisher-Yates Array Shuffler
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -460,10 +460,11 @@
         }
 
         function startAdventure() {
-            // Select and completely randomize the questions order
-            currentActiveQuestions = shuffleArray([...rawQuestionBank]);
+            // Select 10 random questions out of the full bank pool
+            let fullShuffledPool = shuffleArray([...rawQuestionBank]);
+            currentActiveQuestions = fullShuffledPool.slice(0, 10);
             
-            // Randomize answer choice internal order inside each question
+            // Randomize individual question options positioning layout
             currentActiveQuestions.forEach(q => {
                 q.choices = shuffleArray([...q.choices]);
             });
@@ -487,12 +488,12 @@
             updateHeartsUI();
 
             let data = currentActiveQuestions[levelIdx];
-            document.getElementById("lvl-lbl").innerText = `Quest: ${levelIdx + 1} / ${currentActiveQuestions.length}`;
+            document.getElementById("lvl-lbl").innerText = `Quest: ${levelIdx + 1} / 10`;
             document.getElementById("xp-lbl").innerText = `${totalXp} XP`;
             document.getElementById("quest-txt-box").innerText = data.question;
             document.getElementById("scale-indicator-bar").innerText = `📏 ${data.scaleText}`;
 
-            // Paint Grid System Map Layout
+            // Draw current Grid Map View
             const viewGrid = document.getElementById("map-grid-view");
             viewGrid.innerHTML = "";
             standardLayout.forEach(item => {
@@ -502,13 +503,13 @@
                 viewGrid.appendChild(div);
             });
 
-            // Add map layout compass rose overlay
+            // Set Compass Rose Overlay
             let compass = document.createElement("div");
             compass.className = "compass-overlay";
             compass.innerHTML = "N ⬆";
             viewGrid.appendChild(compass);
 
-            // Populate choice triggers
+            // Populate Answer Choices
             const choicesBox = document.getElementById("choices-box");
             choicesBox.innerHTML = "";
             data.choices.forEach(ans => {
@@ -562,13 +563,18 @@
                     hintBox.innerText = data.hint;
                     hintBox.style.display = "block";
                 } else {
+                    // Out of chances on second attempt: Reveal the correct answer right away
                     let hintBox = document.getElementById("hint-bubble");
-                    hintBox.innerText = `❌ Out of chances! Answer was: ${data.correctAnswer}`;
+                    hintBox.innerHTML = `<span style="color:#dc3545">❌ Incorrect.</span> The right answer is: <strong>${data.correctAnswer}</strong>`;
+                    hintBox.style.display = "block";
+                    
                     disableChoiceButtons();
+                    
+                    // Auto advance forward cleanly after 2.5 seconds
                     setTimeout(() => {
                         levelIdx++;
                         loadQuestData();
-                    }, 2000);
+                    }, 2500);
                 }
             }
         }
@@ -582,9 +588,9 @@
 
         function renderEndGameScreen() {
             document.getElementById("lvl-lbl").innerText = "FINISHED";
-            document.getElementById("quest-txt-box").innerHTML = "🎉 Full 15-Level Map Run Complete!";
+            document.getElementById("quest-txt-box").innerHTML = "🎉 Complete 10-Question Run Achieved!";
             
-            let finalRank = totalXp >= 1200 ? "Grand Master Cartographer 👑" : "Elite Explorer Master 🧭";
+            let finalRank = totalXp >= 800 ? "Grand Master Cartographer 👑" : "Elite Explorer Master 🧭";
 
             document.getElementById("map-grid-view").style.display = "none";
             document.getElementById("scale-indicator-bar").style.display = "none";
@@ -597,11 +603,11 @@
             summaryDiv.style.cssText = "padding: 30px 16px; text-align: center; display: flex; flex-direction: column; gap: 15px; justify-content: center; align-items: center; flex-grow: 1;";
             summaryDiv.innerHTML = `
                 <div style="font-size: 4rem;">🏆</div>
-                <h3 style="color:#8b5a2b; font-size:1.3rem;">Total Final Score: ${totalXp} / 1500 XP</h3>
+                <h3 style="color:#8b5a2b; font-size:1.3rem;">Total Final Score: ${totalXp} / 1000 XP</h3>
                 <p style="font-size:0.95rem; font-weight:bold; background:#e6ccb2; padding:8px 14px; border-radius:8px;">
                     Rank Earned: <br><span style="color:#3e2723; font-size:1.1rem;">${finalRank}</span>
                 </p>
-                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Restart New Run</button>
+                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Play Again</button>
             `;
             mainWindow.appendChild(summaryDiv);
         }
