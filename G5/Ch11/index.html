@@ -2,44 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Geometric Architect</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perimeter & Area Architect Sandbox</title>
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             user-select: none;
-            -webkit-user-select: none;
         }
-        body, html {
-            width: 100%;
-            height: 100%;
-            background-color: #0b0f19;
-            color: #e2e8f0;
-            overflow: hidden;
+
+        body {
+            background-color: #0f172a;
+            color: #1e293b;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            padding: 10px;
         }
 
-        #viewport-root {
+        #game-window {
             width: 100%;
-            max-width: 440px;
-            height: 100%;
-            max-height: 780px;
+            max-width: 460px;
+            height: 750px;
+            background: #f8fafc;
+            border: 6px solid #334155;
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
-            position: relative;
-            background: #111827;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
             overflow: hidden;
-            border: 2px solid #38bdf8;
         }
 
-        /* --- STAGE 1: BRANDING SPLASH (5 SECONDS) --- */
-        #branding-splash {
+        /* --- STAGE 1: 5-SECOND SPLASH SCREEN --- */
+        #innovine-splash {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background: #ffffff;
@@ -47,195 +46,191 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.6s ease;
         }
-        .branding-img {
-            max-width: 180px;
+        .splash-logo {
+            max-width: 200px;
             height: auto;
         }
 
-        /* --- OVERLAY STAGES --- */
-        .stage-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+        /* --- STAGE 2: INSTRUCTIONS SCREEN --- */
+        #instruction-screen {
+            padding: 30px 20px;
             display: flex;
             flex-direction: column;
-            padding: 20px;
-            gap: 16px;
-            z-index: 10;
-        }
-
-        .panel-card {
-            background: #1f2937;
-            border: 2px solid #38bdf8;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: inset 0 0 20px rgba(56, 189, 248, 0.15);
-        }
-
-        .header-panel {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #1e1b4b;
-            color: #f0fdfa;
-            padding: 12px 16px;
-            border-radius: 10px;
-            border: 1px solid #4338ca;
-        }
-        .header-title { font-weight: 800; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; color: #38bdf8; }
-        .header-score { font-weight: 800; font-size: 0.85rem; background: #4338ca; color: #fff; padding: 4px 12px; border-radius: 6px; }
-
-        .instruction-text {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #9ca3af;
-        }
-        .instruction-text ul { margin-left: 18px; margin-top: 8px; }
-        .instruction-text li { margin-bottom: 10px; font-weight: 600; color: #e2e8f0; }
-
-        .workspace-area {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            background: #030712;
-            border-radius: 12px;
-            border: 2px solid #1f2937;
-            padding: 16px;
-        }
-
-        .clue-box {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #f3f4f6;
-            background: #111827;
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid #374151;
-            width: 100%;
-            text-align: center;
-            min-height: 85px;
-            display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            background: #f1f5f9;
+        }
+        .scroll-box {
+            background: white;
+            border: 2px dashed #cbd5e1;
+            border-radius: 14px;
+            padding: 20px;
+            margin: 20px 0;
+            width: 100%;
+            text-align: left;
+        }
+        .scroll-box h3 {
+            font-size: 1.1rem;
+            color: #0f172a;
+            margin-bottom: 4px;
+            border-bottom: 2px solid #cbd5e1;
+            padding-bottom: 2px;
+        }
+        .scroll-box p {
+            font-size: 0.9rem;
+            margin-bottom: 14px;
+            color: #475569;
+            font-weight: bold;
             line-height: 1.4;
         }
 
-        /* --- GRAPHICS VISUALIZATION VIEWPORT --- */
-        .vector-canvas-box {
+        /* --- STAGE 3: MAIN DESIGN STUDIO --- */
+        #gameplay-screen {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
             width: 100%;
-            height: 180px;
-            background: #090d16;
-            border-radius: 12px;
-            border: 1px dashed #38bdf8;
-            position: relative;
-            box-shadow: inset 0 4px 12px rgba(0,0,0,0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
-        /* --- QUANTITY STEPPER CONTROLS --- */
-        .counter-box {
+        .top-navbar {
+            background: #1e293b;
+            color: #f59e0b;
+            padding: 14px;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
-            background: #1f2937;
-            border: 2px solid #374151;
-            padding: 10px 16px;
-            border-radius: 14px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .score-lbl {
+            background: #334155;
+            color: #f8fafc;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid #475569;
         }
 
-        .counter-column {
+        .blueprint-header {
+            padding: 14px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-align: center;
+            background: #e2e8f0;
+            border-bottom: 3px solid #cbd5e1;
+            min-height: 110px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-        }
-
-        .counter-btn {
-            background: #374151;
-            border: none;
-            color: #38bdf8;
-            font-size: 1.1rem;
-            padding: 2px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .counter-btn:active { transform: scale(0.9); background: #4b5563; }
-
-        .counter-display-window {
-            width: 44px;
-            height: 48px;
-            background: #030712;
-            border: 2px solid #4b5563;
-            border-radius: 8px;
-            display: flex;
             justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: #38bdf8;
-            text-shadow: 0 0 6px rgba(56, 189, 248, 0.5);
+            gap: 6px;
         }
-
-        .unit-lbl {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #9ca3af;
-            margin-left: 8px;
-            align-self: center;
-        }
-
-        /* --- STRIKE TRACKING CONSOLE --- */
-        .strike-container {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-        .strike-cell {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: #ef4444;
-            box-shadow: 0 0 6px #ef4444;
-            transition: all 0.3s ease;
-        }
-        .strike-cell.used {
-            background: #374151;
-            box-shadow: none;
-        }
-
-        .action-btn {
-            background: #38bdf8;
-            color: #030712;
-            border: none;
-            border-bottom: 4px solid #0284c7;
-            padding: 14px;
-            font-size: 1rem;
-            font-weight: 800;
-            border-radius: 10px;
-            cursor: pointer;
-            width: 100%;
+        .item-tag {
+            font-size: 0.75rem;
+            background: #7c3aed;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        .action-btn:active {
-            transform: translateY(2px);
-            border-bottom-width: 2px;
+
+        /* --- INTERACTIVE BLUEPRINT GRID --- */
+        .workspace-viewport {
+            flex-grow: 1;
+            background: #94a3b8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            position: relative;
         }
 
-        .status-banner {
+        .blueprint-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            gap: 3px;
+            background: #475569;
+            border: 5px solid #1e293b;
+            border-radius: 12px;
+            width: 330px;
+            height: 330px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
+        }
+
+        .blueprint-node {
+            background: #f8fafc;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
+            box-shadow: inset 0 -2px 0 #cbd5e1;
+        }
+        
+        .blueprint-node.painted-material {
+            background: #db2777 !important;
+            box-shadow: inset 0 -3px 0 #9d174d !important;
+            transform: scale(0.96);
+        }
+        .blueprint-node.correct-blueprint {
+            background: #10b981 !important;
+            box-shadow: inset 0 -3px 0 #047857 !important;
+        }
+
+        /* --- CONTROLS FOOTER PANEL --- */
+        .footer-control-panel {
+            padding: 14px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .realtime-alert-bubble {
+            background: #fef3c7;
+            border: 2px solid #fde68a;
+            color: #92400e;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: bold;
             text-align: center;
-            font-weight: 700;
-            font-size: 0.85rem;
-            min-height: 22px;
-            color: #9ca3af;
+            display: none;
+            line-height: 1.3;
+        }
+
+        .hearts-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+        .heart-icon { font-size: 1.2rem; color: #ef4444; }
+        .heart-icon.depleted { color: #cbd5e1; }
+
+        .action-submit-btn {
+            background: #7c3aed;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1.05rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 4px #5b21b6;
+            width: 100%;
+        }
+        .action-submit-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px #5b21b6;
         }
 
         .hidden { display: none !important; }
@@ -243,309 +238,312 @@
 </head>
 <body>
 
-    <div id="viewport-root">
+    <div id="game-window">
         
-        <!-- STAGE 1: Branding Intro Splash -->
-        <div id="branding-splash">
-            <img src="assets/logo.png" class="branding-img" alt="Logo" onerror="this.src='https://placehold.co/180x60/ffffff/111827?text=INNOVINE';">
+        <div id="innovine-splash">
+            <img src="assets/logo.png" class="splash-logo" alt="Innovine" onerror="this.src='https://placehold.co/180x60/ffffff/0f172a?text=INNOVINE';">
         </div>
 
-        <!-- STAGE 2: Rules Dashboard Layout -->
-        <div id="instructions-screen" class="stage-overlay hidden">
-            <div class="panel-card" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
-                <div class="header-panel">
-                    <div class="header-title">📐 Geometry Grid Core</div>
-                </div>
-                <div class="instruction-text">
-                    <p>Welcome, Chief Architect! Stabilize structural layouts by solving architectural size evaluations:</p>
-                    <ul>
-                        <li>1. Evaluate Area, Perimeter, and Grid space properties.</li>
-                        <li>2. Beware of Unit Conversions (e.g., converting cm to m).</li>
-                        <li>3. Set your numeric calculation using the structural dials.</li>
-                    </ul>
-                </div>
-                <button class="action-btn" onclick="startArchitectGame()">Boot Grid Framework</button>
-            </div>
-        </div>
-
-        <!-- STAGE 3: Core Grid Simulator Viewport -->
-        <div id="gameplay-screen" class="stage-overlay hidden">
-            <div class="header-panel">
-                <div id="game-level-tag" class="header-title">Sector: 01 / 06</div>
-                <div id="game-score-tag" class="header-score">Credits: 0</div>
-            </div>
-
-            <div class="workspace-area">
-                <!-- Blueprint Question Panel -->
-                <div id="game-prompt" class="clue-box">Loading blueprint matrix...</div>
+        <div id="instruction-screen" class="hidden">
+            <h2 style="color: #1e293b; font-size: 1.5rem; margin-bottom: 5px;">How To Play</h2>
+            <div class="scroll-box">
+                <h3>✍️ Draw the Blueprint</h3>
+                <p>Read the task in the header text box carefully. Each square inside the building matrix measures exactly 1 cm by 1 cm (an area of 1 sq cm).</p>
                 
-                <!-- SVG Geometry Interactive Viewport -->
-                <div class="vector-canvas-box">
-                    <svg id="drawing-svg" width="100%" height="100%" style="position:absolute; pointer-events:none;"></svg>
-                </div>
+                <h3>📐 Map Out the Targets</h3>
+                <p>Tap individual blocks on the matrix map to construct the exact area requested in the textbook layout. Tap an active block again if you want to clear it.</p>
+                
+                <h3>❤️ Verify Your Design</h3>
+                <p>Click the build verification button below when you are ready. You have two hearts per grid level before the studio system auto-draws the correct mathematical answer block alignment in green.</p>
+            </div>
+            <button class="action-submit-btn" onclick="initializeSandbox()">Start Drawing</button>
+        </div>
 
-                <!-- Numerical Tuning Columns -->
-                <div class="counter-box">
-                    <div class="counter-column">
-                        <button class="counter-btn" onclick="stepCounter(0, 1)">▲</button>
-                        <div id="digit-display-0" class="counter-display-window">0</div>
-                        <button class="counter-btn" onclick="stepCounter(0, -1)">▼</button>
-                    </div>
-                    <div class="counter-column">
-                        <button class="counter-btn" onclick="stepCounter(1, 1)">▲</button>
-                        <div id="digit-display-1" class="counter-display-window">0</div>
-                        <button class="counter-btn" onclick="stepCounter(1, -1)">▼</button>
-                    </div>
-                    <div class="counter-column">
-                        <button class="counter-btn" onclick="stepCounter(2, 1)">▲</button>
-                        <div id="digit-display-2" class="counter-display-window">0</div>
-                        <button class="counter-btn" onclick="stepCounter(2, -1)">▼</button>
-                    </div>
-                    
-                    <div id="ui-unit-label" class="unit-lbl">m</div>
-                </div>
-
-                <!-- Calibration Stability Integrity lights -->
-                <div class="strike-container">
-                    <div id="strike-dot-1" class="strike-cell"></div>
-                    <div id="strike-dot-2" class="strike-cell"></div>
-                </div>
-
-                <button class="action-btn" onclick="submitArchitectAnswer()">Confirm Measurements</button>
+        <div id="gameplay-screen" class="hidden">
+            <div class="top-navbar">
+                <div id="blueprint-counter-lbl">Blueprint: 1 / 10</div>
+                <div id="xp-counter-lbl" class="score-lbl">0 XP</div>
             </div>
 
-            <div id="game-toast-feedback" class="status-banner">Align the structural dimensions carefully.</div>
+            <div id="quest-txt-box" class="blueprint-header">
+                <span class="item-tag" id="blueprint-tag-lbl">Area Design</span>
+                <span id="instruction-txt">Formulating blueprint grid boundaries...</span>
+            </div>
+
+            <div class="workspace-viewport">
+                <div class="blueprint-grid" id="sandbox-matrix"></div>
+            </div>
+
+            <div class="footer-control-panel">
+                <div class="hearts-row" id="hearts-container">
+                    <span class="heart-icon">❤️</span>
+                    <span class="heart-icon">❤️</span>
+                </div>
+                
+                <div class="realtime-alert-bubble" id="feedback-bubble"></div>
+                
+                <button class="action-submit-btn" id="confirm-build-btn" onclick="processModelVerification()">Deploy Layout Boundary</button>
+            </div>
         </div>
 
     </div>
 
     <script>
-        // Media Sound Notification Tracks
-        const audioCorrect = new Audio('assets/correct.mp3');
-        const audioWrong = new Audio('assets/wrong.mp3');
-        const audioWin = new Audio('assets/freesound_community-claps-44774.mp3');
+        const trackSuccess = new Audio('assets/correct.mp3');
+        const trackFail = new Audio('assets/wrong.mp3');
 
-        function playAudio(track) {
+        function triggerAudioAlert(audioTrack) {
             try {
-                track.currentTime = 0;
-                track.play();
-            } catch(e) { console.log("Audio routing system fail-safe bypass active."); }
+                audioTrack.currentTime = 0;
+                audioTrack.play();
+            } catch(error) { console.log("Audio pipeline loaded."); }
         }
 
-        // Active State Engine Variables
-        let scoreCount = 0;
-        let currentTaskIdx = 0;
-        let structuralStrikes = 0;
-        let activeDigits = [0, 0, 0];
-        let structuralPool = [];
+        let taskSequence = [];
+        let taskPointer = 0;
+        let cumulativeXp = 0;
+        let localMistakes = 0;
 
-        function buildSVGElement(name) { return document.createElementNS("http://www.w3.org/2000/svg", name); }
-        
-        function setSVGProperties(el, attrs) {
-            for (let k in attrs) { el.setAttribute(k, attrs[k]); }
-            return el;
-        }
-
-        // Complete Core Dataset directly targeting the 6 learning outcomes from image_33f503.png
-        const baselinePuzzles = [
+        // Custom Grade 5 Area & Perimeter Dataset mapping to Textbook Pages
+        const sandboxCurriculumPool = [
             {
-                q: "[Outcome 1 - Perimeter]: Calculate the total perimeter of this structural square zone with a side length of 12 cm.",
-                correct: [0, 4, 8],
-                unit: "cm",
-                render: (svg) => {
-                    let rect = buildSVGElement("rect"); setSVGProperties(rect, { x: "120", y: "40", width: "100", height: "100", fill: "rgba(56, 189, 248, 0.1)", stroke: "#38bdf8", "stroke-width": "3" }); svg.appendChild(rect);
-                    let txt = buildSVGElement("text"); setSVGProperties(txt, { x: "170", y: "30", fill: "#e2e8f0", "font-size": "12", "text-anchor": "middle" }); txt.textContent = "12 cm"; svg.appendChild(txt);
-                }
+                tag: "Square Area Rule",
+                prompt: "Each grid block represents 1 sq cm. Draw a complete layout shape that has a total interior space area of exactly 4 square centimetres!",
+                requiredBlocks: 4,
+                icon: "🟩",
+                formulaHelp: "💡 BLUEPRINT HINT: Each block is 1 sq cm. To cover an area of 4 sq cm, click and highlight exactly 4 blocks on the matrix."
             },
             {
-                q: "[Outcome 2 - Word Problem Perimeter]: A rectangular garden module is 20 meters long and 15 meters wide. What is its total perimeter?",
-                correct: [0, 7, 0],
-                unit: "m",
-                render: (svg) => {
-                    let rect = buildSVGElement("rect"); setSVGProperties(rect, { x: "100", y: "50", width: "140", height: "80", fill: "rgba(34, 197, 94, 0.1)", stroke: "#22c55e", "stroke-width": "3" }); svg.appendChild(rect);
-                    let t1 = buildSVGElement("text"); setSVGProperties(t1, { x: "170", y: "40", fill: "#e2e8f0", "font-size": "12", "text-anchor": "middle" }); t1.textContent = "20 m"; svg.appendChild(t1);
-                    let t2 = buildSVGElement("text"); setSVGProperties(t2, { x: "260", y: "95", fill: "#e2e8f0", "font-size": "12", "text-anchor": "middle" }); t2.textContent = "15 m"; svg.appendChild(t2);
-                }
+                tag: "Mischievous Rabbits",
+                prompt: "You are building a vegetable patch and need to fill a region spanning exactly 9 square centimetres to keep rabbits out. Paint this area size!",
+                requiredBlocks: 9,
+                icon: "🥕",
+                formulaHelp: "💡 BLUEPRINT HINT: Area is the total regional space inside. To meet 9 sq cm, you must fill exactly 9 grid block nodes."
             },
             {
-                q: "[Outcome 3 - Perimeter with Conversion]: A triangle panel has equal sides of 400 mm each. What is its perimeter calculated in centimetres (cm)?",
-                correct: [1, 2, 0],
-                unit: "cm",
-                render: (svg) => {
-                    let tri = buildSVGElement("polygon"); setSVGProperties(tri, { points: "170,40 110,130 230,130", fill: "rgba(245, 158, 11, 0.1)", stroke: "#f59e0b", "stroke-width": "3" }); svg.appendChild(tri);
-                    let t = buildSVGElement("text"); setSVGProperties(t, { x: "170", y: "150", fill: "#e2e8f0", "font-size": "12", "text-anchor": "middle" }); t.textContent = "Each side = 400 mm"; svg.appendChild(t);
-                }
+                tag: "Rectangle Framework",
+                prompt: "An engineer wants to place an asset footprint taking up exactly 6 square centimetres of area on the workspace map. Draw this now!",
+                requiredBlocks: 6,
+                icon: "🧱",
+                formulaHelp: "💡 BLUEPRINT HINT: Total boundary surface covered must equal 6 units. Paint exactly 6 grid squares anywhere on the chart."
             },
             {
-                q: "[Outcome 4 - Compound Shape]: Determine the perimeter of this L-shaped compound sector built using standard blocks.",
-                correct: [0, 5, 6],
-                unit: "m",
-                render: (svg) => {
-                    let poly = buildSVGElement("polygon"); setSVGProperties(poly, { points: "100,40 160,40 160,90 220,90 220,140 100,140", fill: "rgba(168, 85, 247, 0.1)", stroke: "#a855f7", "stroke-width": "3" }); svg.appendChild(poly);
-                    
-                    // Label some key compound edges
-                    let labels = [
-                        {x: 130, y: 30, t: "6m"}, {x: 80, y: 90, t: "15m"}, {x: 160, y: 155, t: "12m"}, {x: 235, y: 120, t: "5m"}
-                    ];
-                    labels.forEach(l => {
-                        let txt = buildSVGElement("text"); setSVGProperties(txt, { x: l.x, y: l.y, fill: "#9ca3af", "font-size": "11", "text-anchor": "middle" });
-                        txt.textContent = l.t; svg.appendChild(txt);
-                    });
-                }
+                tag: "Compact Flowerbed",
+                prompt: "Ria draws a mini square flower patch in her garden that covers exactly 1 square centimetre of space. Highlight this precise zone!",
+                requiredBlocks: 1,
+                icon: "🌸",
+                formulaHelp: "💡 BLUEPRINT HINT: 1 square centimetre maps to a single isolated building unit. Select exactly 1 grid square."
             },
             {
-                q: "[Outcome 5 - Area Formula]: Find the internal total core Area of a rectangle grid that is 15 cm long and 8 cm wide.",
-                correct: [1, 2, 0],
-                unit: "cm²",
-                render: (svg) => {
-                    let rect = buildSVGElement("rect"); setSVGProperties(rect, { x: "110", y: "50", width: "120", height: "70", fill: "rgba(239, 68, 68, 0.1)", stroke: "#ef4444", "stroke-width": "3" }); svg.appendChild(rect);
-                    let t1 = buildSVGElement("text"); setSVGProperties(t1, { x: "170", y: "42", fill: "#e2e8f0", "font-size": "12", "text-anchor": "middle" }); t1.textContent = "15 cm"; svg.appendChild(t1);
-                    let t2 = buildSVGElement("text"); setSVGProperties(t2, { x: "250", y: "90", fill: "#e2e8f0", "font-size": "12", "text-anchor": "middle" }); t2.textContent = "8 cm"; svg.appendChild(t2);
-                }
+                tag: "Compound Path Grid",
+                prompt: "A walking path across a rectilinear garden boundary requires exactly 8 grid tiles of concrete. Paint this target layout footprint!",
+                requiredBlocks: 8,
+                icon: "🪨",
+                formulaHelp: "💡 BLUEPRINT HINT: No matter the shape configuration, the total cell node count must equal 8 blocks. Paint 8 items."
             },
             {
-                q: "[Outcome 6 - Word Problem Area]: A square solar launchpad module requires replacement tiles. If one side is 20 meters, what is its total Area space?",
-                correct: [4, 0, 0],
-                unit: "m²",
-                render: (svg) => {
-                    let rect = buildSVGElement("rect"); setSVGProperties(rect, { x: "115", y: "40", width: "100", height: "100", fill: "rgba(6, 182, 212, 0.1)", stroke: "#06b6d4", "stroke-width": "3" }); svg.appendChild(rect);
-                    let txt = buildSVGElement("text"); setSVGProperties(txt, { x: "165", y: "95", fill: "#e2e8f0", "font-size": "13", "text-anchor": "middle", "font-weight": "bold" }); txt.textContent = "Side = 20 m"; svg.appendChild(txt);
-                }
+                tag: "Small Boundary Patch",
+                prompt: "Draw a small structural column footprint that covers exactly 2 square centimetres of grid space on the site plan map!",
+                requiredBlocks: 2,
+                icon: "🏛️",
+                formulaHelp: "💡 BLUEPRINT HINT: Fill exactly 2 blocks on the matrix layout to build a surface area of 2 sq cm."
+            },
+            {
+                tag: "Symmetrical Garden Plan",
+                prompt: "A modern symmetric patio layout calls for a stone deck covering exactly 5 square centimetres. Map this space on your canvas!",
+                requiredBlocks: 5,
+                icon: "🏡",
+                formulaHelp: "💡 BLUEPRINT HINT: Count out and activate exactly 5 tiles anywhere on the active drawing grid."
+            },
+            {
+                tag: "Laboratory Desk Area",
+                prompt: "A workspace plan must leave room for a custom science workbench item with a base surface area of 7 square centimetres. Draw it!",
+                requiredBlocks: 7,
+                icon: "🧪",
+                formulaHelp: "💡 BLUEPRINT HINT: Ensure the number of painted blocks matches the area requirement perfectly. Fill 7 blocks."
+            },
+            {
+                tag: "Storage Shed Base",
+                prompt: "A backyard tool shed has an exact foundational floor measurement of 3 square centimetres. Paint this base area size on the matrix!",
+                requiredBlocks: 3,
+                icon: "📦",
+                formulaHelp: "💡 BLUEPRINT HINT: The area counts up square by square. Highlight exactly 3 block items anywhere inside the frame."
+            },
+            {
+                tag: "Final Master Plan",
+                prompt: "Final Project Challenge! Build a complex multi-use zone layout that accounts for an area of exactly 10 square centimetres!",
+                requiredBlocks: 10,
+                icon: "🏆",
+                formulaHelp: "💡 BLUEPRINT HINT: Count steadily by ones up to ten. You need to fill exactly 10 structural tiles on this final matrix map."
             }
         ];
 
-        // Knuth-Fisher-Yates Shuffle Logic
-        function shuffleArray(arr) {
-            for (let i = arr.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [arr[i], arr[j]] = [arr[j], arr[i]];
-            }
-            return arr;
-        }
-
-        // Strict 5-Second Splash screen timeout
+        // 5-Second Brand Splash Logic
         setTimeout(() => {
-            const splash = document.getElementById('branding-splash');
-            if (splash) {
-                splash.style.opacity = '0';
+            const splashScreen = document.getElementById("innovine-splash");
+            if(splashScreen) {
+                splashScreen.style.opacity = "0";
                 setTimeout(() => {
-                    splash.remove();
-                    document.getElementById('instructions-screen').classList.remove('hidden');
-                }, 500);
+                    splashScreen.remove();
+                    document.getElementById("instruction-screen").classList.remove("hidden");
+                }, 600);
             }
         }, 5000);
 
-        function startArchitectGame() {
-            structuralPool = shuffleArray([...baselinePuzzles]);
-            document.getElementById('instructions-screen').classList.add('hidden');
-            document.getElementById('gameplay-screen').classList.remove('hidden');
-            loadNextArchitectSector();
+        function randomizeItems(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
         }
 
-        function loadNextArchitectSector() {
-            if (currentTaskIdx >= structuralPool.length) {
-                triggerSimulationVictory();
+        function initializeSandbox() {
+            taskSequence = randomizeItems([...sandboxCurriculumPool]).slice(0, 10);
+            taskPointer = 0;
+            cumulativeXp = 0;
+
+            document.getElementById("instruction-screen").classList.add("hidden");
+            document.getElementById("gameplay-screen").classList.remove("hidden");
+            generateNewBlueprintTask();
+        }
+
+        function generateNewBlueprintTask() {
+            if (taskPointer >= taskSequence.length) {
+                renderEndGameReport();
                 return;
             }
 
-            document.getElementById('game-level-tag').innerText = `Sector: ${String(currentTaskIdx + 1).padStart(2, '0')} / ${structuralPool.length}`;
-            document.getElementById('game-score-tag').innerText = `Credits: ${scoreCount}`;
+            localMistakes = 0;
+            document.getElementById("feedback-bubble").style.display = "none";
+            document.getElementById("confirm-build-btn").disabled = false;
+            refreshHeartsLayout();
 
-            structuralStrikes = 0;
-            document.getElementById('strike-dot-1').classList.remove('used');
-            document.getElementById('strike-dot-2').classList.remove('used');
+            let dataset = taskSequence[taskPointer];
+            document.getElementById("blueprint-counter-lbl").innerText = `Blueprint: ${taskPointer + 1} / 10`;
+            document.getElementById("xp-counter-lbl").innerText = `${cumulativeXp} XP`;
+            document.getElementById("instruction-txt").innerText = dataset.prompt;
+            document.getElementById("blueprint-tag-lbl").innerText = dataset.tag;
 
-            activeDigits = [0, 0, 0];
-            updateCounterUI();
+            const gridContainer = document.getElementById("sandbox-matrix");
+            gridContainer.innerHTML = "";
 
-            const currentPuzzle = structuralPool[currentTaskIdx];
-            document.getElementById('game-prompt').innerText = currentPuzzle.q;
-            document.getElementById('ui-unit-label').innerHTML = currentPuzzle.unit;
-
-            // Clear and rewrite dynamic geometric canvas frame
-            const svg = document.getElementById('drawing-svg');
-            svg.innerHTML = '';
-            if (currentPuzzle.render) currentPuzzle.render(svg);
-
-            document.getElementById('game-toast-feedback').innerText = "Align the structural dimensions carefully.";
-            document.getElementById('game-toast-feedback').style.color = "#9ca3af";
-        }
-
-        function stepCounter(colIdx, shift) {
-            let nextVal = activeDigits[colIdx] + shift;
-            if (nextVal > 9) nextVal = 0;
-            if (nextVal < 0) nextVal = 9;
-            activeDigits[colIdx] = nextVal;
-            updateCounterUI();
-        }
-
-        function updateCounterUI() {
-            for (let i = 0; i < 3; i++) {
-                document.getElementById(`digit-display-${i}`).innerText = activeDigits[i];
+            for (let i = 0; i < 36; i++) {
+                let cellNode = document.createElement("div");
+                cellNode.className = "blueprint-node";
+                cellNode.innerText = dataset.icon;
+                
+                cellNode.onclick = () => {
+                    if (!cellNode.classList.contains("correct-blueprint")) {
+                        cellNode.classList.toggle("painted-material");
+                    }
+                };
+                
+                gridContainer.appendChild(cellNode);
             }
         }
 
-        function submitArchitectAnswer() {
-            const currentPuzzle = structuralPool[currentTaskIdx];
-            const feedbackText = document.getElementById('game-toast-feedback');
-
-            let isCorrect = true;
-            for (let i = 0; i < 3; i++) {
-                if (activeDigits[i] !== currentPuzzle.correct[i]) {
-                    isCorrect = false;
-                    break;
-                }
-            }
-
-            if (isCorrect) {
-                scoreCount += 150;
-                playAudio(audioCorrect);
-                feedbackText.innerText = "✔ STRUCTURE SECURE: Geometry criteria matches matrix!";
-                feedbackText.style.color = "#38bdf8";
-
-                currentTaskIdx++;
-                setTimeout(() => loadNextArchitectSector(), 1600);
+        function refreshHeartsLayout() {
+            const heartNodes = document.getElementById("hearts-container").children;
+            if(localMistakes === 0) {
+                heartNodes[0].classList.remove("depleted");
+                heartNodes[1].classList.remove("depleted");
+            } else if (localMistakes === 1) {
+                heartNodes[1].classList.add("depleted");
             } else {
-                structuralStrikes++;
-                playAudio(audioWrong);
-
-                if (structuralStrikes === 1) {
-                    document.getElementById('strike-dot-1').classList.add('used');
-                    feedbackText.innerText = "❌ MATRIX MISMATCH: Structural calculations unstable!";
-                    feedbackText.style.color = "#ef4444";
-                } else {
-                    document.getElementById('strike-dot-2').classList.add('used');
-                    
-                    const actualValue = parseInt(currentPuzzle.correct.join(""), 10);
-                    feedbackText.innerText = `Recalibrating core grid... Safe Value was: ${actualValue} ${currentPuzzle.unit}`;
-                    feedbackText.style.color = "#f59e0b";
-
-                    currentTaskIdx++;
-                    setTimeout(() => loadNextArchitectSector(), 3500);
-                }
+                heartNodes[0].classList.add("depleted");
+                heartNodes[1].classList.add("depleted");
             }
-            document.getElementById('game-score-tag').innerText = `Credits: ${scoreCount}`;
         }
 
-        function triggerSimulationVictory() {
-            playAudio(audioWin);
-            document.getElementById('game-level-tag').innerText = "GRID COMPLETE";
-            document.getElementById('game-prompt').innerHTML = `
-                <div style="font-size: 1.1rem; color: #38bdf8; margin-bottom: 4px;">🏆 MASTER GEOMETRIC ARCHITECT!</div>
-                <div style="font-size: 0.85rem; color: #9ca3af; font-weight: 700;">All structural sectors validated cleanly. Total: ${scoreCount} Credits</div>
-            `;
-            document.getElementById('game-toast-feedback').innerText = "Grid stabilization fully achieved.";
-            document.getElementById('game-toast-feedback').style.color = "#f3f4f6";
-
-            document.getElementById('drawing-svg').parentElement.innerHTML = `
-                <div style="font-size:52px; text-align:center; width:100%; padding-top:40px;">🏢📐🏙️</div>
-            `;
+        function processModelVerification() {
+            let currentDataset = taskSequence[taskPointer];
+            const allNodes = document.querySelectorAll(".blueprint-node");
             
-            const interactiveControl = document.querySelector('.counter-box');
-            interactiveControl.style.display = "block";
-            interactiveControl.innerHTML = `
-                <button class="action-btn" onclick="location.reload()">Reinitialize Simulation Framework</button>
+            let totalPaintedUnits = 0;
+            allNodes.forEach(node => {
+                if (node.classList.contains("painted-material")) {
+                    totalPaintedUnits++;
+                }
+            });
+
+            if (totalPaintedUnits === currentDataset.requiredBlocks) {
+                triggerAudioAlert(trackSuccess);
+                cumulativeXp += (localMistakes === 0) ? 100 : 50;
+                document.getElementById("xp-counter-lbl").innerText = `${cumulativeXp} XP`;
+                document.getElementById("confirm-build-btn").disabled = true;
+
+                let alertBox = document.getElementById("feedback-bubble");
+                alertBox.style.display = "block";
+                alertBox.style.background = "#d1fae5";
+                alertBox.style.borderColor = "#10b981";
+                alertBox.style.color = "#065f46";
+                alertBox.innerHTML = "✨ Geometric Boundaries Verified Correctly!";
+
+                setTimeout(() => {
+                    taskPointer++;
+                    generateNewBlueprintTask();
+                }, 1800);
+            } else {
+                localMistakes++;
+                triggerAudioAlert(trackFail);
+                refreshHeartsLayout();
+
+                if (localMistakes === 1) {
+                    let alertBox = document.getElementById("feedback-bubble");
+                    alertBox.innerText = currentDataset.formulaHelp;
+                    alertBox.style.display = "block";
+                    alertBox.style.background = "#fef3c7";
+                    alertBox.style.borderColor = "#fde68a";
+                    alertBox.style.color = "#92400e";
+                } else {
+                    document.getElementById("confirm-build-btn").disabled = true;
+                    let alertBox = document.getElementById("feedback-bubble");
+                    alertBox.style.display = "block";
+                    alertBox.style.background = "#fee2e2";
+                    alertBox.style.borderColor = "#fca5a5";
+                    alertBox.style.color = "#991b1b";
+                    alertBox.innerHTML = `❌ Boundary Limit Error! Auto-generating the target ${currentDataset.requiredBlocks} sq cm grid alignment...`;
+
+                    allNodes.forEach((node, idx) => {
+                        node.classList.remove("painted-material");
+                        if (idx < currentDataset.requiredBlocks) {
+                            node.classList.add("correct-blueprint");
+                        }
+                    });
+
+                    setTimeout(() => {
+                        taskPointer++;
+                        generateNewBlueprintTask();
+                    }, 3200);
+                }
+            }
+        }
+
+        function renderEndGameReport() {
+            document.getElementById("blueprint-counter-lbl").innerText = "FINISHED";
+            document.getElementById("quest-txt-box").innerHTML = "🎉 All Area Architecture Sandbox Frameworks Complete!";
+            
+            let descriptiveRank = cumulativeXp >= 800 ? "Master Boundary Planner 👑" : "Senior Area Surveyor 📐";
+
+            document.getElementById("sandbox-matrix").style.display = "none";
+            document.getElementById("hearts-container").style.display = "none";
+            document.getElementById("feedback-bubble").style.display = "none";
+            document.getElementById("confirm-build-btn").style.display = "none";
+            document.querySelector(".workspace-viewport").style.display = "none";
+
+            const coreWindow = document.getElementById("gameplay-screen");
+            let summaryContainer = document.createElement("div");
+            summaryContainer.style.cssText = "padding: 35px 16px; text-align: center; display: flex; flex-direction: column; gap: 16px; justify-content: center; align-items: center; flex-grow: 1;";
+            summaryContainer.innerHTML = `
+                <div style="font-size: 4.5rem;">🏗️</div>
+                <h3 style="color:#334155; font-size:1.35rem;">Final Spatial Score: ${cumulativeXp} / 1000 XP</h3>
+                <p style="font-size:0.95rem; font-weight:bold; background:#e2e8f0; padding:10px 16px; border-radius:10px; border: 1px solid #cbd5e1;">
+                    Professional Title: <br><span style="color:#7c3aed; font-size:1.15rem; display:block; margin-top:4px;">${descriptiveRank}</span>
+                </p>
+                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Start a New Studio Run</button>
             `;
+            coreWindow.appendChild(summaryContainer);
         }
     </script>
 </body>
