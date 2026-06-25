@@ -356,11 +356,11 @@
         <div id="instruction-screen" class="hidden">
             <h1 class="game-title">SLIME CRUSHER<br><span style="color:#fde047; font-size:1.3rem;">Warehouse Crisis!</span></h1>
             <div class="rules-card">
-                <h3>⚠️ LEVEL 1: Casual Squash</h3>
-                <p>The slimes start tiny but grow bigger every second! Match your crusher dials ($L \times W \times H$) to clear the target volume quickly.</p>
+                <h3> LEVEL 1: Casual Squash</h3>
+                <p>The slimes start tiny but grow bigger every second! Match your crusher dials to clear the target volume quickly before they touch the shield.</p>
                 
-                <h3>🔥 LEVEL 2: Locked Matrix Panic!</h3>
-                <p>Advanced mode tracks real textbook challenges! Length and Width dials lock completely. You must divide to calculate and set the precise missing **Height** before the slime blows up!</p>
+                <h3> LEVEL 2: Locked Matrix Panic!</h3>
+                <p>Advanced mode tracks real textbook challenges! Length and Width dials lock completely. You must calculate and set the precise missing Height before the slime blows up!</p>
             </div>
             <button class="slam-action-btn" style="background:#10b981; box-shadow:0 6px #047857;" onclick="launchSlimeFactory()">Start Packing!</button>
         </div>
@@ -378,7 +378,7 @@
             <div class="factory-floor">
                 <div class="target-monitor">
                     <h4 id="monitor-label-txt">Target Content Capacity</h4>
-                    <div class="volume-target" id="target-vol-readout">24 cm³</div>
+                    <div class="volume-target" id="target-vol-readout">24 cubic cm</div>
                 </div>
 
                 <div class="problem-prompt-bubble" id="word-problem-txt">Slime incoming...</div>
@@ -451,17 +451,17 @@
         let slimeGrowthInterval = null;
         let slimeScaleFactor = 0.4; 
 
-        // Level 1 Puzzles (Volume target matching) & Level 2 Puzzles (Advanced Textbook questions)
+        // Clean text questions completely free of symbols, dollar characters, or latex formats
         const hybridSyllabusPool = [
             // --- LEVEL 1 STAGES (Indices 0 to 2) ---
-            { level: 1, type: "NORMAL", target: 24, text: "Level 1: Quick! Calibrate crusher parameters to safely squash this standard 24 cm³ slime container!", lockedL: null, lockedW: null, hint: "💡 HINT: Tune dials to 4 × 3 × 2 to hit 24 exactly!" },
-            { level: 1, type: "NORMAL", target: 8,  text: "Level 1: A perfect Cube slime block is expanding! All sides must match perfectly to equal 8 cm³.", lockedL: null, lockedW: null, hint: "💡 HINT: Set all three dials exactly to 2 × 2 × 2." },
-            { level: 1, type: "NORMAL", target: 36, text: "Level 1: Container lines overflowing! Balance out a volume space of exactly 36 cm³.", lockedL: null, lockedW: null, hint: "💡 HINT: Try setting Length to 6, Width to 3, and Height to 2!" },
+            { level: 1, type: "NORMAL", target: 24, text: "Level 1: Quick! Calibrate crusher parameters to safely squash this standard 24 cubic cm slime container!", lockedL: null, lockedW: null, hint: "HINT: Tune dials to 4 by 3 by 2 to hit 24 exactly!" },
+            { level: 1, type: "NORMAL", target: 8,  text: "Level 1: A perfect Cube slime block is expanding! All sides must match perfectly to equal 8 cubic cm.", lockedL: null, lockedW: null, hint: "HINT: Set all three dials exactly to 2 by 2 by 2." },
+            { level: 1, type: "NORMAL", target: 36, text: "Level 1: Container lines overflowing! Balance out a volume space of exactly 36 cubic cm.", lockedL: null, lockedW: null, hint: "HINT: Try setting Length to 6, Width to 3, and Height to 2!" },
             
             // --- LEVEL 2 TEXTBOOK CHALLENGES (Indices 3 to 5) ---
-            { level: 2, type: "LOCKED_HEIGHT", target: 120, lockedL: 6, lockedW: 4, text: "Level 2: A container holds a total space of 120 cm³. Length is locked at 6 cm, Width at 4 cm. Calculate and set the missing Height variable!", hint: "💡 FORMULA HINT: Volume ÷ (Length × Width) = Height. Compute 120 ÷ (6 × 4) to find the answer!" },
-            { level: 2, type: "LOCKED_HEIGHT", target: 2000, lockedL: 20, lockedW: 10, text: "Level 2 Liquid Capacity Challenge: A laboratory tank holds exactly 2 Litres of slime liquid ($2,000\\text{ cm}^3$). Length is 20 cm, Width is 10 cm. Deduce the exact target Height!", hint: "💡 CONVERSION HINT: 2 Litres = 2,000 cm³. Divide 2,000 by (20 × 10) to secure the slider position." },
-            { level: 2, type: "LOCKED_HEIGHT", target: 90, lockedL: 5, lockedW: 3, text: "Final Boss Matchbox Rule: A presentation box maps a total volume of 90 cm³. Length is 5 cm and Width is 3 cm. Deduce the hidden Height variable!", hint: "💡 MATH HINT: Divide the full space by the base area: 90 ÷ (5 × 3)." }
+            { level: 2, type: "LOCKED_HEIGHT", target: 120, lockedL: 6, lockedW: 4, text: "Level 2: A carton box holds a total space of 120 cubic cm. Length is locked at 6 cm and Width is locked at 4 cm. Calculate and set the missing Height variable!", hint: "FORMULA HELP: Volume divided by Length times Width equals Height. Try 5 cm!" },
+            { level: 2, type: "LOCKED_HEIGHT", target: 2000, lockedL: 20, lockedW: 10, text: "Level 2 Liquid Challenge: A tank holds exactly 2 Litres of slime liquid which is 2000 cubic cm. Length is locked at 20 cm and Width is locked at 10 cm. Deduce the target Height!", hint: "CONVERSION HELP: 2 Litres is equal to 2000 cubic cm. Divide 2000 by 200 to get your height!" },
+            { level: 2, type: "LOCKED_HEIGHT", target: 90, lockedL: 5, lockedW: 3, text: "Final Boss Matchbox Rule: A presentation box maps a total volume of 90 cubic cm. Length is locked at 5 cm and Width is locked at 3 cm. Deduce the hidden Height variable!", hint: "MATH HELP: Divide the full volume space by the base area. Try 6 cm!" }
         ];
 
         setTimeout(() => {
@@ -476,7 +476,6 @@
         }, 5000);
 
         function launchSlimeFactory() {
-            // Organize game to always have 3 standard levels followed by the 3 advanced math levels
             let lvl1 = hybridSyllabusPool.filter(q => q.level === 1).sort(() => Math.random() - 0.5);
             let lvl2 = hybridSyllabusPool.filter(q => q.level === 2).sort(() => Math.random() - 0.5);
             pipelineSequence = [...lvl1, ...lvl2];
@@ -503,19 +502,17 @@
 
             let activeQuest = pipelineSequence[activePointer];
             
-            // Set labels & level system markers
             document.getElementById("level-badge-txt").innerText = `LEVEL ${activeQuest.level} [Slime ${activePointer + 1}/6]`;
-            document.getElementById("target-vol-readout").innerText = activeQuest.target === 2000 ? "2 Litres (2,000 cm³)" : `${activeQuest.target} cm³`;
+            document.getElementById("target-vol-readout").innerText = activeQuest.target === 2000 ? "2 Litres (2000 cubic cm)" : `${activeQuest.target} cubic cm`;
             document.getElementById("word-problem-txt").innerText = activeQuest.text;
 
-            // Engine Configurations for Level 2 locked modes
             document.getElementById("pod-l").classList.remove("locked");
             document.getElementById("pod-w").classList.remove("locked");
 
             if(activeQuest.type === "LOCKED_HEIGHT") {
                 userL = activeQuest.lockedL;
                 userW = activeQuest.lockedW;
-                userH = 1; // User must guess this variable parameter
+                userH = 1; 
                 document.getElementById("pod-l").classList.add("locked");
                 document.getElementById("pod-w").classList.add("locked");
             } else {
@@ -524,21 +521,18 @@
 
             updateDashboardDisplays();
 
-            // Reset slime visual actor parameters
             const actor = document.getElementById("target-slime-actor");
-            actor.style.background = activeQuest.level === 2 ? "#ec4899" : "#10b981"; // Level 2 slimes turn angry magenta!
+            actor.style.background = activeQuest.level === 2 ? "#ec4899" : "#10b981"; 
             actor.innerText = activeQuest.level === 2 ? "😈" : "👾";
             
-            // Trigger Visual Growth Core engine loops
             slimeScaleFactor = 0.3; 
             actor.style.transform = `scale(${slimeScaleFactor})`;
 
             slimeGrowthInterval = setInterval(() => {
                 if (!isAnimating && slimeScaleFactor < 1.3) {
-                    slimeScaleFactor += 0.02; // Gradually swells in real time
+                    slimeScaleFactor += 0.02; 
                     actor.style.transform = `scale(${slimeScaleFactor})`;
                     
-                    // If slime gets way out of bounds, make it pulse red frantically
                     if (slimeScaleFactor > 1.1) {
                         actor.style.background = "#ef4444";
                     }
@@ -550,7 +544,6 @@
             if(isAnimating) return;
             let activeQuest = pipelineSequence[activePointer];
 
-            // Block tuning adjustments if coordinates match frozen layouts rules
             if(activeQuest.type === "LOCKED_HEIGHT" && (dimension === 'l' || dimension === 'w')) return;
 
             if (dimension === 'l') userL = Math.max(1, Math.min(8, userL + step));
@@ -577,7 +570,7 @@
         function executeCrusherSlamAnimation() {
             if(isAnimating) return;
             isAnimating = true;
-            clearInterval(slimeGrowthInterval); // Stop real-time expansion loops during mechanical drop
+            clearInterval(slimeGrowthInterval); 
 
             const press = document.getElementById("hydraulic-press");
             const slimeObj = document.getElementById("target-slime-actor");
@@ -586,7 +579,6 @@
             let calculatedActiveVol = userL * userW * userH;
             let currentTargetData = pipelineSequence[activePointer];
 
-            // Drop hydraulic plate graphic frame down onto target element workspace
             press.style.transform = "translateY(110px)";
 
             setTimeout(() => {
@@ -602,7 +594,7 @@
                     feedbackToast.style.background = "#d1fae5";
                     feedbackToast.style.borderColor = "#10b981";
                     feedbackToast.style.color = "#065f46";
-                    feedbackToast.innerText = `💥 SUCCESSFUL CRUSH! Box matrix calculated perfectly at ${calculatedActiveVol} cm³!`;
+                    feedbackToast.innerText = `BOOM! Perfect crush! Box volume matches exactly ${calculatedActiveVol} cubic cm!`;
 
                     setTimeout(() => {
                         press.style.transform = "translateY(0px)";
@@ -623,10 +615,9 @@
                     feedbackToast.style.color = "#991b1b";
 
                     if (failedAttempts === 1) {
-                        feedbackToast.innerText = `❌ REJECTED! Dials calculated space as ${calculatedActiveVol} cm³. Slime keeps expanding! ${currentTargetData.hint}`;
+                        feedbackToast.innerText = `❌ REJECTED! Dials calculated space as ${calculatedActiveVol} cubic cm. Slime keeps expanding! ${currentTargetData.hint}`;
                         setTimeout(() => {
                             press.style.transform = "translateY(0px)";
-                            // Resume growth matrix compression calculations parameters
                             isAnimating = false;
                             slimeGrowthInterval = setInterval(() => {
                                 if (slimeScaleFactor < 1.3) {
@@ -637,7 +628,7 @@
                         }, 1800);
                     } else {
                         document.getElementById("slam-trigger-btn").disabled = true;
-                        feedbackToast.innerText = `💥 CRITICAL OVERFLOW! Slime exploded! Emergency automated layout override engaged...`;
+                        feedbackToast.innerText = `CRITICAL OVERFLOW! Slime exploded! Emergency automated layout override engaged...`;
                         slimeObj.innerText = "💥";
                         slimeObj.style.transform = "scale(1.4)";
 
@@ -664,7 +655,7 @@
             let certificateBox = document.createElement("div");
             certificateBox.style.cssText = "padding: 35px 16px; text-align: center; display: flex; flex-direction: column; gap: 20px; justify-content: center; align-items: center; flex-grow: 1; background: linear-gradient(180deg, #312e81 0%, #1e1b4b 100%);";
             
-            let rank = runningScoreXp >= 1000 ? "Supreme Logistics Overlord 👑" : "Elite Packing Tech 📐";
+            let rank = runningScoreXp >= 1000 ? "Supreme Logistics Overlord" : "Elite Packing Tech";
             
             certificateBox.innerHTML = `
                 <div style="font-size: 5rem;">🏆</div>
