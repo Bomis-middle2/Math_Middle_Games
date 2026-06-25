@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Cuboid Cargo Loader</title>
+    <title>Cubic Slime Crusher: Warehouse Panic!</title>
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Comic Sans MS', 'Arial', sans-serif;
+            font-family: 'Arial Black', 'Comic Sans MS', sans-serif;
             margin: 0;
             padding: 0;
             user-select: none;
         }
 
         body {
-            background-color: #0f172a;
-            color: #1e293b;
+            background-color: #1e1b4b;
+            color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,13 +25,13 @@
 
         #game-window {
             width: 100%;
-            max-width: 460px;
-            height: 750px;
-            background: #f8fafc;
-            border: 6px solid #334155;
-            border-radius: 20px;
+            max-width: 440px;
+            height: 740px;
+            background: #312e81;
+            border: 6px solid #4338ca;
+            border-radius: 24px;
             position: relative;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -46,49 +46,52 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.5s ease;
         }
         .splash-logo {
-            max-width: 200px;
+            max-width: 190px;
             height: auto;
         }
 
-        /* --- STAGE 2: INSTRUCTIONS SCREEN --- */
+        /* --- STAGE 2: HOW TO PLAY --- */
         #instruction-screen {
-            padding: 30px 20px;
+            padding: 30px 24px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100%;
             text-align: center;
-            background: #f1f5f9;
+            background: linear-gradient(180deg, #312e81 0%, #1e1b4b 100%);
         }
-        .scroll-box {
-            background: white;
-            border: 2px dashed #cbd5e1;
-            border-radius: 14px;
+        .game-title {
+            font-size: 2rem;
+            color: #a7f3d0;
+            text-shadow: 0 4px #065f46;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .rules-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 3px dashed #6366f1;
+            border-radius: 16px;
             padding: 20px;
-            margin: 20px 0;
-            width: 100%;
+            margin-bottom: 30px;
             text-align: left;
         }
-        .scroll-box h3 {
+        .rules-card h3 {
+            color: #fde047;
             font-size: 1.1rem;
-            color: #0f172a;
-            margin-bottom: 4px;
-            border-bottom: 2px solid #cbd5e1;
-            padding-bottom: 2px;
+            margin-bottom: 8px;
         }
-        .scroll-box p {
+        .rules-card p {
             font-size: 0.9rem;
+            color: #e0e7ff;
             margin-bottom: 14px;
-            color: #475569;
-            font-weight: bold;
             line-height: 1.4;
         }
 
-        /* --- STAGE 3: MAIN VOLUMETRIC HUD --- */
+        /* --- STAGE 3: GAMEPLAY ZONE --- */
         #gameplay-screen {
             display: flex;
             flex-direction: column;
@@ -96,191 +99,221 @@
             width: 100%;
         }
 
-        .top-navbar {
-            background: #1e293b;
-            color: #f59e0b;
-            padding: 14px;
+        .header-bar {
+            background: #1e1b4b;
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: bold;
-            font-size: 0.9rem;
+            border-bottom: 4px solid #4338ca;
         }
-        .score-lbl {
-            background: #334155;
-            color: #f8fafc;
-            padding: 4px 12px;
-            border-radius: 20px;
-            border: 1px solid #475569;
-        }
-
-        .blueprint-header {
-            padding: 14px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            text-align: center;
-            background: #e2e8f0;
-            border-bottom: 3px solid #cbd5e1;
-            min-height: 115px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-        }
-        .item-tag {
-            font-size: 0.75rem;
-            background: #10b981;
-            color: white;
-            padding: 3px 10px;
+        .level-badge {
+            background: #4338ca;
+            padding: 6px 12px;
             border-radius: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+        }
+        .xp-badge {
+            background: #f59e0b;
+            color: #1e1b4b;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
         }
 
-        /* --- 3D INTERACTIVE PROJECTION VIEWPORT --- */
-        .workspace-viewport {
+        /* THE CONVEYOR FACTORY VIEWPORT */
+        .factory-floor {
             flex-grow: 1;
-            background: #1e293b;
+            background: linear-gradient(180deg, #4f46e5 0%, #312e81 100%);
+            position: relative;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding: 15px;
-            position: relative;
+            justify-content: flex-end;
+            padding-bottom: 40px;
+            overflow: hidden;
         }
 
-        /* Target vs Active readout overlay */
-        .capacity-dashboard {
-            width: 100%;
+        /* Danger/Target Manifest Screen */
+        .target-monitor {
+            position: absolute;
+            top: 15px;
+            background: #0f172a;
+            border: 4px solid #f59e0b;
+            border-radius: 12px;
+            padding: 10px 20px;
+            text-align: center;
+            box-shadow: 0 8px 0 #78350f;
+            z-index: 10;
+        }
+        .target-monitor h4 {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+        .target-monitor .volume-target {
+            font-size: 1.7rem;
+            color: #f59e0b;
+            text-shadow: 0 2px #000;
+        }
+
+        /* Hydraulic Crusher Plate */
+        .hydraulic-press-plate {
+            position: absolute;
+            top: 100px;
+            width: 200px;
+            height: 30px;
+            background: linear-gradient(180deg, #94a3b8 0%, #475569 100%);
+            border: 4px solid #1e293b;
+            border-radius: 6px;
+            box-shadow: 0 6px 0 #0f172a;
+            z-index: 5;
+            transition: transform 0.15s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75rem;
+            color: #f8fafc;
+        }
+
+        /* Jiggly Slime Actor Object */
+        .slime-container {
+            width: 160px;
+            height: 160px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 4;
+        }
+        .slime-blob {
+            width: 100px;
+            height: 100px;
+            background: #10b981;
+            border: 4px solid #047857;
+            border-radius: 24px 24px 12px 12px;
+            box-shadow: inset 0 -8px 0 #047857, 0 8px 16px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            text-shadow: 0 2px #047857;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: slimeWobble 2s infinite ease-in-out;
+        }
+        @keyframes slimeWobble {
+            0%, 100% { transform: scaleX(1) scaleY(1); }
+            50% { transform: scaleX(1.08) scaleY(0.92); }
+        }
+
+        /* Conveyor Belt Platform Graphic */
+        .conveyor-belt {
+            width: 280px;
+            height: 20px;
             background: #334155;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #475569;
+            border: 4px solid #1e293b;
+            border-radius: 10px;
+            box-shadow: 0 8px 0 #0f172a;
+        }
+
+        /* --- THE CONTROLS ARCADES DECK --- */
+        .arcade-dashboard {
+            background: #1e1b4b;
+            padding: 16px;
+            border-top: 4px solid #4338ca;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .crusher-tuners {
             display: flex;
             justify-content: space-around;
-            color: white;
-            font-size: 0.85rem;
-            margin-bottom: 15px;
+            gap: 10px;
         }
-        .dashboard-val {
-            color: #10b981;
-            font-weight: bold;
-        }
-
-        /* Pseudo-3D isometric box viewport renderer */
-        .box-projection-canvas {
-            width: 260px;
-            height: 180px;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 2px dashed #475569;
-            border-radius: 12px;
-            background: #0f172a;
-        }
-
-        .isometric-prism {
-            position: relative;
-            transform-style: preserve-3d;
-            transform: rotateX(-25deg) rotateY(45deg);
-            transition: width 0.2s, height 0.2s, depth 0.2s;
-        }
-
-        /* Prism individual surface facets */
-        .prism-face {
-            position: absolute;
-            border: 2px solid #10b981;
-            background: rgba(16, 185, 129, 0.25);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #a7f3d0;
-            font-size: 0.75rem;
-            font-weight: bold;
-        }
-
-        /* --- INTERACTIVE LEVER VALVES (SLIDERS) --- */
-        .sliders-deck {
-            width: 100%;
-            margin-top: 15px;
+        .tuner-pod {
+            background: #312e81;
+            border: 2px solid #4338ca;
+            border-radius: 14px;
+            padding: 8px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            background: #334155;
-            padding: 12px;
-            border-radius: 10px;
-        }
-        .slider-row {
-            display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            color: #cbd5e1;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-        .slider-row label { width: 85px; }
-        .valve-slider {
             flex-grow: 1;
-            accent-color: #10b981;
-            cursor: pointer;
         }
-        .valve-lbl-readout {
-            width: 45px;
-            text-align: right;
-            color: #10b981;
+        .tuner-pod label {
+            font-size: 0.7rem;
+            color: #c7d2fe;
+            margin-bottom: 4px;
         }
-
-        /* --- CONTROLS FOOTER PANEL --- */
-        .footer-control-panel {
-            padding: 14px;
-            background: #f8fafc;
+        .tuner-controls {
             display: flex;
-            flex-direction: column;
+            align-items: center;
             gap: 8px;
-            border-top: 2px solid #e2e8f0;
+        }
+        .btn-arrow {
+            background: #4338ca;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 3px #1e1b4b;
+        }
+        .btn-arrow:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px #1e1b4b;
+        }
+        .pod-val {
+            font-size: 1.2rem;
+            color: #fde047;
+            width: 30px;
+            text-align: center;
         }
 
-        .realtime-alert-bubble {
-            background: #fef3c7;
-            border: 2px solid #fde68a;
-            color: #92400e;
+        /* Big Red Slam Button */
+        .slam-action-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border-radius: 16px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 6px #b91c1c;
+            letter-spacing: 1px;
+            text-shadow: 0 2px #b91c1c;
+        }
+        .slam-action-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px #b91c1c;
+        }
+
+        /* Banner feedback box overlay */
+        .toast-banner {
+            background: #fde047;
+            border: 2px solid #ca8a04;
+            color: #713f12;
             padding: 8px;
             border-radius: 8px;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: bold;
             text-align: center;
             display: none;
-            line-height: 1.3;
         }
 
-        .hearts-row {
+        .hearts-line {
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
         }
-        .heart-icon { font-size: 1.2rem; color: #ef4444; }
-        .heart-icon.depleted { color: #cbd5e1; }
-
-        .action-submit-btn {
-            background: #10b981;
-            color: white;
-            border: none;
-            padding: 14px;
-            font-size: 1.05rem;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            text-transform: uppercase;
-            box-shadow: 0 4px #047857;
-            width: 100%;
-        }
-        .action-submit-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px #047857;
-        }
+        .heart-slot { font-size: 1.2rem; }
+        .heart-slot.empty { filter: grayscale(1) opacity(0.3); }
 
         .hidden { display: none !important; }
     </style>
@@ -294,142 +327,113 @@
         </div>
 
         <div id="instruction-screen" class="hidden">
-            <h2 style="color: #1e293b; font-size: 1.5rem; margin-bottom: 5px;">How To Play</h2>
-            <div class="scroll-box">
-                <h3>📦 Read Target Volume</h3>
-                <p>The cargo sheet requests an exact volume space allocation in cubic centimetres ($cm^3$). Pay close attention to whether it's a cube or cuboid structure.</p>
+            <h1 class="game-title">SLIME CRUSHER<br><span style="color:#fde047; font-size:1.4rem;">Warehouse Panic</span></h1>
+            <div class="rules-card">
+                <h3>⚠️ ALERT: Slimes are growing!</h3>
+                <p>Jiggly slime blocks are blocking the warehouse conveyer belt lines! You need to crush them down into safe boxes.</p>
                 
-                <h3>🎛️ Tune Valve Sliders</h3>
-                <p>Drag the Length, Width, and Height sliders to adjust the dimensions of the isometric cargo crate wireframe in real time.</p>
+                <h3>🎛️ Tune the Press Dimensions</h3>
+                <p>Read the required Target Box Volume ($cm^3$) on the giant crane screen monitor. Use the arcade arrow pads to tune your crushing box Length, Width, and Height dimensions.</p>
                 
-                <h3>❤️ Safe Packing Bounds</h3>
-                <p>Multiply Length × Width × Height to calculate your active volume. When the active calculation exactly hits the target demand capacity, click verify to launch!</p>
+                <h3>💥 SLAM IT!</h3>
+                <p>When your settings match the perfect capacity formula ($L \times W \times H$), slap the Big Red Slam Button to squash the slime block safely into space!</p>
             </div>
-            <button class="action-submit-btn" onclick="startCargoStudio()">Start Cargo Loading</button>
+            <button class="slam-action-btn" style="background:#10b981; box-shadow:0 6px #047857;" onclick="launchSlimeFactory()">Start Crushing</button>
         </div>
 
         <div id="gameplay-screen" class="hidden">
-            <div class="top-navbar">
-                <div id="blueprint-counter-lbl">Cargo Manifest: 1 / 5</div>
-                <div id="xp-counter-lbl" class="score-lbl">0 XP</div>
+            <div class="header-bar">
+                <div class="level-badge" id="slime-counter-txt">Slime: 1 / 5</div>
+                <div class="hearts-line" id="lives-box">
+                    <span class="heart-slot">❤️</span>
+                    <span class="heart-slot">❤️</span>
+                </div>
+                <div class="xp-badge" id="xp-counter-txt">0 XP</div>
             </div>
 
-            <div id="quest-txt-box" class="blueprint-header">
-                <span class="item-tag" id="blueprint-tag-lbl">Cuboid Volume</span>
-                <span id="instruction-txt">Calibrating volumetric spacing matrices...</span>
+            <div class="factory-floor">
+                <div class="target-monitor">
+                    <h4>Target Box Space</h4>
+                    <div class="volume-target" id="target-vol-readout">36 cm³</div>
+                </div>
+
+                <div class="hydraulic-press-plate" id="hydraulic-press">CRUSHER SHIELD</div>
+
+                <div class="slime-container">
+                    <div class="slime-blob" id="target-slime-actor">👾</div>
+                </div>
+
+                <div class="conveyor-belt"></div>
             </div>
 
-            <div class="workspace-viewport">
-                <div class="capacity-dashboard">
-                    <div>Target Space: <span id="target-space-txt" class="dashboard-val">0 cm³</span></div>
-                    <div>Crate Space: <span id="current-space-txt" class="dashboard-val" style="color: #f59e0b;">0 cm³</span></div>
+            <div class="arcade-dashboard">
+                <div class="toast-banner" id="game-feedback-toast"></div>
+
+                <div class="crusher-tuners">
+                    <div class="tuner-pod">
+                        <label>Length (L)</label>
+                        <div class="tuner-controls">
+                            <button class="btn-arrow" onclick="adjustTuner('l', -1)">-</button>
+                            <span class="pod-val" id="val-l">2</span>
+                            <button class="btn-arrow" onclick="adjustTuner('l', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="tuner-pod">
+                        <label>Width (W)</label>
+                        <div class="tuner-controls">
+                            <button class="btn-arrow" onclick="adjustTuner('w', -1)">-</button>
+                            <span class="pod-val" id="val-w">2</span>
+                            <button class="btn-arrow" onclick="adjustTuner('w', 1)">+</button>
+                        </div>
+                    </div>
+                    <div class="tuner-pod">
+                        <label>Height (H)</label>
+                        <div class="tuner-controls">
+                            <button class="btn-arrow" onclick="adjustTuner('h', -1)">-</button>
+                            <span class="pod-val" id="val-h">2</span>
+                            <button class="btn-arrow" onclick="adjustTuner('h', 1)">+</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="box-projection-canvas">
-                    <div class="isometric-prism" id="prism-object">
-                        <div class="prism-face" id="f-front"></div>
-                        <div class="prism-face" id="f-back"></div>
-                        <div class="prism-face" id="f-top"></div>
-                        <div class="prism-face" id="f-bottom"></div>
-                        <div class="prism-face" id="f-left"></div>
-                        <div class="prism-face" id="f-right"></div>
-                    </div>
-                </div>
-
-                <div class="sliders-deck">
-                    <div class="slider-row">
-                        <label for="slide-l">Length (L):</label>
-                        <input type="range" min="1" max="6" value="1" class="valve-slider" id="slide-l" oninput="refreshIsometricPrismGeometry()">
-                        <span class="valve-lbl-readout" id="readout-l">1 cm</span>
-                    </div>
-                    <div class="slider-row" id="row-width">
-                        <label for="slide-w">Width (W):</label>
-                        <input type="range" min="1" max="6" value="1" class="valve-slider" id="slide-w" oninput="refreshIsometricPrismGeometry()">
-                        <span class="valve-lbl-readout" id="readout-w">1 cm</span>
-                    </div>
-                    <div class="slider-row" id="row-height">
-                        <label for="slide-h">Height (H):</label>
-                        <input type="range" min="1" max="6" value="1" class="valve-slider" id="slide-h" oninput="refreshIsometricPrismGeometry()">
-                        <span class="valve-lbl-readout" id="readout-h">1 cm</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="footer-control-panel">
-                <div class="hearts-row" id="hearts-container">
-                    <span class="heart-icon">❤️</span>
-                    <span class="heart-icon">❤️</span>
-                </div>
-                
-                <div class="realtime-alert-bubble" id="feedback-bubble"></div>
-                
-                <button class="action-submit-btn" id="confirm-build-btn" onclick="verifyCargoVolumetricSpace()">Verify Cargo Volume</button>
+                <button class="slam-action-btn" id="slam-trigger-btn" onclick="executeCrusherSlamAnimation()">Slam Crusher! 💥</button>
             </div>
         </div>
 
     </div>
 
     <script>
-        const trackSuccess = new Audio('assets/correct.mp3');
-        const trackFail = new Audio('assets/wrong.mp3');
+        const audioHit = new Audio('assets/correct.mp3');
+        const audioMiss = new Audio('assets/wrong.mp3');
 
-        function triggerAudioAlert(audioTrack) {
+        function playSoundSafe(soundObj) {
             try {
-                audioTrack.currentTime = 0;
-                audioTrack.play();
-            } catch(error) { console.log("Sound effect loaded."); }
+                soundObj.currentTime = 0;
+                soundObj.play();
+            } catch(e) { console.log("Sound trigger engaged."); }
         }
 
-        let taskSequence = [];
-        let taskPointer = 0;
-        let cumulativeXp = 0;
-        let localMistakes = 0;
+        let pipelineSequence = [];
+        let activePointer = 0;
+        let runningScoreXp = 0;
+        let failedAttempts = 0;
 
-        // Dataset focusing fully on Cube and Cuboid volume math parameters directly mapped from Grade 5
-        const volumeSyllabusPool = [
-            {
-                type: "CUBID",
-                tag: "Matchbox Cargo",
-                prompt: "Pack a custom cuboid matchbox parcel containing a target capacity space of exactly 24 cubic centimetres!",
-                targetVolume: 24,
-                solutionDimensions: { l: 4, w: 3, h: 2 },
-                helpHint: "💡 VOLUME HINT: Volume = Length × Width × Height. Try tuning Length to 4 cm, Width to 3 cm, and Height to 2 cm!"
-            },
-            {
-                type: "CUBE",
-                tag: "Ice Box Crate",
-                prompt: "Ria needs to pack a perfect ice box cube. In a cube, all edge sides must match perfectly. Reach a space volume of 27 cubic centimetres!",
-                targetVolume: 27,
-                solutionDimensions: { l: 3, w: 3, h: 3 },
-                helpHint: "💡 VOLUME HINT: For a cube, Volume = Side³. Match all three sliders exactly to 3 cm ($3 \\times 3 \\times 3 = 27$)."
-            },
-            {
-                type: "CUBOID",
-                tag: "Juice Pack Shipment",
-                prompt: "Load a long narrow composite juice box unit with a target holding space of exactly 12 cubic centimetres.",
-                targetVolume: 12,
-                solutionDimensions: { l: 6, w: 2, h: 1 },
-                helpHint: "💡 VOLUME HINT: Set your dimension valves to Length = 6 cm, Width = 2 cm, and Height = 1 cm to perfectly achieve 12 cm³."
-            },
-            {
-                type: "CUBE",
-                tag: "Solid Dice Block",
-                prompt: "Configure a giant wooden playing die cube model requiring an internal core capacity space of exactly 8 cubic centimetres.",
-                targetVolume: 8,
-                solutionDimensions: { l: 2, w: 2, h: 2 },
-                helpHint: "💡 VOLUME HINT: To form a uniform cube, adjust all three dimension slider scales straight to 2 cm ($2 \\times 2 \\times 2 = 8$)."
-            },
-            {
-                type: "CUBOID",
-                tag: "Master Freight Hold",
-                prompt: "Final manifest task! Space out an expanded storage container layout with a full capacity totaling exactly 60 cubic centimetres.",
-                targetVolume: 60,
-                solutionDimensions: { l: 5, w: 4, h: 3 },
-                helpHint: "💡 VOLUME HINT: Maximize your grid lines! Set Length to 5 cm, Width to 4 cm, and Height to 3 cm ($5 \\times 4 \\times 3 = 60$)."
-            }
+        // Current user settings storage parameters
+        let userL = 2;
+        let userW = 2;
+        let userH = 2;
+        let isAnimating = false;
+
+        // Vibrant levels tailored with perfect whole number answers for Grade 5 multiplication
+        const slimeConfigurations = [
+            { target: 24, hint: "💡 TIP: Try setting parameters to 4 × 3 × 2 to hit exactly 24!" },
+            { target: 60, hint: "💡 TIP: Max out coordinates! Try tuning lines to 5 × 4 × 3." },
+            { target: 8,  hint: "💡 TIP: A perfect cube slime block requires matching all sides to 2 × 2 × 2!" },
+            { target: 36, hint: "💡 TIP: Set parameters to 6 × 3 × 2 to cleanly smash this block." },
+            { target: 12, hint: "💡 TIP: Make a thin squish layer! Try tuning scales to 6 × 2 × 1." }
         ];
 
-        // 5-Second Brand Splash Screen Timing Logic
+        // 5-Second Brand Splash Logic Setup
         setTimeout(() => {
             const splashScreen = document.getElementById("innovine-splash");
             if(splashScreen) {
@@ -437,207 +441,181 @@
                 setTimeout(() => {
                     splashScreen.remove();
                     document.getElementById("instruction-screen").classList.remove("hidden");
-                }, 600);
+                }, 500);
             }
         }, 5000);
 
-        function shuffleList(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
+        function randomizeArray(arr) {
+            return arr.sort(() => Math.random() - 0.5);
         }
 
-        function startCargoStudio() {
-            taskSequence = shuffleList([...volumeSyllabusPool]).slice(0, 5);
-            taskPointer = 0;
-            cumulativeXp = 0;
+        function launchSlimeFactory() {
+            pipelineSequence = randomizeArray([...slimeConfigurations]);
+            activePointer = 0;
+            runningScoreXp = 0;
 
             document.getElementById("instruction-screen").classList.add("hidden");
             document.getElementById("gameplay-screen").classList.remove("hidden");
-            loadVolumeChallenge();
+            deployNewSlimeUnit();
         }
 
-        function loadVolumeChallenge() {
-            if (taskPointer >= taskSequence.length) {
-                renderEndGameCertificate();
+        function deployNewSlimeUnit() {
+            if (activePointer >= pipelineSequence.length) {
+                concludeWarehouseOperations();
                 return;
             }
 
-            localMistakes = 0;
-            document.getElementById("feedback-bubble").style.display = "none";
-            document.getElementById("confirm-build-btn").disabled = false;
-            updateHeartsUI();
+            failedAttempts = 0;
+            isAnimating = false;
+            document.getElementById("game-feedback-toast").style.display = "none";
+            document.getElementById("slam-trigger-btn").disabled = false;
+            refreshHeartSlots();
 
-            // Clear slider triggers back to initial parameters
-            document.getElementById("slide-l").value = 1;
-            document.getElementById("slide-w").value = 1;
-            document.getElementById("slide-h").value = 1;
+            // Set reset configurations for tuning wheels
+            userL = 2; userW = 2; userH = 2;
+            updateDashboardDisplays();
 
-            let levelData = taskSequence[taskPointer];
-            document.getElementById("blueprint-counter-lbl").innerText = `Cargo Manifest: ${taskPointer + 1} / 5`;
-            document.getElementById("xp-counter-lbl").innerText = `${cumulativeXp} XP`;
-            document.getElementById("instruction-txt").innerText = levelData.prompt;
-            document.getElementById("blueprint-tag-lbl").innerText = levelData.tag;
-            document.getElementById("target-space-txt").innerText = `${levelData.targetVolume} cm³`;
+            let activeSlime = pipelineSequence[activePointer];
+            document.getElementById("slime-counter-txt").innerText = `Slime: ${activePointer + 1} / 5`;
+            document.getElementById("target-vol-readout").innerText = `${activeSlime.target} cm³`;
 
-            refreshIsometricPrismGeometry();
+            // Reset visual elements
+            const actor = document.getElementById("target-slime-actor");
+            actor.style.transform = "scale(1)";
+            actor.style.background = "#10b981";
+            actor.innerText = "👾";
         }
 
-        function refreshIsometricPrismGeometry() {
-            let activeTask = taskSequence[taskPointer];
+        function adjustTuner(dimension, step) {
+            if(isAnimating) return;
 
-            let l = parseInt(document.getElementById("slide-l").value);
-            let w = parseInt(document.getElementById("slide-w").value);
-            let h = parseInt(document.getElementById("slide-h").value);
+            if (dimension === 'l') userL = Math.max(1, Math.min(8, userL + step));
+            if (dimension === 'w') userW = Math.max(1, Math.min(8, userW + step));
+            if (dimension === 'h') userH = Math.max(1, Math.min(8, userH + step));
 
-            // If question specifies a CUBE task, auto-bind matching sliders together for safe reinforcement
-            if (activeTask && activeTask.type === "CUBE") {
-                let primarySource = event ? event.target : null;
-                if (primarySource && primarySource.id === "slide-l") {
-                    w = l; h = l;
-                    document.getElementById("slide-w").value = l;
-                    document.getElementById("slide-h").value = l;
-                } else if (primarySource && primarySource.id === "slide-w") {
-                    l = w; h = w;
-                    document.getElementById("slide-l").value = w;
-                    document.getElementById("slide-h").value = w;
-                } else if (primarySource && primarySource.id === "slide-h") {
-                    l = h; w = h;
-                    document.getElementById("slide-l").value = h;
-                    document.getElementById("slide-w").value = h;
-                }
-            }
+            updateDashboardDisplays();
 
-            // Update user readouts text blocks labels
-            document.getElementById("readout-l").innerText = `${l} cm`;
-            document.getElementById("readout-w").innerText = `${w} cm`;
-            document.getElementById("readout-h").innerText = `${h} cm`;
-
-            let productVolume = l * w * h;
-            document.getElementById("current-space-txt").innerText = `${productVolume} cm³`;
-
-            // Adjust dimensions for visual CSS scaling
-            let scaleFactor = 22; 
-            let pxL = l * scaleFactor;
-            let pxW = w * scaleFactor;
-            let pxH = h * scaleFactor;
-
-            const prism = document.getElementById("prism-object");
-            prism.style.width = pxL + "px";
-            prism.style.height = pxH + "px";
-
-            // Map face structures into actual 3D translate coordinate styles
-            setupPrismFace("f-front", pxL, pxH, `translateZ(${pxW / 2}px)`);
-            setupPrismFace("f-back", pxL, pxH, `rotateY(180deg) translateZ(${pxW / 2}px)`);
-            setupPrismFace("f-top", pxL, pxW, `rotateX(90deg) translateZ(${pxW / 2}px)`);
-            setupPrismFace("f-bottom", pxL, pxW, `rotateX(-90deg) translateZ(${pxH - (pxW / 2)}px)`);
-            setupPrismFace("f-left", pxW, pxH, `rotateY(-90deg) translateZ(${pxW / 2}px)`);
-            setupPrismFace("f-right", pxW, pxH, `rotateY(90deg) translateZ(${pxL - (pxW / 2)}px)`);
+            // Slightly expand slime visually on tick adjustment to show responsive feedback
+            const slimeObj = document.getElementById("target-slime-actor");
+            slimeObj.style.width = (80 + (userL * 4)) + "px";
+            slimeObj.style.height = (80 + (userH * 4)) + "px";
         }
 
-        function setupPrismFace(faceId, width, height, transformationStr) {
-            let faceNode = document.getElementById(faceId);
-            faceNode.style.width = width + "px";
-            faceNode.style.height = height + "px";
-            faceNode.style.transform = transformationStr;
+        function updateDashboardDisplays() {
+            document.getElementById("val-l").innerText = userL;
+            document.getElementById("val-w").innerText = userW;
+            document.getElementById("val-h").innerText = userH;
         }
 
-        function updateHeartsUI() {
-            const hearts = document.getElementById("hearts-container").children;
-            if (localMistakes === 0) {
-                hearts[0].classList.remove("depleted");
-                hearts[1].classList.remove("depleted");
-            } else if (localMistakes === 1) {
-                hearts[1].classList.add("depleted");
-            } else {
-                hearts[0].classList.add("depleted");
-                hearts[1].classList.add("depleted");
-            }
+        function refreshHeartSlots() {
+            const slots = document.getElementById("lives-box").children;
+            slots[0].classList.remove("empty");
+            slots[1].classList.remove("empty");
+            if (failedAttempts === 1) slots[1].classList.add("empty");
+            if (failedAttempts >= 2) slots[0].classList.add("empty");
         }
 
-        function verifyCargoVolumetricSpace() {
-            let levelData = taskSequence[taskPointer];
-            let l = parseInt(document.getElementById("slide-l").value);
-            let w = parseInt(document.getElementById("slide-w").value);
-            let h = parseInt(document.getElementById("slide-h").value);
-            let activeVolume = l * w * h;
+        function executeCrusherSlamAnimation() {
+            if(isAnimating) return;
+            isAnimating = true;
 
-            let alertBox = document.getElementById("feedback-bubble");
-            alertBox.style.display = "block";
+            const press = document.getElementById("hydraulic-press");
+            const slimeObj = document.getElementById("target-slime-actor");
+            const feedbackToast = document.getElementById("game-feedback-toast");
 
-            if (activeVolume === levelData.targetVolume) {
-                triggerAudioAlert(trackSuccess);
-                cumulativeXp += (localMistakes === 0) ? 200 : 100;
-                document.getElementById("xp-counter-lbl").innerText = `${cumulativeXp} XP`;
-                document.getElementById("confirm-build-btn").disabled = true;
+            let calculatedActiveVol = userL * userW * userH;
+            let currentTargetData = pipelineSequence[activePointer];
 
-                alertBox.style.background = "#d1fae5";
-                alertBox.style.borderColor = "#10b981";
-                alertBox.style.color = "#065f46";
-                alertBox.innerHTML = "✨ Volume Calibration Verified! Cargo fits safely within storage bounds!";
+            // Trigger mechanical drop animation alignment frame
+            press.style.transform = "translateY(140px)";
 
-                setTimeout(() => {
-                    taskPointer++;
-                    loadVolumeChallenge();
-                }, 1800);
-            } else {
-                localMistakes++;
-                triggerAudioAlert(trackFail);
-                updateHeartsUI();
+            setTimeout(() => {
+                // Evaluate matching equations matrices outcome blocks
+                if (calculatedActiveVol === currentTargetData.target) {
+                    playSoundSafe(audioHit);
+                    slimeObj.style.transform = "scaleX(1.4) scaleY(0.4)";
+                    slimeObj.style.background = "#f59e0b";
+                    slimeObj.innerText = "📦"; // Packed away safely!
+                    
+                    runningScoreXp += (failedAttempts === 0) ? 200 : 100;
+                    document.getElementById("xp-counter-txt").innerText = `${runningScoreXp} XP`;
 
-                if (localMistakes === 1) {
-                    alertBox.innerText = levelData.helpHint;
-                    alertBox.style.background = "#fef3c7";
-                    alertBox.style.borderColor = "#fde68a";
-                    alertBox.style.color = "#92400e";
-                } else {
-                    document.getElementById("confirm-build-btn").disabled = true;
-                    alertBox.style.background = "#fee2e2";
-                    alertBox.style.borderColor = "#fca5a5";
-                    alertBox.style.color = "#991b1b";
-                    alertBox.innerHTML = `❌ Loading error! Auto-tuning cargo parameters to target ${levelData.targetVolume} cm³...`;
-
-                    // Safety override pushes slide levels into perfect blueprint coordinates
-                    document.getElementById("slide-l").value = levelData.solutionDimensions.l;
-                    document.getElementById("slide-w").value = levelData.solutionDimensions.w;
-                    document.getElementById("slide-h").value = levelData.solutionDimensions.h;
-                    refreshIsometricPrismGeometry();
+                    feedbackToast.style.display = "block";
+                    feedbackToast.style.background = "#d1fae5";
+                    feedbackToast.style.borderColor = "#10b981";
+                    feedbackToast.style.color = "#065f46";
+                    feedbackToast.innerText = `💥 BOOM! Perfect crush! Box volume matches exactly ${calculatedActiveVol} cm³!`;
 
                     setTimeout(() => {
-                        taskPointer++;
-                        loadVolumeChallenge();
-                    }, 3500);
+                        press.style.transform = "translateY(0px)";
+                        setTimeout(() => {
+                            activePointer++;
+                            deployNewSlimeUnit();
+                        }, 400);
+                    }, 1400);
+
+                } else {
+                    playSoundSafe(audioMiss);
+                    failedAttempts++;
+                    refreshHeartSlots();
+                    
+                    slimeObj.style.animation = "none";
+                    slimeObj.style.transform = "shake";
+                    
+                    feedbackToast.style.display = "block";
+                    feedbackToast.style.background = "#fee2e2";
+                    feedbackToast.style.borderColor = "#ef4444";
+                    feedbackToast.style.color = "#991b1b";
+
+                    if (failedAttempts === 1) {
+                        feedbackToast.innerText = `❌ WARNING: Dimensions set to ${calculatedActiveVol} cm³. Slime is unstable! ${currentTargetData.hint}`;
+                        setTimeout(() => {
+                            press.style.transform = "translateY(0px)";
+                            isAnimating = false;
+                        }, 1200);
+                    } else {
+                        // Max errors reached for this block
+                        document.getElementById("slam-trigger-btn").disabled = true;
+                        feedbackToast.innerText = `💥 SPLAT! Slime exploded! Overriding grid systems to target ${currentTargetData.target} cm³...`;
+                        slimeObj.innerText = "💥";
+                        slimeObj.style.background = "#ef4444";
+
+                        setTimeout(() => {
+                            press.style.transform = "translateY(0px)";
+                            setTimeout(() => {
+                                activePointer++;
+                                deployNewSlimeUnit();
+                            }, 600);
+                        }, 2200);
+                    }
                 }
-            }
+            }, 1500);
         }
 
-        function renderEndGameCertificate() {
-            document.getElementById("blueprint-counter-lbl").innerText = "MANIFEST CLEARED";
-            document.getElementById("quest-txt-box").innerHTML = "🎉 All Volumetric Logistics Operations Completed Safely!";
+        function concludeWarehouseOperations() {
+            document.getElementById("slime-counter-txt").innerText = "CLEARED";
             
-            let assignedRank = cumulativeXp >= 800 ? "Master Logistics Architect 👑" : "Senior Freight Assessor 📐";
+            let descriptiveRank = runningScoreXp >= 800 ? "Slime Master Eliminator 👑" : "Senior Crushing Operator 🚜";
 
-            document.getElementById("hearts-container").style.display = "none";
-            document.getElementById("feedback-bubble").style.display = "none";
-            document.getElementById("confirm-build-btn").style.display = "none";
-            document.querySelector(".capacity-dashboard").style.display = "none";
-            document.querySelector(".box-projection-canvas").style.display = "none";
-            document.querySelector(".sliders-deck").style.display = "none";
+            document.getElementById("lives-box").style.display = "none";
+            document.getElementById("game-feedback-toast").style.display = "none";
+            document.querySelector(".factory-floor").style.display = "none";
+            document.querySelector(".crusher-tuners").style.display = "none";
+            document.getElementById("slam-trigger-btn").style.display = "none";
 
             const coreScreen = document.getElementById("gameplay-screen");
-            let awardCard = document.createElement("div");
-            awardCard.style.cssText = "padding: 35px 16px; text-align: center; display: flex; flex-direction: column; gap: 16px; justify-content: center; align-items: center; flex-grow: 1;";
-            awardCard.innerHTML = `
-                <div style="font-size: 4.5rem;">📦</div>
-                <h3 style="color:#1e293b; font-size:1.35rem;">Final Calculation Score: ${cumulativeXp} / 1000 XP</h3>
-                <p style="font-size:0.95rem; font-weight:bold; background:#e2e8f0; padding:10px 16px; border-radius:10px; border: 1px solid #cbd5e1;">
-                    Earned Title: <br><span style="color:#10b981; font-size:1.15rem; display:block; margin-top:4px;">${assignedRank}</span>
+            let certificateBox = document.createElement("div");
+            certificateBox.style.cssText = "padding: 35px 16px; text-align: center; display: flex; flex-direction: column; gap: 20px; justify-content: center; align-items: center; flex-grow: 1; background: linear-gradient(180deg, #312e81 0%, #1e1b4b 100%);";
+            certificateBox.innerHTML = `
+                <div style="font-size: 5rem; animation: slimeWobble 1s infinite ease-in-out;">📦</div>
+                <h2 style="color:#a7f3d0; font-size:1.6rem;">Warehouse Saved!</h2>
+                <h3 style="color:#ffffff; font-size:1.15rem;">Total Arcade Score: ${runningScoreXp} / 1000 XP</h3>
+                <p style="font-size:0.95rem; font-weight:bold; background:rgba(255,255,255,0.1); padding:12px 20px; border-radius:14px; border: 2px solid #6366f1;">
+                    Earned Title: <br><span style="color:#fde047; font-size:1.25rem; display:block; margin-top:6px;">${descriptiveRank}</span>
                 </p>
-                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Load New Cargo Containers</button>
+                <button class="slam-action-btn" style="background:#10b981; box-shadow:0 6px #047857; margin-top: 15px; width:80%;" onclick="location.reload()">Play Again</button>
             `;
-            coreScreen.appendChild(awardCard);
+            coreScreen.appendChild(certificateBox);
         }
     </script>
 </body>
