@@ -2,44 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Alchemist's Lab: Metric Elixir</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metric Explorer Quest</title>
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Cinzel', 'Georgia', serif;
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             user-select: none;
-            -webkit-user-select: none;
         }
-        body, html {
-            width: 100%;
-            height: 100%;
-            background-color: #0f0c1b;
-            color: #f1e9db;
-            overflow: hidden;
+
+        body {
+            background-color: #0f172a;
+            color: #1e293b;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            padding: 10px;
         }
 
-        #viewport-root {
+        #game-window {
             width: 100%;
-            max-width: 440px;
-            height: 100%;
-            max-height: 780px;
+            max-width: 460px;
+            height: 740px;
+            background: #f8fafc;
+            border: 6px solid #475569;
+            border-radius: 16px;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
-            position: relative;
-            background: #1a1423;
-            box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85);
             overflow: hidden;
-            border: 3px solid #b79ced;
         }
 
-        /* --- STAGE 1: BRANDING-ONLY SPLASH (5 SECONDS STRICT) --- */
-        #branding-splash {
+        /* --- STAGE 1: 5-SECOND SPLASH SCREEN --- */
+        #innovine-splash {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background: #ffffff;
@@ -47,206 +46,196 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .branding-img {
-            max-width: 180px;
+        .splash-logo {
+            max-width: 200px;
             height: auto;
         }
 
-        /* --- OVERLAY STAGES --- */
-        .stage-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+        /* --- STAGE 2: INSTRUCTIONS SCREEN --- */
+        #instruction-screen {
+            padding: 24px 20px;
             display: flex;
             flex-direction: column;
-            padding: 20px;
-            gap: 16px;
-            z-index: 10;
-        }
-
-        .potion-panel {
-            background: #2d1e3d;
-            border: 2px solid #b79ced;
-            border-radius: 16px;
-            padding: 22px;
-            box-shadow: inset 0 0 20px rgba(183, 156, 237, 0.2);
-            color: #f1e9db;
-        }
-
-        .header-panel {
-            display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            background: #3d2647;
-            color: #e2cfea;
-            padding: 12px 16px;
-            border-radius: 10px;
-            border: 1px solid #b79ced;
-        }
-        .header-title { font-weight: 800; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
-        .header-score { font-weight: 800; font-size: 0.85rem; background: #745185; color: #fff; padding: 4px 12px; border-radius: 6px; }
-
-        .instruction-text {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #d2c4db;
-            margin-bottom: 20px;
-        }
-        .instruction-text ul { margin-left: 18px; margin-top: 8px; }
-        .instruction-text li { margin-bottom: 10px; font-weight: 600; color: #b79ced; }
-
-        .workspace-area {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            background: #160f1f;
-            border-radius: 12px;
-            border: 2px solid #3d2647;
-            padding: 16px;
-        }
-
-        .clue-box {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #f1e9db;
-            background: #261730;
-            padding: 14px;
-            border-radius: 10px;
-            border: 1px solid #745185;
-            width: 100%;
+            height: 100%;
             text-align: center;
-            min-height: 85px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1.4;
+            background: #f1f5f9;
         }
-
-        /* --- GRAPHICS VISUALIZATION VIEWPORT --- */
-        .vector-canvas-box {
-            width: 100%;
-            height: 160px;
-            background: #0d0814;
+        .scroll-box {
+            background: white;
+            border: 2px dashed #cbd5e1;
             border-radius: 12px;
-            border: 1px dashed #b79ced;
-            position: relative;
-            box-shadow: inset 0 4px 12px rgba(0,0,0,0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            padding: 20px;
+            margin: 20px 0;
+            width: 100%;
+            text-align: left;
+        }
+        .scroll-box h3 {
+            font-size: 1.05rem;
+            color: #1e293b;
+            margin-bottom: 6px;
+            border-bottom: 2px solid #cbd5e1;
+            padding-bottom: 2px;
+        }
+        .scroll-box p {
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            color: #475569;
+            font-weight: bold;
         }
 
-        /* --- QUANTITY ARTIFACT STEPPER --- */
-        .potion-counter-box {
+        /* --- STAGE 3: MAIN GAMEPLAY HUB --- */
+        #gameplay-screen {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            background: #261730;
-            border: 2px solid #745185;
-            padding: 10px 16px;
-            border-radius: 14px;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
         }
 
-        .counter-column {
+        .top-navbar {
+            background: #334155;
+            color: #f59e0b;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border-bottom: 4px solid #1e293b;
+        }
+        .score-lbl {
+            background: #1e293b;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .quest-container {
+            padding: 14px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            text-align: center;
+            background: #e2e8f0;
+            border-bottom: 2px solid #cbd5e1;
+            min-height: 95px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
+            gap: 6px;
         }
-
-        .counter-btn {
-            background: #745185;
-            border: none;
+        .mode-badge {
+            font-size: 0.75rem;
+            background: #10b981;
             color: white;
-            font-size: 0.85rem;
-            padding: 4px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
         }
-        .counter-btn:active { transform: scale(0.9); background: #b79ced; }
 
-        .counter-display-window {
-            width: 40px;
-            height: 44px;
-            background: #0d0814;
-            border: 2px solid #b79ced;
-            border-radius: 8px;
+        /* --- INTERACTIVE SELECTION GRID ENGINE --- */
+        .grid-viewport-area {
+            flex-grow: 1;
+            background: #cbd5e1;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: #c8b1ef;
-            text-shadow: 0 0 6px rgba(183,156,237,0.7);
+            position: relative;
+            padding: 15px;
+            border-bottom: 3px solid #475569;
         }
 
-        .counter-decimal {
-            font-size: 2rem;
-            font-weight: 900;
-            color: #b79ced;
-            align-self: flex-end;
-            margin-bottom: 4px;
-        }
-
-        /* --- EXTRA MEASURE UNIT LABEL --- */
-        .unit-lbl {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #e2cfea;
-            margin-left: 6px;
-            align-self: center;
-        }
-
-        /* --- STRIKE TRACKING CONSOLE --- */
-        .strike-container {
-            display: flex;
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
-            justify-content: center;
-        }
-        .strike-cell {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: #ef4444;
-            box-shadow: 0 0 6px #ef4444;
-            transition: all 0.3s ease;
-        }
-        .strike-cell.used {
-            background: #4a3b5c;
-            box-shadow: none;
+            width: 100%;
+            max-width: 360px;
         }
 
-        .action-btn {
-            background: #b79ced;
-            color: #160f1f;
+        .grid-cell {
+            background: #f8fafc;
+            border: 3px solid #94a3b8;
+            border-radius: 12px;
+            padding: 16px 10px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 0 #cbd5e1;
+            min-height: 75px;
+        }
+        .grid-cell:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #cbd5e1;
+        }
+        
+        /* Interactive Paint Modifications */
+        .grid-cell.player-painted {
+            background: #ec4899 !important;
+            border-color: #db2777 !important;
+            color: white !important;
+            box-shadow: 0 4px 0 #9d174d !important;
+        }
+        .grid-cell.auto-revealed {
+            background: #10b981 !important;
+            border-color: #059669 !important;
+            color: white !important;
+            box-shadow: 0 4px 0 #047857 !important;
+        }
+
+        /* --- INTERACTION FEEDBACK AND CONTROLS --- */
+        .interaction-panel {
+            padding: 12px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .hint-alert-box {
+            background: #fef3c7;
+            border: 1px solid #fde68a;
+            color: #92400e;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+        }
+
+        .chance-heart-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+        .heart { font-size: 1.1rem; color: #ef4444; }
+        .heart.lost { color: #cbd5e1; }
+
+        .action-submit-btn {
+            background: #3b82f6;
+            color: white;
             border: none;
-            border-bottom: 4px solid #745185;
             padding: 14px;
             font-size: 1rem;
-            font-weight: 800;
-            border-radius: 10px;
+            font-weight: bold;
+            border-radius: 8px;
             cursor: pointer;
-            width: 100%;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            box-shadow: 0 4px #1d4ed8;
+            width: 100%;
         }
-        .action-btn:active {
-            transform: translateY(2px);
-            border-bottom-width: 2px;
-        }
-
-        .status-banner {
-            text-align: center;
-            font-weight: 700;
-            font-size: 0.85rem;
-            min-height: 22px;
-            color: #a795b5;
+        .action-submit-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
         }
 
         .hidden { display: none !important; }
@@ -254,201 +243,160 @@
 </head>
 <body>
 
-    <div id="viewport-root">
+    <div id="game-window">
         
-        <!-- STAGE 1: Branding Intro Splash -->
-        <div id="branding-splash">
-            <img src="assets/logo.png" class="branding-img" alt="Innovine Logo" onerror="this.src='https://placehold.co/180x60/ffffff/160f1f?text=INNOVINE';">
+        <div id="innovine-splash">
+            <img src="assets/logo.png" class="splash-logo" alt="Innovine Logo" onerror="this.src='https://placehold.co/180x60/ffffff/0f172a?text=INNOVINE';">
         </div>
 
-        <!-- STAGE 2: Interactive Mission Rules Setup -->
-        <div id="instructions-screen" class="stage-overlay hidden">
-            <div class="potion-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
-                <div class="header-panel">
-                    <div class="header-title">🧪 The Alchemist's Metric Lab</div>
-                </div>
-                <div class="instruction-text">
-                    <p>Help the Chief Wizard brew rare magical elixirs by calculating metric conversions perfectly:</p>
-                    <ul>
-                        <li>1. Study the requested transmutation recipe on the scroll.</li>
-                        <li>2. Use the **▲** and **▼** dials to set your calculated value.</li>
-                        <li>3. Pour the ingredient! You have **2 stability attempts** per elixir compound.</li>
-                    </ul>
-                </div>
-                <button class="action-btn" onclick="startAlchemistLab()">Stir Catalyst Core</button>
-            </div>
-        </div>
-
-        <!-- STAGE 3: Main Gameplay Viewport -->
-        <div id="gameplay-screen" class="stage-overlay hidden">
-            <div class="header-panel">
-                <div id="game-level-tag" class="header-title">Elixir: 01 / 06</div>
-                <div id="game-score-tag" class="header-score">Mana: 0</div>
-            </div>
-
-            <div class="workspace-area">
-                <!-- Recipe Query Prompt Card -->
-                <div id="game-prompt" class="clue-box">Formulating recipe scroll criteria...</div>
+        <div id="instruction-screen" class="hidden">
+            <h2 style="color: #475569; font-size: 1.4rem; margin-bottom: 10px;">⚖️ Metric Explorer Quest</h2>
+            <div class="scroll-box">
+                <h3>📏 Master Your Conversions</h3>
+                <p>Navigate dynamic challenges covering Length (mm, cm, m, km), Mass (g, kg), and Capacity (mL, L).</p>
                 
-                <!-- Dynamic SVG Metric Beaker Layout -->
-                <div class="vector-canvas-box">
-                    <svg id="drawing-svg" width="100%" height="100%" style="position:absolute; pointer-events:none;"></svg>
-                </div>
+                <h3>👆 Interactive Grid Selection</h3>
+                <p>No typing numbers! Tap to paint the correct grid blocks that solve the metric puzzle or hold equivalent values.</p>
+                
+                <h3>❤️ Two Match Attempts</h3>
+                <p>You have 2 hearts per level. Missing the second attempt will automatically paint and lock the accurate answers for you.</p>
+            </div>
+            <button class="action-submit-btn" onclick="startAdventure()">Enter Game</button>
+        </div>
 
-                <!-- Digital Counter Stepper Matrix -->
-                <div class="potion-counter-box">
-                    <div class="counter-column">
-                        <button class="counter-btn" onclick="stepCounter(0, 1)">▲</button>
-                        <div id="digit-display-0" class="counter-display-window">0</div>
-                        <button class="counter-btn" onclick="stepCounter(0, -1)">▼</button>
-                    </div>
-                    <div class="counter-column">
-                        <button class="counter-btn" onclick="stepCounter(1, 1)">▲</button>
-                        <div id="digit-display-1" class="counter-display-window">0</div>
-                        <button class="counter-btn" onclick="stepCounter(1, -1)">▼</button>
-                    </div>
-                    <div class="counter-column">
-                        <button class="counter-btn" onclick="stepCounter(2, 1)">▲</button>
-                        <div id="digit-display-2" class="counter-display-window">0</div>
-                        <button class="counter-btn" onclick="stepCounter(2, -1)">▼</button>
-                    </div>
-                    
-                    <!-- Dynamic Decimal Separator Point (only shows up for decimal tasks) -->
-                    <div id="ui-decimal-dot" class="counter-decimal hidden">.</div>
-
-                    <div class="counter-column id-dec-col hidden">
-                        <button class="counter-btn" onclick="stepCounter(3, 1)">▲</button>
-                        <div id="digit-display-3" class="counter-display-window">0</div>
-                        <button class="counter-btn" onclick="stepCounter(3, -1)">▼</button>
-                    </div>
-                    
-                    <div id="ui-unit-label" class="unit-lbl">ml</div>
-                </div>
-
-                <!-- Safe Infusion Stability Lights -->
-                <div class="strike-container">
-                    <div id="strike-dot-1" class="strike-cell"></div>
-                    <div id="strike-dot-2" class="strike-cell"></div>
-                </div>
-
-                <button class="action-btn" onclick="brewElixirAttempt()">Pour Into Catalyst</button>
+        <div id="gameplay-screen" class="hidden">
+            <div class="top-navbar">
+                <div id="lvl-lbl">Quest: 1 / 10</div>
+                <div id="xp-lbl" class="score-lbl">0 XP</div>
             </div>
 
-            <div id="game-toast-feedback" class="status-banner">Balance the compound proportions carefully.</div>
+            <div id="quest-txt-box" class="quest-container">
+                <span class="mode-badge" id="mode-badge-lbl">Category</span>
+                <span id="instruction-txt">Loading metric variables...</span>
+            </div>
+
+            <div class="grid-viewport-area">
+                <div class="matrix-grid" id="matrix-canvas"></div>
+            </div>
+
+            <div class="interaction-panel">
+                <div class="chance-heart-row" id="hearts-box">
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                </div>
+                
+                <div class="hint-alert-box" id="hint-bubble"></div>
+                
+                <button class="action-submit-btn" id="verify-action-btn" onclick="verifyPlayerAnswer()">Verify Selection</button>
+            </div>
         </div>
 
     </div>
 
     <script>
-        // Media Sound Notification Tracks
-        const audioCorrect = new Audio('assets/correct.mp3');
-        const audioWrong = new Audio('assets/wrong.mp3');
-        const audioWin = new Audio('assets/freesound_community-claps-44774.mp3');
+        // Sound Pipelines
+        const soundCorrect = new Audio('assets/correct.mp3');
+        const soundWrong = new Audio('assets/wrong.mp3');
 
-        function playAudio(track) {
+        function playSoundTrack(audioObj) {
             try {
-                track.currentTime = 0;
-                track.play();
-            } catch(e) { console.log("Audio routing offline fail-safe triggered."); }
+                audioObj.currentTime = 0;
+                audioObj.play();
+            } catch(e) { console.log("Audio pipeline status: Buffered."); }
         }
 
-        // Active State Engine Variables
-        let scoreCount = 0;
-        let taskIndex = 0;
-        let internalStrikeCounter = 0;
-        let activeComboDigits = [0, 0, 0, 0]; // Supports up to 4 digits for layout flexibility
-        let dynamicShufflePool = [];
+        let currentActiveQuestions = [];
+        let levelIdx = 0;
+        let totalXp = 0;
+        let attemptCount = 0;
 
-        // SVG Dynamic Vector Graphics Builders
-        function buildSVGElement(name) { return document.createElementNS("http://www.w3.org/2000/svg", name); }
-        
-        function setSVGProperties(el, attrs) {
-            for (let k in attrs) { el.setAttribute(k, attrs[k]); }
-            return el;
-        }
-
-        // Complete Core Grade 5 Metric Conversion Dataset [Matches image_33f0e3.png outcomes]
-        const rawMetricPuzzles = [
+        // Structured Metric curriculum dataset covering Length, Mass, Capacity matching cards
+        const metricQuestPool = [
             {
-                q: "A recipe requires a magic vine length of 40 millimetres (mm). Convert this layout value into centimetres (cm).",
-                correct: [0, 0, 4, 0],
-                isDecimal: false,
-                unit: "cm",
-                render: (svg) => {
-                    // Render interactive measurement wand line
-                    let line = buildSVGElement("line"); setSVGProperties(line, { x1: "60", y1: "80", x2: "260", y2: "80", stroke: "#b79ced", "stroke-width": "4" }); svg.appendChild(line);
-                    let cap1 = buildSVGElement("circle"); setSVGProperties(cap1, { cx: "60", cy: "80", r: "6", fill: "#745185" }); svg.appendChild(cap1);
-                    let cap2 = buildSVGElement("circle"); setSVGProperties(cap2, { cx: "260", cy: "80", r: "6", fill: "#745185" }); svg.appendChild(cap2);
-                    
-                    let text = buildSVGElement("text"); setSVGProperties(text, { x: "160", y: "60", fill: "#f1e9db", "font-size": "13", "text-anchor": "middle" });
-                    text.textContent = "Current Length: 40 mm"; svg.appendChild(text);
-                }
+                category: "Length (mm ➔ cm)",
+                question: "Ria measured a coin diameter as 30 millimeters (mm). Select its exact equivalent in centimeters (cm)!",
+                options: ["3 cm", "300 cm", "0.3 cm", "30 cm"],
+                correctIndices: [0],
+                hint: "💡 HINT: Remember that 1 cm = 10 mm. Divide the millimeters by 10 to convert to cm!"
             },
             {
-                q: "The wizard needs to crush 5 kilograms (kg) of moonstone crystal powder. Convert this weight into grams (g).",
-                correct: [5, 0, 0, 0],
-                isDecimal: false,
-                unit: "g",
-                render: (svg) => {
-                    // Render scale weight cauldron plate
-                    let base = buildSVGElement("path"); setSVGProperties(base, { d: "M 110 110 L 210 110 L 190 70 L 130 70 Z", fill: "#3d2647", stroke: "#b79ced", "stroke-width": "2" }); svg.appendChild(base);
-                    let text = buildSVGElement("text"); setSVGProperties(text, { x: "160", y: "95", fill: "#f1e9db", "font-size": "12", "text-anchor": "middle", "font-weight": "bold" });
-                    text.textContent = "5 kg Heavy Weight"; svg.appendChild(text);
-                }
+                category: "Capacity (mL ➔ L)",
+                question: "A standard jar holds 2,500 milliliters (mL) of water. Paint the correct equivalent value in liters (L)!",
+                options: ["25 L", "2.5 L", "0.25 L", "250 L"],
+                correctIndices: [1],
+                hint: "💡 HINT: There are 1,000 milliliters in 1 liter. Divide 2,500 by 1,000!"
             },
             {
-                q: "To prevent a solution from evaporating, pour exactly 3000 millilitres (ml) of clear stream distillate. How many Litres (L) is this?",
-                correct: [0, 0, 3, 0],
-                isDecimal: false,
-                unit: "L",
-                render: (svg) => {
-                    // Render liquid volumetric beaker lines
-                    let flask = buildSVGElement("rect"); setSVGProperties(flask, { x: "120", y: "30", width: "80", height: "100", fill: "rgba(183,156,237,0.1)", stroke: "#b79ced", "stroke-width": "3" }); svg.appendChild(flask);
-                    let fluid = buildSVGElement("rect"); setSVGProperties(fluid, { x: "123", y: "60", width: "74", height: "67", fill: "rgba(116,81,133,0.6)" }); svg.appendChild(fluid);
-                    
-                    let text = buildSVGElement("text"); setSVGProperties(text, { x: "160", y: "95", fill: "#fff", "font-size": "11", "text-anchor": "middle" });
-                    text.textContent = "3000 ml Filling"; svg.appendChild(text);
-                }
+                category: "Mass (g ➔ kg)",
+                question: "A baking recipe requires 750 grams (g) of flour. Paint the correct equivalent in kilograms (kg)!",
+                options: ["7.5 kg", "75 kg", "0.75 kg", "0.075 kg"],
+                correctIndices: [2],
+                hint: "💡 HINT: 1 kg equals 1,000 grams. Shift the decimal point three spots to the left!"
             },
             {
-                q: "A wizard's apprentice runs a messenger track that spans 8 kilometres (km). Convert this travel layout length into meters (m).",
-                correct: [8, 0, 0, 0],
-                isDecimal: false,
-                unit: "m",
-                render: (svg) => {
-                    let path = buildSVGElement("path"); setSVGProperties(path, { d: "M 40 100 Q 160 30 280 100", fill: "none", stroke: "#745185", "stroke-width": "3", "stroke-dasharray": "6 4" }); svg.appendChild(path);
-                    let text = buildSVGElement("text"); setSVGProperties(text, { x: "160", y: "50", fill: "#f1e9db", "font-size": "13", "text-anchor": "middle" });
-                    text.textContent = "Path Span: 8 km"; svg.appendChild(text);
-                }
+                category: "Length (m ➔ cm)",
+                question: "Select ALL options that show the correct equivalent of a 5-meter (m) piece of decoration ribbon!",
+                options: ["50 cm", "500 cm", "0.5 cm", "Five hundred cm"],
+                correctIndices: [1, 3],
+                hint: "💡 HINT: 1 meter = 100 centimeters. Multiply 5 by 100! Look carefully: there are TWO correct matches."
             },
             {
-                q: "A specialized flask contains 1.5 litres (L) of dragon-fire essence. Convert this capacity measurement into millilitres (ml).",
-                correct: [1, 5, 0, 0],
-                isDecimal: false,
-                unit: "ml",
-                render: (svg) => {
-                    let flask = buildSVGElement("polygon"); setSVGProperties(flask, { points: "130,40 190,40 220,120 100,120", fill: "rgba(239,68,68,0.15)", stroke: "#ef4444", "stroke-width": "2" }); svg.appendChild(flask);
-                    let text = buildSVGElement("text"); setSVGProperties(text, { x: "160", y: "95", fill: "#f1e9db", "font-size": "12", "text-anchor": "middle" });
-                    text.textContent = "1.5 Litres"; svg.appendChild(text);
-                }
+                category: "Capacity (L ➔ mL)",
+                question: "Ria needs to serve 3.5 liters (L) of juice. Select the total capacity in milliliters (mL)!",
+                options: ["350 mL", "35,000 mL", "3,500 mL", "3.500 mL"],
+                correctIndices: [2],
+                hint: "💡 HINT: To go from liters to milliliters, multiply by 1,000!"
             },
             {
-                q: "[Word Problem]: If a standard crystal flask holds 250 ml of fluid elixir, how many total ml are in 3 identical crystal flasks?",
-                correct: [7, 5, 0, 0],
-                isDecimal: false,
-                unit: "ml",
-                render: (svg) => {
-                    for(let i=0; i<3; i++) {
-                        let c = buildSVGElement("rect"); setSVGProperties(c, { x: 70 + (i*65), y: 50, width: "40", height: "60", fill: "#3d2647", stroke: "#b79ced", "stroke-width": "2" }); svg.appendChild(c);
-                        let lbl = buildSVGElement("text"); setSVGProperties(lbl, { x: 90 + (i*65), y: 85, fill: "#fff", "font-size": "10", "text-anchor": "middle" });
-                        lbl.textContent = "250"; svg.appendChild(lbl);
-                    }
-                }
+                category: "Length (Route Comparison)",
+                question: "Route A is 3.2 km long. Route B is 2,800 m long. Paint the blocks that are TRUE about these routes!",
+                options: ["Route B is shorter", "Route A is shorter", "Route B = 2.8 km", "Route A = 320 m"],
+                correctIndices: [0, 2],
+                hint: "💡 HINT: Convert 2,800 meters into kilometers by dividing by 1,000 (2.8 km), then compare it to 3.2 km."
+            },
+            {
+                category: "Mass (Subtraction Matrix)",
+                question: "Ria buys a 5 kg bag of sugar and subtracts 750 grams for a cake. Paint the remaining balance left!",
+                options: ["4,250 g", "4.25 kg", "425 g", "4750 g"],
+                correctIndices: [0, 1],
+                hint: "💡 HINT: 5 kg is 5,000 grams. 5,000g minus 750g is 4,250g. Match both the grams and kilograms format!"
+            },
+            {
+                category: "Length (cm ➔ m)",
+                question: "An object is 450 centimeters (cm) long. Choose its proper conversion value in meters (m)!",
+                options: ["45 m", "4.5 m", "0.45 m", "4,500 m"],
+                correctIndices: [1],
+                hint: "💡 HINT: Convert cm to m by dividing by 100."
+            },
+            {
+                category: "Mass (kg ➔ g)",
+                question: "A parcel weighs exactly 8.54 kilograms. Select the block representing its value written out in grams (g)!",
+                options: ["854 g", "85,400 g", "8,540 g", "8.540 g"],
+                correctIndices: [2],
+                hint: "💡 HINT: Multiply kilograms by 1,000 to convert to grams."
+            },
+            {
+                category: "Capacity (Multi-Bottle Fit)",
+                question: "Final Challenge: To get a total of 3.5 liters of juice, select the statements that accurately describe 500 mL bottles!",
+                options: ["Buy exactly 7 bottles", "Buy exactly 70 bottles", "7 bottles = 3,500 mL", "7 bottles = 35 L"],
+                correctIndices: [0, 2],
+                hint: "💡 HINT: Two 500 mL bottles make 1 Liter. So 7 bottles make 3.5 Liters (3,500 mL)!"
             }
         ];
 
-        // Knuth Shuffle Array Utility to Randomize Dataset
-        function shuffleMasterArray(array) {
+        // 5-Second Splash Screen Timeout Execution
+        setTimeout(() => {
+            const splash = document.getElementById("innovine-splash");
+            if(splash) {
+                splash.style.opacity = "0";
+                setTimeout(() => {
+                    splash.remove();
+                    document.getElementById("instruction-screen").classList.remove("hidden");
+                }, 600);
+            }
+        }, 5000);
+
+        function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]];
@@ -456,153 +404,162 @@
             return array;
         }
 
-        // Strict 5-Second Splash Trigger
-        setTimeout(() => {
-            const splash = document.getElementById('branding-splash');
-            if (splash) {
-                splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.remove();
-                    document.getElementById('instructions-screen').classList.remove('hidden');
-                }, 500);
-            }
-        }, 5000);
+        function startAdventure() {
+            // Keep the exact structural timeline, shuffling levels to make replays exciting
+            currentActiveQuestions = shuffleArray([...metricQuestPool]).slice(0, 10);
+            levelIdx = 0;
+            totalXp = 0;
 
-        function startAlchemistLab() {
-            dynamicShufflePool = shuffleMasterArray([...rawMetricPuzzles]);
-            
-            document.getElementById('instructions-screen').classList.add('hidden');
-            document.getElementById('gameplay-screen').classList.remove('hidden');
-            loadNextAlchemistTask();
+            document.getElementById("instruction-screen").classList.add("hidden");
+            document.getElementById("gameplay-screen").classList.remove("hidden");
+            loadQuestData();
         }
 
-        function loadNextAlchemistTask() {
-            if (taskIndex >= dynamicShufflePool.length) {
-                triggerLabVictory();
+        function loadQuestData() {
+            if (levelIdx >= currentActiveQuestions.length) {
+                renderEndGameScreen();
                 return;
             }
 
-            document.getElementById('game-level-tag').innerText = `Elixir: ${String(taskIndex + 1).padStart(2, '0')} / ${dynamicShufflePool.length}`;
-            document.getElementById('game-score-tag').innerText = `Mana: ${scoreCount}`;
+            attemptCount = 0;
+            document.getElementById("hint-bubble").style.display = "none";
+            document.getElementById("verify-action-btn").disabled = false;
+            updateHeartsUI();
 
-            internalStrikeCounter = 0;
-            document.getElementById('strike-dot-1').classList.remove('used');
-            document.getElementById('strike-dot-2').classList.remove('used');
+            let data = currentActiveQuestions[levelIdx];
+            document.getElementById("lvl-lbl").innerText = `Quest: ${levelIdx + 1} / 10`;
+            document.getElementById("xp-lbl").innerText = `${totalXp} XP`;
+            document.getElementById("instruction-txt").innerText = data.question;
+            document.getElementById("mode-badge-lbl").innerText = data.category;
 
-            // Reset dynamic counters
-            activeComboDigits = [0, 0, 0, 0];
-            
-            const currentPuzzle = dynamicShufflePool[taskIndex];
-            document.getElementById('game-prompt').innerText = currentPuzzle.q;
-            document.getElementById('ui-unit-label').innerText = currentPuzzle.unit;
+            const canvas = document.getElementById("matrix-canvas");
+            canvas.innerHTML = "";
 
-            // Handle decimal rendering columns selectively
-            const decimalDot = document.getElementById('ui-decimal-dot');
-            const extraCol = document.querySelector('.id-dec-col');
-            if (currentPuzzle.isDecimal) {
-                decimalDot.classList.remove('hidden');
-                extraCol.classList.remove('hidden');
+            // Populate the grid buttons dynamically
+            data.options.forEach((optionTxt, idx) => {
+                let cell = document.createElement("div");
+                cell.className = "grid-cell";
+                cell.innerText = optionTxt;
+                cell.dataset.index = idx;
+
+                cell.onclick = () => {
+                    if (!cell.classList.contains("auto-revealed")) {
+                        cell.classList.toggle("player-painted");
+                    }
+                };
+                
+                canvas.appendChild(cell);
+            });
+        }
+
+        function updateHeartsUI() {
+            const hearts = document.getElementById("hearts-box").children;
+            if(attemptCount === 0) {
+                hearts[0].classList.remove("lost");
+                hearts[1].classList.remove("lost");
+            } else if (attemptCount === 1) {
+                hearts[1].classList.add("lost");
             } else {
-                decimalDot.classList.add('hidden');
-                extraCol.classList.add('hidden');
-            }
-
-            updateCounterDisplayUI();
-
-            // Clear and draw matching vector graphic context
-            const svg = document.getElementById('drawing-svg');
-            svg.innerHTML = '';
-            if (currentPuzzle.render) currentPuzzle.render(svg);
-
-            document.getElementById('game-toast-feedback').innerText = "Balance the compound proportions carefully.";
-            document.getElementById('game-toast-feedback').style.color = "#a795b5";
-        }
-
-        function stepCounter(columnIdx, offset) {
-            let val = activeComboDigits[columnIdx] + offset;
-            if (val > 9) val = 0;
-            if (val < 0) val = 9;
-            activeComboDigits[columnIdx] = val;
-            updateCounterDisplayUI();
-        }
-
-        function updateCounterDisplayUI() {
-            for (let i = 0; i < 4; i++) {
-                const cell = document.getElementById(`digit-display-${i}`);
-                if (cell) cell.innerText = activeComboDigits[i];
+                hearts[0].classList.add("lost");
+                hearts[1].classList.add("lost");
             }
         }
 
-        function brewElixirAttempt() {
-            const currentPuzzle = dynamicShufflePool[taskIndex];
-            const toast = document.getElementById('game-toast-feedback');
+        function verifyPlayerAnswer() {
+            let data = currentActiveQuestions[levelIdx];
+            const cells = document.querySelectorAll(".grid-cell");
+            let containsError = false;
 
-            let isMatching = true;
-            const comparativeLength = currentPuzzle.isDecimal ? 4 : 3;
+            cells.forEach(cell => {
+                let idx = parseInt(cell.dataset.index);
+                let shouldBeSelected = data.correctIndices.includes(idx);
+                let isSelected = cell.classList.contains("player-painted");
 
-            for (let i = 0; i < comparativeLength; i++) {
-                if (activeComboDigits[i] !== currentPuzzle.correct[i]) {
-                    isMatching = false;
-                    break;
+                if (shouldBeSelected !== isSelected) {
+                    containsError = true;
                 }
-            }
+            });
 
-            if (isMatching) {
-                scoreCount += 100;
-                playAudio(audioCorrect);
-                toast.innerText = "✔ TRANSMUTATION STABLE: Elixir compound calculated cleanly!";
-                toast.style.color = "#b79ced";
+            if (!containsError) {
+                playSoundTrack(soundCorrect);
+                totalXp += (attemptCount === 0) ? 100 : 50;
+                document.getElementById("xp-lbl").innerText = `${totalXp} XP`;
+                document.getElementById("verify-action-btn").disabled = true;
 
-                taskIndex++;
-                setTimeout(() => loadNextAlchemistTask(), 1600);
+                let hintBox = document.getElementById("hint-bubble");
+                hintBox.style.display = "block";
+                hintBox.style.background = "#d1fae5";
+                hintBox.style.borderColor = "#10b981";
+                hintBox.style.color = "#065f46";
+                hintBox.innerHTML = "✨ Metric Conversion Verified Correct!";
+
+                setTimeout(() => {
+                    levelIdx++;
+                    loadQuestData();
+                }, 1600);
             } else {
-                internalStrikeCounter++;
-                playAudio(audioWrong);
+                attemptCount++;
+                playSoundTrack(soundWrong);
+                updateHeartsUI();
 
-                if (internalStrikeCounter === 1) {
-                    document.getElementById('strike-dot-1').classList.add('used');
-                    toast.innerText = "❌ COMPOUND UNSTABLE: Conversions mismatched. Recalibrate!";
-                    toast.style.color = "#ef4444";
+                if (attemptCount === 1) {
+                    let hintBox = document.getElementById("hint-bubble");
+                    hintBox.innerText = data.hint;
+                    hintBox.style.display = "block";
+                    hintBox.style.background = "#fef3c7";
+                    hintBox.style.borderColor = "#fde68a";
+                    hintBox.style.color = "#92400e";
                 } else {
-                    document.getElementById('strike-dot-2').classList.add('used');
-                    
-                    // Format output readable trace
-                    let printAns = currentPuzzle.isDecimal ? 
-                        `${currentPuzzle.correct[0]}${currentPuzzle.correct[1]}${currentPuzzle.correct[2]}.${currentPuzzle.correct[3]}` :
-                        currentPuzzle.correct.slice(0, 3).join("");
-                    
-                    // Parse out leading zeroes cleanly for presentation feedback
-                    printAns = parseInt(printAns, 10) || printAns;
+                    document.getElementById("verify-action-btn").disabled = true;
+                    let hintBox = document.getElementById("hint-bubble");
+                    hintBox.style.display = "block";
+                    hintBox.style.background = "#fee2e2";
+                    hintBox.style.borderColor = "#fca5a5";
+                    hintBox.style.color = "#991b1b";
+                    hintBox.innerHTML = "❌ Out of attempts! Auto-revealing the equivalent values...";
 
-                    toast.innerText = `Catalyst reset! Balanced value was: ${printAns} ${currentPuzzle.unit}`;
-                    toast.style.color = "#f59e0b";
+                    cells.forEach(cell => {
+                        let idx = parseInt(cell.dataset.index);
+                        let isCorrectTarget = data.correctIndices.includes(idx);
+                        
+                        cell.classList.remove("player-painted");
+                        if (isCorrectTarget) {
+                            cell.classList.add("auto-revealed");
+                        }
+                    });
 
-                    taskIndex++;
-                    setTimeout(() => loadNextAlchemistTask(), 3500);
+                    setTimeout(() => {
+                        levelIdx++;
+                        loadQuestData();
+                    }, 3000);
                 }
             }
-            document.getElementById('game-score-tag').innerText = `Mana: ${scoreCount}`;
         }
 
-        function triggerLabVictory() {
-            playAudio(audioWin);
-            document.getElementById('game-level-tag').innerText = "ALCHEMY MASTERED";
-            document.getElementById('game-prompt').innerHTML = `
-                <div style="font-size: 1.15rem; color: #b79ced; margin-bottom: 4px;">🧙‍♂️ SUPREME METRIC GRANDMASTER!</div>
-                <div style="font-size: 0.85rem; color: #e2cfea; font-weight: 800;">All conversion elixirs distilled successfully. Total Score: ${scoreCount} Mana</div>
-            `;
-            document.getElementById('game-toast-feedback').innerText = "The grand elixir transitions perfectly.";
-            document.getElementById('game-toast-feedback').style.color = "#f1e9db";
-
-            document.getElementById('drawing-svg').parentElement.innerHTML = `
-                <div style="font-size:60px; text-align:center; width:100%; padding-top:35px;">🧪🔮✨</div>
-            `;
+        function renderEndGameScreen() {
+            document.getElementById("lvl-lbl").innerText = "FINISHED";
+            document.getElementById("quest-txt-box").innerHTML = "🎉 Metric Conversion Run Complete!";
             
-            const moduleArea = document.querySelector('.potion-counter-box');
-            moduleArea.style.display = "block";
-            moduleArea.innerHTML = `
-                <button class="action-btn" onclick="location.reload()">Brew More Compounds</button>
+            let finalRank = totalXp >= 800 ? "Grand Metric Master 👑" : "Senior Metric Explorer 📐";
+
+            document.getElementById("matrix-canvas").style.display = "none";
+            document.getElementById("hearts-box").style.display = "none";
+            document.getElementById("hint-bubble").style.display = "none";
+            document.getElementById("verify-action-btn").style.display = "none";
+            document.querySelector(".grid-viewport-area").style.display = "none";
+
+            const mainWindow = document.getElementById("gameplay-screen");
+            let summaryDiv = document.createElement("div");
+            summaryDiv.style.cssText = "padding: 30px 16px; text-align: center; display: flex; flex-direction: column; gap: 15px; justify-content: center; align-items: center; flex-grow: 1;";
+            summaryDiv.innerHTML = `
+                <div style="font-size: 4rem;">🏆</div>
+                <h3 style="color:#475569; font-size:1.3rem;">Total Final Score: ${totalXp} / 1000 XP</h3>
+                <p style="font-size:0.95rem; font-weight:bold; background:#e2e8f0; padding:8px 14px; border-radius:8px;">
+                    Rank Earned: <br><span style="color:#2563eb; font-size:1.1rem;">${finalRank}</span>
+                </p>
+                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Play Again</button>
             `;
+            mainWindow.appendChild(summaryDiv);
         }
     </script>
 </body>
