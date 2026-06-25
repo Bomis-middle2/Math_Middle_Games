@@ -3,524 +3,542 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade 5 Math: Map Treasure Hunt</title>
+    <title>Grade 5 Map Math Treasure Quest</title>
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Comic Sans MS', 'Arial', sans-serif;
             margin: 0;
             padding: 0;
+            user-select: none;
         }
 
         body {
-            background: #1e120b;
-            background-image: radial-gradient(#2d1b10 20%, transparent 20%), radial-gradient(#2d1b10 20%, transparent 20%);
-            background-size: 20px 20px;
-            background-position: 0 0, 10px 10px;
-            color: #333;
+            background-color: #1e140a;
+            color: #3e2723;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 15px;
-        }
-
-        #game-container {
-            background: #fcf5e3;
-            border: 8px solid #8b5a2b;
-            border-image: linear-gradient(to bottom right, #a0522d, #8b5a2b, #cd853f) 10;
-            border-radius: 4px;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            overflow: hidden;
-            position: relative;
-        }
-
-        #game-header {
-            background: #5c3a21;
-            color: #f7e7c4;
-            padding: 12px;
-            text-align: center;
-            border-bottom: 4px solid #8b5a2b;
-        }
-
-        #game-header h1 {
-            font-size: 1.3rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 12px;
-            background: #e6ccb2;
-            font-size: 0.9rem;
-            font-weight: bold;
-            border-bottom: 2px solid #b79477;
-        }
-
-        #screen-area {
-            padding: 15px;
-            min-height: 380px;
-        }
-
-        .map-box {
-            background: #f1e3c3;
-            border: 2px dashed #8b5a2b;
-            border-radius: 6px;
             padding: 10px;
-            margin-bottom: 15px;
-            text-align: center;
+        }
+
+        #game-window {
+            width: 100%;
+            max-width: 460px;
+            height: 720px;
+            background: #fbf4db;
+            border: 6px solid #8b5a2b;
+            border-radius: 16px;
             position: relative;
-        }
-
-        /* Vector Map Displays */
-        .grid-map {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            margin: 10px auto;
-            max-width: 280px;
-        }
-
-        .grid-cell {
-            background: #e6dfc3;
-            border: 1px solid #c9be9b;
-            border-radius: 4px;
-            padding: 8px 4px;
-            font-size: 0.8rem;
-            font-weight: bold;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- STAGE 1: 5-SECOND INVOVINE SPLASH SCREEN --- */
+        #innovine-splash {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .splash-logo {
+            max-width: 200px;
+            height: auto;
+        }
+
+        /* --- STAGE 2: INSTRUCTIONS SCREEN --- */
+        #instruction-screen {
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            background: #fdf8e9;
+        }
+        .scroll-box {
+            background: #fffdf6;
+            border: 2px dashed #a17042;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .scroll-box ol {
+            text-align: left;
+            margin-left: 20px;
+        }
+        .scroll-box li {
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #5d4037;
+        }
+
+        /* --- STAGE 3: MAIN GAMEPLAY HUB --- */
+        #gameplay-screen {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
+        .top-navbar {
+            background: #5d4037;
+            color: #fdd835;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            border-bottom: 4px solid #4e342e;
+            font-size: 0.9rem;
+        }
+        .score-lbl {
+            background: #795548;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .quest-container {
+            padding: 12px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            text-align: center;
+            background: #f5ecc8;
+            border-bottom: 2px solid #dfd4a7;
+            min-height: 60px;
+            display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 60px;
         }
 
-        .compass-rose {
-            width: 100px;
-            height: 100px;
-            margin: 10px auto;
+        /* --- ACCURATE TEXTBOOK TOWN MAP CANVAS --- */
+        .map-viewport {
+            flex-grow: 1;
+            background: #e8dbb4;
             position: relative;
-            background: #dfd3b3;
-            border-radius: 50%;
-            border: 2px solid #8b5a2b;
+            border-bottom: 3px solid #8b5a2b;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 4px;
+            padding: 6px;
         }
 
-        .compass-pointer {
-            width: 4px;
-            height: 40px;
-            background: #d9534f;
-            position: absolute;
-            left: 48px;
-            top: 10px;
-            transform-origin: bottom center;
-            transition: transform 0.5s ease;
-        }
-
-        .compass-label {
-            position: absolute;
+        .map-node {
+            background: #f3eacf;
+            border: 2px solid #cfc299;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             font-size: 0.75rem;
+            font-weight: 800;
+            text-align: center;
+            padding: 4px;
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.05);
+        }
+        .map-node span {
+            font-size: 1.6rem;
+            margin-bottom: 2px;
+        }
+
+        .compass-overlay {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #5d4037;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.65rem;
             font-weight: bold;
         }
-        .lbl-n { top: 2px; left: 45px; }
-        .lbl-e { right: 4px; top: 42px; }
-        .lbl-s { bottom: 2px; left: 46px; }
-        .lbl-w { left: 4px; top: 42px; }
 
-        .quest-text {
-            font-size: 1rem;
-            line-height: 1.4;
-            margin-bottom: 15px;
-            color: #4a2f1b;
-            font-weight: 600;
+        .scale-footer-bar {
+            background: #3e2723;
+            color: #fff;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            padding: 4px;
+            letter-spacing: 0.5px;
         }
 
-        .options-list {
+        /* --- INTERACTIVE CONTROL INTERFACE --- */
+        .interaction-panel {
+            padding: 12px;
+            background: #fbf4db;
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
-        .opt-btn {
-            background: #fff;
-            border: 2px solid #b79477;
+        .hint-alert-box {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 8px;
             border-radius: 6px;
-            padding: 12px;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             font-weight: bold;
-            color: #5c3a21;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-        }
-
-        .opt-btn:hover {
-            background: #fbf8f0;
-            border-color: #8b5a2b;
-        }
-
-        .opt-btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn-prefix {
-            background: #e6ccb2;
-            width: 24px;
-            height: 24px;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 50%;
-            margin-right: 10px;
-            font-size: 0.8rem;
-        }
-
-        #feedback-panel {
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
             text-align: center;
-            font-weight: bold;
             display: none;
         }
 
-        .feedback-correct {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .chance-heart-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+        .heart {
+            font-size: 1.1rem;
+            color: #e53935;
+        }
+        .heart.lost {
+            color: #b0bec5;
         }
 
-        .feedback-wrong {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
         }
 
-        .action-btn {
-            background: #bd7a42;
+        .btn-choice {
+            background: #ffffff;
+            border: 2px solid #bda47e;
+            border-radius: 8px;
+            padding: 12px 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #4e342e;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #bda47e;
+            transition: all 0.1s ease;
+        }
+        .btn-choice:active {
+            transform: translateY(3px);
+            box-shadow: none;
+        }
+
+        .action-submit-btn {
+            background: #e67e22;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 14px;
             font-size: 1rem;
             font-weight: bold;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             text-transform: uppercase;
+            box-shadow: 0 4px #d35400;
             width: 100%;
-            margin-top: 15px;
-            box-shadow: 0 4px #8b5a2b;
+        }
+        .action-submit-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
         }
 
-        .action-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px #8b5a2b;
-        }
-
-        .victory-screen {
-            text-align: center;
-            padding: 20px 10px;
-        }
-
-        .badge {
-            font-size: 4rem;
-            margin: 15px 0;
-            animation: bounce 1s infinite alternate;
-        }
-
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-10px); }
-        }
-
-        .scale-bar-ui {
-            background: #332215;
-            color: #f7e7c4;
-            padding: 4px 8px;
-            font-size: 0.8rem;
-            display: inline-block;
-            margin-top: 8px;
-            border-radius: 3px;
-            font-family: monospace;
-        }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="game-container">
-        <div id="game-header">
-            <h1 id="title-label">🗺️ The Map Master Quest</h1>
-        </div>
+    <div id="game-window">
         
-        <div class="status-bar">
-            <span id="level-indicator">Level: 1/5</span>
-            <span id="score-indicator">Score: 0 XP</span>
+        <div id="innovine-splash">
+            <img src="assets/logo.png" class="splash-logo" alt="Innovine Logo" onerror="this.src='https://placehold.co/180x60/ffffff/1a120b?text=INNOVINE';">
         </div>
 
-        <div id="screen-area">
+        <div id="instruction-screen" class="hidden">
+            <h2 style="color: #8b5a2b; font-size: 1.4rem;">🗺️ Map Master Quest</h2>
+            <div class="scroll-box">
+                <p style="font-weight: bold; margin-bottom: 10px; color: #3e2723;">Rules of the Journey:</p>
+                <ol>
+                    <li>Analyze the textbook layout map icons carefully.</li>
+                    <li>Read scale definitions ($1\text{ cm} = \text{X kilometers}$).</li>
+                    <li>You have **2 chances max** per question. Missing the first reveals a helpful tracking hint!</li>
+                </ol>
+            </div>
+            <button class="action-submit-btn" onclick="startAdventure()">Enter Game</button>
+        </div>
+
+        <div id="gameplay-screen" class="hidden">
+            <div class="top-navbar">
+                <div id="lvl-lbl">Quest: 1 / 5</div>
+                <div id="xp-lbl" class="score-lbl">0 XP</div>
             </div>
 
-        <div id="feedback-panel"></div>
+            <div id="quest-txt-box" class="quest-container">...</div>
+
+            <div class="map-viewport" id="map-grid-view"></div>
+
+            <div class="scale-footer-bar" id="scale-indicator-bar">Map Blueprint</div>
+
+            <div class="interaction-panel">
+                <div class="chance-heart-row" id="hearts-box">
+                    <span class="heart">❤️</span>
+                    <span class="heart">❤️</span>
+                </div>
+                
+                <div class="hint-alert-box" id="hint-bubble"></div>
+                
+                <div class="options-grid" id="choices-box"></div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // Game states
-        let currentLevel = 0;
-        let score = 0;
-        let choiceLocked = false;
+        // Assets Audio Registers
+        const soundCorrect = new Audio('assets/correct.mp3');
+        const soundWrong = new Audio('assets/wrong.mp3');
 
-        // Level dataset mapped directly to definitions and test questions in the uploaded document
-        const levels = [
+        function playSoundTrack(audioObj) {
+            try {
+                audioObj.currentTime = 0;
+                audioObj.play();
+            } catch(e) { console.log("Audio setup fallback caught securely."); }
+        }
+
+        // Complete Grade 5 Chapter Levels Matrix
+        let levelIdx = 0;
+        let totalXp = 0;
+        let attemptCount = 0;
+
+        const levelData = [
             {
-                title: "Level 1: Little Town Symbols",
-                questText: "Look at the town map below. Based on standard map keys and orientation rules, what landmark is located directly North of the Post Office?",
-                mapType: "grid",
-                gridCells: [
-                    { label: "🏥 Hospital", style: "" },
-                    { label: "📚 Library", style: "" },
-                    { label: "🌳 Town Park", style: "" },
-                    { label: "💧 Little Lake", style: "" },
-                    { label: "🏡 Neighborhood", style: "background:#d0e1fd;" },
-                    { label: "🛍️ Market", style: "" },
-                    { label: "🪵 Tree Stump", style: "" },
-                    { label: "📮 Post Office", style: "background:#ffcca3;" },
-                    { label: "🚂 Railroad Track", style: "" }
-                ],
-                scale: "Orientation Map",
-                choices: [
-                    "The Neighborhood",
-                    "The Railroad Track",
-                    "The Town Park",
-                    "The Little Lake"
-                ],
-                correctAnswer: 0,
-                explanations: "Correct! North is up on a map layout. The Neighborhood is directly above the Post Office!"
+                question: "Look at the blueprint map. What building is located directly NORTH of the Post Office?",
+                scaleText: "Orientation Blueprint Map",
+                choices: ["The School", "The Pond", "The Mall", "The Fire Station"],
+                correctAnswer: "The Mall",
+                hint: "💡 HINT: Find the Post Office 📮 in the center row. Look directly above it (Upwards is North!).",
+                mapLayout: [
+                    { label: "School", icon: "🏫" }, { label: "Pond", icon: "💧" }, { label: "Park", icon: "🌳" },
+                    { label: "Houses", icon: "🏡" }, { label: "Mall", icon: "🛍️" }, { label: "Fire Station", icon: "🚒" },
+                    { label: "Library", icon: "📚" }, { label: "Post Office", icon: "📮" }, { label: "Empty Field", icon: "🌾" }
+                ]
             },
             {
-                title: "Level 2: The Compass Rose Turn",
-                questText: "Raj is facing North towards the Market. If he turns 135 degrees clockwise to face the item in the South-East (SE) position, what will he be looking at?",
-                mapType: "compass",
-                rotation: 0, // Facing North
-                scale: "Intercardinal Compass",
-                choices: [
-                    "🎒 School (South)",
-                    "🏋️ Gym (East)",
-                    "🌻 Flower Garden (South-East)",
-                    "🚍 Bus Stop (North-West)"
-                ],
-                correctAnswer: 2,
-                explanations: "Correct! South-East (SE) is the intermediate direction pointing halfway between South and East!"
+                question: "If Isha steps out of the Park 🌳, moves West (left) and takes the first turning South (down), what building is she facing?",
+                scaleText: "Navigational Tracking Map",
+                choices: ["Post Office", "Fire Station", "The School", "The Library"],
+                correctAnswer: "Fire Station",
+                hint: "💡 HINT: Start at the top-right Park 🌳. Move left past the Pond to the School/Houses intersection, then turn down towards the fire truck icon!",
+                mapLayout: [
+                    { label: "School", icon: "🏫" }, { label: "Pond", icon: "💧" }, { label: "Park", icon: "🌳" },
+                    { label: "Houses", icon: "🏡" }, { label: "Mall", icon: "🛍️" }, { label: "Fire Station", icon: "🚒" },
+                    { label: "Library", icon: "📚" }, { label: "Post Office", icon: "📮" }, { label: "Empty Field", icon: "🌾" }
+                ]
             },
             {
-                title: "Level 3: Linear Scale Math",
-                questText: "Your adventurer tracking tool indicates that the distance between Kathipara Junction and the Ancient Ruins measures exactly 4 cm on the paper. If the map scale is 1 cm = 2 km, what is the actual travel distance on the ground?",
-                mapType: "text-only",
-                icon: "⛰️",
-                scale: "Scale: 1 cm = 2 km",
-                choices: [
-                    "2 kilometers",
-                    "6 kilometers",
-                    "8 kilometers",
-                    "12 kilometers"
-                ],
-                correctAnswer: 2,
-                explanations: "Correct! 4 cm × 2 km/cm = 8 kilometers in real life!"
+                question: "The map distance between the School and Mall measures 3 cm. If the scale is 1 cm = 4 km, what is the actual distance?",
+                scaleText: "Map Ratio Scale: 1 cm = 4 km",
+                choices: ["7 km", "12 km", "16 km", "20 km"],
+                correctAnswer: "12 km",
+                hint: "💡 HINT: Multiply the chart length by the scale value: 3 cm × 4 km.",
+                mapLayout: [
+                    { label: "School", icon: "🏫" }, { label: "Pond", icon: "💧" }, { label: "Park", icon: "🌳" },
+                    { label: "Houses", icon: "🏡" }, { label: "Mall", icon: "🛍️" }, { label: "Fire Station", icon: "🚒" },
+                    { label: "Library", icon: "📚" }, { label: "Post Office", icon: "📮" }, { label: "Empty Field", icon: "🌾" }
+                ]
             },
             {
-                title: "Level 4: Long Distance Scaling",
-                questText: "To cross the dangerous Crocodile River, the explorer spans a distance on the blueprint chart that measures 3 cm long. If the map uses a proportion scale of 1 cm = 10 km, calculate the actual length of the river crossing.",
-                mapType: "text-only",
-                icon: "🐊",
-                scale: "Scale: 1 cm = 10 km",
-                choices: [
-                    "13 kilometers",
-                    "20 kilometers",
-                    "30 kilometers",
-                    "300 kilometers"
-                ],
-                correctAnswer: 2,
-                explanations: "Correct! Multiply the blueprint length by the scale unit: 3 cm × 10 km = 30 km!"
+                question: "Misha measures the highway from the Houses to the Library to be 5 cm long. If 1 cm = 10 km, how long is the real highway?",
+                scaleText: "Map Ratio Scale: 1 cm = 10 km",
+                choices: ["15 km", "40 km", "50 km", "500 km"],
+                correctAnswer: "50 km",
+                hint: "💡 HINT: Take the 5 cm measurement and multiply it by 10.",
+                mapLayout: [
+                    { label: "School", icon: "🏫" }, { label: "Pond", icon: "💧" }, { label: "Park", icon: "🌳" },
+                    { label: "Houses", icon: "🏡" }, { label: "Mall", icon: "🛍️" }, { label: "Fire Station", icon: "🚒" },
+                    { label: "Library", icon: "📚" }, { label: "Post Office", icon: "📮" }, { label: "Empty Field", icon: "🌾" }
+                ]
             },
             {
-                title: "Level 5: Escape the Treasure Vault",
-                questText: "Final Room! The hidden exit door is exactly 3 grid blocks East of your position. If the scale bar states that 1 grid block = 25 miles, how many real-world miles must you travel to escape?",
-                mapType: "grid",
-                gridCells: [
-                    { label: "🤠 You", style: "background:#ffe066;" },
-                    { label: "🧱 Block", style: "" },
-                    { label: "🧱 Block", style: "" },
-                    { label: "🚪 Exit Door", style: "background:#a3ffa3;" },
-                    { label: "🐍 Trap", style: "" },
-                    { label: "🐍 Trap", style: "" },
-                    { label: "🧱 Block", style: "" },
-                    { label: "🧱 Block", style: "" },
-                    { label: "🧱 Block", style: "" }
-                ],
-                scale: "1 Grid Block = 25 miles",
-                choices: [
-                    "50 miles",
-                    "75 miles",
-                    "100 miles",
-                    "125 miles"
-                ],
-                correctAnswer: 1,
-                explanations: "Fantastic! 3 grid blocks × 25 miles per block = 75 real miles. You unlocked the vault!"
+                question: "The real-world distance from the Pond 💧 to the Library 📚 is 45 kilometers. If our map scale is 1 cm = 9 km, how many cm long is this distance drawn on paper?",
+                scaleText: "Reverse Scale Logic: 1 cm = 9 km",
+                choices: ["4 cm", "5 cm", "9 cm", "36 cm"],
+                correctAnswer: "5 cm",
+                hint: "💡 HINT: To find map centimeters from real kilometers, divide: 45 ÷ 9.",
+                mapLayout: [
+                    { label: "School", icon: "🏫" }, { label: "Pond", icon: "💧" }, { label: "Park", icon: "🌳" },
+                    { label: "Houses", icon: "🏡" }, { label: "Mall", icon: "🛍️" }, { label: "Fire Station", icon: "🚒" },
+                    { label: "Library", icon: "📚" }, { label: "Post Office", icon: "📮" }, { label: "Empty Field", icon: "🌾" }
+                ]
             }
         ];
 
-        function initGame() {
-            currentLevel = 0;
-            score = 0;
-            loadLevel();
+        // 5-Second Brand Display Loop
+        setTimeout(() => {
+            const splash = document.getElementById("innovine-splash");
+            if(splash) {
+                splash.style.opacity = "0";
+                setTimeout(() => {
+                    splash.remove();
+                    document.getElementById("instruction-screen").classList.remove("hidden");
+                }, 600);
+            }
+        }, 5000);
+
+        function startAdventure() {
+            document.getElementById("instruction-screen").classList.add("hidden");
+            document.getElementById("gameplay-screen").classList.remove("hidden");
+            loadQuestData();
         }
 
-        function loadLevel() {
-            choiceLocked = false;
-            const feedback = document.getElementById("feedback-panel");
-            feedback.style.display = "none";
-            
-            if (currentLevel >= levels.length) {
-                showVictory();
+        function loadQuestData() {
+            if (levelIdx >= levelData.length) {
+                renderEndGameScreen();
                 return;
             }
 
-            const lvl = levels[currentLevel];
-            
-            // Update Headers
-            document.getElementById("level-indicator").innerText = `Level: ${currentLevel + 1}/${levels.length}`;
-            document.getElementById("score-indicator").innerText = `Score: ${score} XP`;
-            
-            const screenArea = document.getElementById("screen-area");
-            screenArea.innerHTML = "";
+            attemptCount = 0;
+            document.getElementById("hint-bubble").style.display = "none";
+            updateHeartsUI();
 
-            // 1. Build Visual Map element based on type
-            const mapBox = document.createElement("div");
-            mapBox.className = "map-box";
-            
-            if (lvl.mapType === "grid") {
-                const grid = document.createElement("div");
-                grid.className = "grid-map";
-                lvl.gridCells.forEach(c => {
-                    const cell = document.createElement("div");
-                    cell.className = "grid-cell";
-                    cell.style = c.style;
-                    cell.innerText = c.label;
-                    grid.appendChild(cell);
-                });
-                mapBox.appendChild(grid);
-            } else if (lvl.mapType === "compass") {
-                mapBox.innerHTML = `
-                    <div class="compass-rose">
-                        <div class="compass-pointer" id="pointer-needle"></div>
-                        <div class="compass-label lbl-n">N (Market)</div>
-                        <div class="compass-label lbl-e">E (Gym)</div>
-                        <div class="compass-label lbl-s">S (School)</div>
-                        <div class="compass-label lbl-w">W (Bus Stop)</div>
-                    </div>
-                    <div style="font-size:0.8rem; font-weight:bold; color:#7a4f31;"> 중간방향 (NE: 체육관/유원지 | SE: 정원)</div>
-                `;
-            } else {
-                mapBox.innerHTML = `<div style="font-size:3.5rem; margin:10px 0;">${lvl.icon}</div>`;
-            }
+            let data = levelData[levelIdx];
+            document.getElementById("lvl-lbl").innerText = `Quest: ${levelIdx + 1} / ${levelData.length}`;
+            document.getElementById("xp-lbl").innerText = `${totalXp} XP`;
+            document.getElementById("quest-txt-box").innerText = data.question;
+            document.getElementById("scale-indicator-bar").innerText = `📏 Scale Context: ${data.scaleText}`;
 
-            // Append Scale Bar
-            const scaleBar = document.createElement("div");
-            scaleBar.className = "scale-bar-ui";
-            scaleBar.innerText = `📏 ${lvl.scale}`;
-            mapBox.appendChild(scaleBar);
-            screenArea.appendChild(mapBox);
-
-            // 2. Question Text
-            const qText = document.createElement("div");
-            qText.className = "quest-text";
-            qText.innerText = lvl.questText;
-            screenArea.appendChild(qText);
-
-            // 3. Choice list Tray
-            const optionsTray = document.createElement("div");
-            optionsTray.className = "options-list";
-            
-            lvl.choices.forEach((choice, index) => {
-                const btn = document.createElement("button");
-                btn.className = "opt-btn";
-                btn.innerHTML = `<span class="btn-prefix">${String.fromCharCode(65 + index)}</span> ${choice}`;
-                btn.onclick = () => selectAnswer(index, btn);
-                optionsTray.appendChild(btn);
+            // Build Textbook Precise Map Layout Elements
+            const viewGrid = document.getElementById("map-grid-view");
+            viewGrid.innerHTML = "";
+            data.mapLayout.forEach(item => {
+                let div = document.createElement("div");
+                div.className = "map-node";
+                div.innerHTML = `<span>${item.icon}</span> ${item.label}`;
+                viewGrid.appendChild(div);
             });
-            
-            screenArea.appendChild(optionsTray);
-            
-            // Adjust needle spin animation on level 2
-            if(lvl.mapType === "compass") {
-                setTimeout(() => {
-                    const needle = document.getElementById("pointer-needle");
-                    if(needle) needle.style.transform = "rotate(135deg)";
-                }, 400);
-            }
+
+            // Add standard layout directional rose overlay
+            let compass = document.createElement("div");
+            compass.className = "compass-overlay";
+            compass.innerHTML = "N ⬆";
+            viewGrid.appendChild(compass);
+
+            // Populate Answer Choice Buttons
+            const choicesBox = document.getElementById("choices-box");
+            choicesBox.innerHTML = "";
+            data.choices.forEach(ans => {
+                let btn = document.createElement("button");
+                btn.className = "btn-choice";
+                btn.innerText = ans;
+                btn.onclick = () => processAnswerSelection(ans, btn);
+                choicesBox.appendChild(btn);
+            });
         }
 
-        function selectAnswer(selectedIndex, clickedBtn) {
-            if (choiceLocked) return;
-            choiceLocked = true;
-
-            const lvl = levels[currentLevel];
-            const feedback = document.getElementById("feedback-panel");
-            feedback.style.display = "block";
-
-            if (selectedIndex === lvl.correctAnswer) {
-                score += 100;
-                document.getElementById("score-indicator").innerText = `Score: ${score} XP`;
-                feedback.className = "feedback-panel feedback-correct";
-                feedback.innerText = lvl.explanations;
-                clickedBtn.style.background = "#c3e6cb";
-                clickedBtn.style.borderColor = "#28a745";
+        function updateHeartsUI() {
+            const hearts = document.getElementById("hearts-box").children;
+            if(attemptCount === 0) {
+                hearts[0].classList.remove("lost");
+                hearts[1].classList.remove("lost");
+            } else if (attemptCount === 1) {
+                hearts[1].classList.add("lost");
             } else {
-                feedback.className = "feedback-panel feedback-wrong";
-                feedback.innerText = "Incorrect tracking! Let's correct your coordinates. Click next to try again.";
-                clickedBtn.style.background = "#f5c6cb";
-                clickedBtn.style.borderColor = "#dc3545";
+                hearts[0].classList.add("lost");
+                hearts[1].classList.add("lost");
             }
-
-            // Add navigation Action Button
-            const nextBtn = document.createElement("button");
-            nextBtn.className = "action-btn";
-            nextBtn.innerText = currentLevel === levels.length - 1 ? "Check Final Ranking" : "Advance to next Area ➔";
-            nextBtn.onclick = () => {
-                currentLevel++;
-                loadLevel();
-            };
-            document.getElementById("screen-area").appendChild(nextBtn);
         }
 
-        function showVictory() {
-            document.getElementById("level-indicator").innerText = "QUEST ACCOMPLISHED";
-            const screenArea = document.getElementById("screen-area");
-            screenArea.innerHTML = "";
+        function processAnswerSelection(selected, btnElement) {
+            let data = levelData[levelIdx];
 
-            let titleRank = "Junior Navigator 🧭";
-            if (score >= 400) titleRank = "Grand Cartographer Master 👑";
-            else if (score >= 300) titleRank = "Expert Map Explorer 🤠";
+            if (selected === data.correctAnswer) {
+                playSoundTrack(soundCorrect);
+                btnElement.style.background = "#c3e6cb";
+                btnElement.style.borderColor = "#28a745";
+                
+                // Reward XP based on attempts
+                totalXp += (attemptCount === 0) ? 100 : 50;
+                document.getElementById("xp-lbl").innerText = `${totalXp} XP`;
 
-            screenArea.innerHTML = `
-                <div class="victory-screen">
-                    <h2>👑 Vault Looted Successfully! 👑</h2>
-                    <div class="badge">🏆</div>
-                    <p style="font-weight:bold; font-size:1.1rem; margin-bottom:10px;">Total Loot Earned: <span style="color:#bd7a42">${score} XP</span></p>
-                    <p style="margin-bottom:15px; color:#555;">Your map interpretation, coordinate scaling, and directional skills are textbook perfect!</p>
-                    <div style="background:#e6ccb2; padding:10px; font-weight:bold; border-radius:5px; margin-bottom:20px;">
-                        Earned Rank: ${titleRank}
-                    </div>
-                    <button class="action-btn" onclick="initGame()">Replay Treasure Hunt</button>
-                </div>
+                disableChoiceButtons();
+                setTimeout(() => {
+                    levelIdx++;
+                    loadQuestData();
+                }, 1500);
+            } else {
+                attemptCount++;
+                playSoundTrack(soundWrong);
+                btnElement.style.background = "#f5c6cb";
+                btnElement.style.borderColor = "#dc3545";
+                btnElement.disabled = true;
+                updateHeartsUI();
+
+                if (attemptCount === 1) {
+                    // Give Second Attempt Hint
+                    let hintBox = document.getElementById("hint-bubble");
+                    hintBox.innerText = data.hint;
+                    hintBox.style.display = "block";
+                } else {
+                    // Out of attempts, show answer and move on
+                    let hintBox = document.getElementById("hint-bubble");
+                    hintBox.innerText = `❌ Out of chances! Correct path was: ${data.correctAnswer}`;
+                    disableChoiceButtons();
+                    setTimeout(() => {
+                        levelIdx++;
+                        loadQuestData();
+                    }, 2000);
+                }
+            }
+        }
+
+        function disableChoiceButtons() {
+            const btns = document.getElementById("choices-box").children;
+            for(let b of btns) {
+                b.disabled = true;
+            }
+        }
+
+        function renderEndGameScreen() {
+            document.getElementById("lvl-lbl").innerText = "QUEST FINISHED";
+            document.getElementById("quest-txt-box").innerHTML = "🏆 Map Journey Completed!";
+            
+            let evaluationRank = totalXp >= 400 ? "Grand Map Cartographer Master 👑" : "Junior Map Explorer 🧭";
+
+            const viewGrid = document.getElementById("map-grid-view");
+            viewGrid.style.display = "none";
+            document.getElementById("scale-indicator-bar").style.display = "none";
+            document.getElementById("hearts-box").style.display = "none";
+            document.getElementById("hint-bubble").style.display = "none";
+
+            const choicesBox = document.getElementById("choices-box");
+            choicesBox.style.display = "none";
+
+            // Inject full interactive completion panel
+            const mainWindow = document.getElementById("gameplay-screen");
+            let summaryDiv = document.createElement("div");
+            summaryDiv.style.cssText = "padding: 30px 16px; text-align: center; display: flex; flex-direction: column; gap: 15px; justify-content: center; align-items: center; flex-grow: 1;";
+            summaryDiv.innerHTML = `
+                <div style="font-size: 4rem;">💎</div>
+                <h3 style="color:#8b5a2b; font-size:1.3rem;">Total Gold Score: ${totalXp} XP</h3>
+                <p style="font-size:0.95rem; font-weight:bold; background:#e6ccb2; padding:8px 14px; border-radius:8px;">
+                    Unlocked Rank: <br><span style="color:#3e2723; font-size:1.1rem;">${evaluationRank}</span>
+                </p>
+                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Restart Journey</button>
             `;
+            mainWindow.appendChild(summaryDiv);
         }
-
-        // Run on startup
-        window.onload = initGame;
     </script>
 </body>
 </html>
