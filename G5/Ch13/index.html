@@ -2,44 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nebula Data Station: Graphing Matrix</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula Traffic Control: Star Data Dash!</title>
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Arial Black', 'Comic Sans MS', sans-serif;
             margin: 0;
             padding: 0;
             user-select: none;
-            -webkit-user-select: none;
         }
-        body, html {
-            width: 100%;
-            height: 100%;
-            background-color: #030408;
-            color: #38bdf8;
-            overflow: hidden;
+
+        body {
+            background-color: #020617;
+            color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
+            padding: 10px;
         }
 
-        #viewport-root {
+        #game-window {
             width: 100%;
             max-width: 440px;
-            height: 100%;
-            max-height: 780px;
+            height: 760px;
+            background: #0f172a;
+            border: 6px solid #3b82f6;
+            border-radius: 24px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
             display: flex;
             flex-direction: column;
-            position: relative;
-            background: #0b0f17;
-            box-shadow: 0 0 35px rgba(56, 189, 248, 0.25);
             overflow: hidden;
-            border: 3px solid #38bdf8;
         }
 
-        /* --- STAGE 1: BRANDING SPLASH SCREEN (5 SECONDS STRICT) --- */
-        #branding-splash {
+        /* --- STAGE 1: BRAND SPLASH --- */
+        #innovine-splash {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
             background: #ffffff;
@@ -49,194 +48,283 @@
             align-items: center;
             transition: opacity 0.5s ease;
         }
-        .branding-img {
-            max-width: 180px;
+        .splash-logo {
+            max-width: 190px;
             height: auto;
         }
 
-        /* --- UI CONTAINER OVERLAYS --- */
-        .stage-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+        /* --- STAGE 2: INSTRUCTIONS SCREEN --- */
+        #instruction-screen {
+            padding: 30px 24px;
             display: flex;
             flex-direction: column;
-            padding: 20px;
-            gap: 14px;
-            z-index: 10;
-        }
-
-        .station-panel {
-            background: rgba(15, 23, 42, 0.95);
-            border: 2px solid #38bdf8;
-            border-radius: 12px;
-            padding: 22px;
-            box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
-        }
-
-        .header-panel {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #0f172a;
-            color: #38bdf8;
-            padding: 12px 16px;
-            border-radius: 8px;
-            border: 1px solid #1e293b;
-        }
-        .header-title { font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; }
-        .header-score { font-weight: 800; font-size: 0.85rem; background: #0284c7; color: #fff; padding: 4px 12px; border-radius: 4px; }
-
-        .instruction-text {
-            font-size: 0.9rem;
-            line-height: 1.5;
-            color: #94a3b8;
-        }
-        .instruction-text ul { margin-left: 18px; margin-top: 10px; }
-        .instruction-text li { margin-bottom: 12px; font-weight: bold; color: #f1f5f9; }
-
-        .workspace-area {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            background: #070a12;
-            border-radius: 8px;
-            border: 1px solid #1e293b;
-            padding: 14px;
-        }
-
-        .telemetry-log-box {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #e2e8f0;
-            background: #0f172a;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid #38bdf8;
-            width: 100%;
-            text-align: center;
-            min-height: 90px;
-            display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+            background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+        }
+        .game-title {
+            font-size: 2.2rem;
+            color: #38bdf8;
+            text-shadow: 0 4px #1d4ed8;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .rules-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 3px dashed #3b82f6;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        .rules-card h3 {
+            color: #fde047;
+            font-size: 1.05rem;
+            margin-bottom: 6px;
+        }
+        .rules-card p {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            margin-bottom: 14px;
             line-height: 1.4;
         }
 
-        /* --- RENDERING VISUAL VIEWPORT --- */
-        .vector-canvas-box {
-            width: 100%;
-            height: 180px;
-            background: #020617;
-            border-radius: 8px;
-            border: 1px solid #1e293b;
-            position: relative;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
+        /* --- STAGE 3: GAMEPLAY ZONE --- */
+        #gameplay-screen {
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
         }
 
-        /* --- CONTROL CONSOLE CONTROLLER --- */
-        .console-counter-chassis {
+        .header-bar {
+            background: #020617;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid #1e293b;
+        }
+        .level-badge {
+            background: #a855f7;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .hearts-line {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+        }
+        .heart-slot { font-size: 1.2rem; }
+        .heart-slot.empty { filter: grayscale(1) opacity(0.3); }
+        .xp-badge {
+            background: #22c55e;
+            color: #020617;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        /* LIVE DECK VIEWPORT VIEW */
+        .space-arena {
+            flex-grow: 1;
+            background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 20px;
+            overflow: hidden;
+        }
+
+        /* Star Chart Display Core Terminal */
+        .data-monitor-screen {
+            position: absolute;
+            top: 15px;
+            background: #020617;
+            border: 4px solid #38bdf8;
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: 0 8px 0 #1e4ed8;
+            z-index: 10;
+            width: 90%;
+        }
+        .data-monitor-screen h4 {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+        
+        /* Graphic Area for the visual Data Question */
+        .visual-chart-box {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 8px;
+            min-height: 70px;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 8px;
-            background: #0f172a;
-            border: 1px solid #1e293b;
-            padding: 10px 14px;
-            border-radius: 8px;
+            font-size: 1.1rem;
+            color: #f1f5f9;
         }
 
-        .counter-column {
+        /* Visual representation of a simple data Bar Graph using pure css blocks */
+        .bar-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            height: 60px;
+            padding-top: 5px;
+        }
+        .bar-column {
+            width: 30px;
+            background: linear-gradient(to top, #3b82f6, #60a5fa);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+        }
+        .bar-column.target-bar {
+            background: linear-gradient(to top, #e11d48, #fb7185);
+            animation: pulseGlow 1.5s infinite alternate;
+        }
+        .bar-label {
+            position: absolute;
+            bottom: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.6rem;
+            color: #94a3b8;
+        }
+
+        @keyframes pulseGlow {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; filter: drop-shadow(0 0 4px #f43f5e); }
+        }
+
+        /* Falling Ship Object Box container */
+        .ship-track-lane {
+            width: 100%;
+            height: 180px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            z-index: 4;
+        }
+        .alien-vessel {
+            font-size: 3.5rem;
+            position: absolute;
+            top: 10px;
+            transition: transform 0.1s linear;
+        }
+
+        /* Laser Gateway Barrier Protection Graphic */
+        .laser-gate-line {
+            width: 85%;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 4px;
+            box-shadow: 0 0 12px #ef4444;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        .laser-gate-line.open {
+            background: #22c55e;
+            box-shadow: 0 0 12px #22c55e;
+        }
+
+        /* --- THE ACTIVE ARCADE CONTROLS COCKPIT --- */
+        .dashboard-deck {
+            background: #020617;
+            padding: 14px;
+            border-top: 4px solid #1e293b;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 2px;
-        }
-
-        .counter-btn {
-            background: #1e293b;
-            border: 1px solid #38bdf8;
-            color: #38bdf8;
-            font-size: 1rem;
-            padding: 2px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .counter-btn:active { background: #38bdf8; color: #0f172a; }
-
-        .counter-display-window {
-            width: 38px;
-            height: 44px;
-            background: #020617;
-            border: 1px solid #38bdf8;
-            border-radius: 4px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: #38bdf8;
-            text-shadow: 0 0 5px #38bdf8;
-        }
-
-        .unit-lbl {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: #64748b;
-            margin-left: 8px;
-            align-self: center;
-            text-transform: uppercase;
-        }
-
-        /* --- CONSOLE LIGHTS INTEGRITY --- */
-        .strike-container {
-            display: flex;
             gap: 12px;
-            justify-content: center;
-        }
-        .strike-cell {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #f43f5e;
-            box-shadow: 0 0 8px #f43f5e;
-            transition: all 0.3s ease;
-        }
-        .strike-cell.used {
-            background: #1e293b;
-            box-shadow: none;
         }
 
-        .action-btn {
-            background: #38bdf8;
-            color: #0f172a;
-            border: none;
-            border-bottom: 4px solid #0284c7;
-            padding: 14px;
-            font-size: 0.95rem;
-            font-weight: 900;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .action-btn:active {
-            transform: translateY(2px);
-            border-bottom-width: 2px;
-        }
-
-        .status-banner {
-            text-align: center;
-            font-weight: 700;
+        .toast-banner {
+            background: #fde047;
+            border: 2px solid #ca8a04;
+            color: #713f12;
+            padding: 8px;
+            border-radius: 10px;
             font-size: 0.8rem;
-            min-height: 22px;
-            color: #475569;
-            letter-spacing: 0.5px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+            line-height: 1.3;
+        }
+
+        .tuner-station {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 16px;
+            border: 2px solid #1e293b;
+        }
+        .tuner-station label {
+            font-size: 0.8rem;
+            color: #38bdf8;
+            text-transform: uppercase;
+        }
+        .counter-controls {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .btn-dash {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: 0 4px #1d4ed8;
+        }
+        .btn-dash:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px #1d4ed8;
+        }
+        .count-display-val {
+            font-size: 1.8rem;
+            color: #fde047;
+            width: 40px;
+            text-align: center;
+        }
+
+        /* Master Landing Clearance Trigger Button */
+        .clearance-action-btn {
+            background: #a855f7;
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 1.25rem;
+            font-weight: bold;
+            border-radius: 16px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 6px #7e22ce;
+            letter-spacing: 1px;
+            text-shadow: 0 2px #7e22ce;
+        }
+        .clearance-action-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px #7e22ce;
         }
 
         .hidden { display: none !important; }
@@ -244,333 +332,300 @@
 </head>
 <body>
 
-    <div id="viewport-root">
+    <div id="game-window">
         
-        <div id="branding-splash">
-            <img src="assets/logo.png" class="branding-img" alt="Innovine Logo" onerror="this.src='https://placehold.co/180x60/ffffff/0f172a?text=INNOVINE';">
+        <div id="innovine-splash">
+            <img src="assets/logo.png" class="splash-logo" alt="Innovine" onerror="this.src='https://placehold.co/180x60/ffffff/0f172a?text=INNOVINE';">
         </div>
 
-        <div id="instructions-screen" class="stage-overlay hidden">
-            <div class="station-panel" style="margin: auto 0; display: flex; flex-direction: column; gap: 14px;">
-                <div class="header-panel">
-                    <div class="header-title">📡 Station Analytics Core</div>
-                </div>
-                <div class="instruction-text">
-                    <p>Process systemic data maps by correctly extracting statistical parameters via telescope feedback:</p>
-                    <ul>
-                        <li>1. Evaluate the Bar, Line, Pictograph, or Tally parameters precisely.</li>
-                        <li>2. Input the computed values into the digital matrix interface below.</li>
-                        <li>3. Commit the telemetry report! You have **2 link stabilization retries** per array.</li>
-                    </ul>
-                </div>
-                <button class="action-btn" onclick="engageDataStation()">Reboot Terminal link</button>
-            </div>
-        </div>
-
-        <div id="gameplay-screen" class="stage-overlay hidden">
-            <div class="header-panel">
-                <div id="game-level-tag" class="header-title">Data Array: 01 / 06</div>
-                <div id="game-score-tag" class="header-score">Sync: 0 GHz</div>
-            </div>
-
-            <div class="workspace-area">
-                <div id="game-prompt" class="telemetry-log-box">Synchronizing navigation matrices...</div>
+        <div id="instruction-screen" class="hidden">
+            <h1 class="game-title">NEBULA CONTROL<br><span style="color:#fde047; font-size:1.3rem;">Star Data Dash</span></h1>
+            <div class="rules-card">
+                <h3>🛸 LEVEL 1: Tally Scanner</h3>
+                <p>Count the tally marks on your screen console to find out how many star-ships are in the grid fleet lane.</p>
                 
-                <div class="vector-canvas-box">
-                    <svg id="drawing-svg" width="100%" height="100%" style="position:absolute; pointer-events:none;"></svg>
-                </div>
+                <h3>🛸 LEVEL 2: Pictograph Beam</h3>
+                <p>Read the space graphics chart! But watch out for the key rule: every single star icon represents 4 ships!</p>
+                
+                <h3>🛸 LEVEL 3: Bar Graph Metrics</h3>
+                <p>Identify the level height of the targeted colored energy bar column on your scanner to find the traffic frequency count!</p>
+            </div>
+            <button class="slam-action-btn" style="background:#22c55e; box-shadow:0 6px #15803d;" onclick="startTrafficOperations()">Engage Radar Control</button>
+        </div>
 
-                <div class="console-counter-chassis">
-                    <div class="counter-column">
-                        <button class="counter-btn" onclick="stepConsoleDigit(0, 1)">▲</button>
-                        <div id="digit-display-0" class="counter-display-window">0</div>
-                        <button class="counter-btn" onclick="stepConsoleDigit(0, -1)">▼</button>
-                    </div>
-                    <div class="counter-column">
-                        <button class="counter-btn" onclick="stepConsoleDigit(1, 1)">▲</button>
-                        <div id="digit-display-1" class="counter-display-window">0</div>
-                        <button class="counter-btn" onclick="stepConsoleDigit(1, -1)">▼</button>
-                    </div>
-                    <div class="counter-column">
-                        <button class="counter-btn" onclick="stepConsoleDigit(2, 1)">▲</button>
-                        <div id="digit-display-2" class="counter-display-window">0</div>
-                        <button class="counter-btn" onclick="stepConsoleDigit(2, -1)">▼</button>
-                    </div>
-                    <div class="counter-column">
-                        <button class="counter-btn" onclick="stepConsoleDigit(3, 1)">▲</button>
-                        <div id="digit-display-3" class="counter-display-window">0</div>
-                        <button class="counter-btn" onclick="stepConsoleDigit(3, -1)">▼</button>
-                    </div>
-                    
-                    <div id="ui-unit-label" class="unit-lbl">units</div>
+        <div id="gameplay-screen" class="hidden">
+            <div class="header-bar">
+                <div class="level-badge" id="level-badge-txt">LEVEL 1</div>
+                <div class="hearts-line" id="lives-box">
+                    <span class="heart-slot">❤️</span>
+                    <span class="heart-slot">❤️</span>
                 </div>
-
-                <div class="strike-container">
-                    <div id="strike-dot-1" class="strike-cell"></div>
-                    <div id="strike-dot-2" class="strike-cell"></div>
-                </div>
-
-                <button class="action-btn" onclick="processDataLogSubmission()">Transmit Telemetry Matrix</button>
+                <div class="xp-badge" id="xp-counter-txt">0 XP</div>
             </div>
 
-            <div id="game-toast-feedback" class="status-banner">Awaiting valid structural alignment.</div>
+            <div class="space-arena">
+                <div class="data-monitor-screen">
+                    <h4 id="monitor-heading-txt">Radar Data Feed Scanner</h4>
+                    <div class="visual-chart-box" id="chart-display-arena"></div>
+                </div>
+
+                <div class="ship-track-lane">
+                    <div class="alien-vessel" id="spacecraft-actor">🛸</div>
+                </div>
+
+                <div class="laser-gate-line" id="laser-barrier-line"></div>
+            </div>
+
+            <div class="dashboard-deck">
+                <div class="toast-banner" id="terminal-feedback-toast"></div>
+
+                <div class="tuner-station">
+                    <label>Set Traffic Count</label>
+                    <div class="counter-controls">
+                        <button class="btn-dash" onclick="adjustTrafficCount(-1)">-</button>
+                        <span class="count-display-val" id="user-count-txt">0</span>
+                        <button class="btn-dash" onclick="adjustTrafficCount(1)">+</button>
+                    </div>
+                </div>
+
+                <button class="clearance-action-btn" id="clearance-trigger-btn" onclick="verifyTrafficClearance()">Grant Docking Clearance 🔓</button>
+            </div>
         </div>
 
     </div>
 
     <script>
-        // Media Sound Notification Tracks
-        const audioCorrect = new Audio('assets/correct.mp3');
-        const audioWrong = new Audio('assets/wrong.mp3');
-        const audioWin = new Audio('assets/freesound_community-claps-44774.mp3');
+        let taskSequencePipeline = [];
+        let activePointer = 0;
+        let runningScoreXp = 0;
+        let failedAttempts = 0;
 
-        function triggerAudio(track) {
-            try {
-                track.currentTime = 0;
-                track.play();
-            } catch(e) { console.log("Audio asset fall-back enabled."); }
-        }
+        let userCountSetting = 0;
+        let isAnimating = false;
+        let shipDriftInterval = null;
+        let shipVerticalPosition = 0;
 
-        // Active State Engine Variables
-        let currentSyncScore = 0;
-        let activeDataIndex = 0;
-        let coreArrayStrikes = 0;
-        let tuningDigits = [0, 0, 0, 0];
-        let finalizedShuffledPool = [];
-
-        function buildSVGElement(name) { return document.createElementNS("http://www.w3.org/2000/svg", name); }
-        
-        function setSVGProperties(el, attrs) {
-            for (let k in attrs) { el.setAttribute(k, attrs[k]); }
-            return el;
-        }
-
-        // Complete Dataset explicitly matching all 6 learning outcomes from image_33fca9.png
-        const coreDataPuzzles = [
-            {
-                q: "[Outcome: Interpret Graph Data] Look at this stellar anomaly collection graph. What is the combined count of anomalies recorded in Zone A and Zone B?",
-                correct: [0, 0, 7, 0],
-                unit: "cnt",
-                render: (svg) => {
-                    // Draw a quick clear mini bar comparison chart
-                    let b1 = buildSVGElement("rect"); setSVGProperties(b1, { x: "90", y: "70", width: "40", height: "80", fill: "#38bdf8" }); svg.appendChild(b1);
-                    let b2 = buildSVGElement("rect"); setSVGProperties(b2, { x: "170", y: "40", width: "40", height: "110", fill: "#0284c7" }); svg.appendChild(b2);
-                    
-                    let t1 = buildSVGElement("text"); setSVGProperties(t1, { x: "110", y: "165", fill: "#94a3b8", "font-size": "11", "text-anchor": "middle" }); t1.textContent = "A: 30"; svg.appendChild(t1);
-                    let t2 = buildSVGElement("text"); setSVGProperties(t2, { x: "190", y: "165", fill: "#94a3b8", "font-size": "11", "text-anchor": "middle" }); t2.textContent = "B: 40"; svg.appendChild(t2);
-                }
-            },
-            {
-                q: "[Outcome: Tally Marks Interpretation] Interstellar debris counters recorded this tally cluster matrix. What is the absolute numerical count represented by the active tally matrix?",
-                correct: [0, 0, 1, 3],
-                unit: "items",
-                render: (svg) => {
-                    // Draw 2 full bundles of 5 plus 3 solo tallies (13 total)
-                    for (let g = 0; g < 2; g++) {
-                        let offset = 80 + (g * 60);
-                        for(let i=0; i<4; i++) {
-                            let line = buildSVGElement("line"); setSVGProperties(line, { x1: offset+(i*10), y1: "60", x2: offset+(i*10), y2: "110", stroke: "#38bdf8", "stroke-width": "3" }); svg.appendChild(line);
-                        }
-                        let cross = buildSVGElement("line"); setSVGProperties(cross, { x1: offset-5, y1: "100", x2: offset+35, y2: "70", stroke: "#f43f5e", "stroke-width": "3" }); svg.appendChild(cross);
-                    }
-                    // Remaining 3 standalone tallies
-                    for(let i=0; i<3; i++) {
-                        let line = buildSVGElement("line"); setSVGProperties(line, { x1: 200+(i*10), y1: "60", x2: 200+(i*10), y2: "110", stroke: "#38bdf8", "stroke-width": "3" }); svg.appendChild(line);
-                    }
-                }
-            },
-            {
-                q: "[Outcome: Read Pictograph] Review the probe distribution layout map. If each star emblem represents 15 deep-space probes, how many total probes are deployed in Sector X?",
-                correct: [0, 0, 4, 5],
-                unit: "probes",
-                render: (svg) => {
-                    let label = buildSVGElement("text"); setSVGProperties(label, { x: "160", y: "50", fill: "#e2e8f0", "font-size": "13", "text-anchor": "middle" });
-                    label.textContent = "Sector X Deployed Array:"; svg.appendChild(label);
-                    
-                    // Render 3 distinct stars representing (3 * 15 = 45)
-                    for(let i=0; i<3; i++) {
-                        let textStar = buildSVGElement("text"); setSVGProperties(textStar, { x: 105+(i*50), y: 105, fill: "#eab308", "font-size": "32", "text-anchor": "middle" });
-                        textStar.textContent = "⭐"; svg.appendChild(textStar);
-                    }
-
-                    let legend = buildSVGElement("text"); setSVGProperties(legend, { x: "160", y: "150", fill: "#64748b", "font-size": "11", "text-anchor": "middle" });
-                    legend.textContent = "(Legend: 1 Star = 15 Probes)"; svg.appendChild(legend);
-                }
-            },
-            {
-                q: "[Outcome: Analyze Bar Graph] Analyze this operational bar metrics report. Compute the total combined frequency points of Alpha and Gamma configurations.",
-                correct: [0, 1, 6, 0],
-                unit: "pts",
-                render: (svg) => {
-                    let b1 = buildSVGElement("rect"); setSVGProperties(b1, { x: "70", y: "60", width: "35", height: "90", fill: "#38bdf8" }); svg.appendChild(b1);
-                    let b2 = buildSVGElement("rect"); setSVGProperties(b2, { x: "145", y: "110", width: "35", height: "40", fill: "#475569" }); svg.appendChild(b2);
-                    let b3 = buildSVGElement("rect"); setSVGProperties(b3, { x: "220", y: "80", width: "35", height: "70", fill: "#0284c7" }); svg.appendChild(b3);
-
-                    let l1 = buildSVGElement("text"); setSVGProperties(l1, { x: "87", y: "166", fill: "#94a3b8", "font-size": "10", "text-anchor": "middle" }); l1.textContent = "Alpha:90"; svg.appendChild(l1);
-                    let l2 = buildSVGElement("text"); setSVGProperties(l2, { x: "162", y: "166", fill: "#94a3b8", "font-size": "10", "text-anchor": "middle" }); l2.textContent = "Beta:40"; svg.appendChild(l2);
-                    let l3 = buildSVGElement("text"); setSVGProperties(l3, { x: "237", y: "166", fill: "#94a3b8", "font-size": "10", "text-anchor": "middle" }); l3.textContent = "Gamma:70"; svg.appendChild(l3);
-                }
-            },
-            {
-                q: "[Outcome: Circle Graph Interpretation] A station distribution circle graph segments regional elements: Core Gas (50%), Dark Matter (25%), Exotic Dust (25%). If total system mass equals 800 metric tons, calculate the mass of Dark Matter.",
-                correct: [0, 2, 0, 0],
-                unit: "tons",
-                render: (svg) => {
-                    let circle = buildSVGElement("circle"); setSVGProperties(circle, { cx: "160", cy: "90", r: "50", fill: "none", stroke: "#38bdf8", "stroke-width": "2" }); svg.appendChild(circle);
-                    let line1 = buildSVGElement("line"); setSVGProperties(line1, { x1: "110", y1: "90", x2: "210", y2: "90", stroke: "#38bdf8" }); svg.appendChild(line1);
-                    let line2 = buildSVGElement("line"); setSVGProperties(line2, { x1: "160", y1: "90", x2: "160", y2: "140", stroke: "#38bdf8" }); svg.appendChild(line2);
-                    
-                    let label = buildSVGElement("text"); setSVGProperties(label, { x: "160", y: "30", fill: "#94a3b8", "font-size": "11", "text-anchor": "middle" });
-                    label.textContent = "Total System Cluster = 800 Tons"; svg.appendChild(label);
-                }
-            },
-            {
-                q: "[Outcome: Line Graph to Table] Telemetry coordinates mapped a tracking line node at Time T: 2 Hours -> Value: 120 Units. Extract and input the value for Hour 2.",
-                correct: [0, 1, 2, 0],
-                unit: "units",
-                render: (svg) => {
-                    let ax = buildSVGElement("path"); setSVGProperties(ax, { d: "M 60 40 L 60 140 L 260 140", fill: "none", stroke: "#475569", "stroke-width": "2" }); svg.appendChild(ax);
-                    let track = buildSVGElement("path"); setSVGProperties(track, { d: "M 60 140 L 130 90 L 230 50", fill: "none", stroke: "#38bdf8", "stroke-width": "3" }); svg.appendChild(track);
-                    
-                    let dot = buildSVGElement("circle"); setSVGProperties(dot, { cx: "130", cy: "90", r: "5", fill: "#f43f5e" }); svg.appendChild(dot);
-                    let lbl = buildSVGElement("text"); setSVGProperties(lbl, { x: "130", y: "78", fill: "#fff", "font-size": "11", "text-anchor": "middle" });
-                    lbl.textContent = "(2h, 120)"; svg.appendChild(lbl);
-                }
-            }
+        // Clean textbook data sets entirely free of latex, code or symbols
+        const starDataSyllabus = [
+            // --- LEVEL 1: TALLY MARKS CHALLENGES ---
+            { level: 1, type: "TALLY", answer: 7, asset: "Tally Code: IIII/ II", label: "Read the tally count to unlock entry lines for the incoming Space-Cruiser!" },
+            { level: 1, type: "TALLY", answer: 12, asset: "Tally Code: IIII/ IIII/ II", label: "Incoming fleet detected! Count the tally block marks quickly to set entry gates." },
+            
+            // --- LEVEL 2: PICTOGRAPH CHALLENGES ---
+            { level: 2, type: "PICTO", answer: 16, count: 4, label: "Alien Fleet Scan: Each star icon is worth 4 spaceships. Read the 4 star icons to find the total count!" },
+            { level: 2, type: "PICTO", answer: 24, count: 6, label: "Cargo Pod Scan: Each star icon represents 4 pods. Read the 6 star icons to clear the docks!" },
+            
+            // --- LEVEL 3: BAR CHART CHALLENGES ---
+            { level: 3, type: "BAR", answer: 30, activeBar: 30, barWeights: [10, 20, 30, 15], label: "Energy Shield Chart: Check the height of the flashing red bar column. Find the value point!" },
+            { level: 3, type: "BAR", answer: 45, activeBar: 45, barWeights: [25, 45, 10, 35], label: "Final Master Wave: Check the height of the tall flashing red matrix bar column to pass the game!" }
         ];
 
-        // Knuth-Fisher-Yates Randomization Engine 
-        function randomizeDataPool(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        // Strict 5-Second Splash screen sequence
+        // 5-Second Splash Engine Initialization Loop
         setTimeout(() => {
-            const splashScreen = document.getElementById('branding-splash');
-            if (splashScreen) {
-                splashScreen.style.opacity = '0';
+            const splashScreen = document.getElementById("innovine-splash");
+            if(splashScreen) {
+                splashScreen.style.opacity = "0";
                 setTimeout(() => {
                     splashScreen.remove();
-                    document.getElementById('instructions-screen').classList.remove('hidden');
+                    document.getElementById("instruction-screen").classList.remove("hidden");
                 }, 500);
             }
         }, 5000);
 
-        function engageDataStation() {
-            finalizedShuffledPool = randomizeDataPool([...coreDataPuzzles]);
-            document.getElementById('instructions-screen').classList.add('hidden');
-            document.getElementById('gameplay-screen').classList.remove('hidden');
-            loadNextDataSector();
+        function startTrafficOperations() {
+            taskSequencePipeline = [...starDataSyllabus];
+            activePointer = 0;
+            runningScoreXp = 0;
+
+            document.getElementById("instruction-screen").classList.add("hidden");
+            document.getElementById("gameplay-screen").classList.remove("hidden");
+            loadActiveRadarWave();
         }
 
-        function loadNextDataSector() {
-            if (activeDataIndex >= finalizedShuffledPool.length) {
-                triggerStationVictory();
+        function loadActiveRadarWave() {
+            if (activePointer >= taskSequencePipeline.length) {
+                concludeSpaceMissions();
                 return;
             }
 
-            document.getElementById('game-level-tag').innerText = `Data Array: ${String(activeDataIndex + 1).padStart(2, '0')} / ${finalizedShuffledPool.length}`;
-            document.getElementById('game-score-tag').innerText = `Sync: ${currentSyncScore} GHz`;
+            failedAttempts = 0;
+            isAnimating = false;
+            userCountSetting = 0;
+            clearInterval(shipDriftInterval);
 
-            coreArrayStrikes = 0;
-            document.getElementById('strike-dot-1').classList.remove('used');
-            document.getElementById('strike-dot-2').classList.remove('used');
+            document.getElementById("terminal-feedback-toast").style.display = "none";
+            document.getElementById("clearance-trigger-btn").disabled = false;
+            document.getElementById("laser-barrier-line").classList.remove("open");
+            document.getElementById("user-count-txt").innerText = userCountSetting;
+            refreshHeartDisplaySlots();
 
-            tuningDigits = [0, 0, 0, 0];
-            refreshConsoleUI();
-
-            const currentScenario = finalizedShuffledPool[activeDataIndex];
-            document.getElementById('game-prompt').innerText = currentScenario.q;
-            document.getElementById('ui-unit-label').innerText = currentScenario.unit;
-
-            // Clear and rewrite matching SVG visual context
-            const canvasElement = document.getElementById('drawing-svg');
-            canvasElement.innerHTML = '';
-            if (currentScenario.render) currentScenario.render(canvasElement);
-
-            document.getElementById('game-toast-feedback').innerText = "Awaiting valid structural alignment.";
-            document.getElementById('game-toast-feedback').style.color = "#475569";
-        }
-
-        function stepConsoleDigit(colIndex, offset) {
-            let nextValue = tuningDigits[colIndex] + offset;
-            if (nextValue > 9) nextValue = 0;
-            if (nextValue < 0) nextValue = 9;
-            tuningDigits[colIndex] = nextValue;
-            refreshConsoleUI();
-        }
-
-        function refreshConsoleUI() {
-            for (let i = 0; i < 4; i++) {
-                document.getElementById(`digit-display-${i}`).innerText = tuningDigits[i];
-            }
-        }
-
-        function processDataLogSubmission() {
-            const currentScenario = finalizedShuffledPool[activeDataIndex];
-            const feedbackField = document.getElementById('game-toast-feedback');
-
-            let matrixPass = true;
-            for (let i = 0; i < 4; i++) {
-                if (tuningDigits[i] !== currentScenario.correct[i]) {
-                    matrixPass = false;
-                    break;
-                }
-            }
-
-            if (matrixPass) {
-                currentSyncScore += 120;
-                triggerAudio(audioCorrect);
-                feedbackField.innerText = "✔ LINK STABLE: Telemetry data packet aligned perfectly!";
-                feedbackField.style.color = "#38bdf8";
-
-                activeDataIndex++;
-                setTimeout(() => loadNextDataSector(), 1600);
-            } else {
-                coreArrayStrikes++;
-                triggerAudio(audioWrong);
-
-                if (coreArrayStrikes === 1) {
-                    document.getElementById('strike-dot-1').classList.add('used');
-                    feedbackField.innerText = "❌ DESYNC DETECTED: Statistical indices corrupted!";
-                    feedbackField.style.color = "#f43f5e";
-                } else {
-                    document.getElementById('strike-dot-2').classList.add('used');
-                    
-                    const calculatedTarget = parseInt(currentScenario.correct.join(""), 10);
-                    feedbackField.innerText = `Realigning frequencies... Expected value was: ${calculatedTarget} ${currentScenario.unit}`;
-                    feedbackField.style.color = "#eab308";
-
-                    activeDataIndex++;
-                    setTimeout(() => loadNextDataSector(), 3500);
-                }
-            }
-            document.getElementById('game-score-tag').innerText = `Sync: ${currentSyncScore} GHz`;
-        }
-
-        function triggerStationVictory() {
-            triggerAudio(audioWin);
-            document.getElementById('game-level-tag').innerText = "SYSTEM SECURE";
-            document.getElementById('game-prompt').innerHTML = `
-                <div style="font-size: 1.05rem; color: #38bdf8; margin-bottom: 4px;">🏆 CHIEF QUANTATIVE ANALYST!</div>
-                <div style="font-size: 0.8rem; color: #94a3b8; font-weight: bold;">All sector arrays processed. Final Sync: ${currentSyncScore} GHz</div>
-            `;
-            document.getElementById('game-toast-feedback').innerText = "Main navigation telemetry fully recovered.";
-            document.getElementById('game-toast-feedback').style.color = "#38bdf8";
-
-            document.getElementById('drawing-svg').parentElement.innerHTML = `
-                <div style="font-size:52px; text-align:center; width:100%; padding-top:40px; letter-spacing:6px;">📊📡⚡</div>
-            `;
+            let activeTask = taskSequencePipeline[activePointer];
             
-            const controlConsoleBlock = document.querySelector('.console-counter-chassis');
-            controlConsoleBlock.style.display = "block";
-            controlConsoleBlock.innerHTML = `
-                <button class="action-btn" onclick="location.reload()">Map Alternative Sector</button>
+            // Set Headers
+            document.getElementById("level-badge-txt").innerText = `WAVE ${activeTask.level} [Sector ${activePointer + 1}/6]`;
+            document.getElementById("monitor-heading-txt").innerText = activeTask.label;
+
+            // Render Visual Chart Area dynamically based on dataset models
+            const displayArena = document.getElementById("chart-display-arena");
+            displayArena.innerHTML = "";
+
+            if (activeTask.type === "TALLY") {
+                displayArena.innerText = activeTask.asset;
+                displayArena.style.fontSize = "1.6rem";
+                displayArena.style.letterSpacing = "2px";
+                displayArena.style.color = "#a855f7";
+            } 
+            else if (activeTask.type === "PICTO") {
+                displayArena.style.fontSize = "1.2rem";
+                let starsString = "";
+                for(let i=0; i < activeTask.count; i++) {
+                    starsString += "⭐ ";
+                }
+                displayArena.innerHTML = `<div>${starsString}<br><span style="font-size:0.75rem; color:#94a3b8; display:block; margin-top:6px;">Key Rule: 1 Star Icon = 4 Ships</span></div>`;
+            } 
+            else if (activeTask.type === "BAR") {
+                let barLayoutHtml = `<div class="bar-container">`;
+                activeTask.barWeights.forEach((weight, index) => {
+                    let isTarget = (weight === activeTask.activeBar);
+                    let heightPixels = Math.floor(weight * 1.2);
+                    barLayoutHtml += `
+                        <div class="bar-column ${isTarget ? 'target-bar' : ''}" style="height:${heightPixels}px;">
+                            <span class="bar-label">${weight}</span>
+                        </div>`;
+                });
+                barLayoutHtml += `</div>`;
+                displayArena.innerHTML = barLayoutHtml;
+            }
+
+            // Configure Spacecraft visual properties based on level models
+            const craft = document.getElementById("spacecraft-actor");
+            if (activeTask.level === 1) { craft.innerText = "🛸"; }
+            else if (activeTask.level === 2) { craft.innerText = "🚀"; }
+            else { craft.innerText = "👾"; }
+
+            // Engage Live Floating Descent Loop Engine
+            shipVerticalPosition = 0;
+            craft.style.transform = `translateY(${shipVerticalPosition}px)`;
+
+            shipDriftInterval = setInterval(() => {
+                if (!isAnimating && shipVerticalPosition < 110) {
+                    shipVerticalPosition += 1.5; // Ships drift lower in real-time
+                    craft.style.transform = `translateY(${shipVerticalPosition}px)`;
+                    
+                    if (shipVerticalPosition > 85) {
+                        document.getElementById("laser-barrier-line").style.background = "#fb7185";
+                    }
+                }
+            }, 100);
+        }
+
+        function adjustTrafficCount(step) {
+            if(isAnimating) return;
+            userCountSetting = Math.max(0, Math.min(99, userCountSetting + step));
+            document.getElementById("user-count-txt").innerText = userCountSetting;
+        }
+
+        function refreshHeartDisplaySlots() {
+            const slots = document.getElementById("lives-box").children;
+            slots[0].classList.remove("empty");
+            slots[1].classList.remove("empty");
+            if (failedAttempts === 1) slots[1].classList.add("empty");
+            if (failedAttempts >= 2) slots[0].classList.add("empty");
+        }
+
+        function verifyTrafficClearance() {
+            if(isAnimating) return;
+            isAnimating = true;
+            clearInterval(shipDriftInterval);
+
+            const barrier = document.getElementById("laser-barrier-line");
+            const craft = document.getElementById("spacecraft-actor");
+            const feedbackToast = document.getElementById("terminal-feedback-toast");
+
+            let currentTask = taskSequencePipeline[activePointer];
+
+            if (userCountSetting === currentTask.answer) {
+                // Successful entry authorization alignment
+                barrier.classList.add("open");
+                craft.style.transform = "translateY(190px) scale(0)";
+                
+                runningScoreXp += (failedAttempts === 0) ? 200 : 100;
+                document.getElementById("xp-counter-txt").innerText = `${runningScoreXp} XP`;
+
+                feedbackToast.style.display = "block";
+                feedbackToast.style.background = "#d1fae5";
+                feedbackToast.style.borderColor = "#22c55e";
+                feedbackToast.style.color = "#14532d";
+                feedbackToast.innerText = `ACCESS GRANTED! Data count verified at ${userCountSetting}. Ship landed safely!`;
+
+                setTimeout(() => {
+                    activePointer++;
+                    loadActiveRadarWave();
+                }, 1800);
+
+            } else {
+                failedAttempts++;
+                refreshHeartDisplaySlots();
+
+                feedbackToast.style.display = "block";
+                feedbackToast.style.background = "#fee2e2";
+                feedbackToast.style.borderColor = "#ef4444";
+                feedbackToast.style.color = "#7f1d1d";
+
+                if (failedAttempts === 1) {
+                    feedbackToast.innerText = `WARNING! Count set to ${userCountSetting}. Radar scanning shows variance anomalies! Re-check parameters.`;
+                    setTimeout(() => {
+                        isAnimating = false;
+                        // Resume drift engine sequence lines
+                        shipDriftInterval = setInterval(() => {
+                            if (shipVerticalPosition < 110) {
+                                shipVerticalPosition += 1;
+                                craft.style.transform = `translateY(${shipVerticalPosition}px)`;
+                            }
+                        }, 100);
+                    }, 1800);
+                } else {
+                    // Maximum attempts depleted for active cycle wave
+                    document.getElementById("clearance-trigger-btn").disabled = true;
+                    feedbackToast.innerText = `CRITICAL JAM! Spaceship missed the docking pad alignment! Auto-routing traffic to next grid sector...`;
+                    craft.style.transform = "translateX(250px) rotate(45deg)";
+                    craft.style.opacity = "0";
+
+                    setTimeout(() => {
+                        craft.style.opacity = "1";
+                        craft.style.transform = "none";
+                        activePointer++;
+                        loadActiveRadarWave();
+                    }, 2400);
+                }
+            }
+        }
+
+        function concludeSpaceMissions() {
+            document.getElementById("level-badge-txt").innerText = "SECURED";
+            document.getElementById("lives-box").style.display = "none";
+            document.getElementById("terminal-feedback-toast").style.display = "none";
+            document.querySelector(".space-arena").style.display = "none";
+            document.querySelector(".tuner-station").style.display = "none";
+            document.getElementById("clearance-trigger-btn").style.display = "none";
+
+            const coreScreen = document.getElementById("gameplay-screen");
+            let summaryBox = document.createElement("div");
+            summaryBox.style.cssText = "padding: 35px 16px; text-align: center; display: flex; flex-direction: column; gap: 20px; justify-content: center; align-items: center; flex-grow: 1; background: linear-gradient(180deg, #0f172a 0%, #020617 100%);";
+            
+            let descriptiveRank = runningScoreXp >= 1000 ? "Grand High Admiral of the Galaxy 👑" : "Senior Sector Flight Controller 🚀";
+            
+            summaryBox.innerHTML = `
+                <div style="font-size: 5rem; filter: drop-shadow(0 0 10px #38bdf8);">🏅</div>
+                <h2 style="color:#38bdf8; font-size:1.6rem;">Space Highway Secured!</h2>
+                <h3 style="color:#ffffff; font-size:1.15rem;">Final Combined Score: ${runningScoreXp} / 1200 XP</h3>
+                <p style="font-size:0.95rem; font-weight:bold; background:rgba(255,255,255,0.05); padding:14px 20px; border-radius:14px; border: 2px solid #3b82f6; width:90%;">
+                    Final Earned Rank:<br><span style="color:#fde047; font-size:1.2rem; display:block; margin-top:6px;">${descriptiveRank}</span>
+                </p>
+                <p style="font-size:0.85rem; color:#a7f3d0; margin-top:5px; font-weight:bold;">🎉 Congratulations on finishing the entire Mathematics Journey!</p>
+                <button class="clearance-action-btn" style="background:#22c55e; box-shadow:0 6px #15803d; margin-top: 10px; width:85%;" onclick="location.reload()">Restart Flight Radar</button>
             `;
+            coreScreen.appendChild(summaryBox);
         }
     </script>
 </body>
