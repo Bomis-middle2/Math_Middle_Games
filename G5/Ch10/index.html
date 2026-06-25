@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Metric Grid Painter</title>
+    <title>Metric Architecture Sandbox</title>
     <style>
         * {
             box-sizing: border-box;
@@ -26,12 +26,12 @@
         #game-window {
             width: 100%;
             max-width: 460px;
-            height: 740px;
+            height: 750px;
             background: #f8fafc;
-            border: 6px solid #475569;
-            border-radius: 16px;
+            border: 6px solid #334155;
+            border-radius: 20px;
             position: relative;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -46,7 +46,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.6s ease;
         }
         .splash-logo {
             max-width: 200px;
@@ -55,7 +55,7 @@
 
         /* --- STAGE 2: INSTRUCTIONS SCREEN --- */
         #instruction-screen {
-            padding: 24px 20px;
+            padding: 30px 20px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -67,27 +67,28 @@
         .scroll-box {
             background: white;
             border: 2px dashed #cbd5e1;
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 20px;
             margin: 20px 0;
             width: 100%;
             text-align: left;
         }
         .scroll-box h3 {
-            font-size: 1.05rem;
-            color: #1e293b;
-            margin-bottom: 6px;
+            font-size: 1.1rem;
+            color: #0f172a;
+            margin-bottom: 4px;
             border-bottom: 2px solid #cbd5e1;
             padding-bottom: 2px;
         }
         .scroll-box p {
             font-size: 0.9rem;
-            margin-bottom: 15px;
+            margin-bottom: 14px;
             color: #475569;
             font-weight: bold;
+            line-height: 1.4;
         }
 
-        /* --- STAGE 3: MAIN GAMEPLAY HUB --- */
+        /* --- STAGE 3: MAIN DESIGN STUDIO --- */
         #gameplay-screen {
             display: flex;
             flex-direction: column;
@@ -96,133 +97,141 @@
         }
 
         .top-navbar {
-            background: #334155;
+            background: #1e293b;
             color: #f59e0b;
-            padding: 12px;
+            padding: 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-weight: bold;
             font-size: 0.9rem;
-            border-bottom: 4px solid #1e293b;
         }
         .score-lbl {
-            background: #1e293b;
-            color: white;
-            padding: 4px 10px;
+            background: #334155;
+            color: #f8fafc;
+            padding: 4px 12px;
             border-radius: 20px;
+            border: 1px solid #475569;
         }
 
-        .quest-container {
-            padding: 12px;
+        .blueprint-header {
+            padding: 14px;
             font-size: 0.9rem;
             font-weight: bold;
             text-align: center;
             background: #e2e8f0;
-            border-bottom: 2px solid #cbd5e1;
-            min-height: 95px;
+            border-bottom: 3px solid #cbd5e1;
+            min-height: 110px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 6px;
         }
-        .mode-badge {
+        .item-tag {
             font-size: 0.75rem;
-            background: #9d174d;
+            background: #2563eb;
             color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
+            padding: 3px 10px;
+            border-radius: 12px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* --- QUANTITATIVE MATRIX GRID CANVAS --- */
-        .grid-viewport-area {
+        /* --- THE ACTIVE INTERACTIVE BLUEPRINT WORKSPACE --- */
+        .workspace-viewport {
             flex-grow: 1;
-            background: #cbd5e1;
+            background: #94a3b8;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 15px;
             position: relative;
-            padding: 10px;
-            border-bottom: 3px solid #475569;
         }
 
-        .matrix-grid {
+        .blueprint-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             grid-template-rows: repeat(6, 1fr);
             gap: 3px;
-            background: #94a3b8;
-            border: 4px solid #475569;
-            border-radius: 8px;
-            width: 320px;
-            height: 320px;
-            position: relative;
+            background: #475569;
+            border: 5px solid #1e293b;
+            border-radius: 12px;
+            width: 330px;
+            height: 330px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
         }
 
-        .grid-cell {
+        .blueprint-node {
             background: #f8fafc;
             border-radius: 4px;
             cursor: pointer;
-            transition: background 0.1s ease;
+            transition: all 0.15s ease;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 0.7rem;
-            color: #94a3b8;
-            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: inset 0 -2px 0 #cbd5e1;
         }
         
-        /* State Modification Classes */
-        .grid-cell.player-painted { background: #ec4899 !important; }
-        .grid-cell.auto-revealed { background: #22c55e !important; }
+        /* Interactive Material Texture Painting Overrides */
+        .blueprint-node.painted-material {
+            background: #ec4899 !important;
+            box-shadow: inset 0 -3px 0 #be185d !important;
+            transform: scale(0.96);
+        }
+        .blueprint-node.correct-blueprint {
+            background: #10b981 !important;
+            box-shadow: inset 0 -3px 0 #047857 !important;
+        }
 
-        /* --- INTERACTION FOOTER PANEL --- */
-        .interaction-panel {
-            padding: 12px;
+        /* --- CONTROLS & RESPONSE CODES FOOTER --- */
+        .footer-control-panel {
+            padding: 14px;
             background: #f8fafc;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
+            border-top: 2px solid #e2e8f0;
         }
 
-        .hint-alert-box {
+        .realtime-alert-bubble {
             background: #fef3c7;
-            border: 1px solid #fde68a;
+            border: 2px solid #fde68a;
             color: #92400e;
-            padding: 6px;
-            border-radius: 6px;
-            font-size: 0.8rem;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.82rem;
             font-weight: bold;
             text-align: center;
             display: none;
+            line-height: 1.3;
         }
 
-        .chance-heart-row {
+        .hearts-row {
             display: flex;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
         }
-        .heart { font-size: 1.1rem; color: #ef4444; }
-        .heart.lost { color: #cbd5e1; }
+        .heart-icon { font-size: 1.2rem; color: #ef4444; }
+        .heart-icon.depleted { color: #cbd5e1; }
 
         .action-submit-btn {
-            background: #3b82f6;
+            background: #2563eb;
             color: white;
             border: none;
             padding: 14px;
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: bold;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             text-transform: uppercase;
             box-shadow: 0 4px #1d4ed8;
             width: 100%;
         }
         .action-submit-btn:active {
-            transform: translateY(4px);
-            box-shadow: none;
+            transform: translateY(3px);
+            box-shadow: 0 1px #1d4ed8;
         }
 
         .hidden { display: none !important; }
@@ -233,147 +242,157 @@
     <div id="game-window">
         
         <div id="innovine-splash">
-            <img src="assets/logo.png" class="splash-logo" alt="Innovine Logo" onerror="this.src='https://placehold.co/180x60/ffffff/0f172a?text=INNOVINE';">
+            <img src="assets/logo.png" class="splash-logo" alt="Innovine" onerror="this.src='https://placehold.co/180x60/ffffff/0f172a?text=INNOVINE';">
         </div>
 
         <div id="instruction-screen" class="hidden">
-            <h2 style="color: #475569; font-size: 1.4rem; margin-bottom: 10px;">How To Play</h2>
+            <h2 style="color: #1e293b; font-size: 1.5rem; margin-bottom: 5px;">How To Play</h2>
             <div class="scroll-box">
-                <h3>✏️ Paint the Grid</h3>
-                <p>Read the metric scale given in the prompt box (for example, 1 Block = 1 cm). Tap the squares directly on the board to paint your total answer.</p>
+                <h3>✍️ Draw to Build</h3>
+                <p>Read the textbook task and check the construction scale in the top window (for instance, 1 Grid Block = 1 Litre or 100 Centimetres).</p>
                 
-                <h3>💡 Hints and Corrections</h3>
-                <p>If your painted total doesn't match the conversion, a hint will appear. You have two hearts per question. Losing the second heart automatically paints the correct layout in green.</p>
+                <h3>🎨 Paint the Blueprints</h3>
+                <p>Tap individual squares on the empty grid map to paint and construct the structural models. Tap an active block again to erase it.</p>
                 
-                <h3>🏆 Confirm Answers</h3>
-                <p>Tap the verify button below the grid when you are satisfied with the number of blocks you have painted to lock in your score.</p>
+                <h3>❤️ Verify & Fix Layouts</h3>
+                <p>Click the build button to test your model. If the dimensions are incorrect, a metric rule pops up. You have two hearts per blueprint before the grid auto-draws the correct asset in green.</p>
             </div>
-            <button class="action-submit-btn" onclick="startAdventure()">Start Now</button>
+            <button class="action-submit-btn" onclick="initializeSandbox()">Start Building</button>
         </div>
 
         <div id="gameplay-screen" class="hidden">
             <div class="top-navbar">
-                <div id="lvl-lbl">Quest: 1 / 10</div>
-                <div id="xp-lbl" class="score-lbl">0 XP</div>
+                <div id="blueprint-counter-lbl">Blueprint: 1 / 10</div>
+                <div id="xp-counter-lbl" class="score-lbl">0 XP</div>
             </div>
 
-            <div id="quest-txt-box" class="quest-container">
-                <span class="mode-badge" id="mode-badge-lbl">Scale Canvas</span>
-                <span id="instruction-txt">Loading metric dimensions...</span>
+            <div id="quest-txt-box" class="blueprint-header">
+                <span class="item-tag" id="blueprint-tag-lbl">Ribbon Model</span>
+                <span id="instruction-txt">Formulating blueprint grid dimensions...</span>
             </div>
 
-            <div class="grid-viewport-area">
-                <div class="matrix-grid" id="matrix-canvas"></div>
+            <div class="workspace-viewport">
+                <div class="blueprint-grid" id="sandbox-matrix"></div>
             </div>
 
-            <div class="interaction-panel">
-                <div class="chance-heart-row" id="hearts-box">
-                    <span class="heart">❤️</span>
-                    <span class="heart">❤️</span>
+            <div class="footer-control-panel">
+                <div class="hearts-row" id="hearts-container">
+                    <span class="heart-icon">❤️</span>
+                    <span class="heart-icon">❤️</span>
                 </div>
                 
-                <div class="hint-alert-box" id="hint-bubble"></div>
+                <div class="realtime-alert-bubble" id="feedback-bubble"></div>
                 
-                <button class="action-submit-btn" id="verify-action-btn" onclick="verifyPlayerPaint()">Verify Painted Total</button>
+                <button class="action-submit-btn" id="confirm-build-btn" onclick="processModelVerification()">Deploy Asset Blueprint</button>
             </div>
         </div>
 
     </div>
 
     <script>
-        // Safe-Buffer Audio Tracks
-        const soundCorrect = new Audio('assets/correct.mp3');
-        const soundWrong = new Audio('assets/wrong.mp3');
+        // High-fidelity Audio Catch Engine
+        const trackSuccess = new Audio('assets/correct.mp3');
+        const trackFail = new Audio('assets/wrong.mp3');
 
-        function playSoundTrack(audioObj) {
+        function triggerAudioAlert(audioTrack) {
             try {
-                audioObj.currentTime = 0;
-                audioObj.play();
-            } catch(e) { console.log("Audio systems standard alert buffered."); }
+                audioTrack.currentTime = 0;
+                audioTrack.play();
+            } catch(error) { console.log("Audio node executed safely."); }
         }
 
-        let currentActiveQuestions = [];
-        let levelIdx = 0;
-        let totalXp = 0;
-        let attemptCount = 0;
+        let taskSequence = [];
+        let taskPointer = 0;
+        let cumulativeXp = 0;
+        let localMistakes = 0;
 
-        // Custom Metric Sandbox Tasks using UK English terminology
-        const painterQuestPool = [
+        // Structured Grade 5 Textbook Measurement Dataset (UK English Compliant)
+        const sandboxCurriculumPool = [
             {
-                category: "Length (mm ➔ cm)",
-                question: "Scale: 1 Block = 1 cm. Ria measures a coin's diameter as 30 millimetres (mm). Paint exactly how many centimetres that equals!",
-                targetCount: 3,
-                hint: "💡 HINT: 10 mm = 1 cm. So 30 mm equals 3 cm. Paint exactly 3 blocks anywhere on the grid canvas!"
+                tag: "Coin Diameter (mm ➔ cm)",
+                prompt: "Scale: 1 Block = 1 cm. Ria measures an Indian coin to be exactly 30 millimetres (mm). Paint the equivalent length on your blueprint in centimetres!",
+                requiredBlocks: 3,
+                icon: "🪙",
+                formulaHelp: "💡 METRIC RULE: 10 millimetres make up 1 centimetre. Therefore, 30 mm equals 3 cm. Paint exactly 3 structural blocks."
             },
             {
-                category: "Capacity (mL ➔ L)",
-                question: "Scale: 1 Block = 1 Litre. A container holds 4,000 millilitres (mL) of water. Paint its equivalent capacity value in Litres!",
-                targetCount: 4,
-                hint: "💡 HINT: 1,000 mL makes 1 Litre. 4,000 mL means you must paint exactly 4 blocks."
+                tag: "Water Container (mL ➔ L)",
+                prompt: "Scale: 1 Block = 1 Litre. A heavy jar contains 4,000 millilitres (mL) of water. Paint a storage block container model of equal volume in Litres!",
+                requiredBlocks: 4,
+                icon: "💧",
+                formulaHelp: "💡 METRIC RULE: 1,000 millilitres equals 1 Litre. 4,000 mL divided by 1,000 is 4 Litres. Draw a 4-block tank asset."
             },
             {
-                category: "Mass (kg ➔ g)",
-                question: "Scale: 1 Block = 1,000 grams. Paint the total metric balance matching a 5 kilogram (kg) package of flour!",
-                targetCount: 5,
-                hint: "💡 HINT: 1 kg = 1,000 grams. Therefore, a 5 kg parcel equals 5,000 grams. Fill exactly 5 boxes."
+                tag: "Mass Scaling (kg ➔ g)",
+                prompt: "Scale: 1 Block = 1,000 Grams. Ria buys a bulk pack of flour weighing 5 kilograms (kg). Draw a weight layout matching this value in grams!",
+                requiredBlocks: 5,
+                icon: "⚖️",
+                formulaHelp: "💡 METRIC RULE: 1 kilogram contains exactly 1,000 grams. So a 5 kg package maps out to 5,000 grams. Fill 5 boxes."
             },
             {
-                category: "Length (m ➔ cm)",
-                question: "Scale: 1 Block = 100 cm. Ria buys a decoration ribbon measuring 2 metres (m). Paint its total length value in centimetres!",
-                targetCount: 2,
-                hint: "💡 HINT: Each single metre contains 100 cm. 2 metres equals 200 cm, so paint exactly 2 grid blocks."
+                tag: "Decoration Ribbon (m ➔ cm)",
+                prompt: "Scale: 1 Block = 100 cm. A continuous decoration ribbon strips across 2 metres (m). Draw the matching item stretch size in centimetres!",
+                requiredBlocks: 2,
+                icon: "🎗️",
+                formulaHelp: "💡 METRIC RULE: Every single metre corresponds to 100 centimetres. 2 metres equal 200 cm, so paint exactly 2 grid items."
             },
             {
-                category: "Mass Balance (g)",
-                question: "Scale: 1 Block = 250 grams. A recipe needs 750 grams of sugar. Paint the exact weight quantity required!",
-                targetCount: 3,
-                hint: "💡 HINT: Count up by 250s! 250, 500, 750. You need to fill exactly 3 blocks."
+                tag: "Ingredient Weight (g)",
+                prompt: "Scale: 1 Block = 250 Grams. A complex cake recipe requires 750 grams of sugar. Build a material model representing this exact mass value!",
+                requiredBlocks: 3,
+                icon: "🥣",
+                formulaHelp: "💡 METRIC RULE: Calculate by stacking increments of 250g. 250, 500, 750. You need to map out exactly 3 blocks."
             },
             {
-                category: "Length Comparison",
-                question: "Scale: 1 Block = 1 kilometre (km). Route A is 3 km long. Route B is 2,000 metres long. Paint the distance of Route B in kilometres!",
-                targetCount: 2,
-                hint: "💡 HINT: 2,000 metres translates to exactly 2 kilometres. Paint 2 blocks anywhere on the grid."
+                tag: "Route Mapping (m ➔ km)",
+                prompt: "Scale: 1 Block = 1 Kilometre (km). Route B from Ria's house maps out to 2,000 metres. Draw a track layout representing Route B in kilometres!",
+                requiredBlocks: 2,
+                icon: "🛣️",
+                formulaHelp: "💡 METRIC RULE: 1,000 metres shifts down to 1 kilometre. 2,000 metres equals 2 km. Build a road line of 2 blocks."
             },
             {
-                category: "Capacity Fitment",
-                question: "Scale: 1 Block = 500 mL bottle. Ria needs to serve 3.5 Litres of juice. How many 500 mL bottles make 3 Litres? Paint that amount!",
-                targetCount: 6,
-                hint: "💡 HINT: Two 500 mL bottles combine to make 1 full Litre. To get 3 Litres, you need 2 x 3 = 6 bottles. Fill 6 blocks!"
+                tag: "Single-Serve Bottles",
+                prompt: "Scale: 1 Block = One 500 mL Bottle. Ria must serve 3 full Litres of fresh juice. Draw the number of bottles she needs to purchase!",
+                requiredBlocks: 6,
+                icon: "🍾",
+                formulaHelp: "💡 METRIC RULE: Two 500 mL bottles combine to yield 1 full Litre. For 3 Litres, you require 2 x 3 = 6 bottles. Paint 6 blocks."
             },
             {
-                category: "Mass Subtraction",
-                question: "Scale: 1 Block = 1 kg. You have a 6 kg bag of flour and subtract 5,000 grams. Paint how many kilograms are left!",
-                targetCount: 1,
-                hint: "💡 HINT: 5,000 grams is 5 kg. 6 kg minus 5 kg leaves exactly 1 kg. Paint just 1 block."
+                tag: "Baking Excess Balance",
+                prompt: "Scale: 1 Block = 1 kg. You possess a 6 kg flour bag but subtract 5,000 grams for bread baking. Draw the remaining mass in kilograms!",
+                requiredBlocks: 1,
+                icon: "🍞",
+                formulaHelp: "💡 METRIC RULE: 5,000 grams equals 5 kg. 6 kg minus 5 kg leaves exactly 1 kg. Paint just 1 single grid square."
             },
             {
-                category: "Length (cm ➔ m)",
-                question: "Scale: 1 Block = 1 metre. An object is 600 centimetres (cm) wide. Paint its equivalent value in metres!",
-                targetCount: 6,
-                hint: "💡 HINT: 100 centimetres equals 1 metre. 600 cm divided by 100 equals 6 metres. Paint 6 blocks."
+                tag: "Desk Dimension (cm ➔ m)",
+                prompt: "Scale: 1 Block = 1 Metre. A custom laboratory desk measures 600 centimetres (cm) in length. Recreate its equivalent outline value in metres!",
+                requiredBlocks: 6,
+                icon: "📏",
+                formulaHelp: "💡 METRIC RULE: 100 centimetres translates to 1 metre. 600 cm divided by 100 equals 6 metres. Fill 6 matrix slots."
             },
             {
-                category: "Capacity Accumulation",
-                question: "Final Challenge! Scale: 1 Block = 250 mL. A jar holds 1,250 mL of fluid. Paint how many 250 mL portions are inside!",
-                targetCount: 5,
-                hint: "💡 HINT: Divide 1,250 by 250. 250, 500, 750, 1000, 1250. That is exactly 5 blocks!"
+                tag: "Fluid Portions",
+                prompt: "Scale: 1 Block = 250 mL Bowl. A soup jar holds 1,250 millilitres of broth. Draw the total number of single portions that fit inside!",
+                requiredBlocks: 5,
+                icon: "🍲",
+                formulaHelp: "💡 METRIC RULE: Divide 1,250 by 250. Stacking them yields 250, 500, 750, 1000, 1250. This equates to 5 structural blocks."
             }
         ];
 
-        // 5-Second Brand Splash Screen Display Logic
+        // Trigger 5-Second Brand Splash Logic
         setTimeout(() => {
-            const splash = document.getElementById("innovine-splash");
-            if(splash) {
-                splash.style.opacity = "0";
+            const splashScreen = document.getElementById("innovine-splash");
+            if(splashScreen) {
+                splashScreen.style.opacity = "0";
                 setTimeout(() => {
-                    splash.remove();
+                    splashScreen.remove();
                     document.getElementById("instruction-screen").classList.remove("hidden");
                 }, 600);
             }
         }, 5000);
 
-        function shuffleArray(array) {
+        function randomizeItems(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]];
@@ -381,154 +400,154 @@
             return array;
         }
 
-        function startAdventure() {
-            currentActiveQuestions = shuffleArray([...painterQuestPool]).slice(0, 10);
-            levelIdx = 0;
-            totalXp = 0;
+        function initializeSandbox() {
+            taskSequence = randomizeItems([...sandboxCurriculumPool]).slice(0, 10);
+            taskPointer = 0;
+            cumulativeXp = 0;
 
             document.getElementById("instruction-screen").classList.add("hidden");
             document.getElementById("gameplay-screen").classList.remove("hidden");
-            loadQuestData();
+            generateNewBlueprintTask();
         }
 
-        function loadQuestData() {
-            if (levelIdx >= currentActiveQuestions.length) {
-                renderEndGameScreen();
+        function generateNewBlueprintTask() {
+            if (taskPointer >= taskSequence.length) {
+                renderEndGameReport();
                 return;
             }
 
-            attemptCount = 0;
-            document.getElementById("hint-bubble").style.display = "none";
-            document.getElementById("verify-action-btn").disabled = false;
-            updateHeartsUI();
+            localMistakes = 0;
+            document.getElementById("feedback-bubble").style.display = "none";
+            document.getElementById("confirm-build-btn").disabled = false;
+            refreshHeartsLayout();
 
-            let data = currentActiveQuestions[levelIdx];
-            document.getElementById("lvl-lbl").innerText = `Quest: ${levelIdx + 1} / 10`;
-            document.getElementById("xp-lbl").innerText = `${totalXp} XP`;
-            document.getElementById("instruction-txt").innerText = data.question;
-            document.getElementById("mode-badge-lbl").innerText = data.category;
+            let dataset = taskSequence[taskPointer];
+            document.getElementById("blueprint-counter-lbl").innerText = `Blueprint: ${taskPointer + 1} / 10`;
+            document.getElementById("xp-counter-lbl").innerText = `${cumulativeXp} XP`;
+            document.getElementById("instruction-txt").innerText = dataset.prompt;
+            document.getElementById("blueprint-tag-lbl").innerText = dataset.tag;
 
-            const canvas = document.getElementById("matrix-canvas");
-            canvas.innerHTML = "";
+            const gridContainer = document.getElementById("sandbox-matrix");
+            gridContainer.innerHTML = "";
 
-            // Formulate standard blank 6x6 mathematical matrix block grid
+            // Formulate responsive 6x6 Blueprint Matrix Node items
             for (let i = 0; i < 36; i++) {
-                let cell = document.createElement("div");
-                cell.className = "grid-cell";
-                cell.innerText = "■";
+                let cellNode = document.createElement("div");
+                cellNode.className = "blueprint-node";
+                cellNode.innerText = dataset.icon;
                 
-                cell.onclick = () => {
-                    if (!cell.classList.contains("auto-revealed")) {
-                        cell.classList.toggle("player-painted");
+                cellNode.onclick = () => {
+                    if (!cellNode.classList.contains("correct-blueprint")) {
+                        cellNode.classList.toggle("painted-material");
                     }
                 };
                 
-                canvas.appendChild(cell);
+                gridContainer.appendChild(cellNode);
             }
         }
 
-        function updateHeartsUI() {
-            const hearts = document.getElementById("hearts-box").children;
-            if(attemptCount === 0) {
-                hearts[0].classList.remove("lost");
-                hearts[1].classList.remove("lost");
-            } else if (attemptCount === 1) {
-                hearts[1].classList.add("lost");
+        function refreshHeartsLayout() {
+            const heartNodes = document.getElementById("hearts-container").children;
+            if(localMistakes === 0) {
+                heartNodes[0].classList.remove("depleted");
+                heartNodes[1].classList.remove("depleted");
+            } else if (localMistakes === 1) {
+                heartNodes[1].classList.add("depleted");
             } else {
-                hearts[0].classList.add("lost");
-                hearts[1].classList.add("lost");
+                heartNodes[0].classList.add("depleted");
+                heartNodes[1].classList.add("depleted");
             }
         }
 
-        function verifyPlayerPaint() {
-            let data = currentActiveQuestions[levelIdx];
-            const cells = document.querySelectorAll(".grid-cell");
+        function processModelVerification() {
+            let currentDataset = taskSequence[taskPointer];
+            const allNodes = document.querySelectorAll(".blueprint-node");
             
-            let paintedCount = 0;
-            cells.forEach(cell => {
-                if (cell.classList.contains("player-painted")) {
-                    paintedCount++;
+            let totalPaintedUnits = 0;
+            allNodes.forEach(node => {
+                if (node.classList.contains("painted-material")) {
+                    totalPaintedUnits++;
                 }
             });
 
-            if (paintedCount === data.targetCount) {
-                playSoundTrack(soundCorrect);
-                totalXp += (attemptCount === 0) ? 100 : 50;
-                document.getElementById("xp-lbl").innerText = `${totalXp} XP`;
-                document.getElementById("verify-action-btn").disabled = true;
+            if (totalPaintedUnits === currentDataset.requiredBlocks) {
+                triggerAudioAlert(trackSuccess);
+                cumulativeXp += (localMistakes === 0) ? 100 : 50;
+                document.getElementById("xp-counter-lbl").innerText = `${cumulativeXp} XP`;
+                document.getElementById("confirm-build-btn").disabled = true;
 
-                let hintBox = document.getElementById("hint-bubble");
-                hintBox.style.display = "block";
-                hintBox.style.background = "#d1fae5";
-                hintBox.style.borderColor = "#10b981";
-                hintBox.style.color = "#065f46";
-                hintBox.innerHTML = "✨ Unit Volume Balance Verified Correct!";
+                let alertBox = document.getElementById("feedback-bubble");
+                alertBox.style.display = "block";
+                alertBox.style.background = "#d1fae5";
+                alertBox.style.borderColor = "#10b981";
+                alertBox.style.color = "#065f46";
+                alertBox.innerHTML = "✨ Asset Blueprint Deployed Safely With Valid Metrics!";
 
                 setTimeout(() => {
-                    levelIdx++;
-                    loadQuestData();
-                }, 1600);
+                    taskPointer++;
+                    generateNewBlueprintTask();
+                }, 1800);
             } else {
-                attemptCount++;
-                playSoundTrack(soundWrong);
-                updateHeartsUI();
+                localMistakes++;
+                triggerAudioAlert(trackFail);
+                refreshHeartsLayout();
 
-                if (attemptCount === 1) {
-                    let hintBox = document.getElementById("hint-bubble");
-                    hintBox.innerText = data.hint;
-                    hintBox.style.display = "block";
-                    hintBox.style.background = "#fef3c7";
-                    hintBox.style.borderColor = "#fde68a";
-                    hintBox.style.color = "#92400e";
+                if (localMistakes === 1) {
+                    let alertBox = document.getElementById("feedback-bubble");
+                    alertBox.innerText = currentDataset.formulaHelp;
+                    alertBox.style.display = "block";
+                    alertBox.style.background = "#fef3c7";
+                    alertBox.style.borderColor = "#fde68a";
+                    alertBox.style.color = "#92400e";
                 } else {
-                    document.getElementById("verify-action-btn").disabled = true;
-                    let hintBox = document.getElementById("hint-bubble");
-                    hintBox.style.display = "block";
-                    hintBox.style.background = "#fee2e2";
-                    hintBox.style.borderColor = "#fca5a5";
-                    hintBox.style.color = "#991b1b";
-                    hintBox.innerHTML = `❌ Out of attempts! Auto-painting the correct ${data.targetCount} metric blocks...`;
+                    document.getElementById("confirm-build-btn").disabled = true;
+                    let alertBox = document.getElementById("feedback-bubble");
+                    alertBox.style.display = "block";
+                    alertBox.style.background = "#fee2e2";
+                    alertBox.style.borderColor = "#fca5a5";
+                    alertBox.style.color = "#991b1b";
+                    alertBox.innerHTML = `❌ Structure Failed! Auto-generating the accurate ${currentDataset.requiredBlocks} metric blocks on the blueprint...`;
 
-                    // Safety auto-paint correct counts sequentially starting from block 1
-                    cells.forEach((cell, idx) => {
-                        cell.classList.remove("player-painted");
-                        if (idx < data.targetCount) {
-                            cell.classList.add("auto-revealed");
+                    // Safety override paints accurate blocks sequentially across grid index
+                    allNodes.forEach((node, idx) => {
+                        node.classList.remove("painted-material");
+                        if (idx < currentDataset.requiredBlocks) {
+                            node.classList.add("correct-blueprint");
                         }
                     });
 
                     setTimeout(() => {
-                        levelIdx++;
-                        loadQuestData();
-                    }, 3000);
+                        taskPointer++;
+                        generateNewBlueprintTask();
+                    }, 3200);
                 }
             }
         }
 
-        function renderEndGameScreen() {
-            document.getElementById("lvl-lbl").innerText = "FINISHED";
-            document.getElementById("quest-txt-box").innerHTML = "🎉 Metric Painting Sandbox Run Completed!";
+        function renderEndGameReport() {
+            document.getElementById("blueprint-counter-lbl").innerText = "FINISHED";
+            document.getElementById("quest-txt-box").innerHTML = "🎉 All Metric Sandbox Blueprints Successfully Drawn!";
             
-            let finalRank = totalXp >= 800 ? "Grand Metric Painter 👑" : "Senior Metric Scale Modeler 📐";
+            let descriptiveRank = cumulativeXp >= 800 ? "Master Metric Architect 👑" : "Senior Metric Surveyor 📐";
 
-            document.getElementById("matrix-canvas").style.display = "none";
-            document.getElementById("hearts-box").style.display = "none";
-            document.getElementById("hint-bubble").style.display = "none";
-            document.getElementById("verify-action-btn").style.display = "none";
-            document.querySelector(".grid-viewport-area").style.display = "none";
+            document.getElementById("sandbox-matrix").style.display = "none";
+            document.getElementById("hearts-container").style.display = "none";
+            document.getElementById("feedback-bubble").style.display = "none";
+            document.getElementById("confirm-build-btn").style.display = "none";
+            document.querySelector(".workspace-viewport").style.display = "none";
 
-            const mainWindow = document.getElementById("gameplay-screen");
-            let summaryDiv = document.createElement("div");
-            summaryDiv.style.cssText = "padding: 30px 16px; text-align: center; display: flex; flex-direction: column; gap: 15px; justify-content: center; align-items: center; flex-grow: 1;";
-            summaryDiv.innerHTML = `
-                <div style="font-size: 4rem;">🏆</div>
-                <h3 style="color:#475569; font-size:1.3rem;">Total Final Score: ${totalXp} / 1000 XP</h3>
-                <p style="font-size:0.95rem; font-weight:bold; background:#e2e8f0; padding:8px 14px; border-radius:8px;">
-                    Rank Metric: <br><span style="color:#db2777; font-size:1.1rem;">${finalRank}</span>
+            const coreWindow = document.getElementById("gameplay-screen");
+            let summaryContainer = document.createElement("div");
+            summaryContainer.style.cssText = "padding: 35px 16px; text-align: center; display: flex; flex-direction: column; gap: 16px; justify-content: center; align-items: center; flex-grow: 1;";
+            summaryContainer.innerHTML = `
+                <div style="font-size: 4.5rem;">🏗️</div>
+                <h3 style="color:#334155; font-size:1.35rem;">Final Blueprint Rating: ${cumulativeXp} / 1000 XP</h3>
+                <p style="font-size:0.95rem; font-weight:bold; background:#e2e8f0; padding:10px 16px; border-radius:10px; border: 1px solid #cbd5e1;">
+                    Professional Title: <br><span style="color:#2563eb; font-size:1.15rem; display:block; margin-top:4px;">${descriptiveRank}</span>
                 </p>
-                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Restart Campaign</button>
+                <button class="action-submit-btn" style="margin-top: 10px;" onclick="location.reload()">Build Another Layout</button>
             `;
-            mainWindow.appendChild(summaryDiv);
+            coreWindow.appendChild(summaryContainer);
         }
     </script>
 </body>
