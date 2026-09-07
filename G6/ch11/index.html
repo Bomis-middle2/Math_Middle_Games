@@ -1,351 +1,3545 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Grade 6 Data Handling Shoot Game</title>
+
 <style>
-*{box-sizing:border-box}
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+*{
+  box-sizing:border-box;
+}
+
+html,
 body{
+  width:100%;
   margin:0;
-  font-family:Arial,sans-serif;
-  min-height:100vh;
-  background:linear-gradient(#7bdcff 0%,#c9f7ff 42%,#7bc56f 43%,#2c7d44 100%);
-  color:#12304f;
   overflow-x:hidden;
 }
-button{font-family:inherit;cursor:pointer;border:0}
-.screen{display:none;min-height:100vh;padding:12px}
-.active{display:flex}
+
+body{
+  min-height:100vh;
+  font-family:Arial,sans-serif;
+
+  background:
+  linear-gradient(
+    #7bdcff 0%,
+    #c9f7ff 42%,
+    #7bc56f 43%,
+    #2c7d44 100%
+  );
+
+  color:#12304f;
+}
+
+button{
+  font-family:inherit;
+  cursor:pointer;
+  border:0;
+}
+
+button:focus-visible{
+  outline:4px solid #ffe100;
+  outline-offset:3px;
+}
+
+
+/* =========================================================
+   SCREENS
+========================================================= */
+
+.screen{
+  display:none;
+
+  width:100%;
+  min-height:100vh;
+
+  padding:
+  clamp(7px,2vw,12px);
+}
+
+.active{
+  display:flex;
+}
+
+
+/* =========================================================
+   SPLASH
+========================================================= */
+
 #splash{
-  justify-content:center;align-items:center;flex-direction:column;
-  background:linear-gradient(#ecfbff,#ffffff,#e6ffd9);
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+
+  background:
+  linear-gradient(
+    #ecfbff,
+    #ffffff,
+    #e6ffd9
+  );
 }
-#splash img{max-width:420px;width:75vw}
+
+#splash img{
+  width:min(420px,75vw);
+  max-width:100%;
+  height:auto;
+}
+
 .timer{
-  margin-top:20px;background:#123b66;color:white;padding:12px 24px;border-radius:20px;
-  font-weight:bold;box-shadow:0 10px 24px rgba(0,0,0,.25);
+  margin-top:20px;
+
+  background:#123b66;
+  color:white;
+
+  padding:12px 24px;
+
+  border-radius:20px;
+
+  font-weight:bold;
+
+  box-shadow:
+  0 10px 24px
+  rgba(0,0,0,.25);
 }
-#intro,#result{justify-content:center;align-items:center}
+
+
+/* =========================================================
+   INTRO / RESULT
+========================================================= */
+
+#intro,
+#result{
+  justify-content:center;
+  align-items:center;
+}
+
 .card{
-  width:min(860px,94vw);background:#fff1cb;color:#123b66;border-radius:28px;padding:26px;
-  text-align:center;box-shadow:0 12px 28px rgba(0,0,0,.25);border:5px solid white;
+  width:min(860px,94vw);
+
+  background:#fff1cb;
+  color:#123b66;
+
+  border-radius:28px;
+
+  padding:
+  clamp(18px,4vw,26px);
+
+  text-align:center;
+
+  box-shadow:
+  0 12px 28px
+  rgba(0,0,0,.25);
+
+  border:
+  5px solid white;
 }
-h1{font-size:clamp(32px,6vw,56px);margin:0 0 12px}
-.rules{text-align:left;margin:20px auto;max-width:660px;counter-reset:step;display:grid;gap:10px}
-.rule{background:white;border-radius:15px;padding:14px;font-size:clamp(16px,2.5vw,20px);font-weight:bold}
-.rule:before{counter-increment:step;content:counter(step) ". ";color:#0072bc;margin-right:8px}
-.play,.next,.restart{
-  background:linear-gradient(#60de66,#15973b);color:white;font-size:22px;font-weight:bold;
-  padding:13px 28px;border-radius:30px;box-shadow:0 7px 0 #0b6a2b;
+
+h1{
+  font-size:
+  clamp(30px,6vw,56px);
+
+  margin:
+  0 0 12px;
 }
+
+
+/* =========================================================
+   RULES
+========================================================= */
+
+.rules{
+  text-align:left;
+
+  margin:20px auto;
+
+  max-width:660px;
+
+  counter-reset:step;
+
+  display:grid;
+  gap:10px;
+}
+
+.rule{
+  background:white;
+
+  border-radius:15px;
+
+  padding:14px;
+
+  font-size:
+  clamp(16px,2.5vw,20px);
+
+  font-weight:bold;
+
+  line-height:1.4;
+}
+
+.rule:before{
+  counter-increment:step;
+
+  content:
+  counter(step) ". ";
+
+  color:#0072bc;
+
+  margin-right:8px;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.play,
+.next,
+.restart{
+  background:
+  linear-gradient(
+    #60de66,
+    #15973b
+  );
+
+  color:white;
+
+  font-size:
+  clamp(17px,3vw,22px);
+
+  font-weight:bold;
+
+  padding:
+  13px 28px;
+
+  border-radius:30px;
+
+  box-shadow:
+  0 7px 0
+  #0b6a2b;
+
+  min-height:48px;
+}
+
+.play:active,
+.next:active,
+.restart:active{
+  transform:translateY(4px);
+
+  box-shadow:
+  0 3px 0
+  #0b6a2b;
+}
+
+
+/* =========================================================
+   GAME
+========================================================= */
+
 #game{
-  flex-direction:column;gap:8px;
+  flex-direction:column;
+  align-items:center;
+
+  gap:8px;
+
   background:
-    radial-gradient(circle at 84% 14%,#fff 0 5%,transparent 6%),
-    linear-gradient(#7bdcff 0%,#b7f1ff 36%,#269cc8 37%,#187292 100%);
+
+  radial-gradient(
+    circle at 84% 14%,
+    #fff 0 5%,
+    transparent 6%
+  ),
+
+  linear-gradient(
+    #7bdcff 0%,
+    #b7f1ff 36%,
+    #269cc8 37%,
+    #187292 100%
+  );
 }
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
 .top{
-  width:min(1120px,97vw);margin:8px auto 0;display:grid;grid-template-columns:1fr 1fr 1fr;
-  gap:8px;font-weight:bold;
+  width:min(1120px,100%);
+
+  margin:
+  8px auto 0;
+
+  display:grid;
+
+  grid-template-columns:
+  repeat(
+    3,
+    minmax(0,1fr)
+  );
+
+  gap:8px;
+
+  font-weight:bold;
 }
+
 .box{
-  background:#164c82;color:white;padding:9px 10px;border-radius:14px;text-align:center;
-  border:3px solid #78d9ff;box-shadow:0 7px 18px #0003;
+  min-width:0;
+
+  background:#164c82;
+
+  color:white;
+
+  padding:
+  9px 10px;
+
+  border-radius:14px;
+
+  text-align:center;
+
+  border:
+  3px solid
+  #78d9ff;
+
+  box-shadow:
+  0 7px 18px
+  #0003;
+
+  font-size:
+  clamp(13px,2vw,17px);
 }
+
+
+/* =========================================================
+   CARNIVAL
+========================================================= */
+
 .carnival{
-  width:min(1120px,97vw);margin:auto;min-height:690px;position:relative;overflow:hidden;
-  border-radius:26px;border:4px solid rgba(255,255,255,.4);box-shadow:0 12px 28px #0005;
+  width:min(1120px,100%);
+
+  margin:auto;
+
+  position:relative;
+
+  overflow:hidden;
+
+  border-radius:26px;
+
+  border:
+  4px solid
+  rgba(255,255,255,.4);
+
+  box-shadow:
+  0 12px 28px
+  #0005;
+
   background:
-    radial-gradient(circle at 13% 28%,rgba(255,210,80,.32),transparent 15%),
-    linear-gradient(#7bdcff 0%,#c6f6ff 42%,#178bb9 43%,#0d668a 100%);
+
+  radial-gradient(
+    circle at 13% 28%,
+    rgba(255,210,80,.32),
+    transparent 15%
+  ),
+
+  linear-gradient(
+    #7bdcff 0%,
+    #c6f6ff 42%,
+    #178bb9 43%,
+    #0d668a 100%
+  );
+
+  padding:
+  clamp(10px,2vw,18px);
 }
+
+
+/* =========================================================
+   DECORATIVE FERRIS WHEEL
+========================================================= */
+
 .ferris{
-  position:absolute;left:18px;top:120px;width:145px;height:145px;border:8px solid #4c86cc;border-radius:50%;
-  opacity:.45;z-index:1;
+  position:absolute;
+
+  left:18px;
+  top:120px;
+
+  width:145px;
+  height:145px;
+
+  border:
+  8px solid
+  #4c86cc;
+
+  border-radius:50%;
+
+  opacity:.25;
+
+  z-index:0;
+
+  pointer-events:none;
 }
-.ferris:before,.ferris:after{content:"";position:absolute;left:50%;top:0;bottom:0;width:4px;background:#4c86cc;transform:translateX(-50%)}
-.ferris:after{transform:translateX(-50%) rotate(90deg)}
+
+.ferris:before,
+.ferris:after{
+  content:"";
+
+  position:absolute;
+
+  left:50%;
+  top:0;
+  bottom:0;
+
+  width:4px;
+
+  background:#4c86cc;
+
+  transform:
+  translateX(-50%);
+}
+
+.ferris:after{
+  transform:
+  translateX(-50%)
+  rotate(90deg);
+}
+
+
+/* =========================================================
+   RESPONSIVE CONTENT FLOW
+========================================================= */
+
+.gameContent{
+  position:relative;
+  z-index:3;
+
+  width:100%;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+
+  gap:
+  clamp(12px,2vw,18px);
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
 
 .title{
-  position:absolute;top:10px;left:50%;transform:translateX(-50%);
-  background:#164c82;color:white;border:4px solid #78d9ff;border-radius:16px;
-  padding:8px 28px;font-size:clamp(22px,4vw,40px);font-weight:bold;z-index:8;box-shadow:0 8px 18px #0004;
+  position:relative;
+
+  width:min(500px,100%);
+
+  background:#164c82;
+  color:white;
+
+  border:
+  4px solid
+  #78d9ff;
+
+  border-radius:16px;
+
+  padding:
+  8px 28px;
+
+  font-size:
+  clamp(22px,4vw,40px);
+
+  font-weight:bold;
+
+  text-align:center;
+
+  box-shadow:
+  0 8px 18px
+  #0004;
 }
+
+
+/* =========================================================
+   QUESTION CARD
+========================================================= */
+
 .qcard{
-  position:absolute;top:70px;left:50%;transform:translateX(-50%);
-  width:min(760px,92vw);background:#fff1cb;color:#35200c;border:4px solid #87511e;
-  border-radius:22px;padding:14px;text-align:center;z-index:7;box-shadow:0 8px 18px #0004;
+  position:relative;
+
+  width:min(760px,100%);
+
+  min-width:0;
+
+  background:#fff1cb;
+
+  color:#35200c;
+
+  border:
+  4px solid
+  #87511e;
+
+  border-radius:22px;
+
+  padding:
+  clamp(11px,2vw,16px);
+
+  text-align:center;
+
+  box-shadow:
+  0 8px 18px
+  #0004;
 }
-.qtext{font-size:clamp(18px,2.6vw,27px);font-weight:bold;line-height:1.25;margin-bottom:8px}
+
+.qtext{
+  font-size:
+  clamp(17px,2.6vw,27px);
+
+  font-weight:bold;
+
+  line-height:1.35;
+
+  margin-bottom:8px;
+
+  overflow-wrap:anywhere;
+}
+
+
+/* =========================================================
+   DATA BOX
+========================================================= */
+
 .dataBox{
-  background:#fff8e5;border:3px solid #9c65c9;border-radius:14px;max-width:640px;margin:auto;padding:8px;
+  background:#fff8e5;
+
+  border:
+  3px solid
+  #9c65c9;
+
+  border-radius:14px;
+
+  width:100%;
+
+  max-width:640px;
+
+  margin:auto;
+
+  padding:8px;
+
+  overflow:hidden;
 }
+
+
+/* =========================================================
+   PICTOGRAPH
+========================================================= */
+
 .pictorow{
-  display:grid;grid-template-columns:100px 1fr;align-items:center;border-bottom:2px solid #d0a7ef;min-height:36px;
+  display:grid;
+
+  grid-template-columns:
+  minmax(70px,100px)
+  minmax(0,1fr);
+
+  align-items:center;
+
+  border-bottom:
+  2px solid
+  #d0a7ef;
+
+  min-height:36px;
 }
-.pictorow:last-child{border-bottom:0}
-.nameCell{font-weight:bold;color:white;background:#8950b8;border-radius:9px;margin:4px;padding:7px}
-.icons{text-align:left;font-size:24px;letter-spacing:3px;padding-left:8px}
-.key{font-weight:bold;color:#123b66;margin-bottom:4px}
-.barChart{display:grid;gap:6px;text-align:left}
-.barRow{display:grid;grid-template-columns:100px 1fr 38px;align-items:center;gap:8px}
-.barLabel{font-weight:bold}.bar{height:24px;background:#54c7ff;border-radius:10px;border:2px solid #12658d}.barNum{font-weight:bold}
-.hookArea{
-  position:absolute;left:50%;top:500px;transform:translateX(-50%);
-  width:min(720px,92vw);height:75px;z-index:8;
+
+.pictorow:last-child{
+  border-bottom:0;
 }
-.rail{
-  position:absolute;left:0;right:0;top:22px;height:10px;background:#7e50b8;border:3px solid #d7b8ff;border-radius:99px;
+
+.nameCell{
+  min-width:0;
+
+  font-weight:bold;
+
+  color:white;
+
+  background:#8950b8;
+
+  border-radius:9px;
+
+  margin:4px;
+
+  padding:7px;
+
+  overflow-wrap:anywhere;
 }
-.hook{
-  position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:42px;transition:left .35s ease;filter:drop-shadow(0 7px 6px #0004);
+
+.icons{
+  min-width:0;
+
+  text-align:left;
+
+  font-size:
+  clamp(17px,3.5vw,24px);
+
+  letter-spacing:
+  clamp(0px,.5vw,3px);
+
+  padding:
+  5px 4px 5px 8px;
+
+  white-space:normal;
+
+  overflow-wrap:anywhere;
+
+  line-height:1.35;
 }
+
+.key{
+  font-weight:bold;
+
+  color:#123b66;
+
+  margin-bottom:5px;
+
+  line-height:1.3;
+
+  overflow-wrap:anywhere;
+}
+
+
+/* =========================================================
+   BAR CHART
+========================================================= */
+
+.barChart{
+  display:grid;
+
+  gap:7px;
+
+  text-align:left;
+}
+
+.barRow{
+  display:grid;
+
+  grid-template-columns:
+  minmax(62px,100px)
+  minmax(0,1fr)
+  38px;
+
+  align-items:center;
+
+  gap:
+  clamp(4px,1.5vw,8px);
+
+  min-width:0;
+}
+
+.barLabel{
+  min-width:0;
+
+  font-weight:bold;
+
+  overflow-wrap:anywhere;
+}
+
+.bar{
+  max-width:100%;
+
+  height:24px;
+
+  background:#54c7ff;
+
+  border-radius:10px;
+
+  border:
+  2px solid
+  #12658d;
+}
+
+.barNum{
+  font-weight:bold;
+
+  text-align:center;
+}
+
+
+/* =========================================================
+   TARGET PANEL
+========================================================= */
+
+.targetPanel{
+  width:min(800px,100%);
+
+  min-width:0;
+
+  background:
+  rgba(255,255,255,.16);
+
+  border:
+  3px solid
+  rgba(255,255,255,.42);
+
+  border-radius:20px;
+
+  padding:
+  10px
+  clamp(6px,2vw,14px)
+  14px;
+
+  box-shadow:
+  0 8px 18px
+  rgba(0,0,0,.18);
+}
+
+.targetTitle{
+  color:white;
+
+  text-align:center;
+
+  font-size:
+  clamp(13px,2.5vw,18px);
+
+  font-weight:bold;
+
+  margin-bottom:3px;
+
+  text-shadow:
+  0 2px 3px
+  #0004;
+}
+
+
+/* =========================================================
+   TARGET STAGE
+========================================================= */
+
+/*
+ONE dart lives inside this stage.
+
+The dart position is calculated from the
+actual answer tile centres.
+*/
+
+.targetStage{
+  position:relative;
+
+  width:100%;
+
+  padding-top:72px;
+
+  min-width:0;
+}
+
+
+/* =========================================================
+   AIM RAIL
+========================================================= */
+
+.aimRail{
+  position:absolute;
+
+  left:3%;
+  right:3%;
+
+  top:31px;
+
+  height:9px;
+
+  background:#7e50b8;
+
+  border:
+  3px solid
+  #d7b8ff;
+
+  border-radius:99px;
+
+  box-shadow:
+  0 4px 8px
+  #0003;
+}
+
+
+/* =========================================================
+   SINGLE DART
+========================================================= */
+
 .dart{
   position:absolute;
-  top:26px;
+
+  top:0;
+
   left:50%;
-  transform:translateX(-50%) rotate(-90deg);
-  font-size:38px;
-  transition:left .35s ease, transform .2s ease;
-  filter:drop-shadow(0 7px 6px #0004);
+
+  transform:
+  translateX(-50%)
+  rotate(90deg);
+
+  transform-origin:center;
+
+  font-size:
+  clamp(34px,6vw,44px);
+
+  line-height:1;
+
+  color:#e52b39;
+
+  z-index:10;
+
+  text-shadow:
+  0 2px 0 white,
+  0 5px 6px
+  rgba(0,0,0,.4);
+
+  transition:
+  left .32s ease,
+  top .28s ease,
+  transform .18s ease;
+
+  pointer-events:none;
+
+  user-select:none;
 }
+
+
+/* =========================================================
+   ANSWER CRATES
+========================================================= */
+
+/*
+Four answer targets remain on ONE ROW.
+
+This keeps the left/right shooting
+interaction consistent even on phones.
+*/
+
 .crates{
-  position:absolute;left:50%;top:405px;transform:translateX(-50%);
-  width:min(780px,92vw);display:grid;grid-template-columns:repeat(4,1fr);gap:16px;z-index:7;
+  position:relative;
+
+  width:100%;
+
+  display:grid;
+
+  grid-template-columns:
+  repeat(
+    4,
+    minmax(0,1fr)
+  );
+
+  gap:
+  clamp(4px,1.5vw,14px);
+
+  z-index:4;
 }
+
 .crate{
-  min-height:76px;border-radius:12px;background:#7b431c;color:white;border:4px solid #c8893f;
-  font-size:clamp(22px,4vw,34px);font-weight:bold;box-shadow:0 7px 0 #4b260c;
+  width:100%;
+
+  min-width:0;
+
+  min-height:
+  clamp(62px,10vw,78px);
+
+  padding:
+  7px 4px;
+
+  border-radius:12px;
+
+  background:#7b431c;
+
+  color:white;
+
+  border:
+  4px solid
+  #c8893f;
+
+  font-size:
+  clamp(13px,3.4vw,30px);
+
+  line-height:1.1;
+
+  font-weight:bold;
+
+  box-shadow:
+  0 7px 0
+  #4b260c;
+
+  overflow-wrap:anywhere;
+
+  white-space:normal;
 }
-.crate:active{transform:translateY(4px);box-shadow:0 3px 0 #4b260c}
-.crate.selected{outline:6px solid #ffe100;background:#9a5728}
-.crate.correct{outline:6px solid #30df67;background:#267c3b}
-.crate.wrong{outline:6px solid #ff3434;animation:shake .25s}
+
+.crate:active{
+  transform:
+  translateY(4px);
+
+  box-shadow:
+  0 3px 0
+  #4b260c;
+}
+
+.crate.selected{
+  outline:
+  5px solid
+  #ffe100;
+
+  outline-offset:1px;
+
+  background:#9a5728;
+}
+
+.crate.correct{
+  outline:
+  5px solid
+  #30df67;
+
+  outline-offset:1px;
+
+  background:#267c3b;
+}
+
+.crate.wrong{
+  outline:
+  5px solid
+  #ff3434;
+
+  outline-offset:1px;
+
+  animation:
+  shake .25s;
+}
+
+
+/* =========================================================
+   CONTROLS
+========================================================= */
+
 .controls{
-  position:absolute;left:50%;bottom:62px;transform:translateX(-50%);
-  display:flex;gap:14px;z-index:8;
+  position:relative;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:
+  clamp(8px,3vw,14px);
+
+  width:100%;
 }
+
 .ctrl{
-  background:#7e50b8;color:white;border:4px solid #d7b8ff;border-radius:50%;
-  width:72px;height:72px;font-size:34px;font-weight:bold;box-shadow:0 7px 0 #4f2878;
+  background:#7e50b8;
+
+  color:white;
+
+  border:
+  4px solid
+  #d7b8ff;
+
+  border-radius:50%;
+
+  width:
+  clamp(54px,12vw,72px);
+
+  height:
+  clamp(54px,12vw,72px);
+
+  font-size:
+  clamp(24px,6vw,34px);
+
+  font-weight:bold;
+
+  box-shadow:
+  0 7px 0
+  #4f2878;
 }
-.dropBtn{background:#ffb51d;border-color:#ffe08a;width:98px;border-radius:26px;font-size:18px;color:#2b1a05}
-.ctrl:active{transform:translateY(4px);box-shadow:0 3px 0 #4f2878}
+
+.dropBtn{
+  background:#ffb51d;
+
+  border-color:#ffe08a;
+
+  width:
+  clamp(84px,20vw,105px);
+
+  border-radius:26px;
+
+  font-size:
+  clamp(15px,3vw,18px);
+
+  color:#2b1a05;
+}
+
+.ctrl:active{
+  transform:translateY(4px);
+
+  box-shadow:
+  0 3px 0
+  #4f2878;
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
 .progress{
-  position:absolute;right:18px;top:140px;width:78px;height:430px;background:#6b3a17;border:4px solid #c8893f;border-radius:18px;
-  z-index:5;display:grid;grid-template-rows:repeat(10,1fr);gap:4px;padding:8px;box-shadow:0 8px 18px #0004;
+  position:relative;
+
+  width:min(650px,100%);
+
+  display:grid;
+
+  grid-template-columns:
+  repeat(
+    10,
+    minmax(0,1fr)
+  );
+
+  gap:
+  clamp(2px,1vw,5px);
+
+  padding:
+  7px;
+
+  background:#6b3a17;
+
+  border:
+  3px solid
+  #c8893f;
+
+  border-radius:14px;
+
+  box-shadow:
+  0 6px 14px
+  #0003;
 }
+
 .dot{
-  border-radius:50%;background:#54316d;color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;border:3px solid #a98bc3;
+  aspect-ratio:1/1;
+
+  min-width:0;
+
+  border-radius:50%;
+
+  background:#54316d;
+
+  color:white;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  font-size:
+  clamp(9px,2vw,13px);
+
+  font-weight:bold;
+
+  border:
+  2px solid
+  #a98bc3;
 }
-.dot.on{background:#69be19;border-color:#c8ff71}
+
+.dot.on{
+  background:#69be19;
+
+  border-color:#c8ff71;
+}
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
 .msg{
-  position:absolute;left:50%;bottom:8px;transform:translateX(-50%);
-  width:min(700px,86vw);min-height:34px;background:#1d2137;color:white;border:3px solid #78d9ff;border-radius:14px;
-  padding:8px 12px;text-align:center;font-weight:bold;z-index:10;
+  position:relative;
+
+  width:min(700px,100%);
+
+  min-height:42px;
+
+  background:#1d2137;
+
+  color:white;
+
+  border:
+  3px solid
+  #78d9ff;
+
+  border-radius:14px;
+
+  padding:
+  9px 12px;
+
+  text-align:center;
+
+  font-size:
+  clamp(13px,2vw,17px);
+
+  font-weight:bold;
+
+  line-height:1.4;
+
+  overflow-wrap:anywhere;
 }
-.next{display:none;position:absolute;right:16px;bottom:62px;z-index:11;background:linear-gradient(#ffe45c,#ffad16);color:#122}
-.finalScore{font-size:64px;font-weight:bold;color:#7b3fd1}
-.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:20}
-.piece{position:absolute;top:-20px;width:12px;height:18px;animation:fall 1.5s linear forwards}
-@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
-@keyframes fall{to{transform:translateY(110vh) rotate(500deg)}}
+
+
+/* =========================================================
+   NEXT
+========================================================= */
+
+.next{
+  display:none;
+
+  position:relative;
+
+  margin:0 auto;
+
+  background:
+  linear-gradient(
+    #ffe45c,
+    #ffad16
+  );
+
+  color:#122;
+}
+
+
+/* =========================================================
+   RESULT
+========================================================= */
+
+.finalScore{
+  font-size:
+  clamp(48px,10vw,64px);
+
+  font-weight:bold;
+
+  color:#7b3fd1;
+}
+
+
+/* =========================================================
+   CONFETTI
+========================================================= */
+
+.confetti{
+  position:fixed;
+
+  inset:0;
+
+  pointer-events:none;
+
+  overflow:hidden;
+
+  z-index:20;
+}
+
+.piece{
+  position:absolute;
+
+  top:-20px;
+
+  width:12px;
+  height:18px;
+
+  animation:
+  fall 1.5s
+  linear forwards;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes shake{
+
+  25%{
+    transform:translateX(-5px);
+  }
+
+  50%{
+    transform:translateX(5px);
+  }
+
+  75%{
+    transform:translateX(-3px);
+  }
+
+}
+
+@keyframes fall{
+
+  to{
+    transform:
+    translateY(110vh)
+    rotate(500deg);
+  }
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
 @media(max-width:820px){
-  .screen{padding:8px}.top{grid-template-columns:1fr 1fr}.top .box:nth-child(2){grid-column:1/3;order:-1}
-  .carnival{min-height:820px}.title{font-size:26px;padding:6px 20px}.qcard{top:62px;width:94vw;padding:10px}
-  .pictorow{grid-template-columns:72px 1fr}.icons{font-size:19px;letter-spacing:1px}.nameCell{font-size:13px}
-  .barRow{grid-template-columns:76px 1fr 32px}.hookArea{top:555px}.crates{top:435px;grid-template-columns:repeat(2,1fr);gap:10px}
-  .progress{right:8px;top:370px;width:58px;height:300px;padding:5px}.dot{font-size:12px}
-  .controls{bottom:58px}.ctrl{width:58px;height:58px;font-size:27px}.dropBtn{width:84px;font-size:17px}
-  .msg{bottom:8px;left:39%;width:64vw}.next{bottom:68px;right:8px;padding:10px 16px}
+
+  .screen{
+    padding:8px;
+  }
+
+  .top{
+    grid-template-columns:
+    1fr 1fr;
+  }
+
+  .top .box:nth-child(2){
+    grid-column:
+    1 / 3;
+
+    order:-1;
+  }
+
+  .qcard{
+    width:min(760px,100%);
+  }
+
+  .pictorow{
+    grid-template-columns:
+    minmax(65px,80px)
+    minmax(0,1fr);
+  }
+
+  .barRow{
+    grid-template-columns:
+    minmax(65px,82px)
+    minmax(0,1fr)
+    32px;
+  }
+
 }
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:520px){
+
+  .screen{
+    padding:5px;
+  }
+
+  .carnival{
+    border-radius:19px;
+
+    padding:
+    8px 5px 12px;
+  }
+
+  .gameContent{
+    gap:10px;
+  }
+
+  .ferris{
+    width:95px;
+    height:95px;
+
+    border-width:5px;
+
+    opacity:.15;
+  }
+
+  .title{
+    padding:
+    7px 15px;
+
+    border-width:3px;
+
+    font-size:
+    clamp(21px,7vw,28px);
+  }
+
+  .qcard{
+    border-width:3px;
+
+    border-radius:17px;
+
+    padding:
+    10px 7px;
+  }
+
+  .qtext{
+    font-size:
+    clamp(15px,4.8vw,20px);
+
+    line-height:1.38;
+  }
+
+  .dataBox{
+    border-width:2px;
+
+    padding:5px;
+  }
+
+  .pictorow{
+    grid-template-columns:
+    68px minmax(0,1fr);
+  }
+
+  .nameCell{
+    margin:2px;
+
+    padding:
+    5px 3px;
+
+    font-size:11px;
+  }
+
+  .icons{
+    font-size:
+    clamp(15px,5vw,19px);
+
+    letter-spacing:0;
+
+    padding-left:4px;
+  }
+
+  .key{
+    font-size:12px;
+  }
+
+  .barRow{
+    grid-template-columns:
+    66px minmax(0,1fr) 27px;
+
+    gap:4px;
+  }
+
+  .barLabel,
+  .barNum{
+    font-size:11px;
+  }
+
+  .bar{
+    height:18px;
+  }
+
+  .targetPanel{
+    border-width:2px;
+
+    border-radius:16px;
+
+    padding:
+    8px 4px 11px;
+  }
+
+  .targetTitle{
+    font-size:12px;
+  }
+
+  .targetStage{
+    padding-top:63px;
+  }
+
+  .aimRail{
+    top:28px;
+
+    height:7px;
+
+    border-width:2px;
+  }
+
+  .dart{
+    font-size:34px;
+  }
+
+  /*
+  Still four targets in one row.
+  Font and spacing scale down.
+  */
+
+  .crates{
+    gap:4px;
+  }
+
+  .crate{
+    min-height:58px;
+
+    border-width:3px;
+
+    border-radius:9px;
+
+    padding:
+    6px 2px;
+
+    font-size:
+    clamp(11px,3.8vw,17px);
+
+    box-shadow:
+    0 5px 0
+    #4b260c;
+  }
+
+  .crate.selected,
+  .crate.correct,
+  .crate.wrong{
+    outline-width:3px;
+  }
+
+  .controls{
+    gap:8px;
+  }
+
+  .ctrl{
+    width:54px;
+    height:54px;
+
+    border-width:3px;
+
+    font-size:25px;
+
+    box-shadow:
+    0 5px 0
+    #4f2878;
+  }
+
+  .dropBtn{
+    width:88px;
+
+    font-size:15px;
+  }
+
+  .progress{
+    padding:5px;
+
+    gap:2px;
+  }
+
+  .dot{
+    border-width:1px;
+
+    font-size:9px;
+  }
+
+  .msg{
+    border-width:2px;
+
+    padding:
+    8px 7px;
+
+    font-size:13px;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media(max-width:350px){
+
+  .top{
+    grid-template-columns:1fr;
+  }
+
+  .top .box:nth-child(2){
+    grid-column:auto;
+    order:0;
+  }
+
+  .pictorow{
+    grid-template-columns:
+    58px minmax(0,1fr);
+  }
+
+  .barRow{
+    grid-template-columns:
+    58px minmax(0,1fr) 24px;
+  }
+
+  .crate{
+    font-size:
+    clamp(10px,3.5vw,13px);
+
+    min-height:54px;
+  }
+
+  .dart{
+    font-size:30px;
+  }
+
+  .ctrl{
+    width:48px;
+    height:48px;
+  }
+
+  .dropBtn{
+    width:78px;
+
+    font-size:13px;
+  }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media(prefers-reduced-motion:reduce){
+
+  *,
+  *::before,
+  *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+
+}
+
 </style>
+
 </head>
+
+
 <body>
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
-<section id="splash" class="screen active">
-  <img src="assets/innovine-logo.png" alt="Innovine Logo">
-  <div class="timer">Starting in <span id="count">5</span>s</div>
+
+<!-- =====================================================
+     ORIGINAL AUDIO
+===================================================== -->
+
+<audio
+id="correctSound"
+src="assets/correct.mp3"
+preload="auto">
+</audio>
+
+<audio
+id="wrongSound"
+src="assets/wrong.mp3"
+preload="auto">
+</audio>
+
+<audio
+id="clapSound"
+src="assets/freesound_community-claps-44774.mp3"
+preload="auto">
+</audio>
+
+
+
+<!-- =====================================================
+     SPLASH
+===================================================== -->
+
+<section
+id="splash"
+class="screen active">
+
+<img
+src="assets/innovine-logo.png"
+alt="Innovine Logo">
+
+<div class="timer">
+
+Starting in
+
+<span id="count">
+5
+</span>
+
+s
+
+</div>
+
 </section>
 
-<section id="intro" class="screen">
-  <div class="card">
-    <h1>Data Fair</h1>
-    <p><b>Use the cursor to aim and shoot the correct answer.</b></p>
-    <div class="rules">
-      <div class="rule">Read the data question carefully.</div>
-      <div class="rule">Use left and right buttons to move the cursor.</div>
-      <div class="rule">Press shoot to select the answer.</div>
-      <div class="rule">You have 2 attempts for each challenge.</div>
-      <div class="rule">Complete all 10 challenges to finish the fair.</div>
-    </div>
-    <button class="play" onclick="startGame()">LET’S PLAY</button>
-  </div>
+
+
+<!-- =====================================================
+     INTRO
+===================================================== -->
+
+<section
+id="intro"
+class="screen">
+
+<div class="card">
+
+<h1>
+Data Fair
+</h1>
+
+<p>
+
+<b>
+Move the dart and shoot the correct answer.
+</b>
+
+</p>
+
+
+<div class="rules">
+
+<div class="rule">
+Read the data question carefully.
+</div>
+
+<div class="rule">
+Use the left and right arrows to move the dart.
+</div>
+
+<div class="rule">
+The dart points directly at the selected answer.
+</div>
+
+<div class="rule">
+Press SHOOT to choose the answer. You have 2 attempts.
+</div>
+
+<div class="rule">
+Complete all 10 challenges to finish the fair.
+</div>
+
+</div>
+
+
+<button
+class="play"
+onclick="startGame()">
+
+LET’S PLAY
+
+</button>
+
+</div>
+
 </section>
 
-<section id="game" class="screen">
-  <div class="top">
-    <div class="box">Score: <span id="score">0</span> ⭐</div>
-    <div class="box">Round: <span id="adv">1</span>/10</div>
-    <div class="box">Attempts: <span id="hearts">❤️❤️</span></div>
-  </div>
 
-  <main class="carnival">
-    <div class="ferris"></div>
-    <div class="title">DATA FAIR</div>
 
-    <section class="qcard">
-      <div class="qtext" id="qtext"></div>
-      <div class="dataBox" id="dataBox"></div>
-    </section>
+<!-- =====================================================
+     GAME
+===================================================== -->
 
-    <section class="hookArea">
-      <div class="rail"></div>
-      <div class="hook" id="hook">🎯</div><div class="dart" id="dart">🎯</div>
-    </section>
+<section
+id="game"
+class="screen">
 
-    <section class="crates" id="crates"></section>
 
-    <section class="progress" id="progress"></section>
+<!-- STATUS -->
 
-    <section class="controls">
-      <button class="ctrl" onclick="moveHook(-1)">⬅</button>
-      <button class="ctrl dropBtn" onclick="dropAnswer()">SHOOT</button>
-      <button class="ctrl" onclick="moveHook(1)">➡</button>
-    </section>
+<div class="top">
 
-    <div class="msg" id="msg">Move the cursor and press shoot.</div>
-    <button class="next" id="nextBtn" onclick="nextQuestion()">NEXT ➜</button>
-  </main>
+
+<div class="box">
+
+Score:
+
+<span id="score">
+0
+</span>
+
+⭐
+
+</div>
+
+
+<div class="box">
+
+Round:
+
+<span id="adv">
+1
+</span>
+
+/10
+
+</div>
+
+
+<div class="box">
+
+Attempts:
+
+<span id="hearts">
+❤️❤️
+</span>
+
+</div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     CARNIVAL
+===================================================== -->
+
+<main class="carnival">
+
+
+<div class="ferris"></div>
+
+
+<div class="gameContent">
+
+
+<!-- TITLE -->
+
+<div class="title">
+
+DATA FAIR
+
+</div>
+
+
+
+<!-- =====================================================
+     QUESTION + DATA
+===================================================== -->
+
+<section class="qcard">
+
+
+<div
+class="qtext"
+id="qtext">
+</div>
+
+
+<div
+class="dataBox"
+id="dataBox">
+</div>
+
+
 </section>
 
-<section id="result" class="screen">
-  <div class="card">
-    <h1>Fair Complete!</h1>
-    <p>You completed all 10 data handling challenges.</p>
-    <div class="finalScore" id="finalScore">0</div>
-    <div style="font-size:50px" id="stars">⭐⭐⭐</div>
-    <button class="restart" onclick="startGame()">PLAY AGAIN</button>
-  </div>
+
+
+<!-- =====================================================
+     TARGET AREA
+===================================================== -->
+
+<section class="targetPanel">
+
+
+<div class="targetTitle">
+
+MOVE THE DART WITH ← → AND PRESS SHOOT
+
+</div>
+
+
+<div
+class="targetStage"
+id="targetStage">
+
+
+<!-- RAIL -->
+
+<div class="aimRail"></div>
+
+
+<!--
+ONLY ONE DART EXISTS IN THE GAME.
+-->
+
+<div
+class="dart"
+id="dart"
+aria-hidden="true">
+
+➤
+
+</div>
+
+
+
+<!-- ANSWER TARGETS -->
+
+<section
+class="crates"
+id="crates">
 </section>
-<div class="confetti" id="confetti"></div>
+
+
+</div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     CONTROLS
+===================================================== -->
+
+<section class="controls">
+
+
+<button
+class="ctrl"
+type="button"
+aria-label="Move dart left"
+onclick="moveDart(-1)">
+
+⬅
+
+</button>
+
+
+<button
+class="ctrl dropBtn"
+type="button"
+onclick="shootAnswer()">
+
+SHOOT
+
+</button>
+
+
+<button
+class="ctrl"
+type="button"
+aria-label="Move dart right"
+onclick="moveDart(1)">
+
+➡
+
+</button>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     PROGRESS
+===================================================== -->
+
+<section
+class="progress"
+id="progress">
+</section>
+
+
+
+<!-- =====================================================
+     FEEDBACK
+===================================================== -->
+
+<div
+class="msg"
+id="msg"
+aria-live="polite">
+
+Move the dart and press SHOOT.
+
+</div>
+
+
+
+<!-- =====================================================
+     NEXT
+===================================================== -->
+
+<button
+class="next"
+id="nextBtn"
+onclick="nextQuestion()">
+
+NEXT ➜
+
+</button>
+
+
+</div>
+
+
+</main>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     RESULT
+===================================================== -->
+
+<section
+id="result"
+class="screen">
+
+
+<div class="card">
+
+
+<h1>
+
+Fair Complete!
+
+</h1>
+
+
+<p>
+
+You completed all 10 data handling challenges.
+
+</p>
+
+
+<div
+class="finalScore"
+id="finalScore">
+
+0
+
+</div>
+
+
+<div
+style="font-size:50px"
+id="stars">
+
+⭐⭐⭐
+
+</div>
+
+
+<button
+class="restart"
+onclick="startGame()">
+
+PLAY AGAIN
+
+</button>
+
+
+</div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     CONFETTI
+===================================================== -->
+
+<div
+class="confetti"
+id="confetti">
+</div>
+
+
 
 <script>
+
+
+/* =====================================================
+   QUESTIONS — ORIGINAL CONTENT RETAINED
+===================================================== */
+
 const questions=[
-{text:"The pictograph shows books read by students. How many more books did Riya read than Arjun?", type:"picto", key:"📖 = 2 books", rows:[["Arjun",3],["Riya",6],["Kabir",4],["Meera",2]], answer:"6", opts:["4","6","2","8"], explain:"Riya read 12 books and Arjun read 6 books. Difference = 6 books."},
-{text:"The bar chart shows fruits sold. Which fruit was sold the most?", type:"bar", rows:[["Apple",8],["Banana",5],["Mango",10],["Orange",6]], answer:"Mango", opts:["Apple","Banana","Mango","Orange"], explain:"Mango has the longest bar."},
-{text:"The pictograph shows pets in a colony. How many cats are shown?", type:"picto", key:"🐾 = 3 pets", rows:[["Dogs",4],["Cats",5],["Birds",2],["Fish",3]], answer:"15", opts:["12","15","10","8"], explain:"Cats have 5 symbols. 5 × 3 = 15."},
-{text:"The bar chart shows favourite games. How many students chose cricket and football together?", type:"bar", rows:[["Cricket",12],["Football",9],["Chess",5],["Tennis",4]], answer:"21", opts:["17","21","25","16"], explain:"Cricket 12 + Football 9 = 21."},
-{text:"The pictograph shows vehicles counted. How many fewer buses than cars were counted?", type:"picto", key:"🚗 = 4 vehicles", rows:[["Cars",5],["Buses",2],["Bikes",4],["Vans",3]], answer:"12", opts:["8","10","12","16"], explain:"Cars = 20 and buses = 8. Difference = 12."},
-{text:"The bar chart shows marks in a quiz. Which student scored 7 marks?", type:"bar", rows:[["Asha",9],["Dev",7],["Nina",6],["Kabir",8]], answer:"Dev", opts:["Asha","Dev","Nina","Kabir"], explain:"Dev's bar shows 7 marks."},
-{text:"The pictograph shows ice creams sold. What is the total number sold on Monday and Tuesday?", type:"picto", key:"🍦 = 5 ice creams", rows:[["Mon",3],["Tue",4],["Wed",2],["Thu",5]], answer:"35", opts:["25","30","35","40"], explain:"Monday 15 + Tuesday 20 = 35."},
-{text:"The bar chart shows library visits. How many more visits happened on Friday than Monday?", type:"bar", rows:[["Mon",6],["Tue",8],["Wed",7],["Fri",12]], answer:"6", opts:["4","5","6","8"], explain:"Friday 12 - Monday 6 = 6."},
-{text:"The pictograph shows flowers planted. Which flower type has 18 flowers?", type:"picto", key:"🌼 = 6 flowers", rows:[["Rose",2],["Lily",3],["Lotus",4],["Daisy",1]], answer:"Lily", opts:["Rose","Lily","Lotus","Daisy"], explain:"Lily has 3 symbols. 3 × 6 = 18."},
-{text:"The bar chart shows snacks sold. What is the total number of sandwiches and rolls?", type:"bar", rows:[["Sandwich",11],["Roll",7],["Pizza",6],["Puff",5]], answer:"18", opts:["16","18","20","22"], explain:"Sandwich 11 + Roll 7 = 18."}
+
+
+{
+text:"The pictograph shows books read by students. How many more books did Riya read than Arjun?",
+type:"picto",
+key:"📖 = 2 books",
+rows:[
+["Arjun",3],
+["Riya",6],
+["Kabir",4],
+["Meera",2]
+],
+answer:"6",
+opts:["4","6","2","8"],
+explain:"Riya read 12 books and Arjun read 6 books. Difference = 6 books."
+},
+
+
+{
+text:"The bar chart shows fruits sold. Which fruit was sold the most?",
+type:"bar",
+rows:[
+["Apple",8],
+["Banana",5],
+["Mango",10],
+["Orange",6]
+],
+answer:"Mango",
+opts:["Apple","Banana","Mango","Orange"],
+explain:"Mango has the longest bar."
+},
+
+
+{
+text:"The pictograph shows pets in a colony. How many cats are shown?",
+type:"picto",
+key:"🐾 = 3 pets",
+rows:[
+["Dogs",4],
+["Cats",5],
+["Birds",2],
+["Fish",3]
+],
+answer:"15",
+opts:["12","15","10","8"],
+explain:"Cats have 5 symbols. 5 × 3 = 15."
+},
+
+
+{
+text:"The bar chart shows favourite games. How many students chose cricket and football together?",
+type:"bar",
+rows:[
+["Cricket",12],
+["Football",9],
+["Chess",5],
+["Tennis",4]
+],
+answer:"21",
+opts:["17","21","25","16"],
+explain:"Cricket 12 + Football 9 = 21."
+},
+
+
+{
+text:"The pictograph shows vehicles counted. How many fewer buses than cars were counted?",
+type:"picto",
+key:"🚗 = 4 vehicles",
+rows:[
+["Cars",5],
+["Buses",2],
+["Bikes",4],
+["Vans",3]
+],
+answer:"12",
+opts:["8","10","12","16"],
+explain:"Cars = 20 and buses = 8. Difference = 12."
+},
+
+
+{
+text:"The bar chart shows marks in a quiz. Which student scored 7 marks?",
+type:"bar",
+rows:[
+["Asha",9],
+["Dev",7],
+["Nina",6],
+["Kabir",8]
+],
+answer:"Dev",
+opts:["Asha","Dev","Nina","Kabir"],
+explain:"Dev's bar shows 7 marks."
+},
+
+
+{
+text:"The pictograph shows ice creams sold. What is the total number sold on Monday and Tuesday?",
+type:"picto",
+key:"🍦 = 5 ice creams",
+rows:[
+["Mon",3],
+["Tue",4],
+["Wed",2],
+["Thu",5]
+],
+answer:"35",
+opts:["25","30","35","40"],
+explain:"Monday 15 + Tuesday 20 = 35."
+},
+
+
+{
+text:"The bar chart shows library visits. How many more visits happened on Friday than Monday?",
+type:"bar",
+rows:[
+["Mon",6],
+["Tue",8],
+["Wed",7],
+["Fri",12]
+],
+answer:"6",
+opts:["4","5","6","8"],
+explain:"Friday 12 - Monday 6 = 6."
+},
+
+
+{
+text:"The pictograph shows flowers planted. Which flower type has 18 flowers?",
+type:"picto",
+key:"🌼 = 6 flowers",
+rows:[
+["Rose",2],
+["Lily",3],
+["Lotus",4],
+["Daisy",1]
+],
+answer:"Lily",
+opts:["Rose","Lily","Lotus","Daisy"],
+explain:"Lily has 3 symbols. 3 × 6 = 18."
+},
+
+
+{
+text:"The bar chart shows snacks sold. What is the total number of sandwiches and rolls?",
+type:"bar",
+rows:[
+["Sandwich",11],
+["Roll",7],
+["Pizza",6],
+["Puff",5]
+],
+answer:"18",
+opts:["16","18","20","22"],
+explain:"Sandwich 11 + Roll 7 = 18."
+}
+
 ];
 
-let order=[],current=0,score=0,attempts=0,locked=false,selected=1;
-function $(id){return document.getElementById(id)}
-function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active")}
-let c=5;let splash=setInterval(()=>{c--;$("count").textContent=c;if(c<=0){clearInterval(splash);show("intro")}},1000);
-function sound(id){const a=$(id);a.currentTime=0;a.play().catch(()=>{})}
+
+
+/* =====================================================
+   GAME VARIABLES
+===================================================== */
+
+let order=[];
+
+let current=0;
+
+let score=0;
+
+let attempts=0;
+
+let locked=false;
+
+let selected=1;
+
+let shooting=false;
+
+
+
+/* =====================================================
+   ELEMENT HELPER
+===================================================== */
+
+function $(id){
+
+return document
+.getElementById(id);
+
+}
+
+
+
+/* =====================================================
+   SCREEN
+===================================================== */
+
+function show(id){
+
+
+document
+.querySelectorAll(
+".screen"
+)
+
+.forEach(
+
+screen=>{
+
+screen
+.classList
+.remove(
+"active"
+);
+
+}
+
+);
+
+
+$(id)
+.classList
+.add(
+"active"
+);
+
+
+}
+
+
+
+/* =====================================================
+   SPLASH
+===================================================== */
+
+let c=5;
+
+
+let splash=
+
+setInterval(
+
+()=>{
+
+
+c--;
+
+
+$("count")
+.textContent=
+c;
+
+
+if(
+c<=0
+){
+
+
+clearInterval(
+splash
+);
+
+
+show(
+"intro"
+);
+
+
+}
+
+
+},
+
+1000
+
+);
+
+
+
+/* =====================================================
+   SOUND
+===================================================== */
+
+function sound(id){
+
+
+const audio=
+$(id);
+
+
+if(!audio){
+
+return;
+
+}
+
+
+audio.currentTime=0;
+
+
+audio
+.play()
+
+.catch(
+()=>{}
+);
+
+
+}
+
+
+
+/* =====================================================
+   START
+===================================================== */
 
 function startGame(){
-  ["correctSound","wrongSound","clapSound"].forEach(id=>{const a=$(id);a.volume=.75;a.play().then(()=>{a.pause();a.currentTime=0}).catch(()=>{})});
-  order=[...questions].sort(()=>Math.random()-.5);
-  current=0;score=0;buildProgress();loadQuestion();show("game");
+
+
+/*
+Unlock audio after user click.
+*/
+
+[
+"correctSound",
+"wrongSound",
+"clapSound"
+]
+
+.forEach(
+
+id=>{
+
+
+const audio=
+$(id);
+
+
+audio.volume=.75;
+
+
+audio
+.play()
+
+.then(
+
+()=>{
+
+
+audio.pause();
+
+
+audio.currentTime=0;
+
+
 }
+
+)
+
+.catch(
+()=>{}
+);
+
+
+}
+
+);
+
+
+/*
+Randomise question order.
+*/
+
+order=
+
+[...questions]
+
+.sort(
+
+()=>
+Math.random()-.5
+
+);
+
+
+current=0;
+
+score=0;
+
+shooting=false;
+
+
+buildProgress();
+
+
+/*
+Show the game first so that
+tile positions can be measured.
+*/
+
+show(
+"game"
+);
+
+
+loadQuestion();
+
+
+}
+
+
+
+/* =====================================================
+   PROGRESS
+===================================================== */
+
 function buildProgress(){
-  const p=$("progress");p.innerHTML="";
-  for(let i=0;i<10;i++){const d=document.createElement("div");d.className="dot";d.textContent=i+1;p.appendChild(d)}
+
+
+const p=
+$("progress");
+
+
+p.innerHTML="";
+
+
+for(
+let i=0;
+i<10;
+i++
+){
+
+
+const dot=
+
+document
+.createElement(
+"div"
+);
+
+
+dot.className=
+"dot";
+
+
+dot.textContent=
+i+1;
+
+
+p.appendChild(
+dot
+);
+
+
 }
+
+
+}
+
+
+
+/* =====================================================
+   LOAD QUESTION
+===================================================== */
+
 function loadQuestion(){
-  locked=false;attempts=0;selected=1;
-  const q=order[current];
-  $("score").textContent=score;$("adv").textContent=current+1;$("hearts").textContent="❤️❤️";
-  $("qtext").textContent=q.text;$("msg").textContent="Move the cursor and press shoot.";$("nextBtn").style.display="none";
-  renderData(q);makeCrates(q);moveHook(0,true);
+
+
+locked=false;
+
+shooting=false;
+
+attempts=0;
+
+
+/*
+Start at second target,
+same as the original game.
+*/
+
+selected=1;
+
+
+const q=
+order[current];
+
+
+$("score")
+.textContent=
+score;
+
+
+$("adv")
+.textContent=
+current+1;
+
+
+$("hearts")
+.textContent=
+"❤️❤️";
+
+
+$("qtext")
+.textContent=
+q.text;
+
+
+$("msg")
+.textContent=
+
+"Move the dart with ← → and press SHOOT.";
+
+
+$("nextBtn")
+.style
+.display=
+"none";
+
+
+renderData(q);
+
+
+makeCrates(q);
+
+
+/*
+Wait until answer tiles exist and
+their responsive dimensions are known.
+*/
+
+requestAnimationFrame(
+
+()=>{
+
+selectCurrentTarget();
+
+positionDart();
+
 }
+
+);
+
+
+}
+
+
+
+/* =====================================================
+   RENDER DATA
+===================================================== */
+
 function renderData(q){
-  const box=$("dataBox");
-  if(q.type==="picto"){
-    box.innerHTML=`<div class="key">${q.key}</div>`+q.rows.map(r=>`<div class="pictorow"><div class="nameCell">${r[0]}</div><div class="icons">${Array(r[1]).fill(q.key.split("=")[0].trim()).join(" ")}</div></div>`).join("");
-  }else{
-    const max=Math.max(...q.rows.map(r=>r[1]));
-    box.innerHTML=`<div class="barChart">`+q.rows.map(r=>`<div class="barRow"><div class="barLabel">${r[0]}</div><div class="bar" style="width:${(r[1]/max)*100}%"></div><div class="barNum">${r[1]}</div></div>`).join("")+`</div>`;
-  }
+
+
+const box=
+$("dataBox");
+
+
+/* =================================================
+   PICTOGRAPH
+================================================= */
+
+if(
+q.type==="picto"
+){
+
+
+const symbol=
+
+q.key
+.split("=")[0]
+.trim();
+
+
+box.innerHTML=
+
+`
+<div class="key">
+${q.key}
+</div>
+
+${
+
+q.rows
+
+.map(
+
+row=>
+
+`
+<div class="pictorow">
+
+<div class="nameCell">
+${row[0]}
+</div>
+
+<div class="icons">
+
+${
+
+Array(row[1])
+.fill(symbol)
+.join(" ")
+
 }
+
+</div>
+
+</div>
+`
+
+)
+
+.join("")
+
+}
+`;
+
+
+}
+
+
+
+/* =================================================
+   BAR CHART
+================================================= */
+
+else{
+
+
+const max=
+
+Math.max(
+
+...q.rows
+.map(
+row=>row[1]
+)
+
+);
+
+
+box.innerHTML=
+
+`
+<div class="barChart">
+
+${
+
+q.rows
+
+.map(
+
+row=>
+
+`
+<div class="barRow">
+
+<div class="barLabel">
+${row[0]}
+</div>
+
+<div>
+
+<div
+class="bar"
+style="width:${(row[1]/max)*100}%">
+</div>
+
+</div>
+
+<div class="barNum">
+${row[1]}
+</div>
+
+</div>
+`
+
+)
+
+.join("")
+
+}
+
+</div>
+`;
+
+
+}
+
+
+}
+
+
+
+/* =====================================================
+   MAKE ANSWER CRATES
+===================================================== */
+
 function makeCrates(q){
-  const box=$("crates");box.innerHTML="";
-  [...q.opts].sort(()=>Math.random()-.5).forEach((opt,i)=>{
-    const b=document.createElement("button");b.className="crate";b.textContent=opt;b.onclick=()=>{selected=i;moveHook(0,true)};box.appendChild(b);
-  });
+
+
+const box=
+$("crates");
+
+
+box.innerHTML="";
+
+
+[...q.opts]
+
+.sort(
+
+()=>
+Math.random()-.5
+
+)
+
+.forEach(
+
+(opt,index)=>{
+
+
+const button=
+
+document
+.createElement(
+"button"
+);
+
+
+button.type=
+"button";
+
+
+button.className=
+"crate";
+
+
+button.textContent=
+opt;
+
+
+/*
+Clicking an answer also moves
+the SAME dart above that target.
+*/
+
+button.onclick=
+
+()=>{
+
+
+if(
+locked ||
+shooting
+){
+
+return;
+
 }
-function moveHook(dir,setOnly=false){
-  if(locked)return;
-  if(!setOnly) selected=Math.max(0,Math.min(3,selected+dir));
-  document.querySelectorAll(".crate").forEach(c=>c.classList.remove("selected"));
-  const crate=document.querySelectorAll(".crate")[selected];
-  if(crate) crate.classList.add("selected");
-  const positions=[13,38,63,88];
-  $("hook").style.left=positions[selected]+"%";
-  if($("dart")) $("dart").style.left=positions[selected]+"%";
+
+
+selected=index;
+
+
+selectCurrentTarget();
+
+
+positionDart();
+
+
+};
+
+
+box
+.appendChild(
+button
+);
+
+
 }
-function dropAnswer(){
-  if(locked)return;
-  const q=order[current];
-  const crate=document.querySelectorAll(".crate")[selected];
-  if(!crate)return;
-  $("hook").style.transform="translateX(-50%) scale(1.15)";
-  if($("dart")) $("dart").style.transform="translateX(-50%) rotate(-90deg) translateX(-28px)";
-  setTimeout(()=>{
-    $("hook").style.transform="translateX(-50%) scale(1)";
-    if($("dart")) $("dart").style.transform="translateX(-50%) rotate(-90deg)";
-  },180);
-  if(crate.textContent===q.answer){
-    locked=true;
-    crate.classList.add("correct");
-    score+=attempts===0?100:60;
-    $("score").textContent=score;
-    document.querySelectorAll(".dot")[current].classList.add("on");
-    $("msg").textContent="Correct! "+q.explain;
-    sound("correctSound");sound("clapSound");confetti();
-    $("nextBtn").style.display="block";
-  }else{
-    attempts++;
-    crate.classList.add("wrong");
-    sound("wrongSound");
-    $("hearts").textContent=attempts===1?"❤️🤎":"🤎🤎";
-    if(attempts>=2){
-      locked=true;
-      $("msg").textContent="Correct answer: "+q.answer+". "+q.explain;
-      document.querySelectorAll(".crate").forEach(c=>{if(c.textContent===q.answer)c.classList.add("correct")});
-      $("nextBtn").style.display="block";
-    }else{
-      $("msg").textContent="Not quite. Move the cursor and shoot again.";
-    }
-  }
+
+);
+
+
 }
-function nextQuestion(){current++;if(current>=10){endGame()}else loadQuestion()}
+
+
+
+/* =====================================================
+   SELECT CURRENT TARGET
+===================================================== */
+
+function selectCurrentTarget(){
+
+
+document
+.querySelectorAll(
+".crate"
+)
+
+.forEach(
+
+crate=>{
+
+crate
+.classList
+.remove(
+"selected"
+);
+
+}
+
+);
+
+
+const crates=
+document
+.querySelectorAll(
+".crate"
+);
+
+
+const crate=
+crates[selected];
+
+
+if(crate){
+
+crate
+.classList
+.add(
+"selected"
+);
+
+}
+
+
+}
+
+
+
+/* =====================================================
+   POSITION THE SINGLE DART
+===================================================== */
+
+/*
+This is the important correction.
+
+NO fixed [13,38,63,88] positions.
+
+The centre of the selected answer tile
+is measured directly from the screen.
+*/
+
+function positionDart(){
+
+
+const dart=
+$("dart");
+
+
+const stage=
+$("targetStage");
+
+
+const crates=
+document
+.querySelectorAll(
+".crate"
+);
+
+
+const crate=
+crates[selected];
+
+
+if(
+!dart ||
+!stage ||
+!crate
+){
+
+return;
+
+}
+
+
+const stageRect=
+
+stage
+.getBoundingClientRect();
+
+
+const crateRect=
+
+crate
+.getBoundingClientRect();
+
+
+const centreX=
+
+crateRect.left
+-
+stageRect.left
++
+crateRect.width/2;
+
+
+/*
+Dart always sits directly above
+the selected target.
+*/
+
+dart.style.left=
+
+centreX
++
+"px";
+
+
+}
+
+
+
+/* =====================================================
+   MOVE DART WITH ARROWS
+===================================================== */
+
+function moveDart(direction){
+
+
+if(
+locked ||
+shooting
+){
+
+return;
+
+}
+
+
+const crates=
+document
+.querySelectorAll(
+".crate"
+);
+
+
+if(
+crates.length===0
+){
+
+return;
+
+}
+
+
+/*
+Move only one step left or right.
+*/
+
+selected=
+
+Math.max(
+
+0,
+
+Math.min(
+
+crates.length-1,
+
+selected+direction
+
+)
+
+);
+
+
+selectCurrentTarget();
+
+
+positionDart();
+
+
+}
+
+
+
+/* =====================================================
+   SHOOT
+===================================================== */
+
+function shootAnswer(){
+
+
+if(
+locked ||
+shooting
+){
+
+return;
+
+}
+
+
+const q=
+order[current];
+
+
+const crates=
+document
+.querySelectorAll(
+".crate"
+);
+
+
+const crate=
+crates[selected];
+
+
+const dart=
+$("dart");
+
+
+const stage=
+$("targetStage");
+
+
+if(
+!crate ||
+!dart ||
+!stage
+){
+
+return;
+
+}
+
+
+shooting=true;
+
+
+/*
+Ensure dart begins exactly above
+the chosen answer.
+*/
+
+positionDart();
+
+
+const stageRect=
+
+stage
+.getBoundingClientRect();
+
+
+const crateRect=
+
+crate
+.getBoundingClientRect();
+
+
+/*
+Move dart close to the top of
+the selected answer tile.
+*/
+
+const targetTop=
+
+Math.max(
+
+40,
+
+crateRect.top
+-
+stageRect.top
+-
+34
+
+);
+
+
+/*
+Shoot the SAME dart down.
+*/
+
+dart.style.top=
+
+targetTop
++
+"px";
+
+
+dart.style.transform=
+
+"translateX(-50%) rotate(90deg) scale(1.12)";
+
+
+
+/*
+Check answer when dart reaches target.
+*/
+
+setTimeout(
+
+()=>{
+
+
+evaluateAnswer(
+crate,
+q
+);
+
+
+/*
+Return dart to aim rail.
+*/
+
+dart.style.top=
+"0px";
+
+
+dart.style.transform=
+
+"translateX(-50%) rotate(90deg)";
+
+
+setTimeout(
+
+()=>{
+
+shooting=false;
+
+if(!locked){
+
+positionDart();
+
+}
+
+},
+
+300
+
+);
+
+
+},
+
+280
+
+);
+
+
+}
+
+
+
+/* =====================================================
+   EVALUATE ANSWER
+===================================================== */
+
+function evaluateAnswer(
+crate,
+q
+){
+
+
+/* =================================================
+   CORRECT
+================================================= */
+
+if(
+crate.textContent
+===
+q.answer
+){
+
+
+locked=true;
+
+
+crate
+.classList
+.add(
+"correct"
+);
+
+
+score+=
+
+attempts===0
+
+? 100
+
+: 60;
+
+
+$("score")
+.textContent=
+score;
+
+
+const dots=
+
+document
+.querySelectorAll(
+".dot"
+);
+
+
+if(
+dots[current]
+){
+
+dots[current]
+.classList
+.add(
+"on"
+);
+
+}
+
+
+$("msg")
+.textContent=
+
+"Correct! "
++
+q.explain;
+
+
+sound(
+"correctSound"
+);
+
+
+sound(
+"clapSound"
+);
+
+
+confetti();
+
+
+$("nextBtn")
+.style
+.display=
+"block";
+
+
+}
+
+
+
+/* =================================================
+   WRONG
+================================================= */
+
+else{
+
+
+attempts++;
+
+
+crate
+.classList
+.add(
+"wrong"
+);
+
+
+sound(
+"wrongSound"
+);
+
+
+$("hearts")
+.textContent=
+
+attempts===1
+
+? "❤️🤎"
+
+: "🤎🤎";
+
+
+/* ===============================================
+   SECOND WRONG ATTEMPT
+=============================================== */
+
+if(
+attempts>=2
+){
+
+
+locked=true;
+
+
+$("msg")
+.textContent=
+
+"Correct answer: "
++
+q.answer
++
+". "
++
+q.explain;
+
+
+document
+.querySelectorAll(
+".crate"
+)
+
+.forEach(
+
+answerTile=>{
+
+
+if(
+answerTile.textContent
+===
+q.answer
+){
+
+
+answerTile
+.classList
+.add(
+"correct"
+);
+
+
+}
+
+
+}
+
+);
+
+
+$("nextBtn")
+.style
+.display=
+"block";
+
+
+}
+
+
+/* ===============================================
+   FIRST WRONG ATTEMPT
+=============================================== */
+
+else{
+
+
+$("msg")
+.textContent=
+
+"Not quite. Move the dart and shoot again.";
+
+
+}
+
+
+}
+
+
+}
+
+
+
+/* =====================================================
+   NEXT QUESTION
+===================================================== */
+
+function nextQuestion(){
+
+
+current++;
+
+
+if(
+current>=10
+){
+
+
+endGame();
+
+
+}
+
+else{
+
+
+loadQuestion();
+
+
+}
+
+
+}
+
+
+
+/* =====================================================
+   RESULT
+===================================================== */
+
 function endGame(){
-  $("finalScore").textContent=score;
-  $("stars").textContent=score>=850?"⭐⭐⭐":score>=650?"⭐⭐":"⭐";
-  confetti(80);show("result");
+
+
+$("finalScore")
+.textContent=
+score;
+
+
+$("stars")
+.textContent=
+
+score>=850
+
+? "⭐⭐⭐"
+
+: score>=650
+
+? "⭐⭐"
+
+: "⭐";
+
+
+confetti(
+80
+);
+
+
+show(
+"result"
+);
+
+
 }
-function confetti(n=30){
-  const wrap=$("confetti");
-  for(let i=0;i<n;i++){
-    const p=document.createElement("div");p.className="piece";
-    p.style.left=Math.random()*100+"vw";
-    p.style.background=["#ffd75b","#ff6b6b","#38a9ff","#55df75","#b369ff"][Math.floor(Math.random()*5)];
-    p.style.animationDelay=Math.random()*.4+"s";wrap.appendChild(p);
-    setTimeout(()=>p.remove(),1700);
-  }
+
+
+
+/* =====================================================
+   CONFETTI
+===================================================== */
+
+function confetti(
+n=30
+){
+
+
+const wrap=
+$("confetti");
+
+
+for(
+let i=0;
+i<n;
+i++
+){
+
+
+const piece=
+
+document
+.createElement(
+"div"
+);
+
+
+piece.className=
+"piece";
+
+
+piece.style.left=
+
+Math.random()*100
++
+"vw";
+
+
+piece.style.background=
+
+[
+"#ffd75b",
+"#ff6b6b",
+"#38a9ff",
+"#55df75",
+"#b369ff"
+]
+
+[
+Math.floor(
+Math.random()*5
+)
+];
+
+
+piece.style.animationDelay=
+
+Math.random()*.4
++
+"s";
+
+
+wrap
+.appendChild(
+piece
+);
+
+
+setTimeout(
+
+()=>piece.remove(),
+
+1700
+
+);
+
+
 }
+
+
+}
+
+
+
+/* =====================================================
+   RESPONSIVE REPOSITIONING
+===================================================== */
+
+/*
+Whenever the screen size changes,
+calculate the answer tile centres again.
+
+This keeps the single dart perfectly
+aligned on desktop, tablet and mobile.
+*/
+
+window
+.addEventListener(
+
+"resize",
+
+()=>{
+
+
+if(
+
+$("game")
+.classList
+.contains(
+"active"
+)
+
+){
+
+requestAnimationFrame(
+
+()=>{
+
+positionDart();
+
+}
+
+);
+
+}
+
+
+}
+
+);
+
 </script>
+
 </body>
+
 </html>
