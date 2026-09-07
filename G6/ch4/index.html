@@ -3,469 +3,2662 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Grade 6 Decimals Train Game</title>
+
 <style>
-*{box-sizing:border-box}
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  width:100%;
+  overflow-x:hidden;
+}
+
 body{
   margin:0;
-  font-family:Arial, sans-serif;
-  background:linear-gradient(#8ee3ff,#dff7ff 40%,#71c86f 41%,#338b4b);
+  width:100%;
   min-height:100vh;
+  overflow-x:hidden;
+
+  font-family:Arial, sans-serif;
+
+  background:
+    linear-gradient(
+      #8ee3ff,
+      #dff7ff 40%,
+      #71c86f 41%,
+      #338b4b
+    );
+
   color:#123;
 }
-.screen{display:none;min-height:100vh;padding:18px}
-.active{display:flex}
-button{font-family:inherit;cursor:pointer;border:0}
-#splash{
-  justify-content:center;align-items:center;flex-direction:column;
-  background:linear-gradient(#eefcff,#ffffff,#e6ffd9);
+
+button{
+  font-family:inherit;
+  cursor:pointer;
+  border:0;
 }
-#splash img{max-width:420px;width:75vw}
+
+
+/* =====================================================
+   SCREENS
+===================================================== */
+
+.screen{
+  display:none;
+
+  width:100%;
+  min-height:100vh;
+
+  padding:
+    clamp(10px,2vw,18px);
+}
+
+.active{
+  display:flex;
+}
+
+
+/* =====================================================
+   SPLASH SCREEN
+===================================================== */
+
+#splash{
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+
+  background:
+    linear-gradient(
+      #eefcff,
+      #ffffff,
+      #e6ffd9
+    );
+}
+
+#splash img{
+  width:min(420px,75vw);
+  height:auto;
+  object-fit:contain;
+}
+
 .timer{
   margin-top:20px;
+
   background:#123b66;
   color:white;
+
   padding:12px 24px;
+
   border-radius:20px;
+
   font-weight:bold;
+
+  font-size:
+    clamp(15px,2.5vw,18px);
 }
-#intro,#result{justify-content:center;align-items:center}
+
+
+/* =====================================================
+   INTRO / RESULT
+===================================================== */
+
+#intro,
+#result{
+  justify-content:center;
+  align-items:center;
+}
+
+
+/* =====================================================
+   GENERAL CARD
+===================================================== */
+
 .card{
   width:min(850px,94vw);
+
   background:#fff1cb;
+
   color:#123b66;
+
   border-radius:28px;
-  padding:28px;
+
+  padding:
+    clamp(18px,4vw,28px);
+
   text-align:center;
-  box-shadow:0 12px 28px rgba(0,0,0,.25);
+
+  box-shadow:
+    0 12px 28px
+    rgba(0,0,0,.25);
+
   border:5px solid white;
 }
-h1{font-size:clamp(32px,6vw,56px);margin:0 0 12px}
+
+h1{
+  font-size:
+    clamp(30px,6vw,56px);
+
+  margin:
+    0 0 12px;
+
+  line-height:1.1;
+}
+
+
+/* =====================================================
+   INTRO RULES
+===================================================== */
+
 .rules{
   text-align:left;
-  margin:20px auto;
+
+  margin:
+    20px auto;
+
   max-width:650px;
+
   counter-reset:step;
+
   display:grid;
+
   gap:10px;
 }
+
 .rule{
   background:white;
+
   border-radius:15px;
+
   padding:14px;
-  font-size:clamp(16px,2.5vw,20px);
+
+  font-size:
+    clamp(16px,2.5vw,20px);
+
   font-weight:bold;
+
+  line-height:1.4;
 }
+
 .rule:before{
   counter-increment:step;
-  content:counter(step) ". ";
+
+  content:
+    counter(step) ". ";
+
   color:#0072bc;
+
   margin-right:8px;
 }
-.play,.next,.restart{
-  background:linear-gradient(#50dc65,#149a3c);
+
+
+/* =====================================================
+   MAIN BUTTONS
+===================================================== */
+
+.play,
+.next,
+.restart{
+  background:
+    linear-gradient(
+      #50dc65,
+      #149a3c
+    );
+
   color:white;
-  font-size:22px;
+
+  font-size:
+    clamp(17px,3vw,22px);
+
   font-weight:bold;
-  padding:14px 30px;
+
+  padding:
+    14px 30px;
+
   border-radius:30px;
-  box-shadow:0 7px 0 #0b6a2b;
+
+  box-shadow:
+    0 7px 0
+    #0b6a2b;
+
+  min-height:52px;
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease;
 }
+
+.play:hover,
+.next:hover,
+.restart:hover{
+  transform:
+    translateY(-2px);
+}
+
+.play:active,
+.next:active,
+.restart:active{
+  transform:
+    translateY(4px);
+
+  box-shadow:
+    0 3px 0
+    #0b6a2b;
+}
+
+button:focus-visible{
+  outline:
+    4px solid #ffd84d;
+
+  outline-offset:3px;
+}
+
+
+/* =====================================================
+   GAME SCREEN
+===================================================== */
+
 #game{
   flex-direction:column;
+
+  align-items:center;
+
   gap:10px;
+
+  width:100%;
 }
+
+
+/* =====================================================
+   TOP INFORMATION BAR
+===================================================== */
+
 .top{
   display:grid;
-  grid-template-columns:1fr 1fr 1fr;
+
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+
   gap:8px;
-  width:min(1000px,96vw);
-  margin:auto;
+
+  width:min(1000px,100%);
+
+  margin:0 auto;
+
   font-weight:bold;
 }
+
 .box{
+  min-width:0;
+
   background:#123b66;
+
   color:white;
-  padding:10px;
+
+  padding:
+    10px 8px;
+
   border-radius:14px;
+
   text-align:center;
+
+  font-size:
+    clamp(14px,2vw,17px);
+
+  overflow-wrap:anywhere;
 }
+
+
+/* =====================================================
+   MAIN TRACK AREA
+===================================================== */
+
 .track-area{
-  width:min(1000px,96vw);
-  margin:auto;
-  background:rgba(255,255,255,.35);
+  width:min(1000px,100%);
+
+  margin:0 auto;
+
+  background:
+    rgba(255,255,255,.38);
+
   border-radius:28px;
-  padding:18px;
-  box-shadow:0 10px 24px rgba(0,0,0,.25);
+
+  padding:
+    clamp(12px,2.5vw,20px);
+
+  box-shadow:
+    0 10px 24px
+    rgba(0,0,0,.25);
+
   position:relative;
-  min-height:560px;
+
+  /*
+  IMPORTANT:
+  Height now grows with content.
+  This prevents content from colliding
+  or being clipped.
+  */
+  min-height:0;
+
   overflow:hidden;
 }
+
+
+/* =====================================================
+   DECIMAL CITY DESTINATION
+   FIXED OVERLAP ISSUE
+===================================================== */
+
+/*
+Decimal City is NO LONGER absolutely positioned.
+
+It now occupies its own row and therefore cannot
+overlap the question card.
+*/
+
+.destination-area{
+  width:100%;
+
+  min-height:78px;
+
+  display:flex;
+
+  justify-content:flex-end;
+
+  align-items:center;
+
+  gap:12px;
+
+  flex-wrap:wrap;
+
+  margin:
+    0 0 14px;
+
+  padding:
+    7px 5px;
+}
+
+
+/* City icon */
+
 .city{
-  position:absolute;
-  right:18px;
-  top:28px;
-  font-size:48px;
-}
-.station-label{
-  position:absolute;
-  right:18px;
-  top:88px;
-  background:#184c1f;
-  color:white;
-  padding:8px 12px;
-  border-radius:10px;
-  border:3px solid #ffd84d;
-  font-weight:bold;
-}
-.question-card{
-  background:#fff1cb;
-  color:#123;
-  border:4px solid white;
-  border-radius:22px;
-  padding:18px;
-  width:min(720px,92%);
-  margin:0 auto;
-  text-align:center;
-}
-.qtext{
-  font-size:clamp(18px,3vw,28px);
-  font-weight:bold;
-}
-.qdisplay{
-  font-size:clamp(34px,7vw,64px);
-  font-weight:bold;
-  color:#06345d;
-  margin-top:8px;
-}
-.rail{
-  position:relative;
-  margin:60px auto 20px;
-  width:92%;
-  height:90px;
-  border-radius:50px;
-  background:#6b4a28;
-  border:8px solid #3a2715;
-}
-.rail:before{
-  content:"";
-  position:absolute;
-  left:3%;
-  right:3%;
-  top:50%;
-  height:8px;
-  background:repeating-linear-gradient(90deg,#fff 0 28px,transparent 28px 48px);
-  transform:translateY(-50%);
-}
-.station{
-  position:absolute;
-  top:50%;
-  transform:translate(-50%,-50%);
-  width:32px;
-  height:32px;
-  background:#ffd84d;
-  border:4px solid white;
-  border-radius:50%;
-  z-index:2;
-}
-.train{
-  position:absolute;
-  top:-56px;
-  left:0%;
-  font-size:58px;
-  transition:left .8s ease, transform .35s ease;
-  z-index:3;
+  position:static;
+
+  flex:0 0 auto;
+
+  font-size:
+    clamp(38px,6vw,54px);
+
   line-height:1;
 }
-.train.chug{
-  animation:chug .45s ease;
-}
-.answers{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
-  margin:18px auto;
-  max-width:620px;
-}
-.tile{
-  min-height:64px;
-  border-radius:18px;
-  background:white;
-  color:#123b66;
-  font-size:clamp(20px,4vw,32px);
+
+
+/* Decimal City board */
+
+.station-label{
+  position:static;
+
+  flex:0 0 auto;
+
+  background:#184c1f;
+
+  color:white;
+
+  padding:
+    9px 15px;
+
+  border-radius:10px;
+
+  border:
+    3px solid
+    #ffd84d;
+
   font-weight:bold;
-  border:4px solid transparent;
-  box-shadow:0 6px 0 #b8c8d8;
+
+  font-size:
+    clamp(13px,2.3vw,17px);
+
+  letter-spacing:.04em;
+
+  white-space:nowrap;
 }
-.tile.chosen{border-color:#ffd600;background:#fff6b6}
-.tile.correct{border-color:#12b94f;background:#c9ffd9}
-.tile.wrong{border-color:#e74c3c;background:#ffd3cd;animation:shake .25s}
-.msg{
-  min-height:55px;
-  background:white;
+
+
+/* =====================================================
+   QUESTION CARD
+===================================================== */
+
+.question-card{
+  background:#fff1cb;
+
   color:#123;
-  border-radius:16px;
-  padding:12px;
-  font-size:clamp(16px,2.5vw,21px);
-  font-weight:bold;
+
+  border:
+    4px solid white;
+
+  border-radius:22px;
+
+  padding:
+    clamp(14px,3vw,20px);
+
+  /*
+  Full responsive width with max-size.
+  */
+  width:min(720px,100%);
+
+  margin:
+    0 auto;
+
   text-align:center;
-}
-.next{display:none;margin:12px auto 0}
-.final-score{
-  font-size:64px;
-  font-weight:bold;
-  color:#7b3fd1;
-}
-.confetti{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
+
+  position:relative;
+
+  z-index:2;
+
   overflow:hidden;
 }
+
+.qtext{
+  font-size:
+    clamp(18px,3vw,28px);
+
+  font-weight:bold;
+
+  line-height:1.35;
+
+  overflow-wrap:anywhere;
+}
+
+.qdisplay{
+  font-size:
+    clamp(30px,7vw,64px);
+
+  font-weight:bold;
+
+  color:#06345d;
+
+  margin-top:8px;
+
+  line-height:1.15;
+
+  /*
+  Prevent very long questions
+  from overflowing the card.
+  */
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+
+
+/* =====================================================
+   TRAIN TRACK
+===================================================== */
+
+.rail{
+  position:relative;
+
+  /*
+  Extra space above the rail gives
+  the train enough room.
+  */
+  margin:
+    clamp(58px,9vw,74px)
+    auto
+    22px;
+
+  width:
+    calc(100% - 24px);
+
+  max-width:900px;
+
+  height:
+    clamp(70px,11vw,90px);
+
+  border-radius:50px;
+
+  background:#6b4a28;
+
+  border:
+    clamp(5px,1vw,8px)
+    solid
+    #3a2715;
+}
+
+
+/* Rail sleepers */
+
+.rail:before{
+  content:"";
+
+  position:absolute;
+
+  left:3%;
+  right:3%;
+
+  top:50%;
+
+  height:8px;
+
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #fff 0 28px,
+      transparent 28px 48px
+    );
+
+  transform:
+    translateY(-50%);
+}
+
+
+/* =====================================================
+   STATIONS
+===================================================== */
+
+.station{
+  position:absolute;
+
+  top:50%;
+
+  transform:
+    translate(-50%,-50%);
+
+  width:
+    clamp(22px,4vw,32px);
+
+  height:
+    clamp(22px,4vw,32px);
+
+  background:#ffd84d;
+
+  border:
+    4px solid white;
+
+  border-radius:50%;
+
+  z-index:2;
+}
+
+
+/* =====================================================
+   TRAIN
+===================================================== */
+
+.train{
+  position:absolute;
+
+  /*
+  Train sits above the rail.
+  */
+  top:
+    clamp(-54px,-6vw,-42px);
+
+  left:0%;
+
+  font-size:
+    clamp(40px,6vw,58px);
+
+  line-height:1;
+
+  z-index:3;
+
+  /*
+  Centre train on its progress location.
+  This also reduces clipping at rail edges.
+  */
+  transform:
+    translateX(-50%);
+
+  transition:
+    left .8s ease,
+    transform .35s ease;
+
+  white-space:nowrap;
+}
+
+
+/* Chug animation */
+
+.train.chug{
+  animation:
+    chug .45s ease;
+}
+
+
+/* =====================================================
+   ANSWER OPTIONS
+===================================================== */
+
+.answers{
+  display:grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(0,1fr)
+    );
+
+  gap:12px;
+
+  margin:
+    18px auto;
+
+  width:100%;
+
+  max-width:620px;
+}
+
+.tile{
+  width:100%;
+
+  min-width:0;
+
+  min-height:64px;
+
+  border-radius:18px;
+
+  background:white;
+
+  color:#123b66;
+
+  font-size:
+    clamp(18px,4vw,32px);
+
+  font-weight:bold;
+
+  border:
+    4px solid transparent;
+
+  box-shadow:
+    0 6px 0
+    #b8c8d8;
+
+  padding:
+    10px 12px;
+
+  line-height:1.2;
+
+  overflow-wrap:anywhere;
+
+  transition:
+    transform .16s ease,
+    border-color .16s ease,
+    background .16s ease;
+}
+
+.tile:hover{
+  transform:
+    translateY(-2px);
+}
+
+.tile.chosen{
+  border-color:#ffd600;
+
+  background:#fff6b6;
+}
+
+.tile.correct{
+  border-color:#12b94f;
+
+  background:#c9ffd9;
+}
+
+.tile.wrong{
+  border-color:#e74c3c;
+
+  background:#ffd3cd;
+
+  animation:
+    shake .25s;
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+.msg{
+  min-height:55px;
+
+  width:100%;
+
+  max-width:760px;
+
+  margin:
+    0 auto;
+
+  background:white;
+
+  color:#123;
+
+  border-radius:16px;
+
+  padding:
+    12px 14px;
+
+  font-size:
+    clamp(16px,2.5vw,21px);
+
+  font-weight:bold;
+
+  line-height:1.4;
+
+  text-align:center;
+
+  overflow-wrap:anywhere;
+}
+
+
+/* =====================================================
+   NEXT BUTTON
+===================================================== */
+
+.next{
+  display:none;
+
+  margin:
+    14px auto 5px;
+}
+
+
+/* =====================================================
+   FINAL RESULT
+===================================================== */
+
+.final-score{
+  font-size:
+    clamp(48px,10vw,64px);
+
+  font-weight:bold;
+
+  color:#7b3fd1;
+}
+
+
+/* =====================================================
+   CONFETTI
+===================================================== */
+
+.confetti{
+  position:fixed;
+
+  inset:0;
+
+  pointer-events:none;
+
+  overflow:hidden;
+
+  z-index:9998;
+}
+
 .piece{
   position:absolute;
+
   top:-20px;
+
   width:12px;
+
   height:18px;
-  animation:fall 1.5s linear forwards;
+
+  animation:
+    fall 1.5s
+    linear forwards;
 }
+
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+
 @keyframes shake{
-  25%{transform:translateX(-5px)}
-  50%{transform:translateX(5px)}
-  75%{transform:translateX(-3px)}
+
+  25%{
+    transform:
+      translateX(-5px);
+  }
+
+  50%{
+    transform:
+      translateX(5px);
+  }
+
+  75%{
+    transform:
+      translateX(-3px);
+  }
+
 }
+
+
+/*
+Keep translateX(-50%) during chug
+so train stays centred.
+*/
+
 @keyframes chug{
-  0%{transform:translateY(0)}
-  35%{transform:translateY(-8px)}
-  70%{transform:translateY(3px)}
-  100%{transform:translateY(0)}
+
+  0%{
+    transform:
+      translateX(-50%)
+      translateY(0);
+  }
+
+  35%{
+    transform:
+      translateX(-50%)
+      translateY(-8px);
+  }
+
+  70%{
+    transform:
+      translateX(-50%)
+      translateY(3px);
+  }
+
+  100%{
+    transform:
+      translateX(-50%)
+      translateY(0);
+  }
+
 }
+
+
 @keyframes fall{
-  to{transform:translateY(110vh) rotate(500deg)}
+
+  to{
+
+    transform:
+      translateY(110vh)
+      rotate(500deg);
+
+  }
+
 }
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
 @media(max-width:700px){
-  .top{grid-template-columns:1fr 1fr}
-  .top .box:nth-child(2){grid-column:1/3;order:-1}
-  .track-area{min-height:620px}
-  .answers{grid-template-columns:1fr 1fr}
-  .city{font-size:34px}
-  .station-label{font-size:12px}
-  .rail{margin-top:70px;width:98%}
-  .train{font-size:44px;top:-46px}
+
+  .screen{
+    padding:10px;
+  }
+
+
+  /* Score and attempts first row,
+     station full second row */
+
+  .top{
+    grid-template-columns:
+      1fr 1fr;
+  }
+
+  .top .box:nth-child(2){
+
+    grid-column:
+      1 / 3;
+
+    order:-1;
+
+  }
+
+
+  /*
+  Decimal City centred instead of
+  floating at the edge.
+  */
+
+  .destination-area{
+
+    justify-content:center;
+
+    min-height:auto;
+
+    margin-bottom:12px;
+
+  }
+
+
+  .station-label{
+
+    font-size:13px;
+
+    padding:
+      8px 12px;
+
+  }
+
+
+  .question-card{
+
+    width:100%;
+
+  }
+
+
+  .rail{
+
+    width:
+      calc(100% - 16px);
+
+    margin-top:62px;
+
+  }
+
+
+  .answers{
+
+    grid-template-columns:
+      repeat(
+        2,
+        minmax(0,1fr)
+      );
+
+  }
+
 }
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:500px){
+
+  .screen{
+    padding:7px;
+  }
+
+  .track-area{
+
+    padding:
+      11px 9px 15px;
+
+    border-radius:20px;
+
+  }
+
+
+  /*
+  City icon and board stay in their
+  own row and wrap safely if necessary.
+  */
+
+  .destination-area{
+
+    justify-content:center;
+
+    gap:7px;
+
+    padding:4px 0;
+
+  }
+
+  .city{
+
+    font-size:36px;
+
+  }
+
+  .station-label{
+
+    font-size:12px;
+
+    padding:
+      7px 9px;
+
+  }
+
+
+  .question-card{
+
+    border-width:3px;
+
+    border-radius:18px;
+
+    padding:
+      13px 10px;
+
+  }
+
+
+  .qtext{
+
+    font-size:
+      clamp(
+        17px,
+        5vw,
+        21px
+      );
+
+  }
+
+
+  .qdisplay{
+
+    font-size:
+      clamp(
+        28px,
+        10vw,
+        42px
+      );
+
+  }
+
+
+  /*
+  More usable rail on phones.
+  */
+
+  .rail{
+
+    width:
+      calc(100% - 10px);
+
+    height:67px;
+
+    border-width:5px;
+
+    margin-top:55px;
+
+  }
+
+
+  .rail:before{
+
+    height:6px;
+
+    background:
+      repeating-linear-gradient(
+        90deg,
+        #fff 0 18px,
+        transparent 18px 31px
+      );
+
+  }
+
+
+  .station{
+
+    border-width:3px;
+
+  }
+
+
+  .train{
+
+    font-size:39px;
+
+    top:-40px;
+
+  }
+
+
+  /*
+  Stack answer options on narrow phones.
+  */
+
+  .answers{
+
+    grid-template-columns:
+      1fr;
+
+    gap:9px;
+
+    margin:
+      15px auto;
+
+  }
+
+
+  .tile{
+
+    min-height:54px;
+
+    font-size:
+      clamp(
+        18px,
+        6vw,
+        23px
+      );
+
+    border-width:3px;
+
+  }
+
+
+  .msg{
+
+    font-size:15px;
+
+    min-height:50px;
+
+  }
+
+}
+
+
+/* =====================================================
+   VERY SMALL MOBILE
+===================================================== */
+
+@media(max-width:350px){
+
+  .top{
+
+    grid-template-columns:
+      1fr;
+
+  }
+
+
+  .top .box:nth-child(2){
+
+    grid-column:auto;
+
+    order:0;
+
+  }
+
+
+  .destination-area{
+
+    flex-direction:column;
+
+    gap:5px;
+
+  }
+
+
+  .rail{
+
+    width:
+      calc(100% - 6px);
+
+  }
+
+}
+
+
+/* =====================================================
+   REDUCED MOTION ACCESSIBILITY
+===================================================== */
+
+@media(
+  prefers-reduced-motion:
+  reduce
+){
+
+  *,
+  *::before,
+  *::after{
+
+    animation-duration:
+      .01ms !important;
+
+    animation-iteration-count:
+      1 !important;
+
+    transition-duration:
+      .01ms !important;
+
+  }
+
+}
+
 </style>
+
 </head>
+
+
 <body>
 
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
-<section id="splash" class="screen active">
-  <img src="assets/innovine-logo.png" alt="Innovine Logo">
-  <div class="timer">Starting in <span id="count">5</span>s</div>
+<!-- ==================================================
+     ORIGINAL AUDIO FILES
+================================================== -->
+
+<audio
+  id="correctSound"
+  src="assets/correct.mp3"
+  preload="auto">
+</audio>
+
+<audio
+  id="wrongSound"
+  src="assets/wrong.mp3"
+  preload="auto">
+</audio>
+
+<audio
+  id="clapSound"
+  src="assets/freesound_community-claps-44774.mp3"
+  preload="auto">
+</audio>
+
+
+
+<!-- ==================================================
+     SPLASH SCREEN
+================================================== -->
+
+<section
+  id="splash"
+  class="screen active">
+
+  <img
+    src="assets/innovine-logo.png"
+    alt="Innovine Logo">
+
+  <div class="timer">
+
+    Starting in
+
+    <span id="count">
+      5
+    </span>
+
+    s
+
+  </div>
+
 </section>
 
-<section id="intro" class="screen">
+
+
+<!-- ==================================================
+     INTRO
+================================================== -->
+
+<section
+  id="intro"
+  class="screen">
+
   <div class="card">
-    <h1>Decimal Express</h1>
-    <p><b>Help the train reach Decimal City.</b></p>
+
+    <h1>
+      Decimal Express
+    </h1>
+
+    <p>
+      <b>
+        Help the train reach Decimal City.
+      </b>
+    </p>
+
+
     <div class="rules">
-      <div class="rule">Read the decimal question carefully.</div>
-      <div class="rule">Tap the correct answer tile.</div>
-      <div class="rule">You have 2 attempts for each question.</div>
-      <div class="rule">The train moves ahead after every correct answer.</div>
-      <div class="rule">Complete all 10 stations to finish the game.</div>
+
+      <div class="rule">
+        Read the decimal question carefully.
+      </div>
+
+      <div class="rule">
+        Tap the correct answer tile.
+      </div>
+
+      <div class="rule">
+        You have 2 attempts for each question.
+      </div>
+
+      <div class="rule">
+        The train moves ahead after every correct answer.
+      </div>
+
+      <div class="rule">
+        Complete all 10 stations to finish the game.
+      </div>
+
     </div>
-    <button class="play" onclick="startGame()">LET’S PLAY</button>
+
+
+    <button
+      class="play"
+      onclick="startGame()">
+
+      LET’S PLAY
+
+    </button>
+
   </div>
+
 </section>
 
-<section id="game" class="screen">
+
+
+<!-- ==================================================
+     GAME
+================================================== -->
+
+<section
+  id="game"
+  class="screen">
+
+
+  <!-- SCORE BAR -->
+
   <div class="top">
-    <div class="box">Score: <span id="score">0</span> ⭐</div>
-    <div class="box">Station: <span id="level">1</span>/10</div>
-    <div class="box">Attempts: <span id="hearts">❤️❤️</span></div>
+
+    <div class="box">
+
+      Score:
+
+      <span id="score">
+        0
+      </span>
+
+      ⭐
+
+    </div>
+
+
+    <div class="box">
+
+      Station:
+
+      <span id="level">
+        1
+      </span>
+
+      /10
+
+    </div>
+
+
+    <div class="box">
+
+      Attempts:
+
+      <span id="hearts">
+        ❤️❤️
+      </span>
+
+    </div>
+
   </div>
+
+
+
+  <!-- MAIN PLAY AREA -->
 
   <div class="track-area">
-    <div class="city">🏙️</div>
-    <div class="station-label">DECIMAL CITY</div>
+
+
+    <!-- ==========================================
+         DECIMAL CITY
+         NOW IN ITS OWN RESPONSIVE ROW
+    =========================================== -->
+
+    <div class="destination-area">
+
+      <div
+        class="city"
+        aria-hidden="true">
+
+        🏙️
+
+      </div>
+
+
+      <div class="station-label">
+
+        DECIMAL CITY
+
+      </div>
+
+    </div>
+
+
+
+    <!-- ==========================================
+         QUESTION
+    =========================================== -->
 
     <div class="question-card">
-      <div class="qtext" id="qtext"></div>
-      <div class="qdisplay" id="qdisplay"></div>
+
+      <div
+        class="qtext"
+        id="qtext">
+      </div>
+
+      <div
+        class="qdisplay"
+        id="qdisplay">
+      </div>
+
     </div>
 
-    <div class="rail" id="rail">
-      <div class="train" id="train">🚆</div>
+
+
+    <!-- ==========================================
+         TRAIN TRACK
+    =========================================== -->
+
+    <div
+      class="rail"
+      id="rail">
+
+      <div
+        class="train"
+        id="train">
+
+        🚆
+
+      </div>
+
     </div>
 
-    <div class="answers" id="answers"></div>
-    <div class="msg" id="msg">Tap the correct answer tile.</div>
-    <button class="next" id="nextBtn" onclick="nextQuestion()">NEXT ➜</button>
+
+
+    <!-- ==========================================
+         ANSWERS
+    =========================================== -->
+
+    <div
+      class="answers"
+      id="answers">
+    </div>
+
+
+
+    <!-- ==========================================
+         FEEDBACK
+    =========================================== -->
+
+    <div
+      class="msg"
+      id="msg"
+      aria-live="polite">
+
+      Tap the correct answer tile.
+
+    </div>
+
+
+
+    <button
+      class="next"
+      id="nextBtn"
+      onclick="nextQuestion()">
+
+      NEXT ➜
+
+    </button>
+
   </div>
+
 </section>
 
-<section id="result" class="screen">
+
+
+<!-- ==================================================
+     RESULT
+================================================== -->
+
+<section
+  id="result"
+  class="screen">
+
   <div class="card">
-    <h1>You Reached Decimal City!</h1>
-    <p>You completed all 10 decimal stations.</p>
-    <div class="final-score" id="finalScore">0</div>
-    <div style="font-size:50px" id="stars">⭐⭐⭐</div>
-    <button class="restart" onclick="startGame()">PLAY AGAIN</button>
+
+    <h1>
+      You Reached Decimal City!
+    </h1>
+
+    <p>
+      You completed all 10 decimal stations.
+    </p>
+
+
+    <div
+      class="final-score"
+      id="finalScore">
+
+      0
+
+    </div>
+
+
+    <div
+      style="font-size:50px"
+      id="stars">
+
+      ⭐⭐⭐
+
+    </div>
+
+
+    <button
+      class="restart"
+      onclick="startGame()">
+
+      PLAY AGAIN
+
+    </button>
+
   </div>
+
 </section>
 
-<div class="confetti" id="confetti"></div>
+
+
+<!-- ==================================================
+     CONFETTI
+================================================== -->
+
+<div
+  class="confetti"
+  id="confetti">
+</div>
+
+
 
 <script>
+
+
+/* =====================================================
+   QUESTIONS
+===================================================== */
+
 const questions=[
-{text:"Which digit is in the tenths place?", display:"3.75", answer:"7", opts:["7","5","3","75"], explain:"The first digit after the decimal point is the tenths place."},
-{text:"Write 0.6 as hundredths.", display:"0.6 = ?", answer:"0.60", opts:["0.60","0.06","6.00","0.006"], explain:"0.6 and 0.60 have the same value."},
-{text:"Add the decimals.", display:"4.8 + 2.5", answer:"7.3", opts:["7.3","6.13","7.13","6.3"], explain:"4.8 + 2.5 = 7.3."},
-{text:"Subtract the decimals.", display:"9.6 − 3.2", answer:"6.4", opts:["6.4","6.8","12.8","5.4"], explain:"9.6 − 3.2 = 6.4."},
-{text:"Which amount has the same value?", display:"₹12.50", answer:"₹12.5", opts:["₹12.5","₹12.05","₹125.0","₹1.25"], explain:"A zero at the end after the decimal does not change the value."},
-{text:"Which digit is in the hundredths place?", display:"5.09", answer:"9", opts:["9","0","5","59"], explain:"The second digit after the decimal point is the hundredths place."},
-{text:"Find the total growth.", display:"1.25 + 0.35", answer:"1.60", opts:["1.60","1.50","1.55","1.70"], explain:"1.25 + 0.35 = 1.60."},
-{text:"Find the total distance.", display:"8.75 + 2.25", answer:"11.00", opts:["11.00","10.90","10.100","6.50"], explain:"8.75 + 2.25 = 11.00."},
-{text:"Choose the greatest decimal.", display:"4.05, 4.5, 4.15, 4.005", answer:"4.5", opts:["4.5","4.05","4.15","4.005"], explain:"4.5 is the greatest."},
-{text:"Make the decimal number.", display:"6 ones, 3 tenths, 4 hundredths", answer:"6.34", opts:["6.34","63.4","6.43","0.634"], explain:"6 ones, 3 tenths and 4 hundredths make 6.34."}
+
+
+{
+  text:
+    "Which digit is in the tenths place?",
+
+  display:
+    "3.75",
+
+  answer:
+    "7",
+
+  opts:[
+    "7",
+    "5",
+    "3",
+    "75"
+  ],
+
+  explain:
+    "The first digit after the decimal point is the tenths place."
+},
+
+
+{
+  text:
+    "Write 0.6 as hundredths.",
+
+  display:
+    "0.6 = ?",
+
+  answer:
+    "0.60",
+
+  opts:[
+    "0.60",
+    "0.06",
+    "6.00",
+    "0.006"
+  ],
+
+  explain:
+    "0.6 and 0.60 have the same value."
+},
+
+
+{
+  text:
+    "Add the decimals.",
+
+  display:
+    "4.8 + 2.5",
+
+  answer:
+    "7.3",
+
+  opts:[
+    "7.3",
+    "6.13",
+    "7.13",
+    "6.3"
+  ],
+
+  explain:
+    "4.8 + 2.5 = 7.3."
+},
+
+
+{
+  text:
+    "Subtract the decimals.",
+
+  display:
+    "9.6 − 3.2",
+
+  answer:
+    "6.4",
+
+  opts:[
+    "6.4",
+    "6.8",
+    "12.8",
+    "5.4"
+  ],
+
+  explain:
+    "9.6 − 3.2 = 6.4."
+},
+
+
+{
+  text:
+    "Which amount has the same value?",
+
+  display:
+    "₹12.50",
+
+  answer:
+    "₹12.5",
+
+  opts:[
+    "₹12.5",
+    "₹12.05",
+    "₹125.0",
+    "₹1.25"
+  ],
+
+  explain:
+    "A zero at the end after the decimal does not change the value."
+},
+
+
+{
+  text:
+    "Which digit is in the hundredths place?",
+
+  display:
+    "5.09",
+
+  answer:
+    "9",
+
+  opts:[
+    "9",
+    "0",
+    "5",
+    "59"
+  ],
+
+  explain:
+    "The second digit after the decimal point is the hundredths place."
+},
+
+
+{
+  text:
+    "Find the total growth.",
+
+  display:
+    "1.25 + 0.35",
+
+  answer:
+    "1.60",
+
+  opts:[
+    "1.60",
+    "1.50",
+    "1.55",
+    "1.70"
+  ],
+
+  explain:
+    "1.25 + 0.35 = 1.60."
+},
+
+
+{
+  text:
+    "Find the total distance.",
+
+  display:
+    "8.75 + 2.25",
+
+  answer:
+    "11.00",
+
+  opts:[
+    "11.00",
+    "10.90",
+    "10.100",
+    "6.50"
+  ],
+
+  explain:
+    "8.75 + 2.25 = 11.00."
+},
+
+
+{
+  text:
+    "Choose the greatest decimal.",
+
+  display:
+    "4.05, 4.5, 4.15, 4.005",
+
+  answer:
+    "4.5",
+
+  opts:[
+    "4.5",
+    "4.05",
+    "4.15",
+    "4.005"
+  ],
+
+  explain:
+    "4.5 is the greatest."
+},
+
+
+{
+  text:
+    "Make the decimal number.",
+
+  display:
+    "6 ones, 3 tenths, 4 hundredths",
+
+  answer:
+    "6.34",
+
+  opts:[
+    "6.34",
+    "63.4",
+    "6.43",
+    "0.634"
+  ],
+
+  explain:
+    "6 ones, 3 tenths and 4 hundredths make 6.34."
+}
+
+
 ];
 
-let order=[],current=0,score=0,attempts=0,locked=false;
 
-function $(id){return document.getElementById(id)}
-function show(id){
-  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
-  $(id).classList.add("active");
+
+/* =====================================================
+   GAME VARIABLES
+===================================================== */
+
+let order=[];
+
+let current=0;
+
+let score=0;
+
+let attempts=0;
+
+let locked=false;
+
+
+
+/* =====================================================
+   HELPER
+===================================================== */
+
+function $(id){
+
+  return document
+    .getElementById(id);
+
 }
+
+
+
+/* =====================================================
+   SHOW SCREEN
+===================================================== */
+
+function show(id){
+
+  document
+    .querySelectorAll(".screen")
+    .forEach(
+      screen =>
+        screen
+          .classList
+          .remove("active")
+    );
+
+
+  $(id)
+    .classList
+    .add("active");
+
+}
+
+
+
+/* =====================================================
+   SPLASH COUNTDOWN
+===================================================== */
+
 let c=5;
-let splash=setInterval(()=>{
+
+
+let splash=
+setInterval(
+()=>{
+
   c--;
-  $("count").textContent=c;
-  if(c<=0){clearInterval(splash);show("intro")}
-},1000);
+
+
+  $("count")
+    .textContent=
+    c;
+
+
+  if(c<=0){
+
+    clearInterval(
+      splash
+    );
+
+
+    show(
+      "intro"
+    );
+
+  }
+
+},
+1000
+);
+
+
+
+/* =====================================================
+   SOUND
+===================================================== */
 
 function sound(id){
-  const a=$(id);
-  a.currentTime=0;
-  a.play().catch(()=>{});
+
+  const audio=
+    $(id);
+
+
+  if(!audio){
+    return;
+  }
+
+
+  audio.currentTime=0;
+
+
+  audio
+    .play()
+    .catch(
+      ()=>{}
+    );
+
 }
+
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
 function startGame(){
-  ["correctSound","wrongSound","clapSound"].forEach(id=>{
-    const a=$(id);
-    a.volume=.75;
-    a.play().then(()=>{a.pause();a.currentTime=0}).catch(()=>{});
-  });
-  order=[...questions].sort(()=>Math.random()-.5);
-  current=0;score=0;
-  loadQuestion();
-  show("game");
-}
-function loadQuestion(){
-  locked=false;attempts=0;
-  const q=order[current];
-  $("score").textContent=score;
-  $("level").textContent=current+1;
-  $("hearts").textContent="❤️❤️";
-  $("qtext").textContent=q.text;
-  $("qdisplay").textContent=q.display;
-  $("msg").textContent="Tap the correct answer tile.";
-  $("nextBtn").style.display="none";
-  moveTrain(current);
-  makeStations();
-  makeAnswers(q);
-}
-function makeStations(){
-  const rail=$("rail");
-  rail.querySelectorAll(".station").forEach(s=>s.remove());
-  for(let i=0;i<10;i++){
-    const st=document.createElement("div");
-    st.className="station";
-    st.style.left=(5+i*10)+"%";
-    st.style.background=i<=current?"#ffd84d":"#b6c3cf";
-    rail.appendChild(st);
-  }
-}
-function moveTrain(pos){
-  const train=$("train");
-  train.style.left=(Math.min(92,5+pos*10))+"%";
-}
-function chugTrain(){
-  const train=$("train");
-  train.classList.remove("chug");
-  void train.offsetWidth;
-  train.classList.add("chug");
-}
-function makeAnswers(q){
-  const box=$("answers");
-  box.innerHTML="";
-  [...q.opts].sort(()=>Math.random()-.5).forEach(opt=>{
-    const b=document.createElement("button");
-    b.className="tile";
-    b.textContent=opt;
-    b.onclick=()=>choose(b,opt);
-    box.appendChild(b);
-  });
-}
-function choose(btn,val){
-  if(locked)return;
-  document.querySelectorAll(".tile").forEach(t=>t.classList.remove("chosen","wrong","correct"));
-  btn.classList.add("chosen");
-  const q=order[current];
-  if(val===q.answer){
-    locked=true;
-    btn.classList.add("correct");
-    score+=attempts===0?100:60;
-    $("score").textContent=score;
-    $("msg").textContent="Correct! Train moved ahead. "+q.explain;
-    moveTrain(current+1);
-    chugTrain();
-    sound("correctSound"); sound("clapSound"); confetti();
-    $("nextBtn").style.display="block";
-  }else{
-    attempts++;
-    btn.classList.add("wrong");
-    sound("wrongSound");
-    $("hearts").textContent=attempts===1?"❤️🤎":"🤎🤎";
-    if(attempts>=2){
-      locked=true;
-      $("msg").textContent="Correct answer: "+q.answer+". "+q.explain;
-      document.querySelectorAll(".tile").forEach(t=>{
-        if(t.textContent===q.answer)t.classList.add("correct");
-      });
-      moveTrain(current+1);
-      chugTrain();
-      $("nextBtn").style.display="block";
-    }else{
-      $("msg").textContent="Not quite. Try one more time.";
+
+
+  /*
+  Prepare original sound files
+  after user interaction.
+  */
+
+
+  [
+    "correctSound",
+    "wrongSound",
+    "clapSound"
+  ]
+  .forEach(
+    id=>{
+
+      const audio=
+        $(id);
+
+
+      audio.volume=.75;
+
+
+      audio
+        .play()
+
+        .then(
+          ()=>{
+
+            audio.pause();
+
+            audio.currentTime=0;
+
+          }
+        )
+
+        .catch(
+          ()=>{}
+        );
+
     }
-  }
+  );
+
+
+  /*
+  Random question order.
+  */
+
+  order=
+    [...questions]
+    .sort(
+      () =>
+        Math.random()-.5
+    );
+
+
+  current=0;
+
+  score=0;
+
+
+  loadQuestion();
+
+
+  show(
+    "game"
+  );
+
 }
+
+
+
+/* =====================================================
+   LOAD QUESTION
+===================================================== */
+
+function loadQuestion(){
+
+  locked=false;
+
+  attempts=0;
+
+
+  const q=
+    order[current];
+
+
+  $("score")
+    .textContent=
+    score;
+
+
+  $("level")
+    .textContent=
+    current+1;
+
+
+  $("hearts")
+    .textContent=
+    "❤️❤️";
+
+
+  $("qtext")
+    .textContent=
+    q.text;
+
+
+  $("qdisplay")
+    .textContent=
+    q.display;
+
+
+  $("msg")
+    .textContent=
+    "Tap the correct answer tile.";
+
+
+  $("nextBtn")
+    .style
+    .display=
+    "none";
+
+
+  moveTrain(
+    current
+  );
+
+
+  makeStations();
+
+
+  makeAnswers(q);
+
+}
+
+
+
+/* =====================================================
+   CREATE STATIONS
+===================================================== */
+
+function makeStations(){
+
+  const rail=
+    $("rail");
+
+
+  rail
+    .querySelectorAll(
+      ".station"
+    )
+    .forEach(
+      station =>
+        station.remove()
+    );
+
+
+  /*
+  Keep station markers inside the track,
+  away from the absolute edges.
+  */
+
+  for(
+    let i=0;
+    i<10;
+    i++
+  ){
+
+    const station=
+      document
+        .createElement(
+          "div"
+        );
+
+
+    station.className=
+      "station";
+
+
+    /*
+    6% to 94% gives better edge clearance.
+    */
+
+    const position=
+      6 +
+      (
+        i *
+        (88/9)
+      );
+
+
+    station.style.left=
+      position+"%";
+
+
+    station.style.background=
+
+      i<=current
+
+      ? "#ffd84d"
+
+      : "#b6c3cf";
+
+
+    rail
+      .appendChild(
+        station
+      );
+
+  }
+
+}
+
+
+
+/* =====================================================
+   TRAIN POSITION
+===================================================== */
+
+function moveTrain(pos){
+
+  const train=
+    $("train");
+
+
+  /*
+  Train moves between 6% and 94%.
+
+  current = 0 → starting position
+  final question → Decimal City end
+  */
+
+
+  const safePosition=
+
+    Math.min(
+      94,
+      6 +
+      (
+        pos *
+        (88/9)
+      )
+    );
+
+
+  train
+    .style
+    .left=
+    safePosition+"%";
+
+}
+
+
+
+/* =====================================================
+   TRAIN CHUG
+===================================================== */
+
+function chugTrain(){
+
+  const train=
+    $("train");
+
+
+  train
+    .classList
+    .remove(
+      "chug"
+    );
+
+
+  void train.offsetWidth;
+
+
+  train
+    .classList
+    .add(
+      "chug"
+    );
+
+}
+
+
+
+/* =====================================================
+   ANSWER TILES
+===================================================== */
+
+function makeAnswers(q){
+
+  const box=
+    $("answers");
+
+
+  box.innerHTML="";
+
+
+  [...q.opts]
+
+    .sort(
+      () =>
+        Math.random()-.5
+    )
+
+    .forEach(
+      opt=>{
+
+
+        const button=
+          document
+            .createElement(
+              "button"
+            );
+
+
+        button
+          .className=
+          "tile";
+
+
+        button
+          .textContent=
+          opt;
+
+
+        button
+          .setAttribute(
+            "aria-label",
+            "Answer "+opt
+          );
+
+
+        button.onclick=
+          () =>
+            choose(
+              button,
+              opt
+            );
+
+
+        box
+          .appendChild(
+            button
+          );
+
+      }
+    );
+
+}
+
+
+
+/* =====================================================
+   ANSWER CHECK
+===================================================== */
+
+function choose(
+  btn,
+  val
+){
+
+  if(locked){
+    return;
+  }
+
+
+  document
+    .querySelectorAll(
+      ".tile"
+    )
+    .forEach(
+      tile =>
+        tile
+          .classList
+          .remove(
+            "chosen",
+            "wrong",
+            "correct"
+          )
+    );
+
+
+  btn
+    .classList
+    .add(
+      "chosen"
+    );
+
+
+  const q=
+    order[current];
+
+
+
+  /* =================================================
+     CORRECT ANSWER
+  ================================================= */
+
+  if(
+    val ===
+    q.answer
+  ){
+
+    locked=true;
+
+
+    btn
+      .classList
+      .add(
+        "correct"
+      );
+
+
+    /*
+    First attempt = 100
+    Second attempt = 60
+    */
+
+    score+=
+
+      attempts===0
+
+      ? 100
+
+      : 60;
+
+
+    $("score")
+      .textContent=
+      score;
+
+
+    $("msg")
+      .textContent=
+
+      "Correct! Train moved ahead. "
+      +
+      q.explain;
+
+
+    moveTrain(
+      current+1
+    );
+
+
+    chugTrain();
+
+
+    /*
+    ORIGINAL AUDIO
+    */
+
+    sound(
+      "correctSound"
+    );
+
+
+    sound(
+      "clapSound"
+    );
+
+
+    confetti();
+
+
+    $("nextBtn")
+      .style
+      .display=
+      "block";
+
+  }
+
+
+
+  /* =================================================
+     WRONG ANSWER
+  ================================================= */
+
+  else{
+
+    attempts++;
+
+
+    btn
+      .classList
+      .add(
+        "wrong"
+      );
+
+
+    /*
+    ORIGINAL WRONG SOUND
+    */
+
+    sound(
+      "wrongSound"
+    );
+
+
+    $("hearts")
+      .textContent=
+
+      attempts===1
+
+      ? "❤️🤎"
+
+      : "🤎🤎";
+
+
+    if(
+      attempts>=2
+    ){
+
+      locked=true;
+
+
+      $("msg")
+        .textContent=
+
+        "Correct answer: "
+        +
+        q.answer
+        +
+        ". "
+        +
+        q.explain;
+
+
+      document
+        .querySelectorAll(
+          ".tile"
+        )
+        .forEach(
+          tile=>{
+
+            if(
+              tile.textContent
+              ===
+              q.answer
+            ){
+
+              tile
+                .classList
+                .add(
+                  "correct"
+                );
+
+            }
+
+          }
+        );
+
+
+      moveTrain(
+        current+1
+      );
+
+
+      chugTrain();
+
+
+      $("nextBtn")
+        .style
+        .display=
+        "block";
+
+    }
+
+    else{
+
+      $("msg")
+        .textContent=
+
+        "Not quite. Try one more time.";
+
+    }
+
+  }
+
+}
+
+
+
+/* =====================================================
+   NEXT QUESTION
+===================================================== */
+
 function nextQuestion(){
+
   current++;
-  if(current>=10){endGame()}
-  else loadQuestion();
-}
-function endGame(){
-  $("finalScore").textContent=score;
-  $("stars").textContent=score>=850?"⭐⭐⭐":score>=650?"⭐⭐":"⭐";
-  confetti(70);
-  show("result");
-}
-function confetti(n=30){
-  const wrap=$("confetti");
-  for(let i=0;i<n;i++){
-    const p=document.createElement("div");
-    p.className="piece";
-    p.style.left=Math.random()*100+"vw";
-    p.style.background=["#ffd75b","#ff6b6b","#38a9ff","#55df75","#b369ff"][Math.floor(Math.random()*5)];
-    p.style.animationDelay=Math.random()*.4+"s";
-    wrap.appendChild(p);
-    setTimeout(()=>p.remove(),1700);
+
+
+  if(
+    current>=10
+  ){
+
+    endGame();
+
   }
+
+  else{
+
+    loadQuestion();
+
+  }
+
 }
+
+
+
+/* =====================================================
+   END GAME
+===================================================== */
+
+function endGame(){
+
+  $("finalScore")
+    .textContent=
+    score;
+
+
+  $("stars")
+    .textContent=
+
+    score>=850
+
+    ? "⭐⭐⭐"
+
+    : score>=650
+
+      ? "⭐⭐"
+
+      : "⭐";
+
+
+  confetti(
+    70
+  );
+
+
+  /*
+  Celebration sound at final screen.
+  */
+
+  sound(
+    "clapSound"
+  );
+
+
+  show(
+    "result"
+  );
+
+}
+
+
+
+/* =====================================================
+   CONFETTI
+===================================================== */
+
+function confetti(
+  n=30
+){
+
+  const wrap=
+    $("confetti");
+
+
+  for(
+    let i=0;
+    i<n;
+    i++
+  ){
+
+    const piece=
+      document
+        .createElement(
+          "div"
+        );
+
+
+    piece.className=
+      "piece";
+
+
+    piece.style.left=
+      Math.random()*100
+      +
+      "vw";
+
+
+    piece.style.background=
+
+      [
+        "#ffd75b",
+        "#ff6b6b",
+        "#38a9ff",
+        "#55df75",
+        "#b369ff"
+      ]
+
+      [
+        Math.floor(
+          Math.random()*5
+        )
+      ];
+
+
+    piece
+      .style
+      .animationDelay=
+
+      Math.random()*.4
+      +
+      "s";
+
+
+    wrap
+      .appendChild(
+        piece
+      );
+
+
+    setTimeout(
+
+      () =>
+        piece.remove(),
+
+      1700
+
+    );
+
+  }
+
+}
+
 </script>
+
 </body>
 </html>
