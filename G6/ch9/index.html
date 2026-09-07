@@ -1,504 +1,2953 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Grade 6 Algebraic Expressions Power Game</title>
+
 <style>
-*{box-sizing:border-box}
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+*{
+  box-sizing:border-box;
+}
+
+html,
 body{
+  width:100%;
   margin:0;
-  font-family:Arial,sans-serif;
-  min-height:100vh;
-  background:#071433;
-  color:white;
   overflow-x:hidden;
 }
-button{font-family:inherit;cursor:pointer;border:0}
-.screen{display:none;min-height:100vh;padding:16px}
-.active{display:flex}
+
+body{
+  min-height:100vh;
+  font-family:Arial,sans-serif;
+  background:#071433;
+  color:white;
+}
+
+button{
+  font-family:inherit;
+  cursor:pointer;
+  border:0;
+}
+
+button:focus-visible{
+  outline:4px solid #ffe45c;
+  outline-offset:3px;
+}
+
+
+/* =====================================================
+   SCREENS
+===================================================== */
+
+.screen{
+  display:none;
+  width:100%;
+  min-height:100vh;
+  padding:clamp(7px,2vw,16px);
+}
+
+.active{
+  display:flex;
+}
+
+
+/* =====================================================
+   SPLASH
+===================================================== */
+
 #splash{
-  justify-content:center;align-items:center;flex-direction:column;
-  background:linear-gradient(#ecfbff,#ffffff,#e5ffd9);
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+
+  background:
+  linear-gradient(
+    #ecfbff,
+    #ffffff,
+    #e5ffd9
+  );
 }
-#splash img{max-width:420px;width:75vw}
+
+#splash img{
+  width:min(420px,75vw);
+  max-width:100%;
+  height:auto;
+}
+
 .timer{
-  margin-top:20px;background:#123b66;color:white;padding:12px 24px;
-  border-radius:20px;font-weight:bold;box-shadow:0 10px 24px #0004;
+  margin-top:20px;
+  background:#123b66;
+  color:white;
+  padding:12px 24px;
+  border-radius:20px;
+  font-weight:bold;
+  box-shadow:0 10px 24px #0004;
 }
-#intro,#result{justify-content:center;align-items:center}
+
+
+/* =====================================================
+   INTRO / RESULT
+===================================================== */
+
+#intro,
+#result{
+  justify-content:center;
+  align-items:center;
+}
+
 .card{
   width:min(850px,94vw);
+
   background:#f1fbff;
   color:#102e5f;
+
   border:5px solid #73d9ff;
+
   border-radius:28px;
-  padding:28px;
+
+  padding:
+  clamp(18px,4vw,28px);
+
   text-align:center;
-  box-shadow:0 0 28px #26c6ff88;
+
+  box-shadow:
+  0 0 28px
+  #26c6ff88;
 }
-h1{font-size:clamp(32px,6vw,56px);margin:0 0 12px}
+
+h1{
+  font-size:
+  clamp(30px,6vw,56px);
+
+  line-height:1.1;
+
+  margin:
+  0 0 12px;
+}
+
+
+/* =====================================================
+   RULES
+===================================================== */
+
 .rules{
   text-align:left;
   margin:20px auto;
   max-width:650px;
+
   counter-reset:step;
+
   display:grid;
   gap:10px;
 }
+
 .rule{
   background:white;
+
   border-radius:15px;
+
   padding:14px;
-  font-size:clamp(16px,2.5vw,20px);
+
+  font-size:
+  clamp(16px,2.5vw,20px);
+
   font-weight:bold;
-  box-shadow:0 4px 10px #0001;
+
+  box-shadow:
+  0 4px 10px
+  #0001;
+
+  line-height:1.4;
 }
+
 .rule:before{
   counter-increment:step;
-  content:counter(step) ". ";
+
+  content:
+  counter(step) ". ";
+
   color:#0072bc;
+
   margin-right:8px;
 }
-.play,.next,.restart{
-  background:linear-gradient(#ffe45c,#ffad16);
+
+
+/* =====================================================
+   MAIN BUTTONS
+===================================================== */
+
+.play,
+.next,
+.restart{
+  background:
+  linear-gradient(
+    #ffe45c,
+    #ffad16
+  );
+
   color:#172b43;
-  font-size:22px;
+
+  font-size:
+  clamp(17px,3vw,22px);
+
   font-weight:bold;
+
   padding:14px 30px;
+
   border-radius:30px;
-  box-shadow:0 7px 0 #b36b00;
+
+  box-shadow:
+  0 7px 0
+  #b36b00;
+
+  min-height:50px;
+
+  transition:
+  transform .18s ease,
+  box-shadow .18s ease;
 }
+
+.play:hover,
+.next:hover,
+.restart:hover{
+  transform:translateY(-2px);
+}
+
+.play:active,
+.next:active,
+.restart:active{
+  transform:translateY(4px);
+
+  box-shadow:
+  0 3px 0
+  #b36b00;
+}
+
+
+/* =====================================================
+   GAME
+===================================================== */
+
 #game{
   flex-direction:column;
+  align-items:center;
   gap:8px;
+
   background:
-    radial-gradient(circle at 80% 13%,#4c65ff 0 2%,transparent 3%),
-    radial-gradient(circle at 15% 18%,#fff65c 0 1%,transparent 2%),
-    radial-gradient(circle at 45% 8%,#ffffff 0 1%,transparent 2%),
-    linear-gradient(#06112e,#071433 55%,#0e214a);
+
+  radial-gradient(
+    circle at 80% 13%,
+    #4c65ff 0 2%,
+    transparent 3%
+  ),
+
+  radial-gradient(
+    circle at 15% 18%,
+    #fff65c 0 1%,
+    transparent 2%
+  ),
+
+  radial-gradient(
+    circle at 45% 8%,
+    #ffffff 0 1%,
+    transparent 2%
+  ),
+
+  linear-gradient(
+    #06112e,
+    #071433 55%,
+    #0e214a
+  );
 }
+
+
+/* =====================================================
+   STATUS BAR
+===================================================== */
+
 .top{
   display:grid;
-  grid-template-columns:1fr 1fr 1fr;
+
+  grid-template-columns:
+  repeat(
+    3,
+    minmax(0,1fr)
+  );
+
   gap:8px;
-  width:min(1120px,97vw);
-  margin:16px auto 8px auto;
+
+  width:min(1120px,100%);
+
+  margin:
+  8px auto;
+
   font-weight:bold;
 }
+
 .box{
+  min-width:0;
+
   background:#0b224f;
+
   color:white;
+
   padding:10px;
+
   border-radius:14px;
+
   text-align:center;
-  border:3px solid #3b9cff;
-  box-shadow:0 0 18px #1d9cff66;
+
+  border:
+  3px solid
+  #3b9cff;
+
+  box-shadow:
+  0 0 18px
+  #1d9cff66;
+
+  font-size:
+  clamp(13px,2vw,17px);
 }
+
+
+/* =====================================================
+   CITY
+===================================================== */
+
 .city{
-  width:min(1120px,97vw);
-  margin:16px auto 8px auto;
-  min-height:640px;
+  width:min(1120px,100%);
+
+  margin:
+  0 auto 8px;
+
   position:relative;
+
   overflow:hidden;
+
   border-radius:28px;
-  border:4px solid #1d9cff88;
-  box-shadow:0 0 28px #1d9cff66;
+
+  border:
+  4px solid
+  #1d9cff88;
+
+  box-shadow:
+  0 0 28px
+  #1d9cff66;
+
   background:
-    radial-gradient(circle at 88% 12%,#d5d0ff 0 5%,transparent 6%),
-    linear-gradient(#071433 0%,#08173a 62%,#0a1028 63%,#050817 100%);
+
+  radial-gradient(
+    circle at 88% 12%,
+    #d5d0ff 0 5%,
+    transparent 6%
+  ),
+
+  linear-gradient(
+    #071433 0%,
+    #08173a 62%,
+    #0a1028 63%,
+    #050817 100%
+  );
+
+  padding:
+  clamp(12px,2vw,20px);
 }
+
+
+/* =====================================================
+   SKYLINE
+===================================================== */
+
 .skyline{
   position:absolute;
+
   bottom:0;
-  left:0;right:0;
+  left:0;
+  right:0;
+
   height:180px;
-  background:linear-gradient(transparent,#050817);
-  z-index:1;
+
+  background:
+  linear-gradient(
+    transparent,
+    #050817
+  );
+
+  z-index:0;
+
+  pointer-events:none;
 }
-.tower{
-  position:absolute;
-  left:34px;
-  bottom:58px;
-  width:150px;
-  height:410px;
-  background:#17295a;
-  border:5px solid #7a5cff;
-  border-radius:18px 18px 8px 8px;
-  box-shadow:0 0 24px #7a5cff88;
-  z-index:4;
-  overflow:hidden;
+
+
+/* =====================================================
+   RESPONSIVE CONTENT FLOW
+===================================================== */
+
+/*
+All important educational content is now
+inside normal document flow.
+
+The question and options can therefore
+grow vertically without touching each other.
+*/
+
+.cityContent{
+  position:relative;
+  z-index:3;
+
+  width:100%;
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  gap:
+  clamp(14px,2.5vw,22px);
 }
-.antenna{
-  position:absolute;
-  left:50%;
-  top:-66px;
-  transform:translateX(-50%);
-  width:8px;
-  height:70px;
-  background:#9edfff;
-}
-.antenna:before{
-  content:"";
-  position:absolute;
-  top:-14px;
-  left:50%;
-  transform:translateX(-50%);
-  width:28px;
-  height:28px;
-  border-radius:50%;
-  background:#ffe45c;
-  box-shadow:0 0 22px #ffe45c;
-}
-.floor{
-  height:27px;
-  margin:8px 22px;
-  background:#142044;
-  border:3px solid #2e4f9a;
-  border-radius:8px;
-  display:grid;
-  grid-template-columns:1fr;
-  gap:5px;
-  padding:4px;
-}
-.win{
-  background:#1c2b57;
-  border-radius:3px;
-  transition:.3s;
-}
-.win.on{
-  background:#ffe45c;
-  box-shadow:0 0 12px #ffe45c;
-}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
 .title{
-  position:absolute;
-  top:8px;
-  left:50%;
-  transform:translateX(-50%);
+  position:relative;
+
+  width:min(720px,100%);
+
   text-align:center;
+
   color:#ffe45c;
-  font-size:clamp(24px,4.2vw,46px);
+
+  font-size:
+  clamp(24px,4.2vw,46px);
+
   font-weight:bold;
-  text-shadow:0 0 18px #ffe45c88;
-  z-index:8;
+
+  text-shadow:
+  0 0 18px
+  #ffe45c88;
+
   line-height:1.05;
+
+  overflow-wrap:anywhere;
 }
+
 .subtitle{
   display:block;
+
   color:#4fd6ff;
-  font-size:clamp(16px,2.7vw,30px);
+
+  font-size:
+  clamp(16px,2.7vw,30px);
 }
-.qcard{
-  position:absolute;
-  top:82px;
-  left:48%;
-  transform:translateX(-50%);
-  z-index:7;
-  width:min(720px,76vw);
-  background:#081b42;
-  border:4px solid #2cb9ff;
-  border-radius:24px;
-  padding:14px 18px;
-  text-align:center;
-  box-shadow:0 0 22px #2cb9ff66;
+
+
+/* =====================================================
+   MAIN GAME LAYOUT
+===================================================== */
+
+.gameLayout{
+  width:100%;
+
+  display:grid;
+
+  grid-template-columns:
+  minmax(180px,230px)
+  minmax(0,1fr);
+
+  align-items:start;
+
+  gap:
+  clamp(14px,3vw,28px);
 }
-.qtext{
-  font-size:clamp(18px,2.5vw,26px);
-  font-weight:bold;
-  line-height:1.28;
-}
-.expressionBox{
-  margin:10px auto 0;
-  min-height:58px;
-  width:min(460px,90%);
-  border:3px dashed #9edfff;
-  border-radius:18px;
-  background:#04102a;
-  color:#ffe45c;
+
+
+/* =====================================================
+   POWER VISUAL
+===================================================== */
+
+.powerVisual{
+  position:relative;
+
+  width:100%;
+
+  height:450px;
+
   display:flex;
-  align-items:center;
+
+  align-items:flex-end;
+
   justify-content:center;
-  font-size:clamp(28px,5vw,48px);
-  font-weight:bold;
+
+  gap:14px;
+
+  padding:
+  10px 5px 0;
 }
-.powerMeter{
+
+
+/* =====================================================
+   TOWER
+===================================================== */
+
+.tower{
+  position:relative;
+
+  width:
+  clamp(115px,15vw,150px);
+
+  height:
+  clamp(330px,38vw,410px);
+
+  flex:0 0 auto;
+
+  background:#17295a;
+
+  border:
+  5px solid
+  #7a5cff;
+
+  border-radius:
+  18px 18px 8px 8px;
+
+  box-shadow:
+  0 0 24px
+  #7a5cff88;
+
+  overflow:visible;
+}
+
+
+/* =====================================================
+   ANTENNA
+===================================================== */
+
+.antenna{
   position:absolute;
-  left:222px;
-  top:260px;
-  width:42px;
-  height:320px;
-  border:4px solid #6fdfff;
-  border-radius:30px;
-  overflow:hidden;
-  z-index:5;
-  background:#06122c;
+
+  left:50%;
+
+  top:-61px;
+
+  transform:
+  translateX(-50%);
+
+  width:8px;
+
+  height:62px;
+
+  background:#9edfff;
 }
+
+.antenna:before{
+  content:"";
+
+  position:absolute;
+
+  top:-14px;
+
+  left:50%;
+
+  transform:
+  translateX(-50%);
+
+  width:28px;
+
+  height:28px;
+
+  border-radius:50%;
+
+  background:#ffe45c;
+
+  box-shadow:
+  0 0 22px
+  #ffe45c;
+}
+
+
+/* =====================================================
+   FLOORS / WINDOWS
+===================================================== */
+
+.floor{
+  height:
+  calc(
+    (100% - 80px) / 10
+  );
+
+  min-height:21px;
+
+  margin:
+  7px 18px 0;
+
+  background:#142044;
+
+  border:
+  3px solid
+  #2e4f9a;
+
+  border-radius:8px;
+
+  display:grid;
+
+  grid-template-columns:1fr;
+
+  padding:3px;
+}
+
+.win{
+  min-height:8px;
+
+  background:#1c2b57;
+
+  border-radius:3px;
+
+  transition:
+  background .3s,
+  box-shadow .3s;
+}
+
+.win.on{
+  background:#ffe45c;
+
+  box-shadow:
+  0 0 12px
+  #ffe45c;
+}
+
+
+/* =====================================================
+   POWER METER
+===================================================== */
+
+.powerMeter{
+  position:relative;
+
+  flex:
+  0 0 40px;
+
+  width:40px;
+
+  height:
+  clamp(260px,32vw,320px);
+
+  border:
+  4px solid
+  #6fdfff;
+
+  border-radius:30px;
+
+  overflow:hidden;
+
+  background:#06122c;
+
+  box-shadow:
+  0 0 18px
+  #2cb9ff55;
+}
+
 .powerFill{
   position:absolute;
+
   bottom:0;
-  left:0;right:0;
+
+  left:0;
+  right:0;
+
   height:0%;
-  background:linear-gradient(#ffe45c,#6cff61);
-  transition:height .8s ease;
+
+  background:
+  linear-gradient(
+    to top,
+    #6cff61,
+    #ffe45c
+  );
+
+  transition:
+  height .8s ease;
 }
-.panel{
-  position:absolute;
-  right:34px;
-  top:280px;
-  width:min(700px,60vw);
+
+
+/* =====================================================
+   CHALLENGE COLUMN
+===================================================== */
+
+.challengeColumn{
+  min-width:0;
+
+  width:100%;
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:
+  clamp(12px,2vw,18px);
+}
+
+
+/* =====================================================
+   QUESTION CARD
+===================================================== */
+
+.qcard{
+  position:relative;
+
+  width:100%;
+
+  min-width:0;
+
   background:#081b42;
-  border:4px solid #2cb9ff;
+
+  border:
+  4px solid
+  #2cb9ff;
+
   border-radius:24px;
-  padding:18px;
-  z-index:6;
-  box-shadow:0 0 22px #2cb9ff66;
+
+  padding:
+  clamp(14px,2.5vw,20px);
+
+  text-align:center;
+
+  box-shadow:
+  0 0 22px
+  #2cb9ff66;
 }
+
+.qtext{
+  font-size:
+  clamp(18px,2.5vw,26px);
+
+  font-weight:bold;
+
+  line-height:1.4;
+
+  overflow-wrap:anywhere;
+
+  word-break:normal;
+}
+
+
+/* =====================================================
+   EXPRESSION BOX
+===================================================== */
+
+.expressionBox{
+  margin:
+  12px auto 0;
+
+  min-height:58px;
+
+  width:min(460px,100%);
+
+  border:
+  3px dashed
+  #9edfff;
+
+  border-radius:18px;
+
+  background:#04102a;
+
+  color:#ffe45c;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  padding:
+  8px 12px;
+
+  font-size:
+  clamp(27px,5vw,48px);
+
+  font-weight:bold;
+
+  line-height:1.1;
+
+  overflow-wrap:anywhere;
+}
+
+
+/* =====================================================
+   OPTIONS PANEL
+===================================================== */
+
+/*
+No absolute position.
+It automatically starts AFTER the
+full question card, irrespective
+of how many lines the question uses.
+*/
+
+.panel{
+  position:relative;
+
+  width:100%;
+
+  min-width:0;
+
+  background:#081b42;
+
+  border:
+  4px solid
+  #2cb9ff;
+
+  border-radius:24px;
+
+  padding:
+  clamp(12px,2.5vw,18px);
+
+  box-shadow:
+  0 0 22px
+  #2cb9ff66;
+}
+
 .panelTitle{
   color:#9edfff;
+
   font-weight:bold;
+
   text-align:center;
+
   margin-bottom:12px;
-  font-size:clamp(17px,2.5vw,22px);
+
+  font-size:
+  clamp(16px,2.5vw,22px);
+
+  line-height:1.3;
+
+  overflow-wrap:anywhere;
 }
+
+
+/* =====================================================
+   OPTIONS
+===================================================== */
+
 .options{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+
+  grid-template-columns:
+  repeat(
+    2,
+    minmax(0,1fr)
+  );
+
   gap:12px;
+
+  width:100%;
 }
+
 .opt{
+  width:100%;
+
+  min-width:0;
+
   min-height:72px;
+
+  padding:
+  9px 8px;
+
   border-radius:16px;
+
   background:#d8ffff;
+
   color:#102e5f;
-  border:4px solid transparent;
-  font-size:clamp(22px,4vw,36px);
+
+  border:
+  4px solid
+  transparent;
+
+  font-size:
+  clamp(20px,3.5vw,34px);
+
   font-weight:bold;
-  box-shadow:0 6px 0 #59a7b8;
+
+  line-height:1.15;
+
+  box-shadow:
+  0 6px 0
+  #59a7b8;
+
+  overflow-wrap:anywhere;
+
+  white-space:normal;
 }
-.opt:active{transform:translateY(4px);box-shadow:0 2px 0 #59a7b8}
-.opt.chosen{border-color:#ffe100;background:#fff5a8}
-.opt.correct{border-color:#15bd51;background:#caffd9}
-.opt.wrong{border-color:#e74c3c;background:#ffd4cd;animation:shake .25s}
+
+.opt:active{
+  transform:
+  translateY(4px);
+
+  box-shadow:
+  0 2px 0
+  #59a7b8;
+}
+
+.opt.chosen{
+  border-color:#ffe100;
+
+  background:#fff5a8;
+}
+
+.opt.correct{
+  border-color:#15bd51;
+
+  background:#caffd9;
+}
+
+.opt.wrong{
+  border-color:#e74c3c;
+
+  background:#ffd4cd;
+
+  animation:
+  shake .25s;
+}
+
+
+/* =====================================================
+   FEEDBACK
+===================================================== */
+
 .msg{
-  position:absolute;
-  left:50%;
-  bottom:14px;
-  transform:translateX(-50%);
-  width:min(760px,88vw);
-  min-height:42px;
+  position:relative;
+
+  width:100%;
+
+  min-height:46px;
+
   background:#081b42;
+
   color:white;
-  border:3px solid #2cb9ff;
+
+  border:
+  3px solid
+  #2cb9ff;
+
   border-radius:14px;
-  padding:9px 12px;
+
+  padding:
+  10px 12px;
+
   text-align:center;
+
   font-weight:bold;
-  z-index:10;
+
+  font-size:
+  clamp(14px,2vw,17px);
+
+  line-height:1.4;
+
+  overflow-wrap:anywhere;
 }
+
+
+/* =====================================================
+   NEXT
+===================================================== */
+
 .next{
   display:none;
+
+  position:relative;
+
+  align-self:center;
+
+  margin:
+  0 auto 4px;
+}
+
+
+/* =====================================================
+   RESULT
+===================================================== */
+
+.finalScore{
+  font-size:
+  clamp(48px,10vw,64px);
+
+  font-weight:bold;
+
+  color:#7b3fd1;
+}
+
+
+/* =====================================================
+   CONFETTI
+===================================================== */
+
+.confetti{
+  position:fixed;
+
+  inset:0;
+
+  pointer-events:none;
+
+  overflow:hidden;
+
+  z-index:20;
+}
+
+.piece{
   position:absolute;
-  right:28px;
-  bottom:14px;
-  z-index:11;
+
+  top:-20px;
+
+  width:12px;
+
+  height:18px;
+
+  animation:
+  fall 1.5s
+  linear forwards;
 }
-.finalScore{font-size:64px;font-weight:bold;color:#7b3fd1}
-.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:20}
-.piece{position:absolute;top:-20px;width:12px;height:18px;animation:fall 1.5s linear forwards}
-@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
-@keyframes fall{to{transform:translateY(110vh) rotate(500deg)}}
+
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+
+@keyframes shake{
+
+  25%{
+    transform:translateX(-5px);
+  }
+
+  50%{
+    transform:translateX(5px);
+  }
+
+  75%{
+    transform:translateX(-3px);
+  }
+
+}
+
+@keyframes fall{
+
+  to{
+    transform:
+    translateY(110vh)
+    rotate(500deg);
+  }
+
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
 @media(max-width:850px){
-  .top{grid-template-columns:1fr 1fr}
-  .top .box:nth-child(2){grid-column:1/3;order:-1}
-  .city{min-height:800px}
-  .tower{left:14px;bottom:250px;width:105px;height:300px}
-  .floor{height:21px;margin:6px 14px}
-  .powerMeter{left:128px;top:335px;height:230px}
-  .qcard{top:82px;left:50%;width:92vw}
-  .panel{left:50%;right:auto;transform:translateX(-50%);top:565px;width:92vw}
-  .options{grid-template-columns:repeat(2,1fr)}
-  .msg{bottom:8px;left:39%;width:64vw}
-  .next{bottom:8px;right:10px;padding:10px 18px}
+
+  .top{
+    grid-template-columns:
+    1fr 1fr;
+  }
+
+  .top .box:nth-child(2){
+    grid-column:
+    1 / 3;
+
+    order:-1;
+  }
+
+  /*
+  Power visual moves above
+  the educational content.
+  */
+
+  .gameLayout{
+    grid-template-columns:1fr;
+
+    gap:16px;
+  }
+
+  .powerVisual{
+    height:300px;
+
+    justify-content:center;
+
+    padding-top:55px;
+  }
+
+  .tower{
+    width:110px;
+
+    height:245px;
+  }
+
+  .antenna{
+    top:-49px;
+
+    height:50px;
+  }
+
+  .floor{
+    margin:
+    4px 13px 0;
+
+    height:
+    calc(
+      (100% - 52px) / 10
+    );
+
+    min-height:15px;
+
+    border-width:2px;
+  }
+
+  .powerMeter{
+    width:36px;
+
+    flex-basis:36px;
+
+    height:205px;
+  }
+
+  .qcard,
+  .panel{
+    width:min(760px,100%);
+
+    margin:0 auto;
+  }
+
+  .msg{
+    width:min(760px,100%);
+
+    margin:0 auto;
+  }
+
 }
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:520px){
+
+  .screen{
+    padding:6px;
+  }
+
+  .city{
+    border-radius:20px;
+
+    padding:
+    10px 7px 14px;
+  }
+
+  .cityContent{
+    gap:11px;
+  }
+
+  .title{
+    font-size:
+    clamp(22px,8vw,30px);
+  }
+
+  .subtitle{
+    font-size:
+    clamp(15px,5vw,20px);
+
+    margin-top:3px;
+  }
+
+  /*
+  Compact visual leaves more
+  room for question and answers.
+  */
+
+  .powerVisual{
+    height:240px;
+
+    padding-top:48px;
+  }
+
+  .tower{
+    width:90px;
+
+    height:195px;
+
+    border-width:4px;
+  }
+
+  .antenna{
+    top:-42px;
+
+    height:43px;
+
+    width:6px;
+  }
+
+  .antenna:before{
+    width:22px;
+    height:22px;
+    top:-11px;
+  }
+
+  .floor{
+    height:
+    calc(
+      (100% - 42px) / 10
+    );
+
+    min-height:12px;
+
+    margin:
+    3px 10px 0;
+
+    padding:2px;
+
+    border-width:2px;
+  }
+
+  .powerMeter{
+    width:31px;
+
+    flex-basis:31px;
+
+    height:165px;
+
+    border-width:3px;
+  }
+
+  .challengeColumn{
+    gap:10px;
+  }
+
+  .qcard{
+    border-width:3px;
+
+    border-radius:18px;
+
+    padding:
+    12px 9px;
+  }
+
+  .qtext{
+    font-size:
+    clamp(16px,5vw,21px);
+
+    line-height:1.4;
+  }
+
+  .expressionBox{
+    min-height:52px;
+
+    padding:
+    7px 8px;
+
+    font-size:
+    clamp(24px,9vw,36px);
+  }
+
+  .panel{
+    border-width:3px;
+
+    border-radius:18px;
+
+    padding:
+    10px 8px;
+  }
+
+  .panelTitle{
+    font-size:
+    clamp(14px,4vw,17px);
+
+    margin-bottom:8px;
+  }
+
+  .options{
+    grid-template-columns:
+    repeat(
+      2,
+      minmax(0,1fr)
+    );
+
+    gap:8px;
+  }
+
+  .opt{
+    min-height:56px;
+
+    border-width:3px;
+
+    padding:
+    7px 5px;
+
+    font-size:
+    clamp(17px,6vw,24px);
+  }
+
+  .msg{
+    min-height:43px;
+
+    padding:
+    8px 9px;
+
+    border-width:2px;
+
+    font-size:14px;
+  }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media(max-width:360px){
+
+  .top{
+    grid-template-columns:1fr;
+  }
+
+  .top .box:nth-child(2){
+    grid-column:auto;
+
+    order:0;
+  }
+
+  .powerVisual{
+    height:215px;
+  }
+
+  .tower{
+    width:82px;
+
+    height:175px;
+  }
+
+  .powerMeter{
+    width:28px;
+
+    flex-basis:28px;
+
+    height:145px;
+  }
+
+  /*
+  One option per row gives
+  maximum text space on very
+  narrow devices.
+  */
+
+  .options{
+    grid-template-columns:1fr;
+  }
+
+  .opt{
+    min-height:52px;
+
+    font-size:
+    clamp(17px,6vw,21px);
+  }
+
+}
+
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media(prefers-reduced-motion:reduce){
+
+  *,
+  *::before,
+  *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+
+}
+
 </style>
+
 </head>
+
+
 <body>
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
-<section id="splash" class="screen active">
-  <img src="assets/innovine-logo.png" alt="Innovine Logo">
-  <div class="timer">Starting in <span id="count">5</span>s</div>
+
+<!-- =====================================================
+     ORIGINAL AUDIO
+===================================================== -->
+
+<audio
+id="correctSound"
+src="assets/correct.mp3"
+preload="auto">
+</audio>
+
+<audio
+id="wrongSound"
+src="assets/wrong.mp3"
+preload="auto">
+</audio>
+
+<audio
+id="clapSound"
+src="assets/freesound_community-claps-44774.mp3"
+preload="auto">
+</audio>
+
+
+
+<!-- =====================================================
+     SPLASH
+===================================================== -->
+
+<section
+id="splash"
+class="screen active">
+
+<img
+src="assets/innovine-logo.png"
+alt="Innovine Logo">
+
+<div class="timer">
+
+Starting in
+
+<span id="count">
+5
+</span>
+
+s
+
+</div>
+
 </section>
 
-<section id="intro" class="screen">
-  <div class="card">
-    <h1>Power Up the City</h1>
-    <p><b>Choose the correct algebraic expression to light up the building.</b></p>
-    <div class="rules">
-      <div class="rule">Read the situation carefully.</div>
-      <div class="rule">Tap the correct expression tile.</div>
-      <div class="rule">You have 2 attempts for each challenge.</div>
-      <div class="rule">The city lights up after every correct answer.</div>
-      <div class="rule">Complete all 10 challenges to power the whole city.</div>
-    </div>
-    <button class="play" onclick="startGame()">LET’S PLAY</button>
-  </div>
+
+
+<!-- =====================================================
+     INTRO
+===================================================== -->
+
+<section
+id="intro"
+class="screen">
+
+<div class="card">
+
+<h1>
+Power Up the City
+</h1>
+
+<p>
+<b>
+Choose the correct algebraic expression to light up the building.
+</b>
+</p>
+
+
+<div class="rules">
+
+<div class="rule">
+Read the situation carefully.
+</div>
+
+<div class="rule">
+Tap the correct expression tile.
+</div>
+
+<div class="rule">
+You have 2 attempts for each challenge.
+</div>
+
+<div class="rule">
+The city lights up after every correct answer.
+</div>
+
+<div class="rule">
+Complete all 10 challenges to power the whole city.
+</div>
+
+</div>
+
+
+<button
+class="play"
+onclick="startGame()">
+
+LET’S PLAY
+
+</button>
+
+</div>
+
 </section>
 
-<section id="game" class="screen">
-  <div class="top">
-    <div class="box">Score: <span id="score">0</span> ⚡</div>
-    <div class="box">Power: <span id="adv">1</span>/10</div>
-    <div class="box">Attempts: <span id="hearts">❤️❤️</span></div>
-  </div>
 
-  <main class="city">
-    <div class="skyline"></div>
-    <div class="title">POWER UP <span class="subtitle">THE CITY</span></div>
 
-    <section class="tower" id="tower">
-      <div class="antenna"></div>
-      <div class="floor"><div class="win"></div></div>
-      <div class="floor"><div class="win"></div></div>
-      <div class="floor"><div class="win"></div></div>
-      <div class="floor"><div class="win"></div></div>
-      <div class="floor"><div class="win"></div></div>
-      <div class="floor"><div class="win"></div></div>
-      <div class="floor"><div class="win"></div></div>
-      <div class="floor"><div class="win"></div></div>
-      <div class="floor"><div class="win"></div></div>
-      <div class="floor"><div class="win"></div></div>
-    </section>
+<!-- =====================================================
+     GAME
+===================================================== -->
 
-    <div class="powerMeter"><div class="powerFill" id="powerFill"></div></div>
+<section
+id="game"
+class="screen">
 
-    <section class="qcard">
-      <div class="qtext" id="qtext"></div>
-      <div class="expressionBox" id="answerBox">?</div>
-    </section>
 
-    <section class="panel">
-      <div class="panelTitle">TAP THE EXPRESSION THAT POWERS THE CIRCUIT</div>
-      <div class="options" id="options"></div>
-    </section>
+<!-- STATUS -->
 
-    <div class="msg" id="msg">Tap the correct expression tile.</div>
-    <button class="next" id="nextBtn" onclick="nextQuestion()">NEXT ➜</button>
-  </main>
+<div class="top">
+
+
+<div class="box">
+
+Score:
+
+<span id="score">
+0
+</span>
+
+⚡
+
+</div>
+
+
+<div class="box">
+
+Power:
+
+<span id="adv">
+1
+</span>
+
+/10
+
+</div>
+
+
+<div class="box">
+
+Attempts:
+
+<span id="hearts">
+❤️❤️
+</span>
+
+</div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+     CITY
+===================================================== -->
+
+<main class="city">
+
+
+<div class="skyline"></div>
+
+
+<div class="cityContent">
+
+
+<!-- =================================================
+     GAME TITLE
+================================================= -->
+
+<div class="title">
+
+POWER UP
+
+<span class="subtitle">
+
+THE CITY
+
+</span>
+
+</div>
+
+
+
+<!-- =================================================
+     MAIN RESPONSIVE LAYOUT
+================================================= -->
+
+<div class="gameLayout">
+
+
+
+<!-- =================================================
+     POWER VISUAL
+================================================= -->
+
+<section class="powerVisual">
+
+
+<!-- BUILDING -->
+
+<div
+class="tower"
+id="tower">
+
+
+<div class="antenna"></div>
+
+
+<div class="floor">
+<div class="win"></div>
+</div>
+
+
+<div class="floor">
+<div class="win"></div>
+</div>
+
+
+<div class="floor">
+<div class="win"></div>
+</div>
+
+
+<div class="floor">
+<div class="win"></div>
+</div>
+
+
+<div class="floor">
+<div class="win"></div>
+</div>
+
+
+<div class="floor">
+<div class="win"></div>
+</div>
+
+
+<div class="floor">
+<div class="win"></div>
+</div>
+
+
+<div class="floor">
+<div class="win"></div>
+</div>
+
+
+<div class="floor">
+<div class="win"></div>
+</div>
+
+
+<div class="floor">
+<div class="win"></div>
+</div>
+
+
+</div>
+
+
+
+<!-- POWER METER -->
+
+<div class="powerMeter">
+
+<div
+class="powerFill"
+id="powerFill">
+</div>
+
+</div>
+
+
 </section>
 
-<section id="result" class="screen">
-  <div class="card">
-    <h1>City Powered Up!</h1>
-    <p>You completed all 10 algebraic expression challenges.</p>
-    <div class="finalScore" id="finalScore">0</div>
-    <div style="font-size:50px" id="stars">⭐⭐⭐</div>
-    <button class="restart" onclick="startGame()">PLAY AGAIN</button>
-  </div>
+
+
+<!-- =================================================
+     CHALLENGE COLUMN
+================================================= -->
+
+<div class="challengeColumn">
+
+
+
+<!-- QUESTION -->
+
+<section class="qcard">
+
+
+<div
+class="qtext"
+id="qtext">
+</div>
+
+
+<div
+class="expressionBox"
+id="answerBox">
+
+?
+
+</div>
+
+
 </section>
-<div class="confetti" id="confetti"></div>
+
+
+
+<!-- =================================================
+     OPTIONS
+================================================= -->
+
+<section class="panel">
+
+
+<div class="panelTitle">
+
+TAP THE EXPRESSION THAT POWERS THE CIRCUIT
+
+</div>
+
+
+<div
+class="options"
+id="options">
+</div>
+
+
+</section>
+
+
+
+<!-- =================================================
+     FEEDBACK
+================================================= -->
+
+<div
+class="msg"
+id="msg"
+aria-live="polite">
+
+Tap the correct expression tile.
+
+</div>
+
+
+
+<!-- =================================================
+     NEXT
+================================================= -->
+
+<button
+class="next"
+id="nextBtn"
+onclick="nextQuestion()">
+
+NEXT ➜
+
+</button>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</main>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     RESULT
+===================================================== -->
+
+<section
+id="result"
+class="screen">
+
+
+<div class="card">
+
+
+<h1>
+City Powered Up!
+</h1>
+
+
+<p>
+
+You completed all 10 algebraic expression challenges.
+
+</p>
+
+
+<div
+class="finalScore"
+id="finalScore">
+
+0
+
+</div>
+
+
+<div
+style="font-size:50px"
+id="stars">
+
+⭐⭐⭐
+
+</div>
+
+
+<button
+class="restart"
+onclick="startGame()">
+
+PLAY AGAIN
+
+</button>
+
+
+</div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     CONFETTI
+===================================================== -->
+
+<div
+class="confetti"
+id="confetti">
+</div>
+
+
 
 <script>
+
+
+/* =====================================================
+   QUESTIONS — UNCHANGED
+===================================================== */
+
 const questions=[
-{text:"A pencil box contains p pencils. Riya adds 5 more pencils. Which expression shows the total number of pencils?", answer:"p + 5", opts:["p + 5","5p","p - 5","5 - p"], explain:"Adding 5 more pencils gives p + 5."},
-{text:"One notebook costs ₹n. Which expression shows the cost of 3 notebooks?", answer:"3n", opts:["3n","n + 3","n - 3","3 + n"], explain:"Three notebooks cost 3 times n."},
-{text:"A ribbon is r metres long. Four metres are cut off. Which expression shows the remaining length?", answer:"r - 4", opts:["r - 4","4r","r + 4","4 - r"], explain:"Cutting off 4 metres means subtracting 4 from r."},
-{text:"Each packet contains x biscuits. Which expression shows the number of biscuits in 6 packets?", answer:"6x", opts:["6x","x + 6","x - 6","6 - x"], explain:"Six packets contain 6 groups of x biscuits."},
-{text:"A number x is increased by 9. Which expression represents the result?", answer:"x + 9", opts:["x + 9","9x","x - 9","9 - x"], explain:"Increased by 9 means add 9."},
-{text:"A basket contains n apples. Two apples are removed. Which expression shows the apples left?", answer:"n - 2", opts:["n - 2","2n","n + 2","2 - n"], explain:"Removing 2 apples means subtracting 2 from n."},
-{text:"One pen costs ₹c. Which expression shows the cost of 8 pens?", answer:"8c", opts:["8c","c + 8","c - 8","8 - c"], explain:"Eight pens cost 8 times c."},
-{text:"A number y is multiplied by 4 and then 3 is added. Which expression is correct?", answer:"4y + 3", opts:["4y + 3","4 + y + 3","4y - 3","y + 7"], explain:"Multiply y by 4 first, then add 3."},
-{text:"One chocolate costs ₹c. Aman buys 5 chocolates and also pays ₹2 for a bag. Which expression shows the total cost?", answer:"5c + 2", opts:["5c + 2","c + 7","5 + c + 2","5c - 2"], explain:"Five chocolates cost 5c and the bag adds ₹2."},
-{text:"A number q is shared equally between 2 children. Which expression shows each child's share?", answer:"q ÷ 2", opts:["q ÷ 2","2q","q + 2","q - 2"], explain:"Each child gets half of q."}
+
+
+{
+text:
+"A pencil box contains p pencils. Riya adds 5 more pencils. Which expression shows the total number of pencils?",
+
+answer:"p + 5",
+
+opts:[
+"p + 5",
+"5p",
+"p - 5",
+"5 - p"
+],
+
+explain:
+"Adding 5 more pencils gives p + 5."
+},
+
+
+
+{
+text:
+"One notebook costs ₹n. Which expression shows the cost of 3 notebooks?",
+
+answer:"3n",
+
+opts:[
+"3n",
+"n + 3",
+"n - 3",
+"3 + n"
+],
+
+explain:
+"Three notebooks cost 3 times n."
+},
+
+
+
+{
+text:
+"A ribbon is r metres long. Four metres are cut off. Which expression shows the remaining length?",
+
+answer:"r - 4",
+
+opts:[
+"r - 4",
+"4r",
+"r + 4",
+"4 - r"
+],
+
+explain:
+"Cutting off 4 metres means subtracting 4 from r."
+},
+
+
+
+{
+text:
+"Each packet contains x biscuits. Which expression shows the number of biscuits in 6 packets?",
+
+answer:"6x",
+
+opts:[
+"6x",
+"x + 6",
+"x - 6",
+"6 - x"
+],
+
+explain:
+"Six packets contain 6 groups of x biscuits."
+},
+
+
+
+{
+text:
+"A number x is increased by 9. Which expression represents the result?",
+
+answer:"x + 9",
+
+opts:[
+"x + 9",
+"9x",
+"x - 9",
+"9 - x"
+],
+
+explain:
+"Increased by 9 means add 9."
+},
+
+
+
+{
+text:
+"A basket contains n apples. Two apples are removed. Which expression shows the apples left?",
+
+answer:"n - 2",
+
+opts:[
+"n - 2",
+"2n",
+"n + 2",
+"2 - n"
+],
+
+explain:
+"Removing 2 apples means subtracting 2 from n."
+},
+
+
+
+{
+text:
+"One pen costs ₹c. Which expression shows the cost of 8 pens?",
+
+answer:"8c",
+
+opts:[
+"8c",
+"c + 8",
+"c - 8",
+"8 - c"
+],
+
+explain:
+"Eight pens cost 8 times c."
+},
+
+
+
+{
+text:
+"A number y is multiplied by 4 and then 3 is added. Which expression is correct?",
+
+answer:"4y + 3",
+
+opts:[
+"4y + 3",
+"4 + y + 3",
+"4y - 3",
+"y + 7"
+],
+
+explain:
+"Multiply y by 4 first, then add 3."
+},
+
+
+
+{
+text:
+"One chocolate costs ₹c. Aman buys 5 chocolates and also pays ₹2 for a bag. Which expression shows the total cost?",
+
+answer:"5c + 2",
+
+opts:[
+"5c + 2",
+"c + 7",
+"5 + c + 2",
+"5c - 2"
+],
+
+explain:
+"Five chocolates cost 5c and the bag adds ₹2."
+},
+
+
+
+{
+text:
+"A number q is shared equally between 2 children. Which expression shows each child's share?",
+
+answer:"q ÷ 2",
+
+opts:[
+"q ÷ 2",
+"2q",
+"q + 2",
+"q - 2"
+],
+
+explain:
+"Each child gets half of q."
+}
+
+
 ];
 
-let order=[],current=0,score=0,attempts=0,locked=false;
-function $(id){return document.getElementById(id)}
-function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active")}
-let c=5;let splash=setInterval(()=>{c--;$("count").textContent=c;if(c<=0){clearInterval(splash);show("intro")}},1000);
-function sound(id){const a=$(id);a.currentTime=0;a.play().catch(()=>{})}
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let order=[];
+
+let current=0;
+
+let score=0;
+
+let attempts=0;
+
+let locked=false;
+
+
+
+/* =====================================================
+   ELEMENT HELPER
+===================================================== */
+
+function $(id){
+
+return document
+.getElementById(id);
+
+}
+
+
+
+/* =====================================================
+   SCREEN CONTROL
+===================================================== */
+
+function show(id){
+
+
+document
+.querySelectorAll(
+".screen"
+)
+
+.forEach(
+
+screen=>{
+
+screen
+.classList
+.remove(
+"active"
+);
+
+}
+
+);
+
+
+$(id)
+.classList
+.add(
+"active"
+);
+
+
+}
+
+
+
+/* =====================================================
+   SPLASH COUNTDOWN
+===================================================== */
+
+let c=5;
+
+
+let splash=
+
+setInterval(
+
+()=>{
+
+
+c--;
+
+
+$("count")
+.textContent=
+c;
+
+
+if(
+c<=0
+){
+
+
+clearInterval(
+splash
+);
+
+
+show(
+"intro"
+);
+
+
+}
+
+
+},
+
+1000
+
+);
+
+
+
+/* =====================================================
+   SOUND
+===================================================== */
+
+function sound(id){
+
+
+const audio=
+$(id);
+
+
+if(!audio){
+
+return;
+
+}
+
+
+audio.currentTime=0;
+
+
+audio
+.play()
+
+.catch(
+()=>{}
+);
+
+
+}
+
+
+
+/* =====================================================
+   START GAME
+===================================================== */
 
 function startGame(){
-  ["correctSound","wrongSound","clapSound"].forEach(id=>{const a=$(id);a.volume=.75;a.play().then(()=>{a.pause();a.currentTime=0}).catch(()=>{})});
-  order=[...questions].sort(()=>Math.random()-.5);
-  current=0;score=0;
-  document.querySelectorAll(".win").forEach(w=>w.classList.remove("on"));
-  $("powerFill").style.height="0%";
-  loadQuestion();
-  show("game");
+
+
+/*
+Unlock original audio
+after user interaction.
+*/
+
+[
+"correctSound",
+"wrongSound",
+"clapSound"
+]
+
+.forEach(
+
+id=>{
+
+
+const audio=
+$(id);
+
+
+audio.volume=.75;
+
+
+audio
+.play()
+
+.then(
+
+()=>{
+
+
+audio.pause();
+
+
+audio.currentTime=0;
+
+
 }
+
+)
+
+.catch(
+()=>{}
+);
+
+
+}
+
+);
+
+
+/*
+Randomise question order.
+*/
+
+order=
+
+[...questions]
+
+.sort(
+
+()=>
+Math.random()-.5
+
+);
+
+
+current=0;
+
+score=0;
+
+
+/*
+Turn all building windows off.
+*/
+
+document
+.querySelectorAll(
+".win"
+)
+
+.forEach(
+
+windowLight=>{
+
+windowLight
+.classList
+.remove(
+"on"
+);
+
+}
+
+);
+
+
+/*
+Reset power meter.
+*/
+
+$("powerFill")
+.style
+.height=
+"0%";
+
+
+loadQuestion();
+
+
+show(
+"game"
+);
+
+
+}
+
+
+
+/* =====================================================
+   LOAD QUESTION
+===================================================== */
+
 function loadQuestion(){
-  locked=false;attempts=0;const q=order[current];
-  $("score").textContent=score;$("adv").textContent=current+1;$("hearts").textContent="❤️❤️";
-  $("qtext").textContent=q.text;$("answerBox").textContent="?";
-  $("msg").textContent="Tap the correct expression tile.";$("nextBtn").style.display="none";
-  makeOptions(q);
+
+
+locked=false;
+
+attempts=0;
+
+
+const q=
+order[current];
+
+
+$("score")
+.textContent=
+score;
+
+
+$("adv")
+.textContent=
+current+1;
+
+
+$("hearts")
+.textContent=
+"❤️❤️";
+
+
+$("qtext")
+.textContent=
+q.text;
+
+
+$("answerBox")
+.textContent=
+"?";
+
+
+$("msg")
+.textContent=
+
+"Tap the correct expression tile.";
+
+
+$("nextBtn")
+.style
+.display=
+"none";
+
+
+makeOptions(q);
+
+
 }
+
+
+
+/* =====================================================
+   MAKE OPTIONS
+===================================================== */
+
 function makeOptions(q){
-  const box=$("options");box.innerHTML="";
-  [...q.opts].sort(()=>Math.random()-.5).forEach(opt=>{
-    const b=document.createElement("button");b.className="opt";b.textContent=opt;b.onclick=()=>choose(b,opt);box.appendChild(b)
-  })
+
+
+const box=
+$("options");
+
+
+box.innerHTML="";
+
+
+[...q.opts]
+
+.sort(
+
+()=>
+Math.random()-.5
+
+)
+
+.forEach(
+
+opt=>{
+
+
+const button=
+
+document
+.createElement(
+"button"
+);
+
+
+button.type=
+"button";
+
+
+button.className=
+"opt";
+
+
+button.textContent=
+opt;
+
+
+button.onclick=
+
+()=>choose(
+button,
+opt
+);
+
+
+box
+.appendChild(
+button
+);
+
+
 }
-function choose(btn,val){
-  if(locked)return;
-  document.querySelectorAll(".opt").forEach(t=>t.classList.remove("chosen","wrong","correct"));
-  btn.classList.add("chosen");
-  const q=order[current];
-  if(val===q.answer){
-    locked=true;btn.classList.add("correct");
-    score+=attempts===0?100:60;$("score").textContent=score;
-    $("answerBox").textContent=q.answer;
-    powerUpCity();
-    $("msg").textContent="Correct! "+q.explain;
-    sound("correctSound");sound("clapSound");confetti();
-    $("nextBtn").style.display="block";
-  }else{
-    attempts++;
-    btn.classList.add("wrong");
-    sound("wrongSound");
-    $("hearts").textContent=attempts===1?"❤️🤎":"🤎🤎";
-    if(attempts>=2){
-      locked=true;
-      $("answerBox").textContent=q.answer;
-      $("msg").textContent="Correct answer: "+q.answer+". "+q.explain;
-      document.querySelectorAll(".opt").forEach(t=>{if(t.textContent===q.answer)t.classList.add("correct")});
-      powerUpCity();
-      $("nextBtn").style.display="block";
-    }else{
-      $("msg").textContent="Not quite. Try one more time.";
-    }
-  }
+
+);
+
+
 }
+
+
+
+/* =====================================================
+   ANSWER CHECK
+===================================================== */
+
+function choose(
+btn,
+val
+){
+
+
+if(
+locked
+){
+
+return;
+
+}
+
+
+document
+.querySelectorAll(
+".opt"
+)
+
+.forEach(
+
+tile=>{
+
+
+tile
+.classList
+.remove(
+
+"chosen",
+"wrong",
+"correct"
+
+);
+
+
+}
+
+);
+
+
+btn
+.classList
+.add(
+"chosen"
+);
+
+
+const q=
+order[current];
+
+
+
+/* =================================================
+   CORRECT ANSWER
+================================================= */
+
+if(
+val ===
+q.answer
+){
+
+
+locked=true;
+
+
+btn
+.classList
+.add(
+"correct"
+);
+
+
+/*
+Scoring:
+first attempt = 100
+second attempt = 60
+*/
+
+score+=
+
+attempts===0
+
+? 100
+
+: 60;
+
+
+$("score")
+.textContent=
+score;
+
+
+$("answerBox")
+.textContent=
+q.answer;
+
+
+/*
+Power up building.
+*/
+
+powerUpCity();
+
+
+$("msg")
+.textContent=
+
+"Correct! "
++
+q.explain;
+
+
+sound(
+"correctSound"
+);
+
+
+sound(
+"clapSound"
+);
+
+
+confetti();
+
+
+$("nextBtn")
+.style
+.display=
+"block";
+
+
+}
+
+
+
+/* =================================================
+   WRONG ANSWER
+================================================= */
+
+else{
+
+
+attempts++;
+
+
+btn
+.classList
+.add(
+"wrong"
+);
+
+
+sound(
+"wrongSound"
+);
+
+
+$("hearts")
+.textContent=
+
+attempts===1
+
+? "❤️🤎"
+
+: "🤎🤎";
+
+
+/* ===============================================
+   SECOND WRONG ATTEMPT
+=============================================== */
+
+if(
+attempts>=2
+){
+
+
+locked=true;
+
+
+$("answerBox")
+.textContent=
+q.answer;
+
+
+$("msg")
+.textContent=
+
+"Correct answer: "
++
+q.answer
++
+". "
++
+q.explain;
+
+
+document
+.querySelectorAll(
+".opt"
+)
+
+.forEach(
+
+tile=>{
+
+
+if(
+tile.textContent
+===
+q.answer
+){
+
+tile
+.classList
+.add(
+"correct"
+);
+
+}
+
+
+}
+
+);
+
+
+/*
+Original game behaviour retained.
+*/
+
+powerUpCity();
+
+
+$("nextBtn")
+.style
+.display=
+"block";
+
+
+}
+
+
+/* ===============================================
+   FIRST WRONG ATTEMPT
+=============================================== */
+
+else{
+
+
+$("msg")
+.textContent=
+
+"Not quite. Try one more time.";
+
+
+}
+
+
+}
+
+
+}
+
+
+
+/* =====================================================
+   POWER UP CITY
+===================================================== */
+
 function powerUpCity(){
-  const wins=[...document.querySelectorAll(".win")];
-  wins.forEach((w,i)=>{ if(i<=current) w.classList.add("on"); });
-  $("powerFill").style.height=Math.min(100,(current+1)*10)+"%";
+
+
+const wins=
+
+[
+...document
+.querySelectorAll(
+".win"
+)
+];
+
+
+wins
+.forEach(
+
+(windowLight,index)=>{
+
+
+if(
+index<=current
+){
+
+windowLight
+.classList
+.add(
+"on"
+);
+
 }
+
+
+}
+
+);
+
+
+$("powerFill")
+.style
+.height=
+
+Math.min(
+100,
+(current+1)*10
+)
++
+"%";
+
+
+}
+
+
+
+/* =====================================================
+   NEXT QUESTION
+===================================================== */
+
 function nextQuestion(){
-  current++;
-  if(current>=10){endGame()}else loadQuestion();
+
+
+current++;
+
+
+if(
+current>=10
+){
+
+
+endGame();
+
+
 }
+
+else{
+
+
+loadQuestion();
+
+
+}
+
+
+}
+
+
+
+/* =====================================================
+   END GAME
+===================================================== */
+
 function endGame(){
-  $("finalScore").textContent=score;
-  $("stars").textContent=score>=850?"⭐⭐⭐":score>=650?"⭐⭐":"⭐";
-  confetti(80);
-  show("result");
+
+
+$("finalScore")
+.textContent=
+score;
+
+
+$("stars")
+.textContent=
+
+score>=850
+
+? "⭐⭐⭐"
+
+: score>=650
+
+? "⭐⭐"
+
+: "⭐";
+
+
+confetti(
+80
+);
+
+
+sound(
+"clapSound"
+);
+
+
+show(
+"result"
+);
+
+
 }
-function confetti(n=30){
-  const wrap=$("confetti");
-  for(let i=0;i<n;i++){
-    const p=document.createElement("div");
-    p.className="piece";
-    p.style.left=Math.random()*100+"vw";
-    p.style.background=["#ffd75b","#ff6b6b","#38a9ff","#55df75","#b369ff"][Math.floor(Math.random()*5)];
-    p.style.animationDelay=Math.random()*.4+"s";
-    wrap.appendChild(p);
-    setTimeout(()=>p.remove(),1700);
-  }
+
+
+
+/* =====================================================
+   CONFETTI
+===================================================== */
+
+function confetti(
+n=30
+){
+
+
+const wrap=
+$("confetti");
+
+
+for(
+let i=0;
+i<n;
+i++
+){
+
+
+const piece=
+
+document
+.createElement(
+"div"
+);
+
+
+piece.className=
+"piece";
+
+
+piece.style.left=
+
+Math.random()*100
++
+"vw";
+
+
+piece.style.background=
+
+[
+"#ffd75b",
+"#ff6b6b",
+"#38a9ff",
+"#55df75",
+"#b369ff"
+]
+
+[
+Math.floor(
+Math.random()*5
+)
+];
+
+
+piece.style.animationDelay=
+
+Math.random()*.4
++
+"s";
+
+
+wrap
+.appendChild(
+piece
+);
+
+
+setTimeout(
+
+()=>piece.remove(),
+
+1700
+
+);
+
+
 }
+
+
+}
+
 </script>
+
 </body>
+
 </html>
