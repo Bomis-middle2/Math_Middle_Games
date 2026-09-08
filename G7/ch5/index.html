@@ -1,122 +1,5765 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Angle Express: Lines & Angles Game</title>
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Angle Express: Geometry Delivery Mission
+</title>
+
+
 <style>
-*{box-sizing:border-box;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;margin:0;padding:0;user-select:none;-webkit-user-select:none}
-html,body{width:100%;min-height:100%;color:#1e293b;background:linear-gradient(180deg,#fef3c7 0%,#fde68a 35%,#dbeafe 100%)}
-body{overflow-x:hidden;overflow-y:auto;display:flex;justify-content:center;align-items:flex-start;padding:clamp(8px,2vw,18px)}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.35;background:radial-gradient(circle at 15% 20%,rgba(59,130,246,.28),transparent 22%),radial-gradient(circle at 80% 10%,rgba(245,158,11,.26),transparent 20%),linear-gradient(135deg,rgba(30,64,175,.08) 1px,transparent 1px),linear-gradient(45deg,rgba(217,119,6,.08) 1px,transparent 1px);background-size:auto,auto,42px 42px,42px 42px}
-#viewport-root{width:min(100%,760px);min-height:calc(100vh - 24px);display:flex;flex-direction:column;padding:clamp(10px,2.5vw,18px);gap:clamp(8px,1.8vw,12px);opacity:0;transition:opacity .5s ease;position:relative;margin:auto}
-#hard-splash{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;justify-content:center;align-items:center;transition:opacity .5s ease}.splash-img{width:min(260px,70vw);height:auto;max-height:110px;object-fit:contain}
-#instruction-modal{position:fixed;inset:0;background:rgba(255,251,235,.96);z-index:5000;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:24px;text-align:center}.ins-box{background:#fff7ed;border:2px solid #f59e0b;padding:clamp(18px,4vw,26px);border-radius:18px;box-shadow:0 12px 30px rgba(146,64,14,.22);width:min(100%,520px)}.ins-title{font-size:clamp(1.25rem,4vw,1.55rem);color:#1d4ed8;font-weight:900;margin-bottom:12px}.ins-text{font-size:clamp(.9rem,2.7vw,1rem);color:#475569;line-height:1.55;margin-bottom:20px}
-.header-card{background:rgba(255,255,255,.9);border:2px solid #60a5fa;border-radius:18px;padding:clamp(10px,2vw,14px);box-shadow:0 10px 24px rgba(37,99,235,.16);text-align:center}.ticker{background:#eff6ff;border:2px solid #2563eb;border-radius:12px;padding:clamp(9px,2vw,12px)}.ticker-problem{font-size:clamp(.92rem,3vw,1.08rem);font-weight:750;color:#1e293b;margin-top:6px;line-height:1.35}
-.score-row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:#1d4ed8;font-weight:900;font-size:clamp(.85rem,2.5vw,.98rem)}.simulation-frame{flex:1 1 auto;background:rgba(255,255,255,.76);border:2px solid #f59e0b;border-radius:18px;position:relative;overflow:hidden;min-height:clamp(220px,40vh,360px);box-shadow:inset 0 0 20px rgba(251,191,36,.14)}canvas{display:block;width:100%;height:100%}.console-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(7px,1.8vw,10px)}.option-row-btn{width:100%;background:#ffffff;border:2px solid #bfdbfe;color:#1e293b;border-radius:14px;padding:clamp(11px,2.5vw,14px) clamp(10px,2vw,12px);font-size:clamp(.86rem,2.5vw,.98rem);font-weight:750;cursor:pointer;text-align:left;transition:.2s;line-height:1.25}.option-row-btn:active,.option-row-btn.selected{background:#dbeafe;border-color:#2563eb;box-shadow:0 0 12px rgba(37,99,235,.25)}.option-row-btn.correct{background:#dcfce7!important;border-color:#16a34a!important}.option-row-btn.wrong{background:#fee2e2!important;border-color:#dc2626!important}
-.action-btn{width:100%;background:linear-gradient(135deg,#2563eb,#0ea5e9);color:#fff;border:none;border-radius:14px;padding:clamp(13px,3vw,16px);font-size:clamp(.9rem,2.5vw,1rem);font-weight:900;cursor:pointer;text-transform:uppercase;letter-spacing:.8px;box-shadow:0 6px 16px rgba(37,99,235,.28)}.action-btn:disabled{background:#cbd5e1;color:#64748b;cursor:not-allowed;box-shadow:none}.status-banner{text-align:center;font-weight:800;font-size:clamp(.82rem,2.3vw,.92rem);min-height:22px;color:#475569}.confetti{position:fixed;top:-10px;width:10px;height:10px;pointer-events:none;animation:fall 1.4s linear forwards}@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}
-@media(max-width:520px){body{padding:8px}#viewport-root{width:100%;min-height:calc(100svh - 16px);padding:8px;gap:8px}.console-grid{grid-template-columns:1fr}.simulation-frame{min-height:230px}.header-card{border-radius:14px}.ticker{border-radius:10px}.option-row-btn{border-radius:12px}}
-@media(max-height:680px) and (min-width:521px){#viewport-root{max-width:900px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto 1fr auto;align-items:stretch}.score-row{grid-column:1/3}.header-card{grid-column:1/3}.simulation-frame{grid-row:3/5}.console-grid{align-self:end}.status-banner{align-self:end}.action-btn{align-self:end}.simulation-frame{min-height:260px}}
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+}
+
+html,
+body{
+  width:100%;
+  min-height:100%;
+}
+
+body{
+
+  overflow-x:hidden;
+
+  color:#1e293b;
+
+  background:
+  linear-gradient(
+    180deg,
+    #eef9ff 0%,
+    #fff8df 48%,
+    #e5f4ff 100%
+  );
+
+  padding:
+  clamp(6px,2vw,16px);
+
+}
+
+button{
+  font-family:inherit;
+}
+
+.hidden{
+  display:none !important;
+}
+
+
+/* =====================================================
+   PAGE BACKGROUND
+===================================================== */
+
+body::before{
+
+  content:"";
+
+  position:fixed;
+
+  inset:0;
+
+  pointer-events:none;
+
+  opacity:.25;
+
+  background:
+
+  radial-gradient(
+    circle at 12% 15%,
+    #93c5fd 0 70px,
+    transparent 72px
+  ),
+
+  radial-gradient(
+    circle at 88% 12%,
+    #fde68a 0 85px,
+    transparent 87px
+  );
+
+  z-index:-1;
+
+}
+
+
+/* =====================================================
+   MAIN ROOT
+===================================================== */
+
+#viewport-root{
+
+  width:min(
+    900px,
+    100%
+  );
+
+  margin:0 auto;
+
+  display:flex;
+
+  flex-direction:column;
+
+  gap:
+  clamp(
+    8px,
+    2vw,
+    14px
+  );
+
+  opacity:0;
+
+  transition:
+  opacity .5s ease;
+
+}
+
+
+/* =====================================================
+   SPLASH
+===================================================== */
+
+#hard-splash{
+
+  position:fixed;
+
+  inset:0;
+
+  background:#fff;
+
+  z-index:9999;
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+  transition:
+  opacity .5s ease;
+
+}
+
+.splash-img{
+
+  width:min(
+    260px,
+    70vw
+  );
+
+  max-height:110px;
+
+  height:auto;
+
+  object-fit:contain;
+
+}
+
+
+/* =====================================================
+   INSTRUCTIONS
+===================================================== */
+
+#instruction-modal{
+
+  position:fixed;
+
+  inset:0;
+
+  background:
+  rgba(239,249,255,.97);
+
+  z-index:5000;
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+  padding:
+  clamp(
+    10px,
+    4vw,
+    24px
+  );
+
+  text-align:center;
+
+  overflow-y:auto;
+
+}
+
+.ins-box{
+
+  width:min(
+    540px,
+    100%
+  );
+
+  background:white;
+
+  border:
+  3px solid
+  #7dd3fc;
+
+  border-radius:22px;
+
+  padding:
+  clamp(
+    17px,
+    4vw,
+    28px
+  );
+
+  box-shadow:
+  0 16px 35px
+  rgba(37,99,235,.18);
+
+}
+
+.ins-title{
+
+  color:#1d4ed8;
+
+  font-size:
+  clamp(
+    1.3rem,
+    5vw,
+    1.8rem
+  );
+
+  font-weight:900;
+
+  margin-bottom:14px;
+
+}
+
+.ins-text{
+
+  color:#475569;
+
+  font-size:
+  clamp(
+    .9rem,
+    3vw,
+    1.02rem
+  );
+
+  line-height:1.6;
+
+  margin-bottom:20px;
+
+}
+
+
+/* =====================================================
+   SCORE
+===================================================== */
+
+.score-row{
+
+  display:grid;
+
+  grid-template-columns:
+  repeat(
+    2,
+    minmax(0,1fr)
+  );
+
+  gap:8px;
+
+  color:#1d4ed8;
+
+  font-weight:900;
+
+  font-size:
+  clamp(
+    .84rem,
+    2.5vw,
+    1rem
+  );
+
+}
+
+.score-row > span{
+
+  min-width:0;
+
+  background:
+  rgba(255,255,255,.94);
+
+  border:
+  2px solid
+  #bfdbfe;
+
+  border-radius:12px;
+
+  padding:
+  9px 8px;
+
+  text-align:center;
+
+}
+
+
+/* =====================================================
+   QUESTION
+===================================================== */
+
+.header-card{
+
+  width:100%;
+
+  background:
+  rgba(255,255,255,.96);
+
+  border:
+  2px solid
+  #60a5fa;
+
+  border-radius:18px;
+
+  padding:
+  clamp(
+    11px,
+    2.5vw,
+    17px
+  );
+
+  box-shadow:
+  0 8px 20px
+  rgba(37,99,235,.12);
+
+}
+
+.ticker-problem{
+
+  font-size:
+  clamp(
+    1rem,
+    3vw,
+    1.2rem
+  );
+
+  font-weight:800;
+
+  color:#1e293b;
+
+  line-height:1.45;
+
+  text-align:center;
+
+  overflow-wrap:anywhere;
+
+}
+
+
+/* =====================================================
+   SIMULATION
+===================================================== */
+
+.simulation-frame{
+
+  width:100%;
+
+  height:
+  clamp(
+    270px,
+    44vw,
+    390px
+  );
+
+  background:
+  linear-gradient(
+    #dff5ff 0%,
+    #effaff 54%,
+    #d9f0c7 55%,
+    #b8df9a 100%
+  );
+
+  border:
+  3px solid
+  #f59e0b;
+
+  border-radius:20px;
+
+  position:relative;
+
+  overflow:hidden;
+
+  box-shadow:
+  inset 0 0 24px
+  rgba(251,191,36,.12);
+
+}
+
+canvas{
+
+  display:block;
+
+  width:100%;
+
+  height:100%;
+
+}
+
+
+/* =====================================================
+   MISSION STRIP
+===================================================== */
+
+.mission-strip{
+
+  position:absolute;
+
+  top:8px;
+
+  left:50%;
+
+  transform:
+  translateX(-50%);
+
+  z-index:2;
+
+  width:max-content;
+
+  max-width:92%;
+
+  background:
+  rgba(255,255,255,.93);
+
+  color:#075985;
+
+  border:
+  2px solid
+  #7dd3fc;
+
+  border-radius:999px;
+
+  padding:
+  5px 14px;
+
+  font-size:
+  clamp(
+    .68rem,
+    2vw,
+    .82rem
+  );
+
+  font-weight:900;
+
+  text-align:center;
+
+  line-height:1.2;
+
+  pointer-events:none;
+
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.status-banner{
+
+  width:100%;
+
+  min-height:48px;
+
+  display:flex;
+
+  align-items:center;
+
+  justify-content:center;
+
+  text-align:center;
+
+  background:white;
+
+  border:
+  2px solid
+  #dbeafe;
+
+  border-radius:13px;
+
+  padding:
+  9px 12px;
+
+  font-size:
+  clamp(
+    .83rem,
+    2.4vw,
+    .97rem
+  );
+
+  font-weight:800;
+
+  line-height:1.4;
+
+  color:#475569;
+
+  overflow-wrap:anywhere;
+
+}
+
+
+/* =====================================================
+   OPTIONS
+===================================================== */
+
+.console-grid{
+
+  display:grid;
+
+  grid-template-columns:
+  repeat(
+    2,
+    minmax(0,1fr)
+  );
+
+  gap:
+  clamp(
+    7px,
+    1.8vw,
+    11px
+  );
+
+}
+
+.option-row-btn{
+
+  width:100%;
+
+  min-width:0;
+
+  min-height:58px;
+
+  background:white;
+
+  border:
+  2px solid
+  #bfdbfe;
+
+  color:#1e293b;
+
+  border-radius:14px;
+
+  padding:
+  clamp(
+    10px,
+    2.5vw,
+    14px
+  );
+
+  font-size:
+  clamp(
+    .88rem,
+    2.6vw,
+    1rem
+  );
+
+  font-weight:750;
+
+  cursor:pointer;
+
+  text-align:center;
+
+  line-height:1.3;
+
+  transition:
+  background .2s,
+  border-color .2s,
+  box-shadow .2s,
+  transform .15s;
+
+  overflow-wrap:anywhere;
+
+  white-space:normal;
+
+}
+
+.option-row-btn:hover:not(:disabled){
+
+  background:#eff6ff;
+
+  border-color:#60a5fa;
+
+}
+
+.option-row-btn:active:not(:disabled){
+
+  transform:
+  translateY(2px);
+
+}
+
+
+/*
+Only the option actively chosen
+by the learner becomes blue.
+*/
+
+.option-row-btn.selected{
+
+  background:#dbeafe;
+
+  border-color:#2563eb;
+
+  box-shadow:
+  0 0 12px
+  rgba(37,99,235,.2);
+
+}
+
+
+.option-row-btn.correct{
+
+  background:#dcfce7 !important;
+
+  border-color:#16a34a !important;
+
+  color:#166534;
+
+}
+
+
+.option-row-btn.wrong{
+
+  background:#fee2e2 !important;
+
+  border-color:#dc2626 !important;
+
+  color:#991b1b;
+
+}
+
+
+.option-row-btn:disabled{
+
+  cursor:not-allowed;
+
+}
+
+
+/* =====================================================
+   ACTIONS
+===================================================== */
+
+.action-row{
+
+  display:grid;
+
+  grid-template-columns:1fr;
+
+  gap:8px;
+
+}
+
+
+.action-btn{
+
+  width:100%;
+
+  background:
+  linear-gradient(
+    135deg,
+    #2563eb,
+    #0ea5e9
+  );
+
+  color:white;
+
+  border:0;
+
+  border-radius:14px;
+
+  padding:
+  clamp(
+    13px,
+    3vw,
+    16px
+  );
+
+  font-size:
+  clamp(
+    .88rem,
+    2.5vw,
+    1rem
+  );
+
+  font-weight:900;
+
+  cursor:pointer;
+
+  text-transform:uppercase;
+
+  letter-spacing:.4px;
+
+  box-shadow:
+  0 6px 16px
+  rgba(37,99,235,.24);
+
+}
+
+
+.action-btn:disabled{
+
+  background:#cbd5e1;
+
+  color:#64748b;
+
+  box-shadow:none;
+
+  cursor:not-allowed;
+
+}
+
+
+.next-btn{
+
+  background:
+  linear-gradient(
+    135deg,
+    #16a34a,
+    #22c55e
+  );
+
+}
+
+
+/* =====================================================
+   CONFETTI
+===================================================== */
+
+.confetti{
+
+  position:fixed;
+
+  top:-10px;
+
+  width:10px;
+
+  height:10px;
+
+  pointer-events:none;
+
+  z-index:9000;
+
+  animation:
+  fall 1.4s
+  linear forwards;
+
+}
+
+
+@keyframes fall{
+
+  to{
+
+    transform:
+    translateY(105vh)
+    rotate(720deg);
+
+    opacity:0;
+
+  }
+
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media(max-width:700px){
+
+  .simulation-frame{
+
+    height:
+    clamp(
+      270px,
+      55vw,
+      340px
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:560px){
+
+  body{
+
+    padding:5px;
+
+  }
+
+  #viewport-root{
+
+    gap:7px;
+
+  }
+
+  .score-row{
+
+    gap:5px;
+
+  }
+
+  .header-card{
+
+    border-radius:14px;
+
+    padding:
+    10px 9px;
+
+  }
+
+  .ticker-problem{
+
+    font-size:
+    clamp(
+      .94rem,
+      4.4vw,
+      1.05rem
+    );
+
+  }
+
+  .simulation-frame{
+
+    height:
+    clamp(
+      260px,
+      76vw,
+      320px
+    );
+
+    border-width:2px;
+
+    border-radius:15px;
+
+  }
+
+  .mission-strip{
+
+    top:6px;
+
+    padding:
+    4px 9px;
+
+    max-width:94%;
+
+    font-size:
+    clamp(
+      .6rem,
+      2.8vw,
+      .72rem
+    );
+
+  }
+
+  .console-grid{
+
+    grid-template-columns:1fr;
+
+    gap:7px;
+
+  }
+
+  .option-row-btn{
+
+    min-height:50px;
+
+    padding:
+    10px 8px;
+
+  }
+
+  .status-banner{
+
+    min-height:44px;
+
+    padding:8px;
+
+  }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media(max-width:360px){
+
+  .score-row{
+
+    grid-template-columns:1fr;
+
+  }
+
+  .simulation-frame{
+
+    height:255px;
+
+  }
+
+}
+
+
+/* =====================================================
+   VERY SMALL MOBILE
+===================================================== */
+
+@media(max-width:300px){
+
+  body{
+
+    padding:3px;
+
+  }
+
+  .mission-strip{
+
+    font-size:.56rem;
+
+  }
+
+  .ticker-problem{
+
+    font-size:.9rem;
+
+  }
+
+}
+
+
+/* =====================================================
+   REDUCED MOTION
+===================================================== */
+
+@media(prefers-reduced-motion:reduce){
+
+  *,
+  *::before,
+  *::after{
+
+    animation-duration:.01ms !important;
+
+    animation-iteration-count:1 !important;
+
+    transition-duration:.01ms !important;
+
+  }
+
+}
+
 </style>
+
 </head>
+
+
 <body>
-<audio id="s-correct" src="assets/correct.mp3" preload="auto"></audio>
-<audio id="s-wrong" src="assets/wrong.mp3" preload="auto"></audio>
-<audio id="s-claps" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
-<div id="hard-splash"><img src="assets/innovine-logo.png" class="splash-img" alt="Innovine Logo"></div>
-<div id="viewport-root">
-  <div id="instruction-modal"><div class="ins-box"><h2 class="ins-title">Angle Express Rules</h2><p class="ins-text">Read each Lines & Angles challenge. Select the correct answer, then launch the Geometry Express. Correct choices help the train reach the station safely!</p><button class="action-btn" onclick="dismissInstructions()">Start Mission</button></div></div>
-  <div class="score-row"><span>Challenge: <span id="q-num">1</span>/10</span><span>Stars: ⭐ <span id="score">0</span></span></div>
-  <div class="header-card"><div class="ticker"><div class="ticker-problem" id="lbl-task">Loading...</div></div></div>
-  <div class="simulation-frame"><canvas id="game-canvas"></canvas></div>
-  <div class="status-banner" id="status"></div>
-  <div class="console-grid"><button class="option-row-btn" id="opt-0" onclick="selectOption(0)">A.) Loading...</button><button class="option-row-btn" id="opt-1" onclick="selectOption(1)">B.) Loading...</button><button class="option-row-btn" id="opt-2" onclick="selectOption(2)">C.) Loading...</button><button class="option-row-btn" id="opt-3" onclick="selectOption(3)">D.) Loading...</button></div>
-  <button class="action-btn" id="btn-launch" onclick="launchTrain()">Launch Geometry Express</button>
+
+
+<!-- =====================================================
+     AUDIO
+===================================================== -->
+
+<audio
+id="s-correct"
+src="assets/correct.mp3"
+preload="auto">
+</audio>
+
+<audio
+id="s-wrong"
+src="assets/wrong.mp3"
+preload="auto">
+</audio>
+
+<audio
+id="s-claps"
+src="assets/freesound_community-claps-44774.mp3"
+preload="auto">
+</audio>
+
+
+
+<!-- =====================================================
+     SPLASH
+===================================================== -->
+
+<div id="hard-splash">
+
+<img
+src="assets/innovine-logo.png"
+class="splash-img"
+alt="Innovine Logo">
+
 </div>
+
+
+
+<!-- =====================================================
+     MAIN GAME
+===================================================== -->
+
+<div id="viewport-root">
+
+
+<!-- =================================================
+     INSTRUCTIONS
+================================================= -->
+
+<div id="instruction-modal">
+
+<div class="ins-box">
+
+
+<h2 class="ins-title">
+
+🚚 Geometry Delivery Mission
+
+</h2>
+
+
+<p class="ins-text">
+
+Solve each Lines & Angles challenge and guide the delivery truck to the
+<b>Geometry Depot</b>.
+
+<br><br>
+
+Select an answer first. The
+<b>Launch Delivery Truck</b> button becomes active only after you choose an answer.
+
+<br><br>
+
+The animated <b>Angle Scanner</b> demonstrates the selected answer before deciding whether the truck can pass.
+
+<br><br>
+
+You have 2 attempts for every mission.
+
+</p>
+
+
+<button
+class="action-btn"
+onclick="dismissInstructions()">
+
+Start Mission
+
+</button>
+
+
+</div>
+
+</div>
+
+
+
+<!-- =================================================
+     SCORE
+================================================= -->
+
+<div class="score-row">
+
+
+<span>
+
+Delivery:
+
+<span id="q-num">
+1
+</span>
+
+/10
+
+</span>
+
+
+<span>
+
+Stars: ⭐
+
+<span id="score">
+0
+</span>
+
+</span>
+
+
+</div>
+
+
+
+<!-- =================================================
+     QUESTION
+================================================= -->
+
+<div class="header-card">
+
+
+<div
+class="ticker-problem"
+id="lbl-task">
+
+Loading...
+
+</div>
+
+
+</div>
+
+
+
+<!-- =================================================
+     SIMULATION
+================================================= -->
+
+<div class="simulation-frame">
+
+
+<div class="mission-strip">
+
+🚚 ANGLE EXPRESS → GEOMETRY DEPOT
+
+</div>
+
+
+<canvas id="game-canvas">
+</canvas>
+
+
+</div>
+
+
+
+<!-- =================================================
+     STATUS
+================================================= -->
+
+<div
+class="status-banner"
+id="status">
+
+Choose an answer first.
+
+</div>
+
+
+
+<!-- =================================================
+     OPTIONS
+================================================= -->
+
+<div class="console-grid">
+
+
+<button
+class="option-row-btn"
+id="opt-0"
+onclick="selectOption(0)">
+
+Loading...
+
+</button>
+
+
+<button
+class="option-row-btn"
+id="opt-1"
+onclick="selectOption(1)">
+
+Loading...
+
+</button>
+
+
+<button
+class="option-row-btn"
+id="opt-2"
+onclick="selectOption(2)">
+
+Loading...
+
+</button>
+
+
+<button
+class="option-row-btn"
+id="opt-3"
+onclick="selectOption(3)">
+
+Loading...
+
+</button>
+
+
+</div>
+
+
+
+<!-- =================================================
+     ACTIONS
+================================================= -->
+
+<div class="action-row">
+
+
+<!--
+DISABLED UNTIL AN ANSWER
+IS ACTUALLY SELECTED
+-->
+
+<button
+class="action-btn"
+id="btn-launch"
+onclick="launchTruck()"
+disabled>
+
+Launch Delivery Truck
+
+</button>
+
+
+<button
+class="action-btn next-btn hidden"
+id="btn-next"
+onclick="nextMission()">
+
+Next Delivery ➡️
+
+</button>
+
+
+</div>
+
+
+</div>
+
+
+
 <script>
-let canvas,ctx,loopId,currentQ,chosen=0,answers=[],qIndex=0,score=0,locked=false,attempts=0;
-let train={progress:0,driving:false,crash:false,rot:0,ox:0,oy:0,timer:0};
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let canvas;
+
+let ctx;
+
+let currentQ;
+
+
+/*
+-1 = NO ANSWER SELECTED
+*/
+
+let chosen=-1;
+
+
+let answers=[];
+
+let qIndex=0;
+
+let score=0;
+
+let locked=false;
+
+let attempts=0;
+
+let lastTime=0;
+
+let animationTime=0;
+
+
+
+/* =====================================================
+   SCENE
+===================================================== */
+
+let scene={
+
+progress:0,
+
+phase:'idle',
+
+gateOpen:0,
+
+gateTarget:0,
+
+gateState:'neutral',
+
+flash:0,
+
+unload:0,
+
+guided:false,
+
+deliveryReady:false,
+
+scanProgress:0,
+
+scanSpec:null
+
+};
+
+
+
+/* =====================================================
+   QUESTIONS
+===================================================== */
+
 const questions=[
-{q:'Two angles form a linear pair. One angle is 65°. What is the other angle?',ans:'115°',w:['65°','125°','90°'],exp:'Angles in a linear pair add up to 180°.'},
-{q:'If two vertically opposite angles are formed and one angle is 78°, what is the opposite angle?',ans:'78°',w:['102°','12°','180°'],exp:'Vertically opposite angles are equal.'},
-{q:'An angle measuring 90° is called a/an:',ans:'Right angle',w:['Acute angle','Obtuse angle','Straight angle'],exp:'A right angle measures exactly 90°.'},
-{q:'Which pair of angles are complementary?',ans:'40° and 50°',w:['60° and 40°','90° and 90°','120° and 60°'],exp:'Complementary angles add up to 90°.'},
-{q:'Which pair of angles are supplementary?',ans:'110° and 70°',w:['80° and 80°','45° and 45°','100° and 60°'],exp:'Supplementary angles add up to 180°.'},
-{q:'If an angle is 35°, its complement is:',ans:'55°',w:['145°','35°','65°'],exp:'Complement = 90° - 35° = 55°.'},
-{q:'If an angle is 120°, its supplement is:',ans:'60°',w:['30°','120°','240°'],exp:'Supplement = 180° - 120° = 60°.'},
-{q:'When two lines intersect, how many pairs of vertically opposite angles are formed?',ans:'2 pairs',w:['1 pair','3 pairs','4 pairs'],exp:'Two intersecting lines form two pairs of vertically opposite angles.'},
-{q:'An angle greater than 90° but less than 180° is called:',ans:'Obtuse angle',w:['Acute angle','Right angle','Reflex angle'],exp:'Obtuse angles are between 90° and 180°.'},
-{q:'If a transversal cuts two parallel lines, corresponding angles are:',ans:'Equal',w:['Always 90°','Supplementary only','Unequal'],exp:'Corresponding angles are equal when lines are parallel.'}
+
+
+{
+
+q:
+'Two angles form a linear pair. One angle is 65°. What is the other angle?',
+
+ans:
+'115°',
+
+w:[
+'65°',
+'125°',
+'90°'
+],
+
+exp:
+'Angles in a linear pair add up to 180°.',
+
+scannerType:'single'
+
+},
+
+
+
+{
+
+q:
+'If two vertically opposite angles are formed and one angle is 78°, what is the opposite angle?',
+
+ans:
+'78°',
+
+w:[
+'102°',
+'12°',
+'180°'
+],
+
+exp:
+'Vertically opposite angles are equal.',
+
+scannerType:'vertical'
+
+},
+
+
+
+{
+
+q:
+'An angle measuring 90° is called a/an:',
+
+ans:
+'Right angle',
+
+w:[
+'Acute angle',
+'Obtuse angle',
+'Straight angle'
+],
+
+exp:
+'A right angle measures exactly 90°.',
+
+scannerType:'angleType'
+
+},
+
+
+
+{
+
+q:
+'Which pair of angles are complementary?',
+
+ans:
+'40° and 50°',
+
+w:[
+'60° and 40°',
+'90° and 90°',
+'120° and 60°'
+],
+
+exp:
+'Complementary angles add up to 90°.',
+
+scannerType:'pair'
+
+},
+
+
+
+{
+
+q:
+'Which pair of angles are supplementary?',
+
+ans:
+'110° and 70°',
+
+w:[
+'80° and 80°',
+'45° and 45°',
+'100° and 60°'
+],
+
+exp:
+'Supplementary angles add up to 180°.',
+
+scannerType:'pair'
+
+},
+
+
+
+{
+
+q:
+'If an angle is 35°, its complement is:',
+
+ans:
+'55°',
+
+w:[
+'145°',
+'35°',
+'65°'
+],
+
+exp:
+'Complement = 90° − 35° = 55°.',
+
+scannerType:'single'
+
+},
+
+
+
+{
+
+q:
+'If an angle is 120°, its supplement is:',
+
+ans:
+'60°',
+
+w:[
+'30°',
+'120°',
+'240°'
+],
+
+exp:
+'Supplement = 180° − 120° = 60°.',
+
+scannerType:'single'
+
+},
+
+
+
+{
+
+q:
+'When two lines intersect, how many pairs of vertically opposite angles are formed?',
+
+ans:
+'2 pairs',
+
+w:[
+'1 pair',
+'3 pairs',
+'4 pairs'
+],
+
+exp:
+'Two intersecting lines form two pairs of vertically opposite angles.',
+
+scannerType:'pairCount'
+
+},
+
+
+
+{
+
+q:
+'An angle greater than 90° but less than 180° is called:',
+
+ans:
+'Obtuse angle',
+
+w:[
+'Acute angle',
+'Right angle',
+'Reflex angle'
+],
+
+exp:
+'Obtuse angles are between 90° and 180°.',
+
+scannerType:'angleType'
+
+},
+
+
+
+{
+
+q:
+'If a transversal cuts two parallel lines, corresponding angles are:',
+
+ans:
+'Equal',
+
+w:[
+'Always 90°',
+'Supplementary only',
+'Unequal'
+],
+
+exp:
+'Corresponding angles are equal when lines are parallel.',
+
+scannerType:'corresponding'
+
+}
+
+
 ];
-setTimeout(()=>{const s=document.getElementById('hard-splash');s.style.opacity='0';setTimeout(()=>{s.remove();document.getElementById('viewport-root').style.opacity='1';init();},500)},5000);
-function init(){canvas=document.getElementById('game-canvas');ctx=canvas.getContext('2d');resize();window.addEventListener('resize',resize);window.addEventListener('orientationchange',()=>setTimeout(resize,250));shuffle(questions);loadQuestion();loop();}
-function resize(){if(!canvas)return;const r=canvas.getBoundingClientRect();const dpr=window.devicePixelRatio||1;canvas.width=Math.max(1,Math.floor(r.width*dpr));canvas.height=Math.max(1,Math.floor(r.height*dpr));ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);canvas.logicalWidth=r.width;canvas.logicalHeight=r.height;}
-function dismissInstructions(){const m=document.getElementById('instruction-modal');if(m)m.remove();}
-function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function loadQuestion(){locked=false;attempts=0;currentQ=questions[qIndex];document.getElementById('q-num').innerText=qIndex+1;document.getElementById('lbl-task').innerText=currentQ.q;document.getElementById('status').innerText='';document.getElementById('status').style.color='#475569';document.getElementById('btn-launch').disabled=false;answers=shuffle([{t:currentQ.ans,c:true},...currentQ.w.map(x=>({t:x,c:false}))]);for(let i=0;i<4;i++){let b=document.getElementById('opt-'+i);b.className='option-row-btn';b.innerText=String.fromCharCode(65+i)+'.) '+answers[i].t;}train={progress:0,driving:false,crash:false,finalCrash:false,rot:0,ox:0,oy:0,timer:0};selectOption(0)}
-function selectOption(i){if(train.driving||train.crash||locked)return;chosen=i;for(let k=0;k<4;k++)document.getElementById('opt-'+k).classList.toggle('selected',k===i)}
-function launchTrain(){if(train.driving||train.crash||locked)return;document.getElementById('btn-launch').disabled=true;train.driving=true;document.getElementById('status').innerText='Checking...';document.getElementById('status').style.color='#2563eb'}
-function update(){
- if(train.driving){
-  train.progress+=.018;
-  if(train.progress>=1){train.progress=1;train.driving=false;checkAnswer();}
- }
- if(train.crash){
-  train.timer++;
-  train.rot+= train.finalCrash ? .32 : .22;
-  train.ox+= train.finalCrash ? 2.2 : 1.6;
-  train.oy=Math.sin(train.timer*.45)*7;
-  if(train.timer>58){
-   if(train.finalCrash){
-    train.crash=false;
-    revealCorrect();
-   }else{
-    train.crash=false;train.progress=0;train.rot=0;train.ox=0;train.oy=0;train.timer=0;
-    document.getElementById('btn-launch').disabled=false;
-    document.getElementById('status').innerText='Try again.';
-    document.getElementById('status').style.color='#dc2626';
-   }
-  }
- }
+
+
+
+/* =====================================================
+   SPLASH
+===================================================== */
+
+setTimeout(
+
+()=>{
+
+
+const splash=
+
+document
+.getElementById(
+'hard-splash'
+);
+
+
+splash.style.opacity=
+'0';
+
+
+setTimeout(
+
+()=>{
+
+
+splash.remove();
+
+
+document
+.getElementById(
+'viewport-root'
+)
+.style
+.opacity=
+'1';
+
+
+init();
+
+
+},
+
+500
+
+);
+
+
+},
+
+5000
+
+);
+
+
+
+/* =====================================================
+   INIT
+===================================================== */
+
+function init(){
+
+
+canvas=
+
+document
+.getElementById(
+'game-canvas'
+);
+
+
+ctx=
+
+canvas
+.getContext(
+'2d'
+);
+
+
+resize();
+
+
+window
+.addEventListener(
+'resize',
+resize
+);
+
+
+window
+.addEventListener(
+
+'orientationchange',
+
+()=>setTimeout(
+resize,
+250
+)
+
+);
+
+
+shuffle(
+questions
+);
+
+
+loadQuestion();
+
+
+requestAnimationFrame(
+loop
+);
+
+
 }
-function checkAnswer(){
- let st=document.getElementById('status');
- if(answers[chosen].c){
-  document.getElementById('s-correct').play().catch(()=>{});
-  document.getElementById('opt-'+chosen).classList.add('correct');
-  score++;document.getElementById('score').innerText=score;
-  st.innerText='Correct! '+currentQ.exp;st.style.color='#16a34a';
-  confetti();locked=true;
-  setTimeout(()=>{qIndex++;if(qIndex>=questions.length)finish();else loadQuestion();},1700);
- }else{
-  attempts++;
-  document.getElementById('s-wrong').play().catch(()=>{});
-  document.getElementById('opt-'+chosen).classList.add('wrong');
-  st.style.color='#dc2626';
-  document.getElementById('btn-launch').disabled=true;
-  if(attempts>=2){
-   st.innerText='Second wrong answer — watch the train topple.';
-   locked=true;
-   train.finalCrash=true;
-  }else{
-   st.innerText='Try again.';
-   train.finalCrash=false;
-  }
-  train.crash=true;
- }
+
+
+
+/* =====================================================
+   RESIZE
+===================================================== */
+
+function resize(){
+
+
+if(!canvas){
+
+return;
+
 }
-function revealCorrect(){
- const st=document.getElementById('status');
- const correctIndex=answers.findIndex(a=>a.c);
- if(correctIndex>=0)document.getElementById('opt-'+correctIndex).classList.add('correct');
- st.innerText='Correct Answer: '+answers[correctIndex].t+' | '+currentQ.exp;
- st.style.color='#16a34a';
- setTimeout(()=>{qIndex++;if(qIndex>=questions.length)finish();else loadQuestion();},2600);
+
+
+const rect=
+
+canvas
+.getBoundingClientRect();
+
+
+const dpr=
+
+window.devicePixelRatio || 1;
+
+
+canvas.width=
+
+Math.max(
+1,
+Math.floor(
+rect.width*dpr
+)
+);
+
+
+canvas.height=
+
+Math.max(
+1,
+Math.floor(
+rect.height*dpr
+)
+);
+
+
+ctx=
+
+canvas
+.getContext(
+'2d'
+);
+
+
+ctx.setTransform(
+dpr,
+0,
+0,
+dpr,
+0,
+0
+);
+
+
+canvas.logicalWidth=
+rect.width;
+
+
+canvas.logicalHeight=
+rect.height;
+
+
 }
-function finish(){document.getElementById('s-claps').play().catch(()=>{});document.getElementById('viewport-root').innerHTML=`<div class="ins-box" style="margin:auto;text-align:center"><h2 class="ins-title">🏆 Geometry Station Reached!</h2><p class="ins-text">You completed all 10 Lines & Angles challenges.<br><b>Final Stars: ${score}/10</b></p><button class="action-btn" onclick="location.reload()">Play Again</button></div>`;}
-function render(){if(!ctx||!canvas)return;let w=canvas.logicalWidth||canvas.getBoundingClientRect().width,h=canvas.logicalHeight||canvas.getBoundingClientRect().height;ctx.clearRect(0,0,w,h);ctx.strokeStyle='rgba(37,99,235,.18)';ctx.lineWidth=1;for(let x=0;x<w;x+=35){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke()}for(let y=0;y<h;y+=35){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}let trackY=h-62;ctx.strokeStyle='#f59e0b';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(20,trackY);ctx.lineTo(w-50,trackY);ctx.stroke();ctx.strokeStyle='#1d4ed8';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(w-75,Math.max(32,h*.13));ctx.lineTo(w-35,Math.max(90,h*.28));ctx.lineTo(w-105,Math.max(90,h*.28));ctx.stroke();ctx.fillStyle='#1d4ed8';ctx.font='bold 14px sans-serif';ctx.fillText('∠',w-83,Math.max(105,h*.31));let sx=25,tx=w-90,x=sx+(tx-sx)*train.progress,y=trackY;ctx.save();ctx.translate(x+train.ox,y+train.oy);ctx.rotate(train.rot);ctx.fillStyle='#2563eb';ctx.fillRect(-25,-18,50,25);ctx.fillStyle='#fbbf24';ctx.fillRect(8,-28,22,35);ctx.fillStyle='#dbeafe';ctx.fillRect(-15,-12,16,7);ctx.fillStyle='#111827';ctx.beginPath();ctx.arc(-13,10,6,0,Math.PI*2);ctx.arc(15,10,6,0,Math.PI*2);ctx.fill();ctx.restore();if(train.crash){ctx.fillStyle='rgba(220,38,38,.3)';ctx.beginPath();ctx.arc(x+train.ox,y+train.oy,28,0,Math.PI*2);ctx.fill();}}
-function loop(){update();render();loopId=requestAnimationFrame(loop)}
-function confetti(){for(let i=0;i<16;i++){let p=document.createElement('div');p.className='confetti';p.style.left=Math.random()*100+'vw';p.style.background=['#2563eb','#f59e0b','#16a34a','#ef4444'][Math.floor(Math.random()*4)];document.body.appendChild(p);setTimeout(()=>p.remove(),1600)}}
+
+
+
+/* =====================================================
+   INSTRUCTIONS
+===================================================== */
+
+function dismissInstructions(){
+
+
+const modal=
+
+document
+.getElementById(
+'instruction-modal'
+);
+
+
+if(modal){
+
+modal.remove();
+
+}
+
+
+}
+
+
+
+/* =====================================================
+   SHUFFLE
+===================================================== */
+
+function shuffle(array){
+
+
+for(
+let i=array.length-1;
+i>0;
+i--
+){
+
+
+const j=
+
+Math.floor(
+Math.random()*(i+1)
+);
+
+
+[
+array[i],
+array[j]
+]
+
+=
+
+[
+array[j],
+array[i]
+];
+
+
+}
+
+
+return array;
+
+
+}
+
+
+
+/* =====================================================
+   LOAD QUESTION
+===================================================== */
+
+function loadQuestion(){
+
+
+locked=false;
+
+attempts=0;
+
+
+/*
+IMPORTANT:
+EVERY NEW QUESTION STARTS
+WITH NO OPTION SELECTED.
+*/
+
+chosen=-1;
+
+
+currentQ=
+questions[qIndex];
+
+
+document
+.getElementById(
+'q-num'
+)
+.innerText=
+qIndex+1;
+
+
+document
+.getElementById(
+'lbl-task'
+)
+.innerText=
+currentQ.q;
+
+
+const status=
+
+document
+.getElementById(
+'status'
+);
+
+
+status.innerText=
+
+'Choose an answer first.';
+
+
+status.style.color=
+'#475569';
+
+
+
+/*
+LAUNCH IS DISABLED
+UNTIL LEARNER SELECTS AN OPTION.
+*/
+
+document
+.getElementById(
+'btn-launch'
+)
+.disabled=
+true;
+
+
+document
+.getElementById(
+'btn-launch'
+)
+.classList
+.remove(
+'hidden'
+);
+
+
+document
+.getElementById(
+'btn-next'
+)
+.classList
+.add(
+'hidden'
+);
+
+
+
+/* =================================================
+   CREATE ANSWERS
+================================================= */
+
+answers=
+
+shuffle(
+
+[
+{
+t:currentQ.ans,
+c:true
+},
+
+...currentQ.w.map(
+
+text=>({
+
+t:text,
+c:false
+
+})
+
+)
+
+]
+
+);
+
+
+
+/* =================================================
+   LOAD OPTIONS
+================================================= */
+
+for(
+let i=0;
+i<4;
+i++
+){
+
+
+const button=
+
+document
+.getElementById(
+'opt-'+i
+);
+
+
+/*
+Completely clears selected,
+correct and wrong styles.
+*/
+
+button.className=
+'option-row-btn';
+
+
+button.disabled=
+false;
+
+
+button.innerText=
+answers[i].t;
+
+
+}
+
+
+
+/* =================================================
+   RESET SCENE
+================================================= */
+
+scene={
+
+progress:0,
+
+phase:'idle',
+
+gateOpen:0,
+
+gateTarget:0,
+
+gateState:'neutral',
+
+flash:0,
+
+unload:0,
+
+guided:false,
+
+deliveryReady:false,
+
+scanProgress:0,
+
+scanSpec:null
+
+};
+
+
+/*
+NO selectOption(0) HERE.
+
+Nothing is highlighted.
+*/
+
+
+}
+
+
+
+/* =====================================================
+   SELECT OPTION
+===================================================== */
+
+function selectOption(i){
+
+
+if(
+scene.phase!=='idle' ||
+locked
+){
+
+return;
+
+}
+
+
+/*
+Cannot select a previously disabled
+wrong option.
+*/
+
+const clickedButton=
+
+document
+.getElementById(
+'opt-'+i
+);
+
+
+if(
+clickedButton.disabled
+){
+
+return;
+
+}
+
+
+chosen=i;
+
+
+/*
+Remove blue highlight from all options,
+then apply it only to the chosen one.
+*/
+
+for(
+let k=0;
+k<4;
+k++
+){
+
+
+const button=
+
+document
+.getElementById(
+'opt-'+k
+);
+
+
+button
+.classList
+.toggle(
+'selected',
+k===i
+);
+
+
+}
+
+
+
+/*
+Enable launch only now.
+*/
+
+document
+.getElementById(
+'btn-launch'
+)
+.disabled=
+false;
+
+
+const status=
+
+document
+.getElementById(
+'status'
+);
+
+
+status.innerText=
+
+'Answer selected. Launch the delivery truck to check it.';
+
+
+status.style.color=
+'#2563eb';
+
+
+}
+
+
+
+/* =====================================================
+   CREATE SCANNER SPECIFICATION
+===================================================== */
+
+function createScanSpec(
+optionText,
+scannerType
+){
+
+
+const values=
+
+[
+...optionText.matchAll(
+/(-?\d+(?:\.\d+)?)°/g
+)
+]
+
+.map(
+match=>Number(match[1])
+);
+
+
+
+/* SINGLE ANGLE */
+
+if(
+scannerType==='single'
+){
+
+
+return{
+
+mode:'single',
+
+angle:
+values.length
+? values[0]
+: 60,
+
+label:
+optionText
+
+};
+
+
+}
+
+
+
+/* VERTICALLY OPPOSITE */
+
+if(
+scannerType==='vertical'
+){
+
+
+return{
+
+mode:'vertical',
+
+angle:
+values.length
+? values[0]
+: 60,
+
+label:
+optionText
+
+};
+
+
+}
+
+
+
+/* ANGLE PAIR */
+
+if(
+scannerType==='pair'
+){
+
+
+return{
+
+mode:'pair',
+
+a:
+values[0] ?? 40,
+
+b:
+values[1] ?? 50,
+
+label:
+optionText
+
+};
+
+
+}
+
+
+
+/* ANGLE TYPE */
+
+if(
+scannerType==='angleType'
+){
+
+
+const lower=
+
+optionText
+.toLowerCase();
+
+
+let angle=60;
+
+
+if(
+lower.includes(
+'right'
+)
+){
+
+angle=90;
+
+}
+
+else if(
+lower.includes(
+'acute'
+)
+){
+
+angle=45;
+
+}
+
+else if(
+lower.includes(
+'obtuse'
+)
+){
+
+angle=120;
+
+}
+
+else if(
+lower.includes(
+'straight'
+)
+){
+
+angle=180;
+
+}
+
+else if(
+lower.includes(
+'reflex'
+)
+){
+
+angle=240;
+
+}
+
+
+return{
+
+mode:'angleType',
+
+angle:angle,
+
+label:optionText
+
+};
+
+
+}
+
+
+
+/* PAIR COUNT */
+
+if(
+scannerType==='pairCount'
+){
+
+
+const match=
+
+optionText
+.match(
+/\d+/
+);
+
+
+return{
+
+mode:'pairCount',
+
+count:
+match
+? Number(match[0])
+: 2,
+
+label:
+optionText
+
+};
+
+
+}
+
+
+
+/* CORRESPONDING */
+
+if(
+scannerType==='corresponding'
+){
+
+
+return{
+
+mode:'corresponding',
+
+label:
+optionText
+
+};
+
+
+}
+
+
+return{
+
+mode:'single',
+
+angle:60,
+
+label:
+optionText
+
+};
+
+
+}
+
+
+
+/* =====================================================
+   LAUNCH
+===================================================== */
+
+function launchTruck(){
+
+
+/*
+NO LAUNCH WITHOUT SELECTION.
+*/
+
+if(
+scene.phase!=='idle' ||
+locked ||
+chosen<0
+){
+
+return;
+
+}
+
+
+scene.scanSpec=
+
+createScanSpec(
+
+answers[chosen].t,
+
+currentQ.scannerType
+
+);
+
+
+scene.scanProgress=0;
+
+
+document
+.getElementById(
+'btn-launch'
+)
+.disabled=
+true;
+
+
+scene.phase=
+'toScanner';
+
+
+scene.gateState=
+'neutral';
+
+
+const status=
+
+document
+.getElementById(
+'status'
+);
+
+
+status.innerText=
+
+'🚚 The truck is carrying your answer to the Angle Scanner...';
+
+
+status.style.color=
+'#2563eb';
+
+
+}
+
+
+
+/* =====================================================
+   UPDATE
+===================================================== */
+
+function update(delta){
+
+
+animationTime+=delta;
+
+
+
+/* GATE */
+
+scene.gateOpen+=
+
+(
+scene.gateTarget
+-
+scene.gateOpen
+)
+
+*
+
+Math.min(
+1,
+delta*.008
+);
+
+
+
+/* FLASH */
+
+scene.flash=
+
+Math.max(
+0,
+scene.flash-delta*.003
+);
+
+
+
+/* =================================================
+   DRIVE TO SCANNER
+================================================= */
+
+if(
+scene.phase==='toScanner'
+){
+
+
+scene.progress+=
+delta*.00050;
+
+
+scene.scanProgress=
+
+Math.min(
+
+1,
+
+scene.progress/.70
+
+);
+
+
+if(
+scene.progress>=.70
+){
+
+
+scene.progress=.70;
+
+scene.scanProgress=1;
+
+scene.phase=
+'scanning';
+
+
+checkAtScanner();
+
+
+}
+
+
+}
+
+
+
+/* =================================================
+   RETURN AFTER FIRST WRONG
+================================================= */
+
+if(
+scene.phase==='return'
+){
+
+
+scene.progress-=
+
+delta*.00055;
+
+
+if(
+scene.progress<=0
+){
+
+
+scene.progress=0;
+
+scene.phase=
+'idle';
+
+
+
+/*
+CLEAR THE PREVIOUS SELECTION.
+
+This is the other important fix.
+*/
+
+chosen=-1;
+
+
+document
+.querySelectorAll(
+'.option-row-btn'
+)
+
+.forEach(
+
+button=>{
+
+
+button
+.classList
+.remove(
+'selected'
+);
+
+
+}
+
+);
+
+
+
+/*
+Launch stays disabled until
+another option is selected.
+*/
+
+document
+.getElementById(
+'btn-launch'
+)
+.disabled=
+true;
+
+
+const status=
+
+document
+.getElementById(
+'status'
+);
+
+
+status.innerText=
+
+'Choose another answer for your second attempt.';
+
+
+status.style.color=
+'#b45309';
+
+
+}
+
+
+}
+
+
+
+/* =================================================
+   DRIVE TO DEPOT
+================================================= */
+
+if(
+scene.phase==='toDepot'
+){
+
+
+scene.progress+=
+
+delta*.00045;
+
+
+if(
+scene.progress>=1
+){
+
+
+scene.progress=1;
+
+scene.phase=
+'unloading';
+
+scene.unload=0;
+
+
+}
+
+
+}
+
+
+
+/* =================================================
+   UNLOAD PARCEL
+================================================= */
+
+if(
+scene.phase==='unloading'
+){
+
+
+scene.unload+=
+
+delta*.0011;
+
+
+if(
+scene.unload>=1.15 &&
+!scene.deliveryReady
+){
+
+
+scene.deliveryReady=
+true;
+
+
+completeDelivery();
+
+
+}
+
+
+}
+
+
+}
+
+
+
+/* =====================================================
+   SCANNER CHECK
+===================================================== */
+
+function checkAtScanner(){
+
+
+const status=
+
+document
+.getElementById(
+'status'
+);
+
+
+
+/* =================================================
+   CORRECT
+================================================= */
+
+if(
+answers[chosen].c
+){
+
+
+locked=true;
+
+
+scene.gateState=
+'correct';
+
+
+scene.gateTarget=1;
+
+
+document
+.getElementById(
+'opt-'+chosen
+)
+.classList
+.add(
+'correct'
+);
+
+
+document
+.getElementById(
+'s-correct'
+)
+.play()
+
+.catch(
+()=>{}
+);
+
+
+score++;
+
+
+document
+.getElementById(
+'score'
+)
+.innerText=
+score;
+
+
+status.innerText=
+
+'✅ Angle Scanner verified your answer! Gate opening...';
+
+
+status.style.color=
+'#15803d';
+
+
+confetti();
+
+
+setTimeout(
+
+()=>{
+
+
+scene.phase=
+'toDepot';
+
+
+status.innerText=
+
+'🚚 Correct! The parcel is travelling to the Geometry Depot...';
+
+
+},
+
+550
+
+);
+
+
+}
+
+
+
+/* =================================================
+   WRONG
+================================================= */
+
+else{
+
+
+attempts++;
+
+
+document
+.getElementById(
+'s-wrong'
+)
+.play()
+
+.catch(
+()=>{}
+);
+
+
+const wrongButton=
+
+document
+.getElementById(
+'opt-'+chosen
+);
+
+
+wrongButton
+.classList
+.remove(
+'selected'
+);
+
+
+wrongButton
+.classList
+.add(
+'wrong'
+);
+
+
+scene.gateState=
+'wrong';
+
+
+scene.flash=1;
+
+
+status.style.color=
+'#dc2626';
+
+
+
+/* =================================================
+   FIRST WRONG
+================================================= */
+
+if(
+attempts<2
+){
+
+
+status.innerText=
+
+'❌ The Angle Scanner rejected that answer. The truck is returning for one more attempt.';
+
+
+scene.gateTarget=0;
+
+
+scene.phase=
+'return';
+
+
+/*
+Wrong option remains red and
+cannot be selected again.
+*/
+
+wrongButton.disabled=
+true;
+
+
+}
+
+
+
+/* =================================================
+   SECOND WRONG
+================================================= */
+
+else{
+
+
+locked=true;
+
+
+scene.guided=true;
+
+
+scene.gateState=
+'guided';
+
+
+scene.gateTarget=1;
+
+
+const correctIndex=
+
+answers.findIndex(
+answer=>answer.c
+);
+
+
+if(
+correctIndex>=0
+){
+
+
+document
+.getElementById(
+'opt-'+correctIndex
+)
+.classList
+.add(
+'correct'
+);
+
+
+}
+
+
+/*
+ANGLE SCANNER NOW CHANGES TO
+THE CORRECT ANSWER.
+*/
+
+scene.scanSpec=
+
+createScanSpec(
+
+answers[correctIndex].t,
+
+currentQ.scannerType
+
+);
+
+
+scene.scanProgress=1;
+
+
+status.innerText=
+
+'📘 Correct answer: '
++
+answers[correctIndex].t
++
+'. '
++
+currentQ.exp
++
+' Guided delivery activated.';
+
+
+setTimeout(
+
+()=>{
+
+
+scene.phase=
+'toDepot';
+
+
+},
+
+1000
+
+);
+
+
+}
+
+
+}
+
+
+}
+
+
+
+/* =====================================================
+   DELIVERY COMPLETE
+===================================================== */
+
+function completeDelivery(){
+
+
+const status=
+
+document
+.getElementById(
+'status'
+);
+
+
+if(
+scene.guided
+){
+
+
+status.innerText=
+
+'📦 Guided parcel delivered. Review the highlighted correct answer before continuing.';
+
+
+status.style.color=
+'#b45309';
+
+
+}
+
+
+else{
+
+
+status.innerText=
+
+'🎉 Parcel delivered! '
++
+currentQ.exp;
+
+
+status.style.color=
+'#15803d';
+
+
+document
+.getElementById(
+'s-claps'
+)
+.play()
+
+.catch(
+()=>{}
+);
+
+
+}
+
+
+document
+.getElementById(
+'btn-launch'
+)
+.classList
+.add(
+'hidden'
+);
+
+
+document
+.getElementById(
+'btn-next'
+)
+.classList
+.remove(
+'hidden'
+);
+
+
+disableOptions();
+
+
+}
+
+
+
+/* =====================================================
+   DISABLE OPTIONS
+===================================================== */
+
+function disableOptions(){
+
+
+document
+.querySelectorAll(
+'.option-row-btn'
+)
+
+.forEach(
+
+button=>{
+
+
+button.disabled=
+true;
+
+
+}
+
+);
+
+
+}
+
+
+
+/* =====================================================
+   NEXT QUESTION
+===================================================== */
+
+function nextMission(){
+
+
+qIndex++;
+
+
+if(
+qIndex>=questions.length
+){
+
+
+finish();
+
+
+}
+
+
+else{
+
+
+loadQuestion();
+
+
+}
+
+
+}
+
+
+
+/* =====================================================
+   FINISH
+===================================================== */
+
+function finish(){
+
+
+document
+.getElementById(
+'s-claps'
+)
+.play()
+
+.catch(
+()=>{}
+);
+
+
+document
+.getElementById(
+'viewport-root'
+)
+.innerHTML=
+
+`
+
+<div
+class="ins-box"
+style="
+margin:auto;
+margin-top:12vh;
+text-align:center
+">
+
+<h2 class="ins-title">
+
+🏆 Geometry Depot Complete!
+
+</h2>
+
+<p class="ins-text">
+
+You completed all 10 Lines & Angles delivery missions.
+
+<br><br>
+
+<b>
+Successful Deliveries: ${score}/10 ⭐
+</b>
+
+</p>
+
+<button
+class="action-btn"
+onclick="location.reload()">
+
+Play Again
+
+</button>
+
+</div>
+
+`;
+
+
+}
+
+
+
+/* =====================================================
+   RENDER
+===================================================== */
+
+function render(){
+
+
+if(
+!ctx ||
+!canvas
+){
+
+return;
+
+}
+
+
+const w=
+
+canvas.logicalWidth ||
+
+canvas
+.getBoundingClientRect()
+.width;
+
+
+const h=
+
+canvas.logicalHeight ||
+
+canvas
+.getBoundingClientRect()
+.height;
+
+
+ctx.clearRect(
+0,
+0,
+w,
+h
+);
+
+
+
+/* =================================================
+   BACKGROUND
+================================================= */
+
+const sky=
+
+ctx.createLinearGradient(
+0,
+0,
+0,
+h
+);
+
+
+sky.addColorStop(
+0,
+'#dff5ff'
+);
+
+
+sky.addColorStop(
+.58,
+'#effaff'
+);
+
+
+sky.addColorStop(
+.59,
+'#d8efc4'
+);
+
+
+sky.addColorStop(
+1,
+'#b8dd99'
+);
+
+
+ctx.fillStyle=
+sky;
+
+
+ctx.fillRect(
+0,
+0,
+w,
+h
+);
+
+
+
+/* =================================================
+   CLOUDS
+================================================= */
+
+drawCloud(
+w*.15,
+h*.18,
+Math.max(
+14,
+w*.032
+)
+);
+
+
+drawCloud(
+w*.43,
+h*.13,
+Math.max(
+13,
+w*.027
+)
+);
+
+
+
+/* =================================================
+   ROAD
+================================================= */
+
+const roadY=
+h-58;
+
+
+ctx.fillStyle=
+'#475569';
+
+
+ctx.fillRect(
+10,
+roadY-20,
+w-20,
+46
+);
+
+
+ctx.strokeStyle=
+'#ffffff';
+
+
+ctx.lineWidth=3;
+
+
+ctx.setLineDash(
+[16,14]
+);
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+18,
+roadY+3
+);
+
+
+ctx.lineTo(
+w-18,
+roadY+3
+);
+
+
+ctx.stroke();
+
+
+ctx.setLineDash(
+[]
+);
+
+
+
+/* =================================================
+   RESPONSIVE POSITIONS
+================================================= */
+
+const depotWidth=
+
+Math.max(
+
+82,
+
+Math.min(
+132,
+w*.18
+)
+
+);
+
+
+const depotX=
+
+w
+-
+depotWidth
+-
+10;
+
+
+const dockX=
+
+depotX
+-
+24;
+
+
+const startX=
+
+Math.max(
+38,
+w*.07
+);
+
+
+const scannerX=
+
+Math.max(
+
+startX+85,
+
+depotX-78
+
+);
+
+
+
+/* =================================================
+   DEPOT
+================================================= */
+
+drawDepot(
+
+depotX,
+roadY,
+depotWidth
+
+);
+
+
+
+/* =================================================
+   ANGLE SCANNER
+================================================= */
+
+drawAngleScanner(
+
+scannerX,
+roadY-70,
+w
+
+);
+
+
+
+/* =================================================
+   BARRIER
+================================================= */
+
+drawBarrier(
+
+scannerX,
+roadY
+
+);
+
+
+
+/* =================================================
+   TRUCK
+================================================= */
+
+const truckX=
+
+startX
++
+(
+dockX-startX
+)
+*
+scene.progress;
+
+
+drawTruck(
+
+truckX,
+roadY,
+w
+
+);
+
+
+
+/* =================================================
+   PARCEL
+================================================= */
+
+if(
+scene.phase==='unloading'
+){
+
+
+drawParcelDelivery(
+
+truckX,
+depotX,
+roadY
+
+);
+
+
+}
+
+
+
+/* =================================================
+   ERROR FLASH
+================================================= */
+
+if(
+scene.flash>0
+){
+
+
+ctx.fillStyle=
+
+`rgba(220,38,38,${scene.flash*.12})`;
+
+
+ctx.fillRect(
+0,
+0,
+w,
+h
+);
+
+
+}
+
+
+}
+
+
+
+/* =====================================================
+   CLOUD
+===================================================== */
+
+function drawCloud(
+x,
+y,
+size
+){
+
+
+ctx.fillStyle=
+'rgba(255,255,255,.88)';
+
+
+ctx.beginPath();
+
+
+ctx.arc(
+x,
+y,
+size,
+0,
+Math.PI*2
+);
+
+
+ctx.arc(
+x+size*.8,
+y-size*.15,
+size*.8,
+0,
+Math.PI*2
+);
+
+
+ctx.arc(
+x+size*1.5,
+y,
+size*.65,
+0,
+Math.PI*2
+);
+
+
+ctx.fill();
+
+
+}
+
+
+
+/* =====================================================
+   DEPOT
+===================================================== */
+
+function drawDepot(
+x,
+roadY,
+width
+){
+
+
+const height=
+
+Math.max(
+76,
+width*.78
+);
+
+
+const y=
+roadY-height;
+
+
+ctx.fillStyle=
+'#fef3c7';
+
+
+ctx.strokeStyle=
+'#d97706';
+
+
+ctx.lineWidth=3;
+
+
+roundedRect(
+x,
+y,
+width,
+height,
+9
+);
+
+
+ctx.fill();
+
+ctx.stroke();
+
+
+
+ctx.fillStyle=
+'#2563eb';
+
+
+ctx.fillRect(
+x-3,
+y-9,
+width+6,
+17
+);
+
+
+
+ctx.fillStyle=
+'#1d4ed8';
+
+
+ctx.font=
+
+`bold ${Math.max(
+8,
+Math.min(
+12,
+width*.09
+)
+)}px sans-serif`;
+
+
+ctx.textAlign=
+'center';
+
+
+ctx.fillText(
+'GEOMETRY',
+x+width/2,
+y+23
+);
+
+
+ctx.fillText(
+'DEPOT',
+x+width/2,
+y+37
+);
+
+
+
+ctx.fillStyle=
+'#475569';
+
+
+ctx.fillRect(
+
+x+width*.27,
+
+roadY-height*.46,
+
+width*.46,
+
+height*.46
+
+);
+
+
+
+ctx.fillStyle=
+'#ffffff';
+
+
+ctx.font=
+
+`bold ${Math.max(
+8,
+width*.075
+)}px sans-serif`;
+
+
+ctx.fillText(
+
+`${score}/10`,
+
+x+width/2,
+
+roadY-9
+
+);
+
+
+ctx.textAlign=
+'left';
+
+
+}
+
+
+
+/* =====================================================
+   ANGLE SCANNER
+===================================================== */
+
+function drawAngleScanner(
+x,
+y,
+canvasWidth
+){
+
+
+const radius=
+
+Math.max(
+
+27,
+
+Math.min(
+44,
+canvasWidth*.055
+)
+
+);
+
+
+const spec=
+
+scene.scanSpec;
+
+
+
+/* SCANNER PANEL */
+
+ctx.fillStyle=
+'rgba(255,255,255,.95)';
+
+
+ctx.strokeStyle=
+
+scene.gateState==='wrong'
+
+? '#dc2626'
+
+: scene.gateState==='correct'
+
+? '#16a34a'
+
+: scene.gateState==='guided'
+
+? '#d97706'
+
+: '#2563eb';
+
+
+ctx.lineWidth=2;
+
+
+roundedRect(
+
+x-radius-17,
+
+y-radius-25,
+
+radius*2+34,
+
+radius+52,
+
+10
+
+);
+
+
+ctx.fill();
+
+ctx.stroke();
+
+
+
+/* TITLE */
+
+ctx.fillStyle=
+'#075985';
+
+
+ctx.textAlign=
+'center';
+
+
+ctx.font=
+
+`bold ${Math.max(
+8,
+radius*.21
+)}px sans-serif`;
+
+
+ctx.fillText(
+
+'ANGLE SCANNER',
+
+x,
+
+y-radius-9
+
+);
+
+
+
+/* =================================================
+   IDLE SCANNER
+================================================= */
+
+if(!spec){
+
+
+const idleAngle=
+
+35
++
+30
+*
+(
+.5+
+.5*
+Math.sin(
+animationTime*.002
+)
+);
+
+
+drawSingleAngle(
+
+x,
+y+8,
+radius,
+idleAngle,
+false,
+'SCAN'
+
+);
+
+
+ctx.textAlign=
+'left';
+
+
+return;
+
+
+}
+
+
+
+/* =================================================
+   SINGLE ANGLE
+================================================= */
+
+if(
+spec.mode==='single'
+){
+
+
+const currentAngle=
+
+animateDegree(
+15,
+spec.angle
+);
+
+
+drawSingleAngle(
+
+x,
+y+8,
+radius,
+currentAngle,
+true,
+
+Math.round(
+currentAngle
+)
++
+'°'
+
+);
+
+
+}
+
+
+
+/* =================================================
+   ANGLE TYPE
+================================================= */
+
+else if(
+spec.mode==='angleType'
+){
+
+
+const currentAngle=
+
+animateDegree(
+20,
+spec.angle
+);
+
+
+drawSingleAngle(
+
+x,
+y+8,
+radius,
+currentAngle,
+true,
+
+Math.round(
+currentAngle
+)
++
+'°'
+
+);
+
+
+ctx.fillStyle=
+'#475569';
+
+
+ctx.font=
+
+`bold ${Math.max(
+7,
+radius*.17
+)}px sans-serif`;
+
+
+ctx.fillText(
+
+spec.label
+.toUpperCase(),
+
+x,
+
+y+radius*.62
+
+);
+
+
+}
+
+
+
+/* =================================================
+   VERTICALLY OPPOSITE
+================================================= */
+
+else if(
+spec.mode==='vertical'
+){
+
+
+const currentAngle=
+
+animateDegree(
+20,
+spec.angle
+);
+
+
+drawVerticalAngles(
+
+x,
+y+7,
+radius,
+currentAngle
+
+);
+
+
+}
+
+
+
+/* =================================================
+   ANGLE PAIR
+================================================= */
+
+else if(
+spec.mode==='pair'
+){
+
+
+const a=
+
+animateDegree(
+10,
+spec.a
+);
+
+
+const b=
+
+animateDegree(
+10,
+spec.b
+);
+
+
+drawAnglePair(
+
+x,
+y+9,
+radius,
+a,
+b
+
+);
+
+
+}
+
+
+
+/* =================================================
+   PAIR COUNT
+================================================= */
+
+else if(
+spec.mode==='pairCount'
+){
+
+
+drawPairCount(
+
+x,
+y+8,
+radius,
+spec.count
+
+);
+
+
+}
+
+
+
+/* =================================================
+   CORRESPONDING ANGLES
+================================================= */
+
+else if(
+spec.mode==='corresponding'
+){
+
+
+drawCorresponding(
+
+x,
+y+8,
+radius,
+spec.label
+
+);
+
+
+}
+
+
+ctx.textAlign=
+'left';
+
+
+}
+
+
+
+/* =====================================================
+   DEGREE ANIMATION
+===================================================== */
+
+function animateDegree(
+start,
+target
+){
+
+
+const p=
+
+Math.max(
+0,
+Math.min(
+1,
+scene.scanProgress
+)
+);
+
+
+const eased=
+
+p*p*
+(
+3-2*p
+);
+
+
+return
+
+start
++
+(
+target-start
+)
+*
+eased;
+
+
+}
+
+
+
+/* =====================================================
+   SINGLE ANGLE
+===================================================== */
+
+function drawSingleAngle(
+x,
+y,
+radius,
+degrees,
+showArc,
+label
+){
+
+
+const angle=
+
+degrees*
+Math.PI/180;
+
+
+const vx=
+
+x-radius*.36;
+
+
+const vy=
+
+y+radius*.25;
+
+
+
+/* BASE RAY */
+
+ctx.strokeStyle=
+'#1d4ed8';
+
+
+ctx.lineWidth=4;
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+vx,
+vy
+);
+
+
+ctx.lineTo(
+vx+radius*1.15,
+vy
+);
+
+
+ctx.stroke();
+
+
+
+/* MOVING RAY */
+
+ctx.strokeStyle=
+'#f59e0b';
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+vx,
+vy
+);
+
+
+ctx.lineTo(
+
+vx+
+Math.cos(
+-angle
+)
+*
+radius,
+
+vy+
+Math.sin(
+-angle
+)
+*
+radius
+
+);
+
+
+ctx.stroke();
+
+
+
+/* ARC */
+
+if(showArc){
+
+
+ctx.strokeStyle=
+'#7c3aed';
+
+
+ctx.lineWidth=2;
+
+
+ctx.beginPath();
+
+
+ctx.arc(
+
+vx,
+vy,
+
+radius*.40,
+
+-angle,
+
+0
+
+);
+
+
+ctx.stroke();
+
+
+}
+
+
+
+/* VERTEX */
+
+ctx.fillStyle=
+'#1e293b';
+
+
+ctx.beginPath();
+
+
+ctx.arc(
+vx,
+vy,
+3.5,
+0,
+Math.PI*2
+);
+
+
+ctx.fill();
+
+
+
+/* DEGREE LABEL */
+
+ctx.fillStyle=
+'#6d28d9';
+
+
+ctx.font=
+
+`bold ${Math.max(
+9,
+radius*.25
+)}px sans-serif`;
+
+
+ctx.textAlign=
+'center';
+
+
+ctx.fillText(
+
+label,
+
+x+radius*.08,
+
+y+radius*.08
+
+);
+
+
+}
+
+
+
+/* =====================================================
+   VERTICALLY OPPOSITE ANGLES
+===================================================== */
+
+function drawVerticalAngles(
+x,
+y,
+radius,
+degrees
+){
+
+
+const a=
+
+degrees*
+Math.PI/180;
+
+
+const length=
+radius*.9;
+
+
+
+ctx.strokeStyle=
+'#1d4ed8';
+
+
+ctx.lineWidth=4;
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+x-length,
+y
+);
+
+
+ctx.lineTo(
+x+length,
+y
+);
+
+
+ctx.stroke();
+
+
+
+ctx.strokeStyle=
+'#f59e0b';
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+
+x-
+Math.cos(a)*length,
+
+y+
+Math.sin(a)*length
+
+);
+
+
+ctx.lineTo(
+
+x+
+Math.cos(a)*length,
+
+y-
+Math.sin(a)*length
+
+);
+
+
+ctx.stroke();
+
+
+
+const value=
+
+Math.round(
+degrees
+)
++
+'°';
+
+
+ctx.fillStyle=
+'#6d28d9';
+
+
+ctx.font=
+
+`bold ${Math.max(
+9,
+radius*.23
+)}px sans-serif`;
+
+
+ctx.textAlign=
+'center';
+
+
+ctx.fillText(
+
+value,
+
+x+radius*.43,
+
+y-radius*.24
+
+);
+
+
+ctx.fillText(
+
+value,
+
+x-radius*.43,
+
+y+radius*.52
+
+);
+
+
+}
+
+
+
+/* =====================================================
+   PAIR OF ANGLES
+===================================================== */
+
+function drawAnglePair(
+x,
+y,
+radius,
+a,
+b
+){
+
+
+const total=
+
+a+b;
+
+
+const aRad=
+
+-a*
+Math.PI/180;
+
+
+const totalRad=
+
+-total*
+Math.PI/180;
+
+
+const vx=
+
+x-radius*.30;
+
+
+const vy=
+
+y+radius*.32;
+
+
+
+/* FIRST RAY */
+
+ctx.strokeStyle=
+'#1d4ed8';
+
+
+ctx.lineWidth=4;
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+vx,
+vy
+);
+
+
+ctx.lineTo(
+vx+radius*1.1,
+vy
+);
+
+
+ctx.stroke();
+
+
+
+/* MIDDLE RAY */
+
+ctx.strokeStyle=
+'#16a34a';
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+vx,
+vy
+);
+
+
+ctx.lineTo(
+
+vx+
+Math.cos(aRad)
+*
+radius,
+
+vy+
+Math.sin(aRad)
+*
+radius
+
+);
+
+
+ctx.stroke();
+
+
+
+/* FINAL RAY */
+
+ctx.strokeStyle=
+'#f59e0b';
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+vx,
+vy
+);
+
+
+ctx.lineTo(
+
+vx+
+Math.cos(totalRad)
+*
+radius,
+
+vy+
+Math.sin(totalRad)
+*
+radius
+
+);
+
+
+ctx.stroke();
+
+
+
+/* FIRST ARC */
+
+ctx.strokeStyle=
+'#16a34a';
+
+
+ctx.lineWidth=2;
+
+
+ctx.beginPath();
+
+
+ctx.arc(
+
+vx,
+vy,
+
+radius*.34,
+
+aRad,
+0
+
+);
+
+
+ctx.stroke();
+
+
+
+/* SECOND ARC */
+
+ctx.strokeStyle=
+'#7c3aed';
+
+
+ctx.beginPath();
+
+
+ctx.arc(
+
+vx,
+vy,
+
+radius*.47,
+
+totalRad,
+aRad
+
+);
+
+
+ctx.stroke();
+
+
+
+ctx.textAlign=
+'center';
+
+
+ctx.font=
+
+`bold ${Math.max(
+8,
+radius*.19
+)}px sans-serif`;
+
+
+ctx.fillStyle=
+'#15803d';
+
+
+ctx.fillText(
+
+Math.round(a)
++
+'°',
+
+x+radius*.18,
+
+y-radius*.10
+
+);
+
+
+ctx.fillStyle=
+'#6d28d9';
+
+
+ctx.fillText(
+
+Math.round(b)
++
+'°',
+
+x-radius*.18,
+
+y-radius*.30
+
+);
+
+
+
+ctx.fillStyle=
+'#475569';
+
+
+ctx.font=
+
+`bold ${Math.max(
+7,
+radius*.16
+)}px sans-serif`;
+
+
+ctx.fillText(
+
+'Total '
++
+Math.round(total)
++
+'°',
+
+x,
+
+y+radius*.62
+
+);
+
+
+}
+
+
+
+/* =====================================================
+   PAIR COUNT
+===================================================== */
+
+function drawPairCount(
+x,
+y,
+radius,
+count
+){
+
+
+const pulse=
+
+.5
++
+.5*
+Math.sin(
+animationTime*.005
+);
+
+
+
+ctx.strokeStyle=
+'#1d4ed8';
+
+
+ctx.lineWidth=4;
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+x-radius*.75,
+y-radius*.55
+);
+
+
+ctx.lineTo(
+x+radius*.75,
+y+radius*.55
+);
+
+
+ctx.stroke();
+
+
+
+ctx.strokeStyle=
+'#f59e0b';
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+x-radius*.75,
+y+radius*.55
+);
+
+
+ctx.lineTo(
+x+radius*.75,
+y-radius*.55
+);
+
+
+ctx.stroke();
+
+
+
+ctx.fillStyle=
+
+`rgba(124,58,237,${.20+.20*pulse})`;
+
+
+ctx.beginPath();
+
+
+ctx.arc(
+x,
+y,
+radius*.42,
+-.7,
+.7
+);
+
+
+ctx.lineTo(
+x,
+y
+);
+
+
+ctx.fill();
+
+
+
+ctx.beginPath();
+
+
+ctx.arc(
+x,
+y,
+radius*.42,
+Math.PI-.7,
+Math.PI+.7
+);
+
+
+ctx.lineTo(
+x,
+y
+);
+
+
+ctx.fill();
+
+
+
+ctx.fillStyle=
+'#6d28d9';
+
+
+ctx.textAlign=
+'center';
+
+
+ctx.font=
+
+`bold ${Math.max(
+10,
+radius*.24
+)}px sans-serif`;
+
+
+ctx.fillText(
+
+count
++
+(
+count===1
+? ' pair'
+: ' pairs'
+),
+
+x,
+
+y+radius*.08
+
+);
+
+
+}
+
+
+
+/* =====================================================
+   CORRESPONDING ANGLES
+===================================================== */
+
+function drawCorresponding(
+x,
+y,
+radius,
+label
+){
+
+
+const left=
+
+x-radius*.72;
+
+
+const right=
+
+x+radius*.72;
+
+
+
+/* PARALLEL LINES */
+
+ctx.strokeStyle=
+'#1d4ed8';
+
+
+ctx.lineWidth=3;
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+left,
+y-radius*.42
+);
+
+
+ctx.lineTo(
+right,
+y-radius*.42
+);
+
+
+ctx.moveTo(
+left,
+y+radius*.32
+);
+
+
+ctx.lineTo(
+right,
+y+radius*.32
+);
+
+
+ctx.stroke();
+
+
+
+/* TRANSVERSAL */
+
+ctx.strokeStyle=
+'#f59e0b';
+
+
+ctx.lineWidth=4;
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+x-radius*.35,
+y-radius*.72
+);
+
+
+ctx.lineTo(
+x+radius*.35,
+y+radius*.67
+);
+
+
+ctx.stroke();
+
+
+
+const pulse=
+
+.55
++
+.25*
+Math.sin(
+animationTime*.005
+);
+
+
+ctx.fillStyle=
+
+`rgba(22,163,74,${pulse})`;
+
+
+ctx.beginPath();
+
+
+ctx.arc(
+x-radius*.11,
+y-radius*.42,
+5,
+0,
+Math.PI*2
+);
+
+
+ctx.fill();
+
+
+ctx.beginPath();
+
+
+ctx.arc(
+x+radius*.12,
+y+radius*.32,
+5,
+0,
+Math.PI*2
+);
+
+
+ctx.fill();
+
+
+
+ctx.fillStyle=
+'#6d28d9';
+
+
+ctx.textAlign=
+'center';
+
+
+ctx.font=
+
+`bold ${Math.max(
+8,
+radius*.18
+)}px sans-serif`;
+
+
+ctx.fillText(
+
+label,
+
+x,
+
+y+radius*.72
+
+);
+
+
+}
+
+
+
+/* =====================================================
+   BARRIER
+===================================================== */
+
+function drawBarrier(
+x,
+roadY
+){
+
+
+const baseY=
+roadY-23;
+
+
+ctx.fillStyle=
+'#1e3a8a';
+
+
+ctx.fillRect(
+x-5,
+baseY-12,
+10,
+38
+);
+
+
+ctx.save();
+
+
+ctx.translate(
+x,
+baseY-7
+);
+
+
+ctx.rotate(
+
+-scene.gateOpen
+*
+Math.PI
+*
+.42
+
+);
+
+
+ctx.lineWidth=9;
+
+
+ctx.strokeStyle=
+
+scene.gateState==='wrong'
+
+? '#dc2626'
+
+: '#ffffff';
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+0,
+0
+);
+
+
+ctx.lineTo(
+-54,
+0
+);
+
+
+ctx.stroke();
+
+
+ctx.lineWidth=4;
+
+
+ctx.strokeStyle=
+'#ef4444';
+
+
+ctx.setLineDash(
+[9,8]
+);
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+0,
+0
+);
+
+
+ctx.lineTo(
+-54,
+0
+);
+
+
+ctx.stroke();
+
+
+ctx.setLineDash(
+[]
+);
+
+
+ctx.restore();
+
+
+}
+
+
+
+/* =====================================================
+   TRUCK
+===================================================== */
+
+function drawTruck(
+x,
+roadY,
+canvasWidth
+){
+
+
+const scale=
+
+Math.max(
+
+.66,
+
+Math.min(
+1,
+canvasWidth/650
+)
+
+);
+
+
+ctx.save();
+
+
+ctx.translate(
+x,
+roadY-17
+);
+
+
+ctx.scale(
+scale,
+scale
+);
+
+
+
+ctx.fillStyle=
+'#2563eb';
+
+
+ctx.strokeStyle=
+'#1e40af';
+
+
+ctx.lineWidth=2;
+
+
+roundedRect(
+-34,
+-30,
+45,
+29,
+5
+);
+
+
+ctx.fill();
+
+ctx.stroke();
+
+
+
+ctx.fillStyle=
+'#fde68a';
+
+
+ctx.fillRect(
+-22,
+-21,
+15,
+12
+);
+
+
+ctx.strokeStyle=
+'#d97706';
+
+
+ctx.strokeRect(
+-22,
+-21,
+15,
+12
+);
+
+
+
+ctx.fillStyle=
+'#f59e0b';
+
+
+roundedRect(
+8,
+-24,
+27,
+23,
+5
+);
+
+
+ctx.fill();
+
+
+
+ctx.fillStyle=
+'#dbeafe';
+
+
+ctx.fillRect(
+15,
+-19,
+13,
+9
+);
+
+
+
+ctx.fillStyle=
+'#334155';
+
+
+ctx.fillRect(
+-36,
+-3,
+73,
+6
+);
+
+
+
+ctx.fillStyle=
+'#111827';
+
+
+ctx.beginPath();
+
+
+ctx.arc(
+-20,
+5,
+7,
+0,
+Math.PI*2
+);
+
+
+ctx.arc(
+23,
+5,
+7,
+0,
+Math.PI*2
+);
+
+
+ctx.fill();
+
+
+
+ctx.fillStyle=
+'#94a3b8';
+
+
+ctx.beginPath();
+
+
+ctx.arc(
+-20,
+5,
+3,
+0,
+Math.PI*2
+);
+
+
+ctx.arc(
+23,
+5,
+3,
+0,
+Math.PI*2
+);
+
+
+ctx.fill();
+
+
+ctx.restore();
+
+
+}
+
+
+
+/* =====================================================
+   PARCEL DELIVERY
+===================================================== */
+
+function drawParcelDelivery(
+truckX,
+depotX,
+roadY
+){
+
+
+const t=
+
+Math.min(
+scene.unload,
+1
+);
+
+
+const startX=
+truckX+5;
+
+
+const endX=
+depotX+28;
+
+
+const parcelX=
+
+startX
++
+(
+endX-startX
+)
+*
+t;
+
+
+const parcelY=
+
+roadY-46
+-
+Math.sin(
+t*Math.PI
+)
+*
+35;
+
+
+ctx.fillStyle=
+'#f59e0b';
+
+
+ctx.strokeStyle=
+'#92400e';
+
+
+ctx.lineWidth=2;
+
+
+ctx.fillRect(
+parcelX-8,
+parcelY-8,
+16,
+16
+);
+
+
+ctx.strokeRect(
+parcelX-8,
+parcelY-8,
+16,
+16
+);
+
+
+ctx.strokeStyle=
+'#fff7ed';
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+parcelX,
+parcelY-8
+);
+
+
+ctx.lineTo(
+parcelX,
+parcelY+8
+);
+
+
+ctx.stroke();
+
+
+}
+
+
+
+/* =====================================================
+   ROUNDED RECT
+===================================================== */
+
+function roundedRect(
+x,
+y,
+width,
+height,
+radius
+){
+
+
+const r=
+
+Math.min(
+radius,
+width/2,
+height/2
+);
+
+
+ctx.beginPath();
+
+
+ctx.moveTo(
+x+r,
+y
+);
+
+
+ctx.lineTo(
+x+width-r,
+y
+);
+
+
+ctx.quadraticCurveTo(
+x+width,
+y,
+x+width,
+y+r
+);
+
+
+ctx.lineTo(
+x+width,
+y+height-r
+);
+
+
+ctx.quadraticCurveTo(
+x+width,
+y+height,
+x+width-r,
+y+height
+);
+
+
+ctx.lineTo(
+x+r,
+y+height
+);
+
+
+ctx.quadraticCurveTo(
+x,
+y+height,
+x,
+y+height-r
+);
+
+
+ctx.lineTo(
+x,
+y+r
+);
+
+
+ctx.quadraticCurveTo(
+x,
+y,
+x+r,
+y
+);
+
+
+ctx.closePath();
+
+
+}
+
+
+
+/* =====================================================
+   LOOP
+===================================================== */
+
+function loop(time){
+
+
+const delta=
+
+Math.min(
+
+40,
+
+time-lastTime || 16
+
+);
+
+
+lastTime=
+time;
+
+
+update(
+delta
+);
+
+
+render();
+
+
+requestAnimationFrame(
+loop
+);
+
+
+}
+
+
+
+/* =====================================================
+   CONFETTI
+===================================================== */
+
+function confetti(){
+
+
+for(
+let i=0;
+i<18;
+i++
+){
+
+
+const piece=
+
+document
+.createElement(
+'div'
+);
+
+
+piece.className=
+'confetti';
+
+
+piece.style.left=
+
+Math.random()*100
++
+'vw';
+
+
+piece.style.background=
+
+[
+'#2563eb',
+'#f59e0b',
+'#16a34a',
+'#ef4444',
+'#7c3aed'
+]
+
+[
+Math.floor(
+Math.random()*5
+)
+];
+
+
+piece.style.animationDelay=
+
+Math.random()*.25
++
+'s';
+
+
+document.body
+.appendChild(
+piece
+);
+
+
+setTimeout(
+
+()=>piece.remove(),
+
+1600
+
+);
+
+
+}
+
+
+}
+
 </script>
+
 </body>
+
 </html>
