@@ -17,7 +17,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.45;ba
 .grid{display:grid;grid-template-columns:.92fr 1.25fr;gap:12px;min-height:0;flex:1}
 .panel{background:rgba(255,255,255,.9);border:2px solid #86efac;border-radius:20px;padding:clamp(10px,2vw,14px);box-shadow:0 10px 24px rgba(34,197,94,.15)}
 .qpanel{display:flex;flex-direction:column;gap:10px}
-.taskbox{background:#fdf2f8;border:2px solid #ec4899;border-radius:16px;padding:clamp(10px,2.2vw,14px);text-align:center}.tag{font-size:clamp(.67rem,1.8vw,.8rem);letter-spacing:1.8px;text-transform:uppercase;color:#047857;font-weight:900}.task{font-size:clamp(1rem,3vw,1.32rem);font-weight:900;color:#111827;line-height:1.35;margin-top:6px}.visual{font-size:clamp(2rem,7vw,3.5rem);line-height:1;margin-top:8px}.hint{font-size:clamp(.78rem,2.2vw,.92rem);font-weight:750;color:#475569;text-align:center;line-height:1.35}
+.taskbox{background:#fdf2f8;border:2px solid #ec4899;border-radius:16px;padding:clamp(10px,2.2vw,14px);text-align:center}.tag{font-size:clamp(.67rem,1.8vw,.8rem);letter-spacing:1.8px;text-transform:uppercase;color:#047857;font-weight:900}.task{font-size:clamp(1rem,3vw,1.32rem);font-weight:900;color:#111827;line-height:1.35;margin-top:6px}.visual{font-size:clamp(2rem,7vw,3.5rem);line-height:1;margin-top:8px}
 .opts{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:auto}.opt{border:2px solid #bbf7d0;background:#f0fdf4;border-radius:16px;padding:clamp(10px,2vw,14px) 8px;min-height:54px;font-size:clamp(.88rem,2.4vw,1.03rem);font-weight:900;color:#1e293b;cursor:pointer;box-shadow:0 3px 10px rgba(34,197,94,.09);transition:.2s}.opt.selected{background:#dcfce7;border-color:#16a34a;transform:translateY(-1px)}.opt.correct{background:#dcfce7!important;border-color:#16a34a!important}.opt.wrong{background:#fee2e2!important;border-color:#dc2626!important}
 .scene{position:relative;overflow:hidden;min-height:280px;padding:0;border-color:#f9a8d4;background:#fff7fb}canvas{display:block;width:100%;height:100%}
 .status{font-size:clamp(.82rem,2.3vw,.95rem);font-weight:850;text-align:center;color:#475569;min-height:22px;line-height:1.3}
@@ -26,7 +26,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.45;ba
 @media(max-width:720px){#root{max-width:480px}.grid{grid-template-columns:1fr;grid-template-rows:auto 1fr}.scene{min-height:260px}.opts{grid-template-columns:1fr 1fr}}
 @media(max-width:390px){#root{padding:8px;gap:8px}.scene{min-height:220px}.opts{gap:7px}.opt{min-height:48px}}
 @media(max-height:650px){#root{max-height:none;gap:7px}.panel{padding:8px}.taskbox{padding:8px}.scene{min-height:190px}.opt{min-height:44px;padding:8px}.btn{padding:11px}}
-@media(orientation:landscape) and (max-height:520px){#root{max-width:900px}.grid{grid-template-columns:.9fr 1.3fr}.scene{min-height:0}.hint{font-size:.78rem}.opts{gap:6px}.opt{min-height:40px;padding:7px}.btn{padding:10px}}
+@media(orientation:landscape) and (max-height:520px){#root{max-width:900px}.grid{grid-template-columns:.9fr 1.3fr}.scene{min-height:0}.opts{gap:6px}.opt{min-height:40px;padding:7px}.btn{padding:10px}}
 </style>
 </head>
 <body>
@@ -59,7 +59,6 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.45;ba
         <div class="task" id="task">Loading...</div>
         <div class="visual" id="visual"></div>
       </div>
-      <div class="hint" id="hint">Choose the correct match.</div>
       <div class="opts">
         <button class="opt" id="o0" onclick="pick(0)">A</button>
         <button class="opt" id="o1" onclick="pick(1)">B</button>
@@ -78,7 +77,7 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.45;ba
 </div>
 
 <script>
-let canvas,ctx,current,chosen=0,choices=[],qIndex=0,score=0,locked=false;
+let canvas,ctx,current,chosen=-1,choices=[],qIndex=0,score=0,locked=false;
 let butterfly={progress:0,moving:false,fail:false,success:false,timer:0,wing:0,target:0};
 let bloomed=[];
 const qs=[
@@ -88,7 +87,7 @@ const qs=[
 {tag:'Regular Polygon',q:'A regular hexagon has:',visual:'⬡',ans:'6 lines of symmetry',w:['4 lines of symmetry','5 lines of symmetry','8 lines of symmetry'],exp:'A regular hexagon has 6 equal sides and 6 lines of symmetry.'},
 {tag:'Reasoning',q:'Which shape has rotational symmetry but no line symmetry?',visual:'↻',ans:'Parallelogram',w:['Rectangle','Rhombus','Square'],exp:'A general parallelogram has rotational symmetry of order 2 but no line symmetry.'},
 {tag:'Rotational Symmetry',q:'The order of rotational symmetry of a regular octagon is:',visual:'⯃',ans:'8',w:['4','6','16'],exp:'A regular octagon matches itself 8 times in a full turn.'},
-{tag:'Letter Symmetry',q:'Which capital letter has rotational symmetry of order 2?',visual:'Z',ans:'Z',w:['A','H','N'],exp:'Z looks the same after a half-turn rotation.'},
+{tag:'Letter Symmetry',q:'Which capital letter has rotational symmetry of order 2?',visual:'↻',ans:'Z',w:['A','H','N'],exp:'Z looks the same after a half-turn rotation.'},
 {tag:'Angle of Rotation',q:'A shape matches itself after rotating through 120°. Its rotational symmetry order is:',visual:'△',ans:'3',w:['2','4','6'],exp:'360° ÷ 120° = 3.'},
 {tag:'True Statement',q:'Which statement is TRUE?',visual:'↻',ans:'Some shapes have rotational symmetry but no line symmetry.',w:['Every shape with rotational symmetry has line symmetry.','Every shape with line symmetry has rotational symmetry.','Rotational symmetry and line symmetry are always the same.'],exp:'Some shapes, like a general parallelogram, have rotational symmetry but no line symmetry.'},
 {tag:'Regular Polygon',q:'A regular decagon has:',visual:'⬢',ans:'10 lines of symmetry',w:['5 lines of symmetry','8 lines of symmetry','20 lines of symmetry'],exp:'A regular decagon has 10 sides, so it has 10 lines of symmetry.'},
@@ -102,21 +101,34 @@ function resize(){let r=canvas.getBoundingClientRect();canvas.width=Math.max(300
 function closeIntro(){let m=document.getElementById('intro');if(m)m.remove();}
 function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function loadQ(){
- locked=false;current=qs[qIndex];
+ locked=false;
+ chosen=-1;
+ current=qs[qIndex];
  document.getElementById('qnum').innerText=qIndex+1;
  document.getElementById('task').innerText=current.q;
  document.getElementById('visual').innerText=current.visual || '';
  document.getElementById('status').innerText='Select an answer and let the butterfly fly.';
  document.getElementById('status').style.color='#475569';
- document.getElementById('go').disabled=false;
+ document.getElementById('go').disabled=true;
  choices=shuffle([{text:current.ans,correct:true},...current.w.map(x=>({text:x,correct:false}))]);
- for(let i=0;i<4;i++){let b=document.getElementById('o'+i);b.className='opt';b.innerText=String.fromCharCode(65+i)+'. '+choices[i].text;}
- butterfly={progress:0,moving:false,fail:false,success:false,timer:0,wing:0,target:qIndex%4};
- pick(0);
+ for(let i=0;i<4;i++){
+   let b=document.getElementById('o'+i);
+   b.className='opt';
+   b.disabled=false;
+   b.innerText=String.fromCharCode(65+i)+'. '+choices[i].text;
+ }
+ butterfly={progress:0,moving:false,fail:false,success:false,timer:0,wing:0,target:0};
 }
-function pick(i){if(butterfly.moving||butterfly.fail||locked)return;chosen=i;for(let k=0;k<4;k++)document.getElementById('o'+k).classList.toggle('selected',k===i);}
-function flyButterfly(){
+function pick(i){
  if(butterfly.moving||butterfly.fail||locked)return;
+ chosen=i;
+ for(let k=0;k<4;k++){
+   document.getElementById('o'+k).classList.toggle('selected',k===i);
+ }
+ document.getElementById('go').disabled=false;
+}
+function flyButterfly(){
+ if(chosen<0||butterfly.moving||butterfly.fail||locked)return;
  butterfly.target=chosen;
  document.getElementById('go').disabled=true;
  butterfly.moving=true;
@@ -126,7 +138,22 @@ function flyButterfly(){
 function update(){
  butterfly.wing+=.18;
  if(butterfly.moving){butterfly.progress+=.018;if(butterfly.progress>=1){butterfly.progress=1;butterfly.moving=false;check();}}
- if(butterfly.fail){butterfly.timer++;butterfly.progress=Math.max(0,butterfly.progress-.025);if(butterfly.timer>45){butterfly.fail=false;butterfly.timer=0;butterfly.progress=0;document.getElementById('go').disabled=false;document.getElementById('status').innerText='Try again. Recheck the symmetry property.';document.getElementById('status').style.color='#dc2626';}}
+ if(butterfly.fail){
+   butterfly.timer++;
+   butterfly.progress=Math.max(0,butterfly.progress-.025);
+   if(butterfly.timer>45){
+     butterfly.fail=false;
+     butterfly.timer=0;
+     butterfly.progress=0;
+     chosen=-1;
+     for(let k=0;k<4;k++){
+       document.getElementById('o'+k).classList.remove('selected');
+     }
+     document.getElementById('go').disabled=true;
+     document.getElementById('status').innerText='Try again. Recheck the symmetry property.';
+     document.getElementById('status').style.color='#dc2626';
+   }
+ }
 }
 function check(){
  let st=document.getElementById('status');
