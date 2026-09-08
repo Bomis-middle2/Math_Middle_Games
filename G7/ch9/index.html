@@ -2,74 +2,1498 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Area Quest: Perimeter & Area Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Measurement Workshop: Perimeter & Area</title>
+
 <style>
-*{box-sizing:border-box;font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,sans-serif;margin:0;padding:0;user-select:none;-webkit-user-select:none}
-html,body{width:100%;height:100%;overflow:hidden;color:#1f2937;background:linear-gradient(180deg,#fff7ed 0%,#ffedd5 42%,#dcfce7 100%);display:flex;justify-content:center;align-items:center}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.42;background:radial-gradient(circle at 16% 18%,rgba(251,146,60,.22),transparent 22%),radial-gradient(circle at 82% 14%,rgba(34,197,94,.22),transparent 20%),linear-gradient(90deg,rgba(249,115,22,.09) 1px,transparent 1px),linear-gradient(0deg,rgba(34,197,94,.09) 1px,transparent 1px);background-size:auto,auto,42px 42px,42px 42px}
-#viewport-root{width:100%;max-width:500px;height:100%;max-height:790px;display:flex;flex-direction:column;padding:clamp(10px,2vw,16px);gap:clamp(8px,1.6vh,12px);opacity:0;transition:opacity .5s ease;position:relative}
-#hard-splash{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;justify-content:center;align-items:center;transition:opacity .5s ease}.splash-img{width:min(280px,70vw);height:auto;object-fit:contain}
-#instruction-modal{position:absolute;inset:0;background:rgba(255,247,237,.97);z-index:5000;display:flex;justify-content:center;align-items:center;padding:20px;text-align:center;border-radius:16px}.ins-box{background:#fff;border:2px solid #fb923c;padding:clamp(18px,5vw,26px);border-radius:20px;box-shadow:0 12px 30px rgba(194,65,12,.18)}.ins-title{font-size:clamp(1.25rem,4vw,1.58rem);color:#c2410c;font-weight:900;margin-bottom:12px}.ins-text{font-size:clamp(.88rem,2.6vw,.98rem);color:#475569;line-height:1.55;margin-bottom:20px}
-.header-card{background:rgba(255,255,255,.9);border:2px solid #fb923c;border-radius:18px;padding:clamp(10px,2.4vw,14px);box-shadow:0 10px 24px rgba(249,115,22,.16);text-align:center}.signpost{background:#fff7ed;border:2px solid #ea580c;border-radius:12px;padding:clamp(9px,2vw,12px)}.signpost-value{font-size:clamp(.96rem,3.2vw,1.16rem);font-weight:850;color:#1e293b;margin-top:5px;line-height:1.35}
-.score-row{display:flex;justify-content:space-between;gap:8px;color:#c2410c;font-weight:900;font-size:clamp(.86rem,2.8vw,1rem);padding:0 2px}.map-frame{flex:1 1 auto;background:rgba(255,255,255,.82);border:2px solid #22c55e;border-radius:18px;position:relative;overflow:hidden;min-height:230px;box-shadow:inset 0 0 20px rgba(34,197,94,.12)}canvas{display:block;width:100%;height:100%}
-.toast-banner{text-align:center;font-weight:800;font-size:clamp(.82rem,2.6vw,.92rem);min-height:24px;color:#475569;line-height:1.25}.switch-deck{display:flex;justify-content:space-between;gap:8px;width:100%}.btn-switch{flex:1;background:#fff;border:2px solid #fed7aa;color:#1e293b;border-radius:14px;padding:clamp(10px,2.4vw,14px) 6px;font-size:clamp(.72rem,2.3vw,.88rem);font-weight:850;cursor:pointer;text-transform:uppercase;transition:.2s;white-space:pre-line}.btn-switch.active{background:#ffedd5;border-color:#ea580c;color:#9a3412;box-shadow:0 0 15px rgba(249,115,22,.22)}.btn-switch.correct{background:#dcfce7!important;border-color:#16a34a!important;color:#166534!important}.btn-switch.wrong{background:#fee2e2!important;border-color:#dc2626!important;color:#991b1b!important}
-.btn-submit{width:100%;background:linear-gradient(135deg,#f97316,#22c55e);color:#fff;border:none;border-radius:14px;padding:clamp(13px,3vw,16px);font-size:clamp(.88rem,2.8vw,1rem);font-weight:900;cursor:pointer;text-transform:uppercase;letter-spacing:.7px;box-shadow:0 6px 16px rgba(249,115,22,.25)}.btn-submit:disabled{background:#cbd5e1;color:#64748b;cursor:not-allowed;box-shadow:none}.confetti{position:fixed;top:-10px;width:10px;height:10px;pointer-events:none;animation:fall 1.4s linear forwards}@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}
-@media(max-width:390px){#viewport-root{padding:8px;gap:7px}.switch-deck{gap:6px}.map-frame{min-height:205px}.signpost-title{letter-spacing:1px}.btn-submit{letter-spacing:.2px}}
-@media(max-height:650px){#viewport-root{max-height:none;gap:7px}.header-card{padding:8px}.signpost{padding:8px}.map-frame{min-height:180px}.btn-switch{padding:9px 5px}.btn-submit{padding:11px}.ins-box{padding:18px}}
-@media(orientation:landscape) and (max-height:520px){#viewport-root{max-width:860px;display:grid;grid-template-columns:1fr 1.25fr;grid-template-rows:auto 1fr auto auto;gap:8px}.score-row{grid-column:1/3}.header-card{grid-column:1/2;grid-row:2/3}.map-frame{grid-column:2/3;grid-row:2/5;min-height:0}.toast-banner{grid-column:1/2}.switch-deck{grid-column:1/2}.btn-submit{grid-column:1/2}}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,sans-serif;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+html,body{
+  width:100%;
+  min-height:100%;
+}
+
+body{
+  min-height:100dvh;
+  overflow-x:hidden;
+  overflow-y:auto;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:clamp(6px,1.8vw,14px);
+  color:#1f2937;
+  background:
+    radial-gradient(circle at 14% 15%,rgba(251,146,60,.20),transparent 23%),
+    radial-gradient(circle at 84% 16%,rgba(34,197,94,.18),transparent 23%),
+    linear-gradient(180deg,#fff7ed 0%,#fef3c7 42%,#e0f2fe 100%);
+}
+
+button{
+  font-family:inherit;
+}
+
+.hidden{
+  display:none !important;
+}
+
+/* =====================================================
+   SPLASH
+===================================================== */
+#hard-splash{
+  position:fixed;
+  inset:0;
+  background:#fff;
+  z-index:9999;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  transition:opacity .5s ease;
+}
+
+.splash-img{
+  width:min(280px,72vw);
+  height:auto;
+  object-fit:contain;
+}
+
+/* =====================================================
+   ROOT
+===================================================== */
+#viewport-root{
+  width:min(100%,620px);
+  min-height:calc(100dvh - clamp(12px,3vw,28px));
+  height:auto;
+  display:flex;
+  flex-direction:column;
+  gap:clamp(7px,1.4vh,12px);
+  opacity:0;
+  transition:opacity .5s ease;
+  position:relative;
+  margin:auto 0;
+}
+
+/* =====================================================
+   INSTRUCTIONS
+===================================================== */
+#instruction-modal{
+  position:absolute;
+  inset:0;
+  z-index:5000;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:clamp(12px,4vw,20px);
+  text-align:center;
+  border-radius:20px;
+  background:rgba(255,247,237,.97);
+  overflow-y:auto;
+}
+
+.ins-box{
+  width:min(100%,480px);
+  background:#fff;
+  border:2px solid #fb923c;
+  border-radius:22px;
+  padding:clamp(18px,5vw,28px);
+  box-shadow:0 16px 36px rgba(194,65,12,.16);
+}
+
+.ins-title{
+  font-size:clamp(1.3rem,5vw,1.7rem);
+  color:#c2410c;
+  font-weight:900;
+  margin-bottom:12px;
+}
+
+.ins-text{
+  font-size:clamp(.88rem,3.1vw,1rem);
+  line-height:1.58;
+  color:#475569;
+  margin-bottom:20px;
+}
+
+/* =====================================================
+   SCORE
+===================================================== */
+.score-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.score-chip{
+  background:rgba(255,255,255,.94);
+  border:2px solid #fed7aa;
+  border-radius:14px;
+  padding:8px 10px;
+  text-align:center;
+  color:#c2410c;
+  font-size:clamp(.82rem,2.8vw,.98rem);
+  font-weight:900;
+  box-shadow:0 5px 13px rgba(154,52,18,.07);
+}
+
+/* =====================================================
+   QUESTION
+===================================================== */
+.question-card{
+  background:rgba(255,255,255,.95);
+  border:2px solid #fb923c;
+  border-radius:18px;
+  padding:clamp(10px,2.5vw,14px);
+  box-shadow:0 10px 24px rgba(249,115,22,.12);
+}
+
+.question-inner{
+  background:#fff7ed;
+  border:2px solid #fdba74;
+  border-radius:14px;
+  padding:clamp(10px,2.3vw,14px);
+  text-align:center;
+}
+
+.question-text{
+  font-size:clamp(.95rem,3.3vw,1.17rem);
+  line-height:1.4;
+  font-weight:850;
+  color:#1e293b;
+  overflow-wrap:anywhere;
+}
+
+/* =====================================================
+   BLUEPRINT WORKSHOP
+===================================================== */
+.workshop-frame{
+  flex:1 1 auto;
+  min-height:clamp(240px,52vw,360px);
+  position:relative;
+  overflow:hidden;
+  border:2px solid #22c55e;
+  border-radius:20px;
+  background:#f8fafc;
+  box-shadow:
+    inset 0 0 24px rgba(34,197,94,.08),
+    0 9px 24px rgba(21,128,61,.08);
+}
+
+.workshop-label{
+  position:absolute;
+  z-index:3;
+  top:8px;
+  left:50%;
+  transform:translateX(-50%);
+  max-width:92%;
+  width:max-content;
+  padding:5px 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,.92);
+  border:1px solid #bbf7d0;
+  color:#047857;
+  font-size:clamp(.64rem,2.2vw,.78rem);
+  font-weight:900;
+  text-align:center;
+  pointer-events:none;
+}
+
+canvas{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+/* =====================================================
+   FEEDBACK
+===================================================== */
+.feedback{
+  min-height:24px;
+  text-align:center;
+  font-size:clamp(.8rem,2.55vw,.93rem);
+  line-height:1.3;
+  color:#475569;
+  font-weight:850;
+}
+
+/* =====================================================
+   ANSWER CARDS
+===================================================== */
+.answer-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(110px,1fr));
+  gap:8px;
+}
+
+.answer-card{
+  min-width:0;
+  min-height:60px;
+  border:2px solid #fed7aa;
+  border-radius:14px;
+  background:#fff;
+  color:#1f2937;
+  padding:clamp(9px,2.3vw,13px) 6px;
+  font-size:clamp(.76rem,2.55vw,.92rem);
+  font-weight:900;
+  text-align:center;
+  cursor:pointer;
+  transition:
+    background .2s,
+    border-color .2s,
+    box-shadow .2s,
+    transform .15s;
+}
+
+.answer-card:hover:not(:disabled){
+  transform:translateY(-2px);
+  background:#fffaf5;
+  border-color:#fb923c;
+}
+
+/* No selection styling until learner actually clicks */
+.answer-card.selected{
+  background:#ffedd5;
+  border-color:#ea580c;
+  color:#9a3412;
+  box-shadow:0 0 15px rgba(249,115,22,.22);
+}
+
+.answer-card.correct{
+  background:#dcfce7 !important;
+  border-color:#16a34a !important;
+  color:#166534 !important;
+}
+
+.answer-card.wrong{
+  background:#fee2e2 !important;
+  border-color:#dc2626 !important;
+  color:#991b1b !important;
+}
+
+.answer-card:disabled{
+  cursor:not-allowed;
+}
+
+.answer-card.wrong:disabled{
+  opacity:1;
+}
+
+/* =====================================================
+   CHECK BUTTON
+===================================================== */
+.action-btn{
+  width:100%;
+  border:none;
+  border-radius:15px;
+  padding:clamp(12px,3vw,16px);
+  background:linear-gradient(135deg,#f97316,#22c55e);
+  color:#fff;
+  font-size:clamp(.88rem,2.8vw,1rem);
+  font-weight:950;
+  text-transform:uppercase;
+  letter-spacing:.55px;
+  cursor:pointer;
+  box-shadow:0 7px 18px rgba(249,115,22,.20);
+  transition:transform .15s,box-shadow .2s;
+}
+
+.action-btn:hover:not(:disabled){
+  transform:translateY(-2px);
+  box-shadow:0 11px 22px rgba(249,115,22,.25);
+}
+
+.action-btn:disabled{
+  background:#cbd5e1;
+  color:#64748b;
+  box-shadow:none;
+  cursor:not-allowed;
+  transform:none;
+}
+
+/* =====================================================
+   CONFETTI
+===================================================== */
+.confetti{
+  position:fixed;
+  top:-10px;
+  width:10px;
+  height:10px;
+  pointer-events:none;
+  z-index:9000;
+  animation:fall 1.4s linear forwards;
+}
+
+@keyframes fall{
+  to{
+    transform:translateY(105vh) rotate(720deg);
+    opacity:0;
+  }
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+@media(max-width:520px){
+  body{
+    padding:6px;
+  }
+
+  #viewport-root{
+    width:100%;
+    min-height:calc(100dvh - 12px);
+    gap:7px;
+    margin:0;
+  }
+
+  .score-row{
+    gap:6px;
+  }
+
+  .question-card{
+    padding:8px;
+    border-radius:15px;
+  }
+
+  .question-inner{
+    padding:9px;
+  }
+
+  .workshop-frame{
+    min-height:clamp(230px,70vw,330px);
+    border-radius:16px;
+  }
+
+  .workshop-label{
+    top:6px;
+    padding:4px 9px;
+    font-size:clamp(.58rem,2.6vw,.7rem);
+  }
+
+  .answer-grid{
+    grid-template-columns:1fr;
+    gap:7px;
+  }
+
+  .answer-card{
+    min-height:48px;
+    padding:10px 8px;
+    font-size:clamp(.82rem,3.4vw,.95rem);
+  }
+
+  .action-btn{
+    padding:12px;
+    letter-spacing:.2px;
+  }
+}
+
+@media(max-width:360px){
+  .score-row{
+    grid-template-columns:1fr;
+  }
+
+  .workshop-frame{
+    min-height:220px;
+  }
+
+  .question-text{
+    font-size:.92rem;
+  }
+
+  .feedback{
+    font-size:.78rem;
+  }
+}
+
+@media(max-height:690px) and (min-width:650px){
+  body{
+    align-items:flex-start;
+  }
+
+  #viewport-root{
+    width:min(100%,960px);
+    max-width:960px;
+    min-height:calc(100dvh - 12px);
+    display:grid;
+    grid-template-columns:minmax(290px,.95fr) minmax(400px,1.25fr);
+    grid-template-rows:auto auto minmax(0,1fr) auto auto;
+    gap:8px;
+    margin:0;
+  }
+
+  .score-row{
+    grid-column:1/3;
+  }
+
+  .question-card{
+    grid-column:1/2;
+    grid-row:2/3;
+  }
+
+  .workshop-frame{
+    grid-column:2/3;
+    grid-row:2/6;
+    min-height:0;
+    height:auto;
+  }
+
+  .feedback{
+    grid-column:1/2;
+  }
+
+  .answer-grid{
+    grid-column:1/2;
+    grid-template-columns:1fr;
+  }
+
+  .action-btn{
+    grid-column:1/2;
+  }
+
+  #instruction-modal{
+    position:fixed;
+    border-radius:0;
+  }
+}
+
+@media(orientation:landscape) and (max-height:520px){
+  body{
+    padding:4px;
+  }
+
+  #viewport-root{
+    min-height:calc(100dvh - 8px);
+    gap:6px;
+  }
+
+  .score-chip{
+    padding:6px 8px;
+  }
+
+  .question-card{
+    padding:6px;
+  }
+
+  .question-inner{
+    padding:7px;
+  }
+
+  .workshop-frame{
+    min-height:0;
+  }
+
+  .answer-card{
+    min-height:42px;
+    padding:7px 6px;
+  }
+
+  .action-btn{
+    padding:9px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,
+  *::before,
+  *::after{
+    animation-duration:.01ms !important;
+    transition-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+  }
+}
 </style>
 </head>
+
 <body>
+
 <audio id="s-correct" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="s-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 <audio id="s-claps" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
-<div id="hard-splash"><img src="assets/innovine-logo.png" class="splash-img" alt="Innovine Logo"></div>
-<div id="viewport-root">
-  <div id="instruction-modal"><div class="ins-box"><h2 class="ins-title">Area Quest Rules</h2><p class="ins-text">Read each Perimeter & Area challenge. Select Path 1, 2, or 3 to guide the measuring rover to the correct answer.</p><button class="btn-submit" onclick="dismissInstructions()">Start Mission</button></div></div>
-  <div class="score-row"><span>Challenge: <span id="q-num">1</span>/10</span><span>Stars: ⭐ <span id="score">0</span></span></div>
-  <div class="header-card"><div class="signpost"><div class="signpost-value" id="lbl-directive">Loading...</div></div></div>
-  <div class="map-frame"><canvas id="area-canvas"></canvas></div>
-  <div class="toast-banner" id="lbl-feedback"></div>
-  <div class="switch-deck"><button class="btn-switch" id="sw-0" onclick="choosePath(0)">Path 1</button><button class="btn-switch" id="sw-1" onclick="choosePath(1)">Path 2</button><button class="btn-switch" id="sw-2" onclick="choosePath(2)">Path 3</button></div>
-  <button class="btn-submit" id="btn-dispatch" onclick="launchRover()">Launch Measuring Rover</button>
+
+<div id="hard-splash">
+  <img src="assets/innovine-logo.png" class="splash-img" alt="Innovine Logo">
 </div>
+
+<div id="viewport-root">
+
+  <div id="instruction-modal">
+    <div class="ins-box">
+      <h2 class="ins-title">📐 Measurement Workshop</h2>
+      <p class="ins-text">
+        Read each Perimeter & Area challenge. Select the correct measurement card, then activate the blueprint.
+        The shape will be measured or filled depending on the question.
+        Correct answers earn stars. You have 2 attempts for each challenge.
+      </p>
+      <button class="action-btn" onclick="dismissInstructions()">Start Workshop</button>
+    </div>
+  </div>
+
+  <div class="score-row">
+    <div class="score-chip">Challenge: <span id="q-num">1</span>/10</div>
+    <div class="score-chip">Stars: ⭐ <span id="score">0</span></div>
+  </div>
+
+  <div class="question-card">
+    <div class="question-inner">
+      <div class="question-text" id="lbl-directive">Loading...</div>
+    </div>
+  </div>
+
+  <div class="workshop-frame">
+    <div class="workshop-label">📏 INTERACTIVE BLUEPRINT BOARD</div>
+    <canvas id="area-canvas"></canvas>
+  </div>
+
+  <div class="feedback" id="lbl-feedback"></div>
+
+  <div class="answer-grid">
+    <button class="answer-card" id="ans-0" onclick="chooseAnswer(0)">Loading...</button>
+    <button class="answer-card" id="ans-1" onclick="chooseAnswer(1)">Loading...</button>
+    <button class="answer-card" id="ans-2" onclick="chooseAnswer(2)">Loading...</button>
+  </div>
+
+  <button class="action-btn" id="btn-check" onclick="checkMeasurement()" disabled>
+    Activate Blueprint
+  </button>
+
+</div>
+
 <script>
-let canvas,ctx,currentQ,selected=0,options=[],qIndex=0,score=0,locked=false,animationId=null,attempts=0;
-let rover={progress:0,moving:false,tumbling:false,timer:0,rot:0,ox:0,oy:0,color:'#f97316'};
+let canvas,
+    ctx,
+    currentQ,
+    selected=-1,
+    options=[],
+    qIndex=0,
+    score=0,
+    attempts=0,
+    locked=false,
+    animationId=null,
+    time=0;
+
+let blueprint={
+  animating:false,
+  progress:0,
+  success:false,
+  shake:0,
+  flash:0
+};
+
 const questions=[
-{q:'Find the perimeter of a rectangle with length 12 cm and breadth 8 cm.',ans:'40 cm',w:['20 cm','96 cm'],exp:'Perimeter of rectangle = 2(l + b) = 2(12 + 8) = 40 cm.',shape:'rect'},
-{q:'Find the area of a rectangle with length 9 cm and breadth 6 cm.',ans:'54 cm²',w:['30 cm²','15 cm²'],exp:'Area of rectangle = length × breadth = 9 × 6 = 54 cm².',shape:'rect'},
-{q:'Find the area of a square with side 7 cm.',ans:'49 cm²',w:['28 cm²','14 cm²'],exp:'Area of square = side × side = 7 × 7 = 49 cm².',shape:'square'},
-{q:'Find the perimeter of a square with side 11 cm.',ans:'44 cm',w:['121 cm','22 cm'],exp:'Perimeter of square = 4 × side = 4 × 11 = 44 cm.',shape:'square'},
-{q:'Find the area of a triangle with base 10 cm and height 8 cm.',ans:'40 cm²',w:['80 cm²','18 cm²'],exp:'Area of triangle = 1/2 × base × height = 1/2 × 10 × 8 = 40 cm².',shape:'triangle'},
-{q:'Find the area of a parallelogram with base 12 cm and height 5 cm.',ans:'60 cm²',w:['34 cm²','30 cm²'],exp:'Area of parallelogram = base × height = 12 × 5 = 60 cm².',shape:'para'},
-{q:'A rectangular garden is 15 m long and 10 m wide. Find its area.',ans:'150 m²',w:['50 m²','25 m²'],exp:'Area = length × breadth = 15 × 10 = 150 m².',shape:'rect'},
-{q:'A square park has side 9 m. Find the total fencing needed around it.',ans:'36 m',w:['81 m','18 m'],exp:'Fencing means perimeter. Perimeter = 4 × 9 = 36 m.',shape:'square'},
-{q:'A triangle has base 14 cm and height 6 cm. Find its area.',ans:'42 cm²',w:['84 cm²','20 cm²'],exp:'Area = 1/2 × 14 × 6 = 42 cm².',shape:'triangle'},
-{q:'The area of a rectangle is 72 cm² and its length is 12 cm. Find its breadth.',ans:'6 cm',w:['60 cm','84 cm'],exp:'Breadth = area ÷ length = 72 ÷ 12 = 6 cm.',shape:'rect'}
+  {
+    q:'Find the perimeter of a rectangle with length 12 cm and breadth 8 cm.',
+    ans:'40 cm',
+    w:['20 cm','96 cm'],
+    exp:'Perimeter of rectangle = 2(l + b) = 2(12 + 8) = 40 cm.',
+    shape:'rect'
+  },
+  {
+    q:'Find the area of a rectangle with length 9 cm and breadth 6 cm.',
+    ans:'54 cm²',
+    w:['30 cm²','15 cm²'],
+    exp:'Area of rectangle = length × breadth = 9 × 6 = 54 cm².',
+    shape:'rect'
+  },
+  {
+    q:'Find the area of a square with side 7 cm.',
+    ans:'49 cm²',
+    w:['28 cm²','14 cm²'],
+    exp:'Area of square = side × side = 7 × 7 = 49 cm².',
+    shape:'square'
+  },
+  {
+    q:'Find the perimeter of a square with side 11 cm.',
+    ans:'44 cm',
+    w:['121 cm','22 cm'],
+    exp:'Perimeter of square = 4 × side = 4 × 11 = 44 cm.',
+    shape:'square'
+  },
+  {
+    q:'Find the area of a triangle with base 10 cm and height 8 cm.',
+    ans:'40 cm²',
+    w:['80 cm²','18 cm²'],
+    exp:'Area of triangle = 1/2 × base × height = 1/2 × 10 × 8 = 40 cm².',
+    shape:'triangle'
+  },
+  {
+    q:'Find the area of a parallelogram with base 12 cm and height 5 cm.',
+    ans:'60 cm²',
+    w:['34 cm²','30 cm²'],
+    exp:'Area of parallelogram = base × height = 12 × 5 = 60 cm².',
+    shape:'para'
+  },
+  {
+    q:'A rectangular garden is 15 m long and 10 m wide. Find its area.',
+    ans:'150 m²',
+    w:['50 m²','25 m²'],
+    exp:'Area = length × breadth = 15 × 10 = 150 m².',
+    shape:'rect'
+  },
+  {
+    q:'A square park has side 9 m. Find the total fencing needed around it.',
+    ans:'36 m',
+    w:['81 m','18 m'],
+    exp:'Fencing means perimeter. Perimeter = 4 × 9 = 36 m.',
+    shape:'square'
+  },
+  {
+    q:'A triangle has base 14 cm and height 6 cm. Find its area.',
+    ans:'42 cm²',
+    w:['84 cm²','20 cm²'],
+    exp:'Area = 1/2 × 14 × 6 = 42 cm².',
+    shape:'triangle'
+  },
+  {
+    q:'The area of a rectangle is 72 cm² and its length is 12 cm. Find its breadth.',
+    ans:'6 cm',
+    w:['60 cm','84 cm'],
+    exp:'Breadth = area ÷ length = 72 ÷ 12 = 6 cm.',
+    shape:'rect'
+  }
 ];
-setTimeout(()=>{const s=document.getElementById('hard-splash');s.style.opacity='0';setTimeout(()=>{s.remove();document.getElementById('viewport-root').style.opacity='1';init();},500)},5000);
-function init(){canvas=document.getElementById('area-canvas');ctx=canvas.getContext('2d');resize();window.addEventListener('resize',resize);shuffle(questions);loadQuestion();loop();}
-function resize(){const r=canvas.getBoundingClientRect();canvas.width=Math.max(260,Math.floor(r.width));canvas.height=Math.max(170,Math.floor(r.height));}
-function dismissInstructions(){const m=document.getElementById('instruction-modal');if(m)m.remove();}
-function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function loadQuestion(){locked=false;attempts=0;currentQ=questions[qIndex];document.getElementById('q-num').innerText=qIndex+1;document.getElementById('lbl-directive').innerText=currentQ.q;document.getElementById('lbl-feedback').innerText='';document.getElementById('lbl-feedback').style.color='#475569';document.getElementById('btn-dispatch').disabled=false;options=shuffle([{text:currentQ.ans,correct:true},{text:currentQ.w[0],correct:false},{text:currentQ.w[1],correct:false}]);rover={progress:0,moving:false,tumbling:false,timer:0,rot:0,ox:0,oy:0,color:['#f97316','#22c55e','#0ea5e9','#a855f7'][Math.floor(Math.random()*4)]};for(let i=0;i<3;i++){const b=document.getElementById('sw-'+i);b.innerText='Path '+(i+1)+'\n'+options[i].text;b.classList.remove('correct','wrong');}choosePath(0);}
-function choosePath(i){if(rover.moving||rover.tumbling||locked)return;selected=i;for(let k=0;k<3;k++)document.getElementById('sw-'+k).classList.toggle('active',k===i);}
-function launchRover(){if(rover.moving||rover.tumbling||locked)return;document.getElementById('btn-dispatch').disabled=true;rover.moving=true;document.getElementById('lbl-feedback').innerText='Measuring rover is checking the path...';document.getElementById('lbl-feedback').style.color='#ea580c';}
-function update(){if(rover.moving){rover.progress+=.016;if(rover.progress>=.88){rover.moving=false;checkAnswer();}}if(rover.tumbling){rover.timer++;rover.rot+=.25;rover.ox+=2;rover.oy=Math.sin(rover.timer*.4)*6;if(rover.timer>=58){rover.tumbling=false;rover.progress=0;rover.rot=0;rover.ox=0;rover.oy=0;rover.timer=0;document.getElementById('btn-dispatch').disabled=false;document.getElementById('lbl-feedback').innerText='Try again. Recheck the formula.';document.getElementById('lbl-feedback').style.color='#dc2626';}}}
-function checkAnswer(){const fb=document.getElementById('lbl-feedback');if(options[selected].correct){document.getElementById('s-correct').play().catch(()=>{});score++;document.getElementById('score').innerText=score;document.getElementById('sw-'+selected).classList.add('correct');fb.innerText='Correct! '+currentQ.exp;fb.style.color='#16a34a';confetti();locked=true;setTimeout(()=>{qIndex++;if(qIndex>=questions.length)finish();else loadQuestion();},1800)}else{attempts++;document.getElementById('s-wrong').play().catch(()=>{});document.getElementById('sw-'+selected).classList.add('wrong');if(attempts>=2){const correctIndex=options.findIndex(o=>o.correct);selected=correctIndex;locked=true;rover.tumbling=false;rover.progress=.88;document.getElementById('sw-'+correctIndex).classList.add('correct','active');fb.innerText='Correct path: Path '+(correctIndex+1)+' — '+options[correctIndex].text+'. '+currentQ.exp;fb.style.color='#92400e';document.getElementById('btn-dispatch').disabled=true;setTimeout(()=>{qIndex++;if(qIndex>=questions.length)finish();else loadQuestion();},2800)}else{fb.innerText='Oops! Wrong measuring path. One attempt left.';fb.style.color='#dc2626';rover.tumbling=true;}}}
-function bezier(t,p0,p1,p2,p3){let x=(1-t)**3*p0.x+3*(1-t)**2*t*p1.x+3*(1-t)*t*t*p2.x+t**3*p3.x;let y=(1-t)**3*p0.y+3*(1-t)**2*t*p1.y+3*(1-t)*t*t*p2.y+t**3*p3.y;return{x,y};}
-function render(){ctx.clearRect(0,0,canvas.width,canvas.height);let w=canvas.width,h=canvas.height;let ys=[h*.24,h*.5,h*.76];ctx.strokeStyle='rgba(249,115,22,.15)';ctx.lineWidth=1;for(let x=0;x<w;x+=34){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke()}for(let y=0;y<h;y+=34){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}ctx.fillStyle='#ffedd5';ctx.fillRect(0,h/2-24,55,48);ctx.lineWidth=Math.max(5,w*.018);ctx.lineCap='round';for(let i=0;i<3;i++){ctx.strokeStyle=i===selected?'#f97316':'rgba(148,163,184,.42)';ctx.beginPath();ctx.moveTo(15,h/2);ctx.lineTo(55,h/2);ctx.bezierCurveTo(w*.38,h/2,w*.38,ys[i],w-90,ys[i]);ctx.lineTo(w-8,ys[i]);ctx.stroke();}
-for(let i=0;i<3;i++){ctx.fillStyle=i===selected?'#ffedd5':'#ffffff';ctx.strokeStyle=i===selected?'#ea580c':'#fed7aa';ctx.lineWidth=2;roundRect(ctx,w-104,ys[i]-17,96,34,8,true,true);ctx.fillStyle='#1e293b';ctx.font='bold '+Math.max(10,Math.min(13,w*.03))+'px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';fitText(options[i]?.text||'',w-56,ys[i],86);}
-let p=bezier(rover.progress,{x:28,y:h/2},{x:w*.38,y:h/2},{x:w*.38,y:ys[selected]},{x:w-58,y:ys[selected]});ctx.save();ctx.translate(p.x+rover.ox,p.y+rover.oy);ctx.rotate(rover.rot);drawRover();ctx.restore();if(rover.tumbling){ctx.fillStyle='rgba(220,38,38,.25)';ctx.beginPath();ctx.arc(p.x+rover.ox,p.y+rover.oy,26,0,Math.PI*2);ctx.fill();}}
-function drawShapeIcon(w,h){}
-function drawRover(){ctx.fillStyle=rover.color;ctx.fillRect(-20,-12,40,24);ctx.fillStyle='#ffffff';ctx.fillRect(-8,-8,12,8);ctx.fillStyle='#111827';ctx.beginPath();ctx.arc(-12,13,5,0,Math.PI*2);ctx.arc(13,13,5,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#111827';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,-12);ctx.lineTo(0,-24);ctx.lineTo(12,-24);ctx.stroke();}
-function roundRect(c,x,y,w,h,r,fill,stroke){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();if(fill)c.fill();if(stroke)c.stroke();}
-function fitText(text,x,y,max){let size=parseInt(ctx.font.match(/\d+/)[0]);while(ctx.measureText(text).width>max&&size>8){size--;ctx.font='bold '+size+'px sans-serif'}ctx.fillText(text,x,y)}
-function loop(){update();render();animationId=requestAnimationFrame(loop)}
-function finish(){document.getElementById('s-claps').play().catch(()=>{});document.getElementById('viewport-root').innerHTML='<div class="ins-box" style="margin:auto;text-align:center"><h2 class="ins-title">🏆 Area Quest Complete!</h2><p class="ins-text">You completed all 10 Perimeter & Area challenges.<br><b>Final Stars: '+score+'/10</b></p><button class="btn-submit" onclick="location.reload()">Play Again</button></div>';}
-function confetti(){for(let i=0;i<16;i++){let p=document.createElement('div');p.className='confetti';p.style.left=Math.random()*100+'vw';p.style.background=['#f97316','#22c55e','#0ea5e9','#a855f7'][Math.floor(Math.random()*4)];document.body.appendChild(p);setTimeout(()=>p.remove(),1600)}}
+
+/* =====================================================
+   SPLASH
+===================================================== */
+setTimeout(()=>{
+  const s=document.getElementById('hard-splash');
+  s.style.opacity='0';
+
+  setTimeout(()=>{
+    s.remove();
+    document.getElementById('viewport-root').style.opacity='1';
+    init();
+  },500);
+},5000);
+
+/* =====================================================
+   INIT
+===================================================== */
+function init(){
+  canvas=document.getElementById('area-canvas');
+  ctx=canvas.getContext('2d');
+
+  resize();
+
+  window.addEventListener('resize',resize);
+  window.addEventListener('orientationchange',()=>setTimeout(resize,250));
+
+  shuffle(questions);
+  loadQuestion();
+  loop();
+}
+
+function resize(){
+  const r=canvas.getBoundingClientRect();
+  const dpr=window.devicePixelRatio||1;
+
+  canvas.width=Math.max(260,Math.floor(r.width*dpr));
+  canvas.height=Math.max(190,Math.floor(r.height*dpr));
+
+  canvas.logicalWidth=r.width;
+  canvas.logicalHeight=r.height;
+
+  ctx=canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+
+function dismissInstructions(){
+  const m=document.getElementById('instruction-modal');
+  if(m) m.remove();
+}
+
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+/* =====================================================
+   LOAD QUESTION
+===================================================== */
+function loadQuestion(){
+  locked=false;
+  attempts=0;
+  selected=-1;
+
+  currentQ=questions[qIndex];
+
+  document.getElementById('q-num').innerText=qIndex+1;
+  document.getElementById('lbl-directive').innerText=currentQ.q;
+
+  const fb=document.getElementById('lbl-feedback');
+  fb.innerText='';
+  fb.style.color='#475569';
+
+  document.getElementById('btn-check').disabled=true;
+
+  options=shuffle([
+    {text:currentQ.ans,correct:true},
+    {text:currentQ.w[0],correct:false},
+    {text:currentQ.w[1],correct:false}
+  ]);
+
+  for(let i=0;i<3;i++){
+    const btn=document.getElementById('ans-'+i);
+    btn.className='answer-card';
+    btn.disabled=false;
+    btn.innerText=options[i].text;
+  }
+
+  blueprint={
+    animating:false,
+    progress:0,
+    success:false,
+    shake:0,
+    flash:0
+  };
+}
+
+/* =====================================================
+   SELECT ANSWER
+===================================================== */
+function chooseAnswer(i){
+  if(locked || blueprint.animating) return;
+
+  const btn=document.getElementById('ans-'+i);
+  if(btn.disabled) return;
+
+  selected=i;
+
+  for(let k=0;k<3;k++){
+    document.getElementById('ans-'+k).classList.toggle('selected',k===i);
+  }
+
+  document.getElementById('btn-check').disabled=false;
+
+  const fb=document.getElementById('lbl-feedback');
+  fb.innerText='Measurement selected. Activate the blueprint to check it.';
+  fb.style.color='#ea580c';
+}
+
+/* =====================================================
+   CHECK / ACTIVATE
+===================================================== */
+function checkMeasurement(){
+  if(selected<0 || locked || blueprint.animating) return;
+
+  document.getElementById('btn-check').disabled=true;
+
+  blueprint.animating=true;
+  blueprint.progress=0;
+
+  const fb=document.getElementById('lbl-feedback');
+  fb.innerText='📐 Measuring the shape...';
+  fb.style.color='#ea580c';
+}
+
+/* =====================================================
+   UPDATE
+===================================================== */
+function update(){
+  time+=.016;
+
+  if(blueprint.animating){
+    blueprint.progress+=.018;
+
+    if(blueprint.progress>=1){
+      blueprint.progress=1;
+      blueprint.animating=false;
+      evaluateAnswer();
+    }
+  }
+
+  if(blueprint.shake>0){
+    blueprint.shake--;
+  }
+
+  blueprint.flash=Math.max(0,blueprint.flash-.025);
+}
+
+/* =====================================================
+   EVALUATE
+===================================================== */
+function evaluateAnswer(){
+  const fb=document.getElementById('lbl-feedback');
+
+  if(options[selected].correct){
+    document.getElementById('s-correct').play().catch(()=>{});
+
+    score++;
+    document.getElementById('score').innerText=score;
+
+    document.getElementById('ans-'+selected).classList.add('correct');
+
+    blueprint.success=true;
+
+    fb.innerText='✅ Correct! '+currentQ.exp;
+    fb.style.color='#16a34a';
+
+    locked=true;
+    confetti();
+
+    setTimeout(()=>{
+      qIndex++;
+
+      if(qIndex>=questions.length){
+        finish();
+      }else{
+        loadQuestion();
+      }
+    },1900);
+  }else{
+    attempts++;
+
+    document.getElementById('s-wrong').play().catch(()=>{});
+
+    const wrong=document.getElementById('ans-'+selected);
+    wrong.classList.remove('selected');
+    wrong.classList.add('wrong');
+    wrong.disabled=true;
+
+    blueprint.flash=1;
+    blueprint.shake=28;
+
+    if(attempts<2){
+      selected=-1;
+
+      for(let k=0;k<3;k++){
+        document.getElementById('ans-'+k).classList.remove('selected');
+      }
+
+      document.getElementById('btn-check').disabled=true;
+
+      fb.innerText='❌ Not quite. Recheck the formula and choose another measurement.';
+      fb.style.color='#dc2626';
+    }else{
+      const correctIndex=options.findIndex(o=>o.correct);
+
+      document.getElementById('ans-'+correctIndex).classList.add('correct');
+
+      for(let k=0;k<3;k++){
+        document.getElementById('ans-'+k).disabled=true;
+      }
+
+      blueprint.success=true;
+      blueprint.progress=1;
+
+      fb.innerText=
+        'Correct Answer: '
+        +options[correctIndex].text
+        +' | '
+        +currentQ.exp;
+
+      fb.style.color='#16a34a';
+
+      locked=true;
+
+      setTimeout(()=>{
+        qIndex++;
+
+        if(qIndex>=questions.length){
+          finish();
+        }else{
+          loadQuestion();
+        }
+      },2800);
+    }
+  }
+}
+
+/* =====================================================
+   RENDER
+===================================================== */
+function render(){
+  if(!ctx || !canvas) return;
+
+  const w=canvas.logicalWidth || canvas.getBoundingClientRect().width;
+  const h=canvas.logicalHeight || canvas.getBoundingClientRect().height;
+
+  ctx.clearRect(0,0,w,h);
+
+  const shakeX=blueprint.shake>0 ? Math.sin(time*32)*4 : 0;
+
+  ctx.save();
+  ctx.translate(shakeX,0);
+
+  /* BLUEPRINT BACKGROUND */
+  ctx.fillStyle='#f8fafc';
+  ctx.fillRect(0,0,w,h);
+
+  ctx.strokeStyle='rgba(59,130,246,.12)';
+  ctx.lineWidth=1;
+
+  for(let x=0;x<w;x+=28){
+    ctx.beginPath();
+    ctx.moveTo(x,0);
+    ctx.lineTo(x,h);
+    ctx.stroke();
+  }
+
+  for(let y=0;y<h;y+=28){
+    ctx.beginPath();
+    ctx.moveTo(0,y);
+    ctx.lineTo(w,y);
+    ctx.stroke();
+  }
+
+  /* WORKBENCH */
+  ctx.fillStyle='#fed7aa';
+  ctx.fillRect(0,h-48,w,48);
+
+  ctx.fillStyle='#c2410c';
+  ctx.fillRect(0,h-48,w,5);
+
+  /* TOOLS */
+  drawRuler(22,h-31,76);
+  drawPencil(w-96,h-28,60);
+
+  /* CENTRAL BLUEPRINT PANEL */
+  const compact = w < 390;
+
+  const panelX = compact ? w*.07 : w*.10;
+  const panelY = compact ? h*.17 : h*.18;
+  const panelW = compact ? w*.72 : w*.70;
+  const panelH = compact ? h*.62 : h*.60;
+
+  roundedRect(
+    ctx,
+    panelX,
+    panelY,
+    panelW,
+    panelH,
+    16,
+    true,
+    true,
+    '#ffffff',
+    '#93c5fd'
+  );
+
+  /* shape positioning */
+  const cx=panelX+panelW*.48;
+  const cy=panelY+panelH*.50;
+  const size=Math.min(panelW,panelH)*.48;
+
+  const mode=isPerimeterQuestion() ? 'perimeter' : 'area';
+
+  drawCurrentShape(cx,cy,size,mode);
+
+  /* side formula card */
+  const cardW = compact ? Math.min(78,w*.22) : Math.min(112,w*.23);
+  const cardH = compact ? 66 : 76;
+  const cardX = w-cardW-(compact ? 8 : 12);
+  const cardY = panelY+10;
+
+  roundedRect(
+    ctx,
+    cardX,
+    cardY,
+    cardW,
+    cardH,
+    12,
+    true,
+    true,
+    '#fff7ed',
+    '#fb923c'
+  );
+
+  ctx.fillStyle='#9a3412';
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  ctx.font='bold '+Math.max(8,Math.min(11,w*.024))+'px sans-serif';
+
+  if(mode==='perimeter'){
+    ctx.fillText('MEASURE',cardX+cardW/2,cardY+18);
+    ctx.fillText('THE BORDER',cardX+cardW/2,cardY+34);
+  }else{
+    ctx.fillText('MEASURE',cardX+cardW/2,cardY+18);
+    ctx.fillText('THE SURFACE',cardX+cardW/2,cardY+34);
+  }
+
+  ctx.fillStyle='#2563eb';
+  ctx.font='bold '+Math.max(10,Math.min(14,w*.03))+'px sans-serif';
+  ctx.fillText('📐',cardX+cardW/2,cardY+57);
+
+  ctx.restore();
+
+  if(blueprint.flash>0){
+    ctx.fillStyle=`rgba(220,38,38,${blueprint.flash*.12})`;
+    ctx.fillRect(0,0,w,h);
+  }
+}
+
+/* =====================================================
+   QUESTION MODE
+===================================================== */
+function isPerimeterQuestion(){
+  const q=currentQ.q.toLowerCase();
+
+  return (
+    q.includes('perimeter') ||
+    q.includes('fencing')
+  );
+}
+
+/* =====================================================
+   DRAW SHAPE
+===================================================== */
+function drawCurrentShape(cx,cy,size,mode){
+  const p=blueprint.progress;
+
+  ctx.save();
+
+  ctx.lineWidth=4;
+  ctx.strokeStyle='#2563eb';
+  ctx.fillStyle='rgba(34,197,94,.22)';
+
+  if(currentQ.shape==='rect'){
+    const sw=size*1.25;
+    const sh=size*.72;
+
+    const x=cx-sw/2;
+    const y=cy-sh/2;
+
+    if(mode==='area'){
+      drawAreaFillRect(x,y,sw,sh,p);
+    }
+
+    drawAnimatedRectOutline(x,y,sw,sh,p);
+
+    drawDimensionLine(x,y+sh+22,x+sw,y+sh+22,'length');
+    drawVerticalDimension(x-24,y,x-24,y+sh,'breadth');
+  }
+
+  else if(currentQ.shape==='square'){
+    const s=size*.92;
+
+    const x=cx-s/2;
+    const y=cy-s/2;
+
+    if(mode==='area'){
+      drawAreaFillRect(x,y,s,s,p);
+    }
+
+    drawAnimatedRectOutline(x,y,s,s,p);
+
+    drawDimensionLine(x,y+s+22,x+s,y+s+22,'side');
+  }
+
+  else if(currentQ.shape==='triangle'){
+    const x1=cx-size*.58;
+    const y1=cy+size*.42;
+
+    const x2=cx+size*.58;
+    const y2=cy+size*.42;
+
+    const x3=cx;
+    const y3=cy-size*.52;
+
+    if(mode==='area'){
+      ctx.save();
+      ctx.globalAlpha=.18+.35*p;
+      ctx.fillStyle='#22c55e';
+      ctx.beginPath();
+      ctx.moveTo(x1,y1);
+      ctx.lineTo(x2,y2);
+      ctx.lineTo(x3,y3);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    drawAnimatedTriangle(x1,y1,x2,y2,x3,y3,p);
+
+    drawDimensionLine(x1,y1+20,x2,y2+20,'base');
+
+    ctx.setLineDash([5,5]);
+    ctx.strokeStyle='#f97316';
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(x3,y3);
+    ctx.lineTo(x3,y1);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  else if(currentQ.shape==='para'){
+    const sw=size*1.18;
+    const sh=size*.72;
+    const skew=size*.30;
+
+    const x1=cx-sw/2+skew;
+    const y1=cy-sh/2;
+
+    const x2=cx+sw/2+skew;
+    const y2=cy-sh/2;
+
+    const x3=cx+sw/2-skew;
+    const y3=cy+sh/2;
+
+    const x4=cx-sw/2-skew;
+    const y4=cy+sh/2;
+
+    if(mode==='area'){
+      ctx.save();
+      ctx.globalAlpha=.18+.35*p;
+      ctx.fillStyle='#22c55e';
+      ctx.beginPath();
+      ctx.moveTo(x1,y1);
+      ctx.lineTo(x2,y2);
+      ctx.lineTo(x3,y3);
+      ctx.lineTo(x4,y4);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    drawAnimatedPolygon([x1,y1,x2,y2,x3,y3,x4,y4],p);
+
+    drawDimensionLine(x4,y4+20,x3,y3+20,'base');
+
+    ctx.setLineDash([5,5]);
+    ctx.strokeStyle='#f97316';
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x1,y4);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  /* success stamp */
+  if(blueprint.success){
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(-.10);
+
+    ctx.fillStyle='rgba(22,163,74,.92)';
+    roundedRect(
+      ctx,
+      -48,
+      -18,
+      96,
+      36,
+      10,
+      true,
+      false,
+      'rgba(22,163,74,.92)',
+      ''
+    );
+
+    ctx.fillStyle='#fff';
+    ctx.font='bold 15px sans-serif';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText('MEASURED ✓',0,1);
+
+    ctx.restore();
+  }
+
+  ctx.restore();
+}
+
+/* =====================================================
+   ANIMATION HELPERS
+===================================================== */
+function drawAnimatedRectOutline(x,y,w,h,p){
+  const perimeter=2*(w+h);
+  const shown=perimeter*p;
+
+  ctx.strokeStyle='#2563eb';
+  ctx.lineWidth=4;
+  ctx.lineCap='round';
+
+  ctx.beginPath();
+
+  let left=shown;
+
+  ctx.moveTo(x,y);
+
+  const top=Math.min(left,w);
+  ctx.lineTo(x+top,y);
+  left-=top;
+
+  if(left>0){
+    const right=Math.min(left,h);
+    ctx.lineTo(x+w,y+right);
+    left-=right;
+  }
+
+  if(left>0){
+    const bottom=Math.min(left,w);
+    ctx.lineTo(x+w-bottom,y+h);
+    left-=bottom;
+  }
+
+  if(left>0){
+    const l=Math.min(left,h);
+    ctx.lineTo(x,y+h-l);
+  }
+
+  ctx.stroke();
+}
+
+function drawAreaFillRect(x,y,w,h,p){
+  ctx.save();
+  ctx.fillStyle='rgba(34,197,94,.28)';
+  ctx.fillRect(x,y,w*p,h);
+  ctx.restore();
+}
+
+function drawAnimatedTriangle(x1,y1,x2,y2,x3,y3,p){
+  const points=[
+    {x:x1,y:y1},
+    {x:x2,y:y2},
+    {x:x3,y:y3},
+    {x:x1,y:y1}
+  ];
+
+  drawAnimatedPolyline(points,p);
+}
+
+function drawAnimatedPolygon(coords,p){
+  const pts=[];
+
+  for(let i=0;i<coords.length;i+=2){
+    pts.push({x:coords[i],y:coords[i+1]});
+  }
+
+  pts.push({...pts[0]});
+
+  drawAnimatedPolyline(pts,p);
+}
+
+function drawAnimatedPolyline(points,p){
+  let total=0;
+  const lens=[];
+
+  for(let i=0;i<points.length-1;i++){
+    const dx=points[i+1].x-points[i].x;
+    const dy=points[i+1].y-points[i].y;
+    const len=Math.hypot(dx,dy);
+
+    lens.push(len);
+    total+=len;
+  }
+
+  let remaining=total*p;
+
+  ctx.strokeStyle='#2563eb';
+  ctx.lineWidth=4;
+  ctx.lineCap='round';
+  ctx.beginPath();
+  ctx.moveTo(points[0].x,points[0].y);
+
+  for(let i=0;i<lens.length;i++){
+    if(remaining<=0) break;
+
+    const len=Math.min(remaining,lens[i]);
+    const ratio=len/lens[i];
+
+    const x=points[i].x+(points[i+1].x-points[i].x)*ratio;
+    const y=points[i].y+(points[i+1].y-points[i].y)*ratio;
+
+    ctx.lineTo(x,y);
+
+    if(len<lens[i]) break;
+
+    remaining-=len;
+  }
+
+  ctx.stroke();
+}
+
+/* =====================================================
+   DIMENSIONS
+===================================================== */
+function drawDimensionLine(x1,y1,x2,y2,label){
+  ctx.strokeStyle='#f97316';
+  ctx.fillStyle='#9a3412';
+  ctx.lineWidth=2;
+
+  ctx.beginPath();
+  ctx.moveTo(x1,y1);
+  ctx.lineTo(x2,y2);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(x1,y1-5);
+  ctx.lineTo(x1,y1+5);
+  ctx.moveTo(x2,y2-5);
+  ctx.lineTo(x2,y2+5);
+  ctx.stroke();
+
+  ctx.font='bold 10px sans-serif';
+  ctx.textAlign='center';
+  ctx.textBaseline='bottom';
+  ctx.fillText(label,(x1+x2)/2,y1-3);
+}
+
+function drawVerticalDimension(x1,y1,x2,y2,label){
+  ctx.strokeStyle='#f97316';
+  ctx.fillStyle='#9a3412';
+  ctx.lineWidth=2;
+
+  ctx.beginPath();
+  ctx.moveTo(x1,y1);
+  ctx.lineTo(x2,y2);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(x1-5,y1);
+  ctx.lineTo(x1+5,y1);
+  ctx.moveTo(x2-5,y2);
+  ctx.lineTo(x2+5,y2);
+  ctx.stroke();
+
+  ctx.save();
+  ctx.translate(x1-7,(y1+y2)/2);
+  ctx.rotate(-Math.PI/2);
+
+  ctx.font='bold 10px sans-serif';
+  ctx.textAlign='center';
+  ctx.textBaseline='bottom';
+  ctx.fillText(label,0,0);
+
+  ctx.restore();
+}
+
+/* =====================================================
+   TOOLS
+===================================================== */
+function drawRuler(x,y,w){
+  ctx.fillStyle='#facc15';
+  roundedRect(ctx,x,y,w,14,4,true,true,'#facc15','#ca8a04');
+
+  ctx.strokeStyle='#78350f';
+  ctx.lineWidth=1;
+
+  for(let i=0;i<=10;i++){
+    const px=x+i*w/10;
+    const len=i%5===0 ? 9 : 5;
+
+    ctx.beginPath();
+    ctx.moveTo(px,y);
+    ctx.lineTo(px,y+len);
+    ctx.stroke();
+  }
+}
+
+function drawPencil(x,y,w){
+  ctx.save();
+
+  ctx.translate(x,y);
+  ctx.rotate(-.12);
+
+  ctx.fillStyle='#fb923c';
+  ctx.fillRect(0,0,w,10);
+
+  ctx.fillStyle='#fef3c7';
+  ctx.beginPath();
+  ctx.moveTo(w,0);
+  ctx.lineTo(w+14,5);
+  ctx.lineTo(w,10);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle='#1f2937';
+  ctx.beginPath();
+  ctx.moveTo(w+14,5);
+  ctx.lineTo(w+10,3);
+  ctx.lineTo(w+10,7);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
+}
+
+/* =====================================================
+   ROUNDED RECT
+===================================================== */
+function roundedRect(c,x,y,w,h,r,fill,stroke,fillStyle,strokeStyle){
+  c.beginPath();
+  c.moveTo(x+r,y);
+  c.arcTo(x+w,y,x+w,y+h,r);
+  c.arcTo(x+w,y+h,x,y+h,r);
+  c.arcTo(x,y+h,x,y,r);
+  c.arcTo(x,y,x+w,y,r);
+  c.closePath();
+
+  if(fill){
+    c.fillStyle=fillStyle;
+    c.fill();
+  }
+
+  if(stroke){
+    c.strokeStyle=strokeStyle;
+    c.lineWidth=2;
+    c.stroke();
+  }
+}
+
+/* =====================================================
+   LOOP
+===================================================== */
+function loop(){
+  update();
+  render();
+  animationId=requestAnimationFrame(loop);
+}
+
+/* =====================================================
+   FINISH
+===================================================== */
+function finish(){
+  document.getElementById('s-claps').play().catch(()=>{});
+
+  document.getElementById('viewport-root').innerHTML=`
+    <div class="ins-box" style="margin:auto;text-align:center">
+      <h2 class="ins-title">🏆 Measurement Workshop Complete!</h2>
+
+      <p class="ins-text" style="text-align:center">
+        You completed all 10 Perimeter & Area challenges.
+        <br><br>
+        <b>Final Stars: ${score}/10 ⭐</b>
+      </p>
+
+      <button class="action-btn" onclick="location.reload()">
+        Play Again
+      </button>
+    </div>
+  `;
+}
+
+/* =====================================================
+   CONFETTI
+===================================================== */
+function confetti(){
+  for(let i=0;i<18;i++){
+    const p=document.createElement('div');
+
+    p.className='confetti';
+
+    p.style.left=Math.random()*100+'vw';
+
+    p.style.background=[
+      '#f97316',
+      '#22c55e',
+      '#0ea5e9',
+      '#a855f7'
+    ][Math.floor(Math.random()*4)];
+
+    p.style.animationDelay=(Math.random()*.25)+'s';
+
+    document.body.appendChild(p);
+
+    setTimeout(()=>p.remove(),1600);
+  }
+}
 </script>
+
 </body>
 </html>
