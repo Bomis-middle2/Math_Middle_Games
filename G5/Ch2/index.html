@@ -2,48 +2,53 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Basic Operations Treasure Hunt</title>
 <style>
-*{box-sizing:border-box}
+*{box-sizing:border-box; touch-action: manipulation;}
 body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(#8fd3ff,#dff8ff);overflow:hidden;text-align:center}
 .screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;padding:20px}
 
-/* White background for the first 5 seconds splash screen */
+/* Splash screen */
 #loader{background:#ffffff}
-.splash-title{font-size:36px;font-weight:bold;color:#0066ff;margin-top:10px;letter-spacing:1px}
+.splash-title{font-size:clamp(28px, 8vw, 36px);font-weight:bold;color:#0066ff;margin-top:10px;letter-spacing:1px}
 
 /* Loading Bar Styles */
-.progress-container {width:200px;height:10px;background:#e0e0e0;border-radius:5px;margin-top:20px;overflow:hidden}
+.progress-container {width:80%;max-width:200px;height:10px;background:#e0e0e0;border-radius:5px;margin-top:20px;overflow:hidden}
 .progress-bar {width:0%;height:100%;background:#0066ff;border-radius:5px;animation:load 5s linear forwards}
 @keyframes load{to{width:100%}}
 
-/* Instructions and End screens match original layout styles */
+/* Instructions and End screens */
 #instructions, #end{background:linear-gradient(#eaf9ff,#fff)}
-.logo{width:160px;margin-bottom:20px}
-button{border:0;border-radius:14px;background:#0066ff;color:white;font-size:20px;font-weight:bold;padding:13px 28px;cursor:pointer;box-shadow:0 6px #004aad;transition:.1s;margin-top:20px}
+.logo{max-width:160px;width:50%;height:auto;margin-bottom:20px}
+button{border:0;border-radius:14px;background:#0066ff;color:white;font-size:clamp(16px, 4vw, 20px);font-weight:bold;padding:12px 28px;cursor:pointer;box-shadow:0 6px #004aad;transition:.1s;margin-top:15px; -webkit-tap-highlight-color: transparent;}
 button:active{transform:translateY(4px);box-shadow:0 2px #004aad}
 
 /* Instruction Text Card */
-.rules-card {background:white;border:3px solid #004aad;border-radius:16px;padding:20px;max-width:500px;text-align:left;box-shadow:0 4px 10px rgba(0,0,0,0.05);margin-bottom:10px}
-.rules-card h2 {margin-top:0;color:#004aad;font-size:22px;text-align:center}
-.rules-card ul {margin:0;padding-left:20px;font-size:16px;line-height:1.6;color:#333}
+.rules-card {background:white;border:3px solid #004aad;border-radius:16px;padding:16px;width:92%;max-width:500px;text-align:left;box-shadow:0 4px 10px rgba(0,0,0,0.05);margin-bottom:10px}
+.rules-card h2 {margin-top:0;color:#004aad;font-size:clamp(18px, 5vw, 22px);text-align:center}
+.rules-card ul {margin:0;padding-left:20px;font-size:clamp(13px, 3.5vw, 16px);line-height:1.5;color:#333}
 
-#hud{display:flex;justify-content:space-around;padding:12px;font-size:20px;font-weight:bold;flex-wrap:wrap}
-#questionBox{width:92%;max-width:900px;margin:8px auto;background:white;border:4px solid #004aad;border-radius:18px;padding:16px;font-size:24px;font-weight:bold}
-#gameArea{position:relative;width:1000px;max-width:96vw;height:480px;margin:10px auto;border-radius:20px;overflow:hidden;border:5px solid #333;background:linear-gradient(#74c365 0 70%,#d8c28d 70% 100%)}
-.chest{position:absolute;width:180px;height:170px;cursor:pointer;transition:.25s}
-.chest:hover{transform:scale(1.05)}
-.chestTop{width:180px;height:70px;background:#7b3f00;border:5px solid #3b1d00;border-radius:18px 18px 8px 8px;position:absolute;top:0}
-.chestBody{width:180px;height:110px;background:#a85a10;border:5px solid #3b1d00;border-radius:0 0 18px 18px;position:absolute;top:60px}
-.lock{width:28px;height:40px;background:gold;border:4px solid #5c4200;position:absolute;left:76px;top:75px;border-radius:6px}
-.answerText{position:absolute;width:100%;bottom:-38px;font-size:24px;font-weight:bold;color:#111}
+#hud{display:flex;justify-content:space-around;padding:10px;font-size:clamp(14px, 4vw, 20px);font-weight:bold;background:rgba(255,255,255,0.6);border-bottom:2px solid #8fd3ff}
+#questionBox{width:92%;max-width:900px;margin:8px auto;background:white;border:3px solid #004aad;border-radius:14px;padding:12px 10px;font-size:clamp(16px, 4.5vw, 24px);font-weight:bold;box-shadow:0 4px 8px rgba(0,0,0,0.05)}
+
+#gameArea{position:relative;width:94vw;max-width:900px;height:55vh;max-height:450px;margin:10px auto;border-radius:18px;overflow:hidden;border:4px solid #333;background:linear-gradient(#74c365 0 70%,#d8c28d 70% 100%)}
+
+.chest{position:absolute;width:clamp(90px, 26vw, 160px);height:clamp(85px, 24vw, 150px);cursor:pointer;transition:transform .25s;transform:translateX(-50%); -webkit-tap-highlight-color: transparent;}
+.chest:active{transform:translateX(-50%) scale(1.05)}
+
+.chestTop{width:100%;height:40%;background:#7b3f00;border:3px solid #3b1d00;border-radius:14px 14px 6px 6px;position:absolute;top:0}
+.chestBody{width:100%;height:65%;background:#a85a10;border:3px solid #3b1d00;border-radius:0 0 14px 14px;position:absolute;top:35%}
+.lock{width:20%;height:25%;background:gold;border:2px solid #5c4200;position:absolute;left:40%;top:42%;border-radius:4px;z-index:2}
+.answerText{position:absolute;width:120%;left:-10%;bottom:-35px;font-size:clamp(14px, 3.8vw, 22px);font-weight:bold;color:#111;text-shadow: 0 0 4px #fff, 0 0 4px #fff;}
+
 .open .chestTop{transform:rotate(-28deg);transform-origin:left bottom}
-.coinBurst{position:absolute;font-size:38px;animation:burst 1s ease-out forwards}
-@keyframes burst{0%{transform:translateY(0) scale(.5);opacity:1}100%{transform:translateY(-120px) scale(1.5);opacity:0}}
+.coinBurst{position:absolute;font-size:clamp(24px, 6vw, 36px);animation:burst 1s ease-out forwards;z-index:10;pointer-events:none}
+@keyframes burst{0%{transform:translateY(0) scale(.5);opacity:1}100%{transform:translateY(-100px) scale(1.4);opacity:0}}
 .shake{animation:shake .4s}
-@keyframes shake{0%{transform:translateX(0)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-10px)}80%{transform:translateX(10px)}100%{transform:translateX(0)}}
-#msg{font-size:30px;font-weight:bold;min-height:40px;margin-top:10px}
+@keyframes shake{0%{transform:translateX(-50%)}20%{transform:translateX(calc(-50% - 8px))}40%{transform:translateX(calc(-50% + 8px))}60%{transform:translateX(calc(-50% - 8px))}80%{transform:translateX(calc(-50% + 8px))}100%{transform:translateX(-50%)}}
+
+#msg{font-size:clamp(16px, 4.5vw, 26px);font-weight:bold;min-height:32px;margin-top:6px;padding:0 10px}
 </style>
 </head>
 
@@ -62,7 +67,7 @@ button:active{transform:translateY(4px);box-shadow:0 2px #004aad}
     <h2>How to Play</h2>
     <ul>
       <li>Solve the math question displayed at the top.</li>
-      <li>Click on the treasure chest with the correct answer.</li>
+      <li>Tap on the treasure chest with the correct answer.</li>
       <li>You have <strong>2 chances</strong> per question.</li>
       <li>Find all 10 hidden treasures to win the adventure!</li>
     </ul>
@@ -71,8 +76,8 @@ button:active{transform:translateY(4px);box-shadow:0 2px #004aad}
 </div>
 
 <div id="end" class="screen" style="display:none">
-  <h1 id="endTitle" style="font-size:36px; color:#004aad; margin-bottom:10px;"></h1>
-  <h2 style="font-size:24px; margin-bottom:30px;">Final Score: <span id="finalScore"></span></h2>
+  <h1 id="endTitle" style="font-size:clamp(28px, 8vw, 36px); color:#004aad; margin-bottom:10px;"></h1>
+  <h2 style="font-size:clamp(20px, 6vw, 24px); margin-bottom:20px;">Final Score: <span id="finalScore"></span></h2>
   <button onclick="location.reload()">Play Again</button>
 </div>
 
@@ -172,7 +177,6 @@ function generateDynamicQuestions() {
 }
 
 window.onload = () => {
-  // Pure white splash container stays active for exactly 5000ms
   setTimeout(() => {
     document.getElementById("loader").style.display = "none";
     document.getElementById("instructions").style.display = "flex";
@@ -204,13 +208,14 @@ function createChests() {
   const item = questions[current];
   
   const shuffled = [...item.options].sort(() => Math.random() - 0.5);
-  const positions = [120, 410, 700];
+  // Responsive horizontal positions in percentages
+  const positions = ["18%", "50%", "82%"];
 
   shuffled.forEach((opt, i) => {
     const chest = document.createElement("div");
     chest.className = "chest";
-    chest.style.left = positions[i] + "px";
-    chest.style.top = "180px";
+    chest.style.left = positions[i];
+    chest.style.top = "42%";
     chest.dataset.answer = opt;
     chest.innerHTML = `
       <div class="chestTop"></div>
@@ -218,7 +223,15 @@ function createChests() {
       <div class="lock"></div>
       <div class="answerText">${opt}</div>
     `;
-    chest.onclick = () => selectChest(chest, opt);
+
+    const handleSelect = (e) => {
+      if (e) e.preventDefault();
+      selectChest(chest, opt);
+    };
+
+    chest.addEventListener("touchstart", handleSelect, { passive: false });
+    chest.onclick = handleSelect;
+
     wrap.appendChild(chest);
   });
 }
@@ -274,12 +287,15 @@ function wrongChest(chest) {
 }
 
 function showCoins(chest) {
-  for(let i = 0; i < 12; i++) {
+  const chestRect = chest.getBoundingClientRect();
+  const gameRect = document.getElementById("gameArea").getBoundingClientRect();
+
+  for(let i = 0; i < 10; i++) {
     const coin = document.createElement("div");
     coin.className = "coinBurst";
     coin.innerHTML = "🪙";
-    coin.style.left = (chest.offsetLeft + 60 + Math.random() * 60) + "px";
-    coin.style.top = (chest.offsetTop + 40) + "px";
+    coin.style.left = (chestRect.left - gameRect.left + (chestRect.width / 4) + Math.random() * (chestRect.width / 2)) + "px";
+    coin.style.top = (chestRect.top - gameRect.top + 10) + "px";
     document.getElementById("gameArea").appendChild(coin);
     setTimeout(() => coin.remove(), 1000);
   }
