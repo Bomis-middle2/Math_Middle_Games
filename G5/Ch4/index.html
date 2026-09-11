@@ -3,20 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Fraction Kingdom Adventure</title>
+<title>Fraction Kingdom Mobile</title>
 <style>
-*{box-sizing:border-box}
+*{ box-sizing: border-box; touch-action: manipulation; }
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  overflow: hidden;
-  background: #0f0f2d; /* Subtle cosmic midnight sapphire */
-  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #0f0f2d;
   color: white;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+  user-select: none;
 }
 
 .screen {
@@ -28,189 +29,154 @@ body {
   align-items: center;
   background: #0f0f2d;
   z-index: 100;
-  padding: 20px;
+  padding: 16px;
 }
 
-/* 1. Ultra Clean Splash Loader Viewport Overlays */
-#loader {
-  background: #ffffff;
-  color: #111111;
-}
-
-.logo {
-  width: 160px;
-  margin-bottom: 24px;
-}
-
-.loading-box {
-  width: 200px;
-  height: 6px;
-  background: #e0e0e0;
-  border-radius: 3px;
-  overflow: hidden;
-}
-.loading-fill {
-  width: 0%;
-  height: 100%;
-  background: #ff007f;
-  transition: width 0.1s linear;
-}
+#loader { background: #ffffff; color: #111; }
+.loading-box { width: 180px; height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
+.loading-fill { width: 0%; height: 100%; background: #ff007f; transition: width 0.1s linear; }
 
 .menu-card {
-  background: rgba(255, 255, 255, 0.06);
-  border: 2px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: 35px 25px;
-  border-radius: 24px;
-  max-width: 550px;
-  width: 100%;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  padding: 24px 16px;
+  border-radius: 20px;
+  width: 92vw;
+  max-width: 500px;
+  text-align: center;
 }
 
 button {
   border: 0;
-  border-radius: 14px;
-  padding: 14px 28px;
-  font-size: 20px;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 18px;
   font-weight: bold;
   background: #d62828;
   color: white;
   cursor: pointer;
-  transition: transform 0.2s;
-}
-button:hover {
-  transform: scale(1.04);
 }
 
 #hud {
+  width: 100%;
   display: flex;
-  justify-content: space-around;
-  padding: 12px;
-  font-size: 20px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  font-size: 15px;
   font-weight: bold;
   background: rgba(255, 255, 255, 0.05);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  flex-wrap: wrap;
+}
+
+#timerBar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+}
+#timerFill {
+  height: 100%;
+  width: 100%;
+  background: #00ffff;
+  transition: width 0.2s linear;
 }
 
 #levelTitle {
-  font-size: 34px;
-  font-weight: bold;
-  margin-top: 10px;
+  font-size: 22px;
+  font-weight: 800;
+  margin-top: 8px;
   color: #00ffff;
-  text-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
 }
 
 #questionBox {
-  width: 92%;
-  max-width: 900px;
-  margin: 12px auto;
+  width: 92vw;
+  max-width: 600px;
+  margin: 8px auto;
   background: rgba(255, 255, 255, 0.08);
-  border: 4px solid #7b2cbf;
-  border-radius: 18px;
-  padding: 16px;
-  font-size: 24px;
+  border: 2px solid #7b2cbf;
+  border-radius: 14px;
+  padding: 12px;
+  font-size: 18px;
   font-weight: bold;
-  min-height: 80px;
+  text-align: center;
 }
 
 #gameArea {
   position: relative;
-  width: 1000px;
-  max-width: 96vw;
-  height: 520px;
-  margin: auto;
-  background: linear-gradient(#1e1e4f 0%, #13133a 100%);
-  border: 5px solid #333;
-  border-radius: 20px;
-  overflow: hidden;
-  padding-top: 25px;
+  width: 94vw;
+  max-width: 600px;
+  flex: 1;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 12px;
+  margin-bottom: 8px;
 }
 
 #msg {
-  font-size: 30px;
+  font-size: 18px;
   font-weight: bold;
-  min-height: 40px;
-  margin-top: 10px;
+  min-height: 28px;
+  margin-bottom: 8px;
 }
 
-.instructions {
-  font-size: 22px;
-  line-height: 1.6;
-  max-width: 760px;
-  text-align: left;
-  margin-bottom: 20px;
-  color: #cbd5e1;
-}
-
-#pizza {
-  position: relative;
-  width: 340px;
-  height: 340px;
-  margin: 20px auto;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 10px solid #c97b30;
-  background: #ffd166;
-}
-
-.slice {
-  position: absolute;
-  width: 50%;
-  height: 50%;
-  left: 50%;
-  top: 50%;
-  transform-origin: 0% 0%;
-  border: 2px solid white;
+/* SVG Pizza Mobile Styles */
+.pizza-svg path {
+  fill: #ffd166;
+  stroke: #c97b30;
+  stroke-width: 2;
   cursor: pointer;
-  background: #ffd166;
+  transition: fill 0.15s;
 }
+.pizza-svg path.selected { fill: #ef476f !important; }
 
-.selected { background: #ef476f !important; }
+/* Tape Diagram (Fraction Bar) Mobile Styles */
+.tape-container {
+  display: flex;
+  width: 90%;
+  max-width: 320px;
+  height: 60px;
+  border: 3px solid #7b2cbf;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 15px 0;
+}
+.tape-segment {
+  flex: 1;
+  border-right: 2px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1);
+  cursor: pointer;
+}
+.tape-segment:last-child { border-right: none; }
+.tape-segment.selected { background: #00ffff; }
+
+/* Grid for buttons on mobile */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat( auto-fit, minmax(130px, 1fr) );
+  gap: 10px;
+  width: 100%;
+}
 
 .optionBtn {
-  padding: 16px 28px;
-  margin: 16px;
-  font-size: 30px;
-  border-radius: 16px;
-  border: 4px solid rgba(255, 255, 255, 0.3);
+  padding: 14px;
+  font-size: 20px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
   background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  cursor: pointer;
+  color: #fff;
   font-weight: bold;
-  min-width: 170px;
-  min-height: 80px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.15s, background 0.2s, border-color 0.2s;
-}
-.optionBtn:hover {
-  transform: scale(1.05);
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.5);
 }
 
-/* Correct Answer Reveal Glow Classes */
 .btn-reveal-correct {
-  background: rgba(16, 185, 129, 0.3) !important;
+  background: rgba(16, 185, 129, 0.4) !important;
   border-color: #10b981 !important;
-  color: #10b981 !important;
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
-}
-.pizza-reveal-correct .slice {
-  border-color: #10b981 !important;
-}
-
-.visual {
-  font-size: 120px;
-  margin: 20px auto;
-}
-
-.celebrate-icon {
-  font-size: 5rem;
-  margin-bottom: 15px;
 }
 </style>
 </head>
@@ -218,85 +184,74 @@ button:hover {
 <body>
 
 <div id="loader" class="screen">
-  <img src="assets/logo.png" class="logo" onerror="this.style.display='none'; document.getElementById('fallback-text').style.display='block';">
-  <h1 id="fallback-text" style="display:none; font-size:2.5rem; margin-bottom:24px; font-weight:900; color:#ff007f; letter-spacing: 2px;">INNOVINE</h1>
-  <div class="loading-box">
-    <div id="splash-fill-bar" class="loading-fill"></div>
-  </div>
+  <h1 style="font-size:2rem; color:#ff007f; margin-bottom:16px;">FRACTION KINGDOM</h1>
+  <div class="loading-box"><div id="splash-fill-bar" class="loading-fill"></div></div>
 </div>
 
 <div id="instructions" class="screen" style="display:none">
   <div class="menu-card">
-    <h1 style="color:#00ffff; text-shadow: 0 0 10px rgba(0, 255, 255, 0.3); margin-bottom:20px; font-size:2.2rem;">How to Play</h1>
-    <div class="instructions">
-      <p>🎯 Read the fraction question carefully at the top of the screen.</p>
-      <p>👆 Tap the pizza slices or click the buttons to pick your answer.</p>
-      <p>❤️ You get <b>2 chances</b> to get each question right!</p>
-      <p>✨ If you miss twice, the game will reveal the correct answer and move forward.</p>
-    </div>
-    <button style="background: linear-gradient(135deg, #ff007f, #7f00ff); box-shadow: 0 6px 20px rgba(255, 0, 127, 0.3);" onclick="startGame()">Start Game!</button>
+    <h1 style="color:#00ffff; margin-bottom:12px;">How to Play</h1>
+    <p style="text-align:left; line-height:1.5; color:#cbd5e1; font-size:15px;">
+      🎯 Read each fraction challenge.<br>
+      👆 Tap pizza slices, tape segments, or answer buttons.<br>
+      ⚡ Answer quickly to get <b>Speed Bonus</b> points!<br>
+      ❤️ You get 2 chances per question.
+    </p>
+    <button style="background: linear-gradient(135deg, #ff007f, #7f00ff); width:100%; margin-top:10px;" onclick="startGame()">Start Game!</button>
   </div>
 </div>
 
 <div id="end" class="screen" style="display:none">
-  <div class="menu-card" style="border-color: #00ffff; box-shadow: 0 20px 50px rgba(0,255,255,0.2);">
-    <div class="celebrate-icon">🏆</div>
-    <h1 style="color:#00ffff; margin-bottom:10px;">Simulation Mastered!</h1>
-    <p style="color:#cbd5e1; font-size:1.2rem; margin-bottom:25px;">All algorithmic verification channels successfully matched.</p>
-    <h2>Final Performance: <span id="finalScore" style="color:#ff007f;"></span></h2>
-    <button style="margin-top:25px; background:#7b2cbf;" onclick="location.reload()">Re-engage System</button>
+  <div class="menu-card">
+    <div style="font-size: 3rem;">🏆</div>
+    <h1 style="color:#00ffff;">Mastered!</h1>
+    <h2>Final Score: <span id="finalScore" style="color:#ff007f;"></span></h2>
+    <button style="width:100%; background:#7b2cbf;" onclick="location.reload()">Play Again</button>
   </div>
 </div>
 
 <div id="hud">
-  <div>⭐ Score: <span id="score">0</span></div>
-  <div>❤️ Chances: <span id="chances">❤️❤️</span></div>
-  <div>🏰 Level: <span id="levelNo">1</span>/10</div>
+  <div>⭐ <span id="score">0</span></div>
+  <div>⏱️ <span id="timeText">15</span>s</div>
+  <div>❤️ <span id="chances">❤️❤️</span></div>
+  <div>🏰 <span id="levelNo">1</span>/10</div>
 </div>
+<div id="timerBar"><div id="timerFill"></div></div>
 
 <div id="levelTitle"></div>
 <div id="questionBox"></div>
 <div id="gameArea"></div>
 <div id="msg"></div>
 
-<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
-
 <script>
 const levelBank = [
-  { title:"🍕 Slicing Field", question:"Select 5 out of 8 slices to show 5/8.", answer:"5 slices", type:"pizza", total:8, correct:5 },
-  { title:"🌳 Sorting Matrix", question:"Which fraction is an improper fraction?", answer:"11/7", type:"choice", visual:"🌳", options:["5/9","11/7","2 1/3"] },
-  { title:"✨ Equivalent Mirror", question:"Which fraction is equivalent to 3/4?", answer:"9/12", type:"choice", visual:"✨", options:["6/10","9/12","12/15"] },
-  { title:"🐉 Comparison Engine", question:"Choose the greater fraction.", answer:"5/6", type:"choice", visual:"🐉", options:["5/6","7/12","3/8"] },
-  { title:"⚙️ Operational Reducer", question:"Simplify 18/24. Give answer in simplest form.", answer:"3/4", type:"choice", visual:"⚙️", options:["6/8","3/4","9/12"] },
-  { title:"🧙 Mixed Core Conversion", question:"Convert 17/5 into a mixed number.", answer:"3 2/5", type:"choice", visual:"🧙", options:["2 3/5","3 2/5","4 1/5"] },
-  { title:"💰 Operational Matrix Sum", question:"2/9 + 5/9 = ? Give answer in simplest form.", answer:"7/9", type:"choice", visual:"💰", options:["7/18","7/9","3/9"] },
-  { title:"Bridge Variable Difference", question:"7/10 - 3/10 = ? Give answer in simplest form.", answer:"2/5", type:"choice", visual:"🌉", options:["4/10","2/5","3/5"] },
-  { title:"⚔️ Product Evaluation", question:"2/3 × 3/4 = ? Give answer in simplest form.", answer:"1/2", type:"choice", visual:"⚔️", options:["6/12","1/2","5/7"] },
-  { title:"🏰 Operational Quotient", question:"3/5 ÷ 3/10 = ?", answer:"2", type:"choice", visual:"👑", options:["1","2","3"] }
+  { title:"🍕 Slicing Field", question:"Select 5 out of 8 slices to show 5/8.", answer:"5", type:"pizza", total:8, correct:5 },
+  { title:"📊 Tape Diagram", question:"Shade 3 out of 5 segments to show 3/5.", answer:"3", type:"tape", total:5, correct:3 },
+  { title:"🌳 Sorting Matrix", question:"Which fraction is an improper fraction?", answer:"11/7", type:"choice", options:["5/9","11/7","2 1/3"] },
+  { title:"✨ Equivalent Mirror", question:"Which fraction is equivalent to 3/4?", answer:"9/12", type:"choice", options:["6/10","9/12","12/15"] },
+  { title:"🐉 Comparison Engine", question:"Choose the greater fraction.", answer:"5/6", type:"choice", options:["5/6","7/12","3/8"] },
+  { title:"📊 Fraction Bar", question:"Shade 2 out of 3 segments to show 2/3.", answer:"2", type:"tape", total:3, correct:2 },
+  { title:"⚙️ Operational Reducer", question:"Simplify 18/24 to simplest form.", answer:"3/4", type:"choice", options:["6/8","3/4","9/12"] },
+  { title:"🧙 Mixed Core Conversion", question:"Convert 17/5 into a mixed number.", answer:"3 2/5", type:"choice", options:["2 3/5","3 2/5","4 1/5"] },
+  { title:"💰 Matrix Sum", question:"2/9 + 5/9 = ?", answer:"7/9", type:"choice", options:["7/18","7/9","3/9"] },
+  { title:"🏰 Operational Quotient", question:"3/5 ÷ 3/10 = ?", answer:"2", type:"choice", options:["1","2","3"] }
 ];
 
 let levels = [...levelBank].sort(() => Math.random() - 0.5);
-let level = 0;
-let score = 0;
-let chances = 2;
-let locked = false;
+let level = 0, score = 0, chances = 2, locked = false;
+let timeLeft = 15, timerInterval = null;
 
-// 1. Strict 5-Second Splash Loading Cycle
 window.onload = () => {
   let progressCount = 0;
   const loadTimer = setInterval(() => {
-    progressCount += 2;
-    const bar = document.getElementById("splash-fill-bar");
-    if(bar) bar.style.width = progressCount + "%";
-
+    progressCount += 4;
+    document.getElementById("splash-fill-bar").style.width = progressCount + "%";
     if (progressCount >= 100) {
       clearInterval(loadTimer);
       document.getElementById("loader").style.display = "none";
       document.getElementById("instructions").style.display = "flex";
     }
-  }, 100); // 50 frames * 100ms = 5000ms
+  }, 50);
 };
 
 function startGame(){
@@ -304,17 +259,34 @@ function startGame(){
   loadLevel();
 }
 
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 15;
+  updateTimerUI();
+  timerInterval = setInterval(() => {
+    if(!locked) {
+      timeLeft--;
+      updateTimerUI();
+      if(timeLeft <= 0) {
+        clearInterval(timerInterval);
+        wrong(levels[level].answer);
+      }
+    }
+  }, 1000);
+}
+
+function updateTimerUI() {
+  document.getElementById("timeText").textContent = timeLeft;
+  document.getElementById("timerFill").style.width = (timeLeft / 15 * 100) + "%";
+}
+
 function updateChancesHUD() {
-  const element = document.getElementById("chances");
-  if(!element) return;
-  if(chances === 2) element.textContent = "❤️❤️";
-  else if(chances === 1) element.textContent = "❤️💔";
-  else element.textContent = "💔💔";
+  const el = document.getElementById("chances");
+  el.textContent = chances === 2 ? "❤️❤️" : (chances === 1 ? "❤️💔" : "💔💔");
 }
 
 function loadLevel(){
-  chances = 2;
-  locked = false;
+  chances = 2; locked = false;
   updateChancesHUD();
   document.getElementById("msg").textContent = "";
   document.getElementById("gameArea").innerHTML = "";
@@ -325,120 +297,126 @@ function loadLevel(){
   }
 
   const item = levels[level];
-
   document.getElementById("levelNo").textContent = level + 1;
   document.getElementById("levelTitle").textContent = item.title;
-  document.getElementById("questionBox").textContent = "Question " + (level + 1) + ": " + item.question;
+  document.getElementById("questionBox").textContent = item.question;
 
-  if(item.type === "pizza"){
-    buildPizzaQuestion(item);
-  }else{
-    buildChoiceQuestion(item);
-  }
+  if(item.type === "pizza") buildSVGPizza(item);
+  else if(item.type === "tape") buildTapeDiagram(item);
+  else buildChoiceQuestion(item);
+
+  startTimer();
 }
 
-function buildPizzaQuestion(item){
-  const targetArea = document.getElementById("gameArea");
-  const pizza = document.createElement("div");
-  pizza.id = "pizza";
-  targetArea.appendChild(pizza);
+/* SVG Pizza Generator (Works for any slice count) */
+function buildSVGPizza(item) {
+  const area = document.getElementById("gameArea");
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", "-105 -105 210 210");
+  svg.setAttribute("width", "220");
+  svg.setAttribute("height", "220");
+  svg.setAttribute("class", "pizza-svg");
 
-  const angle = 360 / item.total;
+  const total = item.total;
+  for(let i=0; i<total; i++) {
+    const a1 = (i * 2 * Math.PI) / total - Math.PI/2;
+    const a2 = ((i + 1) * 2 * Math.PI) / total - Math.PI/2;
+    const x1 = 100 * Math.cos(a1), y1 = 100 * Math.sin(a1);
+    const x2 = 100 * Math.cos(a2), y2 = 100 * Math.sin(a2);
+    const largeArc = (a2 - a1) > Math.PI ? 1 : 0;
+    const pathData = `M 0 0 L ${x1} ${y1} A 100 100 0 ${largeArc} 1 ${x2} ${y2} Z`;
 
-  for(let i = 0; i < item.total; i++){
-    const slice = document.createElement("div");
-    slice.className = "slice";
-    slice.style.transform = `rotate(${i * angle}deg) skewY(${90 - angle}deg)`;
-    slice.onclick = () => {
-      if(!locked) slice.classList.toggle("selected");
-    };
-    pizza.appendChild(slice);
+    const path = document.createElementNS(svgNS, "path");
+    path.setAttribute("d", pathData);
+    path.onclick = () => { if(!locked) path.classList.toggle("selected"); };
+    svg.appendChild(path);
   }
+  area.appendChild(svg);
 
-  const verifyBtn = document.createElement("button");
-  verifyBtn.innerText = "Check Answer";
-  verifyBtn.style.marginTop = "15px";
-  verifyBtn.onclick = () => {
+  const vBtn = document.createElement("button");
+  vBtn.innerText = "Check Answer";
+  vBtn.style.marginTop = "12px";
+  vBtn.onclick = () => {
     if(locked) return;
-    const selectedCount = document.querySelectorAll(".selected").length;
-    if(selectedCount === item.correct){
-      correct();
-    }else{
-      wrong(item.answer);
-    }
+    const sel = svg.querySelectorAll(".selected").length;
+    if(sel === item.correct) correct();
+    else wrong(item.correct + " slices");
   };
+  area.appendChild(vBtn);
+}
 
-  targetArea.appendChild(verifyBtn);
+/* Tape Diagram / Fraction Bar Generator */
+function buildTapeDiagram(item) {
+  const area = document.getElementById("gameArea");
+  const tape = document.createElement("div");
+  tape.className = "tape-container";
+
+  for(let i=0; i<item.total; i++) {
+    const seg = document.createElement("div");
+    seg.className = "tape-segment";
+    seg.onclick = () => { if(!locked) seg.classList.toggle("selected"); };
+    tape.appendChild(seg);
+  }
+  area.appendChild(tape);
+
+  const vBtn = document.createElement("button");
+  vBtn.innerText = "Check Answer";
+  vBtn.onclick = () => {
+    if(locked) return;
+    const sel = tape.querySelectorAll(".selected").length;
+    if(sel === item.correct) correct();
+    else wrong(item.correct + " segments");
+  };
+  area.appendChild(vBtn);
 }
 
 function buildChoiceQuestion(item){
-  const targetArea = document.getElementById("gameArea");
-  const visual = document.createElement("div");
-  visual.className = "visual";
-  visual.textContent = item.visual || "👑";
-  targetArea.appendChild(visual);
+  const area = document.getElementById("gameArea");
+  const grid = document.createElement("div");
+  grid.className = "options-grid";
 
-  const shuffled = [...item.options].sort(() => Math.random() - 0.5);
-
-  shuffled.forEach(opt => {
+  [...item.options].sort(() => Math.random() - 0.5).forEach(opt => {
     const btn = document.createElement("button");
     btn.className = "optionBtn";
     btn.innerText = opt;
     btn.onclick = () => {
       if(locked) return;
-      if(opt === item.answer){
-        correct();
-      }else{
-        wrong(item.answer);
-      }
+      if(opt === item.answer) correct();
+      else wrong(item.answer);
     };
-    targetArea.appendChild(btn);
+    grid.appendChild(btn);
   });
+  area.appendChild(grid);
 }
 
 function correct(){
   locked = true;
-  try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
-  score++;
+  clearInterval(timerInterval);
+  const timeBonus = timeLeft;
+  score += 10 + timeBonus;
   document.getElementById("score").textContent = score;
   document.getElementById("msg").style.color = "#10b981";
-  document.getElementById("msg").textContent = "Correct! Well done! 🎉";
+  document.getElementById("msg").textContent = `Correct! +${10 + timeBonus} pts 🎉`;
   level++;
-  setTimeout(loadLevel, 1500);
+  setTimeout(loadLevel, 1400);
 }
 
-// 5. Strict 2-Chance Core Architecture Resolution Logic
 function wrong(answer){
-  try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
   chances--;
   updateChancesHUD();
   document.getElementById("msg").style.color = "#ef4444";
 
   if(chances > 0){
-    document.getElementById("msg").textContent = "Not quite! Try one more time.";
-  }else{
-    // Second Attempt Failure Trigger: Lock interaction field, highlight correct coordinates, auto-advance
+    document.getElementById("msg").textContent = "Not quite! Try once more.";
+  } else {
     locked = true;
-    document.getElementById("msg").textContent = "Let's see the correct answer...";
-
-    const currentItem = levels[level];
-    if(currentItem.type === "pizza") {
-      const pizzaContainer = document.getElementById("pizza");
-      if(pizzaContainer) pizzaContainer.classList.add("pizza-reveal-correct");
-      
-      const slices = document.querySelectorAll(".slice");
-      slices.forEach((sl, index) => {
-        sl.classList.remove("selected");
-        if(index < currentItem.correct) sl.classList.add("selected");
-      });
-    } else {
-      const optionButtons = document.querySelectorAll(".optionBtn");
-      optionButtons.forEach(btn => {
-        if(btn.innerText === answer) {
-          btn.classList.add("btn-reveal-correct");
-        }
-      });
-    }
+    clearInterval(timerInterval);
+    document.getElementById("msg").textContent = "Revealing answer...";
+    
+    document.querySelectorAll(".optionBtn").forEach(btn => {
+      if(btn.innerText === answer) btn.classList.add("btn-reveal-correct");
+    });
 
     level++;
     setTimeout(loadLevel, 2000);
@@ -446,11 +424,10 @@ function wrong(answer){
 }
 
 function finishGame(){
-  try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
-  document.getElementById("finalScore").textContent = score + " / " + levels.length;
+  clearInterval(timerInterval);
+  document.getElementById("finalScore").textContent = score;
   document.getElementById("end").style.display = "flex";
 }
 </script>
-
 </body>
 </html>
