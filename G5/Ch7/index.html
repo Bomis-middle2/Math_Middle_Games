@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>The Legend of the Golden Ratio</title>
     <style>
         * {
@@ -11,13 +11,18 @@
             padding: 0;
             user-select: none;
             -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: manipulation;
         }
         body, html {
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #090b11;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial', sans-serif;
+            background-color: #030406;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 'Comic Sans MS', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         #game-container {
             position: relative;
@@ -33,6 +38,7 @@
             max-width: 100%;
             max-height: 100%;
             aspect-ratio: 16 / 9;
+            object-fit: contain;
             display: block;
         }
         audio {
@@ -80,16 +86,16 @@ const levelsData = [
         title: "Chapter I: The Temple of Triangles",
         introText: "Ancient runes have split open the stone temple pillars! Link each shattered triangle vector blueprint to its true mathematical identity token to stabilize the foundation walls.",
         shapes: [
-            { id: "equilateral", name: "Equilateral Triangle", matchId: "p_eq", x: 220, y: 160, color: "#38bdf8" },
-            { id: "rightangle", name: "Right-Angled Triangle", matchId: "p_ri", x: 220, y: 260, color: "#a855f7" },
-            { id: "isosceles", name: "Isosceles Triangle", matchId: "p_is", x: 220, y: 360, color: "#06b6d4" },
-            { id: "scalene", name: "Scalene Triangle", matchId: "p_sc", x: 220, y: 460, color: "#f43f5e" }
+            { id: "equilateral", name: "Equilateral Triangle", matchId: "p_eq", x: 200, y: 150, color: "#38bdf8" },
+            { id: "rightangle", name: "Right-Angled Triangle", matchId: "p_ri", x: 200, y: 250, color: "#a855f7" },
+            { id: "isosceles", name: "Isosceles Triangle", matchId: "p_is", x: 200, y: 350, color: "#06b6d4" },
+            { id: "scalene", name: "Scalene Triangle", matchId: "p_sc", x: 200, y: 450, color: "#f43f5e" }
         ],
         properties: [
-            { id: "p_is", label: "Has exactly 2 Equal Sides", x: 780, y: 160, w: 300, h: 54, color: "#06b6d4" },
-            { id: "p_sc", label: "All 3 Sides are Unequal", x: 780, y: 260, w: 300, h: 54, color: "#f43f5e" },
-            { id: "p_eq", label: "All 3 Sides & Angles Equal", x: 780, y: 360, w: 300, h: 54, color: "#38bdf8" },
-            { id: "p_ri", label: "Features one perfect 90° Corner", x: 780, y: 460, w: 300, h: 54, color: "#a855f7" }
+            { id: "p_is", label: "Has exactly 2 Equal Sides", x: 820, y: 150, w: 340, h: 64, color: "#06b6d4" },
+            { id: "p_sc", label: "All 3 Sides are Unequal", x: 820, y: 250, w: 340, h: 64, color: "#f43f5e" },
+            { id: "p_eq", label: "All 3 Sides & Angles Equal", x: 820, y: 350, w: 340, h: 64, color: "#38bdf8" },
+            { id: "p_ri", label: "Features one perfect 90° Corner", x: 820, y: 450, w: 340, h: 64, color: "#a855f7" }
         ]
     },
     {
@@ -97,33 +103,33 @@ const levelsData = [
         title: "Chapter II: The Portal of Circles",
         introText: "To activate the deep space travel nexus, you must calibrate the circular plasma fields. Route the circle element tracks cleanly into their textbook property slots.",
         shapes: [
-            { id: "radius", name: "Circle Radius line", matchId: "p_rad", x: 220, y: 160, color: "#fbbf24" },
-            { id: "diameter", name: "Full Diameter line", matchId: "p_dia", x: 220, y: 260, color: "#22c55e" },
-            { id: "circumference", name: "Outer Boundary line", matchId: "p_cir", x: 220, y: 360, color: "#38bdf8" },
-            { id: "center", name: "Central Origin Dot", matchId: "p_cen", x: 220, y: 460, color: "#a855f7" }
+            { id: "radius", name: "Circle Radius line", matchId: "p_rad", x: 200, y: 150, color: "#fbbf24" },
+            { id: "diameter", name: "Full Diameter line", matchId: "p_dia", x: 200, y: 250, color: "#22c55e" },
+            { id: "circumference", name: "Outer Boundary line", matchId: "p_cir", x: 200, y: 350, color: "#38bdf8" },
+            { id: "center", name: "Central Origin Dot", matchId: "p_cen", x: 200, y: 450, color: "#a855f7" }
         ],
         properties: [
-            { id: "p_dia", label: "Diameter = 2 × Radius", x: 780, y: 160, w: 300, h: 54, color: "#22c55e" },
-            { id: "p_cen", label: "Fixed point inside center loop", x: 780, y: 260, w: 300, h: 54, color: "#a855f7" },
-            { id: "p_rad", label: "Distance from Center to Edge", x: 780, y: 360, w: 300, h: 54, color: "#fbbf24" },
-            { id: "p_cir", label: "Complete Perimeter length around", x: 780, y: 460, w: 300, h: 54, color: "#38bdf8" }
+            { id: "p_dia", label: "Diameter = 2 × Radius", x: 820, y: 150, w: 340, h: 64, color: "#22c55e" },
+            { id: "p_cen", label: "Fixed point inside center loop", x: 820, y: 250, w: 340, h: 64, color: "#a855f7" },
+            { id: "p_rad", label: "Distance from Center to Edge", x: 820, y: 350, w: 340, h: 64, color: "#fbbf24" },
+            { id: "p_cir", label: "Complete Perimeter length around", x: 820, y: 450, w: 340, h: 64, color: "#38bdf8" }
         ]
     },
     {
         levelNum: 3,
         title: "Chapter III: The Vault of Quadrilaterals",
-        introText: "You've reached the treasure vault vault core! The final lock arrays are constructed from shifting 4-sided shapes. Sync them with their geometric definitions to finish the journey.",
+        introText: "You've reached the treasure vault core! The final lock arrays are constructed from shifting 4-sided shapes. Sync them with their geometric definitions to finish the journey.",
         shapes: [
-            { id: "square", name: "Perfect Square", matchId: "p_sq", x: 220, y: 160, color: "#22c55e" },
-            { id: "rectangle", name: "Rectangle Polygon", matchId: "p_rec", x: 220, y: 260, color: "#38bdf8" },
-            { id: "parallelogram", name: "Parallelogram block", matchId: "p_par", x: 220, y: 360, color: "#fbbf24" },
-            { id: "rhombus", name: "Rhombus Diamond", matchId: "p_rho", x: 220, y: 460, color: "#ec4899" }
+            { id: "square", name: "Perfect Square", matchId: "p_sq", x: 200, y: 150, color: "#22c55e" },
+            { id: "rectangle", name: "Rectangle Polygon", matchId: "p_rec", x: 200, y: 250, color: "#38bdf8" },
+            { id: "parallelogram", name: "Parallelogram block", matchId: "p_par", x: 200, y: 350, color: "#fbbf24" },
+            { id: "rhombus", name: "Rhombus Diamond", matchId: "p_rho", x: 200, y: 450, color: "#ec4899" }
         ],
         properties: [
-            { id: "p_par", label: "Opposite sides parallel & equal", x: 780, y: 160, w: 300, h: 54, color: "#fbbf24" },
-            { id: "p_sq", label: "4 Equal Sides & 4 Right Angles", x: 780, y: 260, w: 300, h: 54, color: "#22c55e" },
-            { id: "p_rho", label: "4 Equal Sides but NO right angles", x: 780, y: 360, w: 300, h: 54, color: "#ec4899" },
-            { id: "p_rec", label: "Opposite sides equal, 4 right angles", x: 780, y: 460, w: 300, h: 54, color: "#38bdf8" }
+            { id: "p_par", label: "Opposite sides parallel & equal", x: 820, y: 150, w: 340, h: 64, color: "#fbbf24" },
+            { id: "p_sq", label: "4 Equal Sides & 4 Right Angles", x: 820, y: 250, w: 340, h: 64, color: "#22c55e" },
+            { id: "p_rho", label: "4 Equal Sides but NO right angles", x: 820, y: 350, w: 340, h: 64, color: "#ec4899" },
+            { id: "p_rec", label: "Opposite sides equal, 4 right angles", x: 820, y: 450, w: 340, h: 64, color: "#38bdf8" }
         ]
     }
 ];
@@ -141,15 +147,15 @@ let feedbackTimer = 0;
 
 function startLevelLoad(idx) {
     currentLevelIdx = idx;
-    activeLevel = JSON.parse(JSON.stringify(levelsData[currentLevelIdx])); // deep clones dataset securely
+    activeLevel = JSON.parse(JSON.stringify(levelsData[currentLevelIdx]));
     linkedConnections = [];
     selectedShape = null;
     selectedProperty = null;
-    feedbackText = "Link the structures on the left with their textbook laws on the right!";
+    feedbackText = "Tap a shape on the left, then tap its rule on the right!";
     feedbackColor = "#94a3b8";
     
-    // Scramble right board layout dynamically to keep puzzle interactions unexpected
-    const slotYCoords = [160, 260, 360, 460].sort(() => Math.random() - 0.5);
+    // Scramble right board layout dynamically
+    const slotYCoords = [150, 250, 350, 450].sort(() => Math.random() - 0.5);
     activeLevel.properties.forEach((prop, i) => {
         prop.y = slotYCoords[i];
     });
@@ -192,7 +198,7 @@ function renderShapeGraphic(id, x, y) {
             ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2); ctx.fill();
         } else if (id === "radius") {
             ctx.strokeStyle = "#fbbf24"; ctx.lineWidth = 2.5;
-            ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 22, 0); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 22, y); ctx.stroke();
         } else if (id === "diameter") {
             ctx.strokeStyle = "#22c55e"; ctx.lineWidth = 2.5;
             ctx.beginPath(); ctx.moveTo(x - 22, y); ctx.lineTo(x + 22, y); ctx.stroke();
@@ -227,7 +233,7 @@ function drawBranding() {
         ctx.drawImage(logoImg, canvas.width / 2 - logoImg.width / 2, canvas.height / 2 - logoImg.height / 2);
     } else {
         ctx.fillStyle = "#38bdf8";
-        ctx.font = "bold 45px 'Comic Sans MS'";
+        ctx.font = "bold 45px sans-serif";
         ctx.textAlign = "center";
         ctx.fillText("INNOVINE", canvas.width / 2, canvas.height / 2);
     }
@@ -237,7 +243,6 @@ function drawStoryIntro() {
     ctx.fillStyle = "#090b11";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Render sci-fi background scanning grid trace
     ctx.strokeStyle = "rgba(56, 189, 248, 0.04)";
     ctx.lineWidth = 1;
     for (let i = 0; i < canvas.width; i += 40) {
@@ -247,96 +252,97 @@ function drawStoryIntro() {
     let config = levelsData[currentLevelIdx];
     
     ctx.fillStyle = "#fbbf24";
-    ctx.font = "bold 38px 'Comic Sans MS'";
+    ctx.font = "bold 34px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(config.title, canvas.width / 2, 130);
+    ctx.fillText(config.title, canvas.width / 2, 120);
 
-    // Wrapped block text helper
     ctx.fillStyle = "#ffffff";
-    ctx.font = "21px 'Comic Sans MS'";
+    ctx.font = "20px sans-serif";
     let words = config.introText.split(" ");
     let line = "";
-    let currentY = 220;
+    let currentY = 210;
     
     for (let w = 0; w < words.length; w++) {
         let testLine = line + words[w] + " ";
-        if (ctx.measureText(testLine).width > 760) {
+        if (ctx.measureText(testLine).width > 780) {
             ctx.fillText(line, canvas.width / 2, currentY);
             line = words[w] + " ";
-            currentY += 35;
+            currentY += 34;
         } else {
             line = testLine;
         }
     }
     ctx.fillText(line, canvas.width / 2, currentY);
 
-    // Pulse action button
     let pulseVal = Math.sin(Date.now() / 130) * 4;
     ctx.fillStyle = "#6366f1";
     ctx.beginPath();
-    ctx.roundRect(canvas.width / 2 - 130, 420 + pulseVal, 260, 58, 14);
+    ctx.roundRect(canvas.width / 2 - 140, 410 + pulseVal, 280, 68, 18);
     ctx.fill();
     ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2;
     ctx.stroke();
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 20px 'Comic Sans MS'";
-    ctx.fillText("BEGIN EXPEDITION", canvas.width / 2, 455 + pulseVal);
+    ctx.font = "bold 22px sans-serif";
+    ctx.fillText("BEGIN EXPEDITION", canvas.width / 2, 452 + pulseVal);
 }
 
 function drawPlayingState() {
     ctx.fillStyle = "#0e111a";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Core Header Display
     ctx.fillStyle = "#1e293b";
     ctx.fillRect(0, 0, canvas.width, 75);
     ctx.strokeStyle = "rgba(56, 189, 248, 0.2)";
     ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(0, 75); ctx.lineTo(canvas.width, 75); ctx.stroke();
 
-    if (Date.now() - feedbackTimer > 2000) {
-        feedbackText = "Link the left blueprint modules to their true geometric laws on the right.";
+    if (Date.now() - feedbackTimer > 2500) {
+        feedbackText = "Tap a shape on the left, then tap its matching rule on the right.";
         feedbackColor = "#94a3b8";
     }
     ctx.fillStyle = feedbackColor;
-    ctx.font = "bold 18px 'Comic Sans MS'";
+    ctx.font = "bold 17px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(feedbackText, canvas.width / 2, 44);
 
     // Draw confirmed lock lines
     linkedConnections.forEach(link => {
-        ctx.strokeStyle = "rgba(34, 197, 94, 0.7)";
-        ctx.lineWidth = 5;
+        ctx.strokeStyle = "rgba(34, 197, 94, 0.8)";
+        ctx.lineWidth = 6;
         ctx.beginPath(); ctx.moveTo(link.sx, link.sy); ctx.lineTo(link.px, link.py); ctx.stroke();
     });
 
-    // Draw elastic rubber-band line if selecting items
+    // Draw active elastic rubber-band target line
     if (selectedShape) {
-        ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
-        ctx.lineWidth = 2;
-        ctx.setLineDash([5, 5]);
-        ctx.beginPath(); ctx.moveTo(selectedShape.x + 130, selectedShape.y); ctx.lineTo(canvas.width / 2 + 100, canvas.height / 2 + 50); ctx.stroke();
+        ctx.strokeStyle = "#38bdf8";
+        ctx.lineWidth = 3;
+        ctx.setLineDash([6, 6]);
+        ctx.beginPath();
+        ctx.moveTo(selectedShape.x + 140, selectedShape.y);
+        ctx.lineTo(canvas.width / 2 + 120, canvas.height / 2);
+        ctx.stroke();
         ctx.setLineDash([]);
     }
 
-    // --- DRAW LEFT SHAPES CARDS ---
+    // --- DRAW LEFT SHAPES CARDS (Sized for Touch Targets) ---
     activeLevel.shapes.forEach(node => {
         let isLinked = linkedConnections.some(c => c.shapeId === node.id);
         let isSelected = selectedShape && selectedShape.id === node.id;
 
         ctx.fillStyle = isSelected ? "#1e293b" : "#111827";
-        ctx.beginPath(); ctx.roundRect(node.x - 130, node.y - 38, 260, 76, 12); ctx.fill();
+        ctx.beginPath(); ctx.roundRect(node.x - 140, node.y - 32, 280, 64, 14); ctx.fill();
         ctx.strokeStyle = isSelected ? "#38bdf8" : (isLinked ? "#22c55e" : "#374151");
-        ctx.lineWidth = isSelected ? 3 : 1.5;
+        ctx.lineWidth = isSelected ? 3.5 : 2;
         ctx.stroke();
 
-        renderShapeGraphic(node.id, node.x - 80, node.y);
+        renderShapeGraphic(node.id, node.x - 90, node.y);
 
         ctx.fillStyle = isLinked ? "#64748b" : "#ffffff";
-        ctx.font = "bold 15px 'Comic Sans MS'";
+        ctx.font = "bold 15px sans-serif";
         ctx.textAlign = "left";
-        ctx.fillText(node.name, node.x - 30, node.y + 5);
+        ctx.fillText(node.name, node.x - 40, node.y + 5);
     });
 
     // --- DRAW RIGHT PROPERTIES TOKENS ---
@@ -345,13 +351,13 @@ function drawPlayingState() {
         let isSelected = selectedProperty && selectedProperty.id === tok.id;
 
         ctx.fillStyle = isSelected ? "#2d1b4e" : "#111827";
-        ctx.beginPath(); ctx.roundRect(tok.x - tok.w/2, tok.y - tok.h/2, tok.w, tok.h, 12); ctx.fill();
+        ctx.beginPath(); ctx.roundRect(tok.x - tok.w/2, tok.y - tok.h/2, tok.w, tok.h, 14); ctx.fill();
         ctx.strokeStyle = isSelected ? "#a855f7" : (isLinked ? "#22c55e" : "#374151");
-        ctx.lineWidth = isSelected ? 3 : 1.5;
+        ctx.lineWidth = isSelected ? 3.5 : 2;
         ctx.stroke();
 
         ctx.fillStyle = isLinked ? "#475569" : "#ffffff";
-        ctx.font = "bold 15px 'Comic Sans MS'";
+        ctx.font = "bold 14px sans-serif";
         ctx.textAlign = "center";
         ctx.fillText(tok.label, tok.x, tok.y + 5);
     });
@@ -362,22 +368,22 @@ function drawLevelCompleteState() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "#22c55e";
-    ctx.font = "bold 44px 'Comic Sans MS'";
+    ctx.font = "bold 38px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("✨ CHAPTER MODULE STABILIZED! ✨", canvas.width / 2, 200);
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "22px 'Comic Sans MS'";
-    ctx.fillText("All vectors successfully aligned with textbook parameters.", canvas.width / 2, 280);
+    ctx.font = "20px sans-serif";
+    ctx.fillText("All vectors successfully aligned with textbook parameters.", canvas.width / 2, 270);
 
     let pulse = Math.sin(Date.now() / 120) * 4;
     ctx.fillStyle = "#fbbf24";
-    ctx.beginPath(); ctx.roundRect(canvas.width / 2 - 140, 400 + pulse, 280, 60, 16); ctx.fill();
-    ctx.strokeStyle = "#ffffff"; ctx.stroke();
+    ctx.beginPath(); ctx.roundRect(canvas.width / 2 - 140, 390 + pulse, 280, 68, 18); ctx.fill();
+    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2; ctx.stroke();
 
     ctx.fillStyle = "#000000";
-    ctx.font = "bold 20px 'Comic Sans MS'";
-    ctx.fillText("ADVANCE STORYLINE", canvas.width / 2, 436 + pulse);
+    ctx.font = "bold 20px sans-serif";
+    ctx.fillText("ADVANCE STORYLINE", canvas.width / 2, 432 + pulse);
 }
 
 function drawGameOverState() {
@@ -385,25 +391,25 @@ function drawGameOverState() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "#fbbf24";
-    ctx.font = "bold 46px 'Comic Sans MS'";
+    ctx.font = "bold 42px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("🏆 LEGEND COMPLETED! 🏆", canvas.width / 2, 190);
+    ctx.fillText("🏆 LEGEND COMPLETED! 🏆", canvas.width / 2, 180);
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "24px 'Comic Sans MS'";
-    ctx.fillText("Fantastic! You have completed all 3 chapters of the Geometric Grid.", canvas.width / 2, 270);
+    ctx.font = "22px sans-serif";
+    ctx.fillText("Fantastic! You have completed all 3 chapters of the Geometric Grid.", canvas.width / 2, 260);
     
     ctx.fillStyle = "#34d399";
-    ctx.font = "bold 20px 'Comic Sans MS'";
-    ctx.fillText("Rank Secured: Grand Geometry Blueprint Architect", canvas.width / 2, 330);
+    ctx.font = "bold 20px sans-serif";
+    ctx.fillText("Rank Secured: Grand Geometry Blueprint Architect", canvas.width / 2, 320);
 
     ctx.fillStyle = "#6366f1";
-    ctx.beginPath(); ctx.roundRect(canvas.width / 2 - 120, 420, 240, 60, 20); ctx.fill();
-    ctx.strokeStyle = "#ffffff"; ctx.stroke();
+    ctx.beginPath(); ctx.roundRect(canvas.width / 2 - 130, 410, 260, 68, 20); ctx.fill();
+    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2; ctx.stroke();
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 20px 'Comic Sans MS'";
-    ctx.fillText("REPLAY JOURNEY", canvas.width / 2, 456);
+    ctx.font = "bold 20px sans-serif";
+    ctx.fillText("REPLAY JOURNEY", canvas.width / 2, 452);
 }
 
 // --- DATA LOGIC LINK EVALUATIONS ---
@@ -413,11 +419,11 @@ function checkMatchingNodes() {
         if (selectedShape.matchId === selectedProperty.id) {
             linkedConnections.push({
                 shapeId: selectedShape.id, tokenId: selectedProperty.id,
-                sx: selectedShape.x + 130, sy: selectedShape.y,
+                sx: selectedShape.x + 140, sy: selectedShape.y,
                 px: selectedProperty.x - selectedProperty.w/2, py: selectedProperty.y
             });
             audioCorrect.currentTime = 0; audioCorrect.play().catch(() => {});
-            feedbackText = `🌟 Success! ${selectedShape.name} locked safely into core system.`;
+            feedbackText = `🌟 Success! ${selectedShape.name} aligned correctly!`;
             feedbackColor = "#22c55e";
         } else {
             audioWrong.currentTime = 0; audioWrong.play().catch(() => {});
@@ -427,7 +433,6 @@ function checkMatchingNodes() {
         feedbackTimer = Date.now();
         selectedShape = null; selectedProperty = null;
 
-        // Verify if all elements are cleared in level map
         if (linkedConnections.length === activeLevel.shapes.length) {
             setTimeout(() => {
                 if (currentLevelIdx + 1 < levelsData.length) {
@@ -436,14 +441,14 @@ function checkMatchingNodes() {
                     currentState = STATES.GAMEOVER;
                 }
                 audioWin.currentTime = 0; audioWin.play().catch(() => {});
-            }, 1200);
+            }, 1000);
         }
     }
 }
 
 function handlePointerClick(coords) {
     if (currentState === STATES.STORY_INTRO) {
-        if (coords.x > canvas.width/2 - 130 && coords.x < canvas.width/2 + 130 && coords.y > 420 && coords.y < 480) {
+        if (coords.x > canvas.width/2 - 140 && coords.x < canvas.width/2 + 140 && coords.y > 410 && coords.y < 480) {
             currentState = STATES.PLAYING;
         }
     } 
@@ -451,7 +456,7 @@ function handlePointerClick(coords) {
         // Track shapes cards bounding hits
         activeLevel.shapes.forEach(node => {
             if (!linkedConnections.some(c => c.shapeId === node.id)) {
-                if (coords.x >= node.x - 130 && coords.x <= node.x + 130 && coords.y >= node.y - 38 && coords.y <= node.y + 38) {
+                if (coords.x >= node.x - 140 && coords.x <= node.x + 140 && coords.y >= node.y - 32 && coords.y <= node.y + 32) {
                     selectedShape = node;
                 }
             }
@@ -469,13 +474,13 @@ function handlePointerClick(coords) {
         checkMatchingNodes();
     } 
     else if (currentState === STATES.LEVEL_COMPLETE) {
-        if (coords.x > canvas.width/2 - 140 && coords.x < canvas.width/2 + 140 && coords.y > 400 && coords.y < 460) {
+        if (coords.x > canvas.width/2 - 140 && coords.x < canvas.width/2 + 140 && coords.y > 390 && coords.y < 460) {
             startLevelLoad(currentLevelIdx + 1);
             currentState = STATES.STORY_INTRO;
         }
     } 
     else if (currentState === STATES.GAMEOVER) {
-        if (coords.x > canvas.width/2 - 120 && coords.x < canvas.width/2 + 120 && coords.y > 420 && coords.y < 480) {
+        if (coords.x > canvas.width/2 - 130 && coords.x < canvas.width/2 + 130 && coords.y > 410 && coords.y < 480) {
             startLevelLoad(0);
             currentState = STATES.STORY_INTRO;
         }
@@ -486,9 +491,11 @@ function extractResolutionCoords(e) {
     const bound = canvas.getBoundingClientRect();
     const scaleX = canvas.width / bound.width;
     const scaleY = canvas.height / bound.height;
-    let rawX = e.clientX; let rawY = e.clientY;
+    let rawX = e.clientX; 
+    let rawY = e.clientY;
     if (e.touches && e.touches.length > 0) {
-        rawX = e.touches[0].clientX; rawY = e.touches[0].clientY;
+        rawX = e.touches[0].clientX; 
+        rawY = e.touches[0].clientY;
     }
     return { x: (rawX - bound.left) * scaleX, y: (rawY - bound.top) * scaleY };
 }
@@ -496,7 +503,8 @@ function extractResolutionCoords(e) {
 // --- LISTENERS ---
 canvas.addEventListener('mousedown', (e) => handlePointerClick(extractResolutionCoords(e)));
 canvas.addEventListener('touchstart', (e) => {
-    e.preventDefault(); handlePointerClick(extractResolutionCoords(e));
+    e.preventDefault(); 
+    handlePointerClick(extractResolutionCoords(e));
 }, { passive: false });
 
 // --- MAIN LOOP EXECUTION THREAD ---
@@ -504,7 +512,7 @@ function masterThreadLoop() {
     switch (currentState) {
         case STATES.BRANDING:
             drawBranding();
-            if (Date.now() - stateStartTime > 4000) {
+            if (Date.now() - stateStartTime > 3000) {
                 startLevelLoad(0);
                 currentState = STATES.STORY_INTRO;
             }
