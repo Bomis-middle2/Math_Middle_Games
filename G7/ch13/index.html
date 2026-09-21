@@ -3,469 +3,256 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Solid Shapes Express - Grade 7</title>
+<title>3D Geometry Museum Quest - Mystery Exhibit</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  font-family:'Segoe UI',Tahoma,Verdana,sans-serif;
-  margin:0;
-  padding:0;
-  user-select:none;
-  -webkit-user-select:none;
+:root{
+  --ink:#1f2937;
+  --muted:#64748b;
+  --panel:#ffffffef;
+  --navy:#17324d;
+  --teal:#0f766e;
+  --blue:#0284c7;
+  --gold:#d97706;
+  --gold-soft:#fef3c7;
+  --green:#15803d;
+  --green-soft:#dcfce7;
+  --red:#b91c1c;
+  --red-soft:#fee2e2;
+  --line:#dbe4ea;
+  --purple:#7c3aed;
 }
 
-html,body{
-  width:100%;
-  min-height:100%;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;min-height:100%}
 
 body{
   min-height:100dvh;
-  overflow-x:hidden;
-  overflow-y:auto;
-  color:#1e293b;
+  font-family:"Segoe UI",Tahoma,Verdana,sans-serif;
+  color:var(--ink);
   background:
-    radial-gradient(circle at 12% 12%,rgba(14,165,233,.16),transparent 22%),
-    radial-gradient(circle at 88% 14%,rgba(249,115,22,.15),transparent 22%),
-    linear-gradient(180deg,#dff6ff 0%,#fff7d6 52%,#dcfce7 100%);
-  display:flex;
-  justify-content:center;
-  align-items:flex-start;
-  padding:clamp(6px,1.8vw,14px);
+    radial-gradient(circle at 10% 10%,rgba(14,165,233,.12),transparent 22%),
+    radial-gradient(circle at 90% 12%,rgba(245,158,11,.12),transparent 22%),
+    linear-gradient(180deg,#edf8ff 0%,#fffaf0 50%,#effcf5 100%);
+  padding:clamp(6px,1.6vw,14px);
+  overflow-x:hidden;
 }
 
-button{
-  -webkit-tap-highlight-color:transparent;
-  outline:none;
-  font-family:inherit;
-}
+button{font:inherit;-webkit-tap-highlight-color:transparent}
+button:focus-visible{outline:3px solid rgba(2,132,199,.3);outline-offset:2px}
+.hidden{display:none!important}
 
-button:focus{
-  outline:none;
-}
-
-.hidden{
-  display:none !important;
-}
-
-/* =====================================================
-   SPLASH
-===================================================== */
+/* splash */
 #splash{
-  position:fixed;
-  inset:0;
-  background:#fff;
-  z-index:9999;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:opacity .5s ease;
+  position:fixed;inset:0;z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  background:#fff;transition:opacity .45s ease;
 }
+#splash img{width:min(280px,72vw);height:auto}
 
-#splash img{
-  width:min(280px,72vw);
-  height:auto;
-  object-fit:contain;
-}
-
-/* =====================================================
-   ROOT
-===================================================== */
-#root{
-  width:min(100%,960px);
-  min-height:calc(100dvh - 12px);
-  padding:clamp(8px,2vw,16px);
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  opacity:0;
-  transition:opacity .5s ease;
-  position:relative;
-}
-
-/* =====================================================
-   INTRO
-===================================================== */
+/* intro */
 #intro{
-  position:absolute;
-  inset:0;
-  background:rgba(240,249,255,.97);
-  z-index:5;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  padding:18px;
-  border-radius:18px;
-  overflow-y:auto;
+  position:fixed;inset:0;z-index:5000;
+  display:flex;align-items:center;justify-content:center;
+  padding:18px;background:rgba(248,250,252,.96);
 }
-
-.card{
-  background:#fff;
-  border:2px solid #38bdf8;
-  border-radius:22px;
-  padding:24px;
-  max-width:560px;
-  box-shadow:0 12px 28px rgba(14,165,233,.18);
+.intro-card{
+  width:min(640px,100%);background:#fff;border:2px solid #cbd5e1;
+  border-radius:26px;padding:clamp(22px,5vw,34px);
+  box-shadow:0 24px 60px rgba(15,23,42,.14);text-align:center;
 }
-
-.card h1{
-  color:#0369a1;
-  font-size:clamp(1.35rem,4vw,1.85rem);
-  margin-bottom:10px;
+.intro-icon{
+  width:76px;height:76px;display:grid;place-items:center;margin:0 auto 12px;
+  border-radius:22px;background:linear-gradient(135deg,#e0f2fe,#fef3c7);
+  font-size:2.2rem;
 }
-
-.card p{
-  color:#475569;
-  line-height:1.55;
-  font-weight:650;
+.intro-card h1{color:var(--navy);font-size:clamp(1.55rem,4.6vw,2.1rem);margin-bottom:10px}
+.intro-card p{color:#475569;line-height:1.6;font-weight:650}
+.role{margin:16px 0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.role div{
+  background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px;
+  padding:11px 8px;font-size:.82rem;color:#475569;font-weight:750;
 }
+.role b{display:block;color:var(--teal);margin-bottom:3px}
 
-/* =====================================================
-   BUTTON
-===================================================== */
+/* app */
+#app{width:min(100%,1040px);margin:0 auto;opacity:0;transition:opacity .45s ease}
+
 .btn{
-  width:100%;
-  border:0;
-  border-radius:16px;
-  padding:clamp(12px,2.7vw,16px);
-  background:linear-gradient(135deg,#0ea5e9,#f97316);
-  color:#fff;
-  font-size:clamp(.9rem,2.8vw,1.05rem);
-  font-weight:950;
-  text-transform:uppercase;
-  letter-spacing:.6px;
-  cursor:pointer;
-  box-shadow:0 8px 18px rgba(14,165,233,.22);
-  transition:transform .15s,box-shadow .2s;
+  width:100%;border:0;border-radius:16px;padding:13px 16px;
+  background:linear-gradient(135deg,var(--navy),var(--teal));
+  color:#fff;font-size:clamp(.9rem,2.6vw,1rem);font-weight:900;
+  letter-spacing:.3px;cursor:pointer;
+  box-shadow:0 8px 18px rgba(23,50,77,.18);
+  transition:transform .15s ease,box-shadow .15s ease;
 }
+.btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 11px 23px rgba(23,50,77,.23)}
+.btn:disabled{background:#cbd5e1;color:#64748b;cursor:not-allowed;box-shadow:none;transform:none}
 
-.btn:hover:not(:disabled){
-  transform:translateY(-2px);
-  box-shadow:0 11px 22px rgba(14,165,233,.25);
+.header{
+  display:grid;grid-template-columns:1fr auto auto;
+  gap:8px;align-items:center;margin-bottom:8px;
 }
-
-.btn:disabled{
-  background:#cbd5e1;
-  color:#64748b;
-  box-shadow:none;
-  cursor:not-allowed;
-  transform:none;
+.brand,.stat{
+  background:rgba(255,255,255,.9);border:1px solid var(--line);
+  border-radius:14px;padding:10px 12px;font-weight:900;
 }
+.brand{color:var(--navy);font-weight:950}
+.stat{min-width:110px;text-align:center;color:var(--teal);font-size:.9rem}
 
-/* =====================================================
-   TOP / PROGRESS
-===================================================== */
-.top{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:8px;
-  font-weight:900;
-  color:#0369a1;
-  font-size:clamp(.82rem,2.5vw,1rem);
+.progress-wrap{
+  display:grid;grid-template-columns:1fr auto;gap:9px;align-items:center;margin-bottom:10px;
 }
-
-.top span{
-  background:rgba(255,255,255,.88);
-  border:2px solid #bae6fd;
-  border-radius:12px;
-  padding:7px 8px;
-  text-align:center;
+.progress{height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+#progressBar{
+  height:100%;width:0;
+  background:linear-gradient(90deg,var(--teal),var(--blue),var(--gold));
+  transition:width .35s ease;
 }
+.counter{color:#475569;font-weight:900;font-size:.83rem}
 
-.progress{
-  height:10px;
-  background:#e2e8f0;
-  border-radius:999px;
-  overflow:hidden;
+.collection{
+  display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin-bottom:10px;
 }
-
-.bar{
-  height:100%;
-  width:0%;
-  background:linear-gradient(90deg,#0ea5e9,#22c55e,#f59e0b);
-  transition:width .4s ease;
+.slot{
+  height:34px;border-radius:10px;display:grid;place-items:center;
+  background:rgba(255,255,255,.85);border:1px solid #dbe4ea;color:#94a3b8;
+  font-size:.8rem;font-weight:900;transition:.2s;
 }
+.slot.current{border-color:var(--gold);background:#fff7ed;color:#b45309}
+.slot.earned{border-color:#86efac;background:#f0fdf4;color:var(--green)}
 
-/* =====================================================
-   GAME LAYOUT
-===================================================== */
-.game{
-  display:grid;
-  grid-template-columns:minmax(250px,.9fr) minmax(360px,1.28fr);
-  gap:12px;
-  min-height:0;
-  flex:1;
+.stage{
+  display:grid;grid-template-columns:minmax(300px,.92fr) minmax(390px,1.18fr);
+  gap:12px;min-height:520px;
 }
-
 .panel{
-  background:rgba(255,255,255,.92);
-  border:2px solid #bae6fd;
-  border-radius:20px;
-  padding:clamp(10px,2vw,14px);
-  box-shadow:0 8px 22px rgba(14,165,233,.12);
+  background:var(--panel);border:1px solid #dbe4ea;border-radius:22px;
+  box-shadow:0 12px 30px rgba(15,23,42,.08);
+}
+.question-panel{
+  padding:clamp(12px,2.2vw,18px);
+  display:flex;flex-direction:column;gap:11px;
 }
 
-.left{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+.category-row{
+  display:flex;align-items:center;justify-content:flex-end;gap:10px;
+}
+.attempt{font-size:.78rem;color:#475569;font-weight:900}
+
+.question-card{
+  background:#fffaf2;border:2px solid #fed7aa;border-radius:18px;
+  padding:clamp(14px,2.6vw,19px);
+}
+.question-card h2{
+  font-size:clamp(1.03rem,2.6vw,1.3rem);
+  line-height:1.42;color:#111827;
 }
 
-.question{
-  background:#fff7ed;
-  border:2px solid #fb923c;
-  border-radius:16px;
-  text-align:center;
-  padding:clamp(10px,2.4vw,14px);
-}
-
-.qtext{
-  font-size:clamp(1.02rem,2.7vw,1.28rem);
-  font-weight:900;
-  line-height:1.38;
-  color:#111827;
-}
-
-/* =====================================================
-   OPTIONS
-===================================================== */
-.options{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
-  margin-top:auto;
-}
-
+.options{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:2px}
 .opt{
-  min-width:0;
-  border:2px solid #cbd5e1;
-  background:#fff;
-  border-radius:15px;
-  padding:12px 7px;
-  min-height:52px;
-  font-size:clamp(.82rem,2.25vw,.98rem);
-  font-weight:900;
-  color:#1e293b;
-  cursor:pointer;
-  transition:.15s;
+  min-width:0;min-height:57px;border:2px solid #d1d5db;border-radius:15px;
+  background:#fff;color:#1f2937;padding:11px 8px;
+  font-size:clamp(.83rem,2.15vw,.98rem);font-weight:900;line-height:1.25;
+  cursor:pointer;transition:background .15s ease,border-color .15s ease,transform .15s ease;
   overflow-wrap:anywhere;
 }
+.opt:hover:not(:disabled){border-color:#7dd3fc;background:#f0f9ff}
+.opt.selected{border-color:var(--gold);background:var(--gold-soft);transform:translateY(-1px)}
+.opt.correct{border-color:var(--green)!important;background:var(--green-soft)!important;color:#166534!important}
+.opt.wrong{border-color:var(--red)!important;background:var(--red-soft)!important;color:#991b1b!important}
+.opt:disabled{cursor:not-allowed}
 
-.opt:hover:not(:disabled){
-  border-color:#38bdf8;
-  background:#f0f9ff;
+.feedback{
+  min-height:52px;display:flex;align-items:center;gap:9px;border-radius:14px;
+  padding:10px 11px;background:#f8fafc;border:1px solid #e2e8f0;color:#475569;
+  font-weight:800;line-height:1.35;font-size:.88rem;
+}
+.feedback .ficon{
+  width:32px;height:32px;flex:0 0 32px;display:grid;place-items:center;
+  border-radius:10px;background:#e2e8f0;
 }
 
-.opt.selected{
-  background:#fef3c7!important;
-  border-color:#f59e0b!important;
-  color:#1e293b!important;
+.explanation{
+  display:none;border-radius:14px;padding:10px 12px;line-height:1.45;
+  font-size:.86rem;font-weight:700;
+}
+.explanation.show{display:block}
+.explanation.good{background:#f0fdf4;border:1px solid #86efac;color:#166534}
+.explanation.review{background:#fff7ed;border:1px solid #fdba74;color:#9a3412}
+
+.exhibit-panel{
+  position:relative;overflow:hidden;min-height:520px;
+  background:linear-gradient(180deg,#f8fafc 0%,#ffffff 62%,#f5f3ff 100%);
+}
+.exhibit-header{
+  position:absolute;top:12px;left:12px;right:12px;z-index:3;
+  display:flex;justify-content:space-between;gap:8px;align-items:center;
+}
+.exhibit-title,.exhibit-state{
+  border-radius:999px;padding:6px 11px;font-weight:900;
+}
+.exhibit-title{
+  background:rgba(255,255,255,.94);border:1px solid #dbe4ea;
+  color:var(--navy);font-size:.76rem;font-weight:950;
+}
+.exhibit-state{
+  background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;font-size:.72rem;
+}
+.exhibit-state.selected{background:#fff7ed;color:#b45309;border-color:#fdba74}
+.exhibit-state.verified{background:#f0fdf4;color:#166534;border-color:#86efac}
+.exhibit-state.review{background:#fef2f2;color:#991b1b;border-color:#fecaca}
+
+canvas{display:block;width:100%;height:100%}
+
+.exhibit-panel.flash-good{animation:goodFlash .55s ease}
+@keyframes goodFlash{
+  0%{box-shadow:0 0 0 rgba(34,197,94,0)}
+  50%{box-shadow:inset 0 0 0 8px rgba(34,197,94,.18)}
+  100%{box-shadow:0 0 0 rgba(34,197,94,0)}
 }
 
-.opt.correct{
-  background:#dcfce7!important;
-  border-color:#16a34a!important;
-  color:#166534!important;
-}
-
-.opt.wrong{
-  background:#fee2e2!important;
-  border-color:#dc2626!important;
-  color:#991b1b!important;
-}
-
-.opt:disabled{
-  cursor:not-allowed;
-}
-
-/* =====================================================
-   SCENE
-===================================================== */
-.scene{
-  padding:0;
-  overflow:hidden;
-  border-color:#fb923c;
-  background:#fffdf8;
-  min-height:300px;
-  position:relative;
-}
-
-.scene-title{
-  position:absolute;
-  z-index:3;
-  top:8px;
-  left:50%;
-  transform:translateX(-50%);
-  width:max-content;
-  max-width:92%;
-  padding:5px 12px;
-  border-radius:999px;
-  background:rgba(255,255,255,.92);
-  border:1px solid #bae6fd;
-  color:#0369a1;
-  font-size:clamp(.64rem,1.9vw,.76rem);
-  font-weight:900;
-  text-align:center;
-  pointer-events:none;
-}
-
-canvas{
-  display:block;
-  width:100%;
-  height:100%;
-}
-
-/* =====================================================
-   STATUS
-===================================================== */
-.status{
-  font-weight:900;
-  text-align:center;
-  min-height:24px;
-  color:#475569;
-  line-height:1.3;
-  font-size:clamp(.82rem,2.4vw,.95rem);
-}
-
-/* =====================================================
-   CONFETTI
-===================================================== */
 .confetti{
-  position:fixed;
-  top:-10px;
-  width:10px;
-  height:10px;
-  pointer-events:none;
-  animation:fall 1.4s linear forwards;
-  z-index:9000;
+  position:fixed;top:-10px;width:10px;height:10px;pointer-events:none;z-index:9000;
+  animation:fall 1.25s linear forwards;
 }
-
 @keyframes fall{
-  to{
-    transform:translateY(105vh) rotate(720deg);
-    opacity:0;
-  }
+  to{transform:translateY(105vh) rotate(720deg);opacity:0}
 }
 
-/* =====================================================
-   RESPONSIVE
-===================================================== */
-@media(max-width:760px){
-  #root{
-    max-width:520px;
-  }
-
-  .game{
-    grid-template-columns:1fr;
-    grid-template-rows:auto 1fr;
-  }
-
-  .scene{
-    min-height:clamp(245px,63vw,330px);
-  }
-
-  .top{
-    font-size:.82rem;
-  }
+.result-card{
+  width:min(620px,100%);margin:60px auto 0;background:#fff;border:1px solid #dbe4ea;
+  border-radius:26px;padding:clamp(22px,5vw,34px);text-align:center;
+  box-shadow:0 22px 50px rgba(15,23,42,.12);
 }
+.result-icon{font-size:3rem;margin-bottom:8px}
+.result-card h1{color:var(--navy);margin-bottom:8px}
+.result-card p{color:#475569;line-height:1.55;font-weight:700}
 
-@media(max-width:420px){
-  body{
-    padding:4px;
-  }
-
-  #root{
-    padding:7px;
-    gap:7px;
-  }
-
-  .top{
-    gap:5px;
-  }
-
-  .top span{
-    padding:6px 4px;
-  }
-
-  .panel{
-    padding:8px;
-  }
-
-  .question{
-    padding:9px 8px;
-  }
-
-  .scene{
-    min-height:230px;
-    border-radius:16px;
-  }
-
-  .options{
-    gap:7px;
-  }
-
-  .opt{
-    min-height:46px;
-    padding:8px 5px;
-    font-size:.8rem;
-  }
-
-  .btn{
-    padding:11px;
-    letter-spacing:.2px;
-  }
+/* responsive */
+@media(max-width:790px){
+  #app{max-width:560px}
+  .stage{grid-template-columns:1fr;min-height:0}
+  .exhibit-panel{min-height:360px}
 }
-
+@media(max-width:480px){
+  body{padding:4px}
+  .header{grid-template-columns:1fr 1fr}
+  .brand{grid-column:1/-1;text-align:center}
+  .stat{min-width:0;padding:8px 5px}
+  .collection{gap:4px}
+  .slot{height:29px;border-radius:8px;font-size:.72rem}
+  .question-panel{padding:9px}
+  .options{grid-template-columns:1fr;gap:7px}
+  .opt{min-height:49px;padding:9px 7px}
+  .exhibit-panel{min-height:315px}
+  .role{grid-template-columns:1fr}
+}
 @media(max-width:340px){
-  .top{
-    grid-template-columns:1fr;
-  }
-
-  .options{
-    grid-template-columns:1fr;
-  }
-
-  .scene{
-    min-height:215px;
-  }
+  .collection{grid-template-columns:repeat(5,1fr)}
 }
-
-@media(orientation:landscape) and (max-height:540px){
-  body{
-    padding:4px;
-  }
-
-  #root{
-    max-width:960px;
-    min-height:calc(100dvh - 8px);
-    gap:6px;
-    padding:6px;
-  }
-
-  .game{
-    grid-template-columns:minmax(260px,.88fr) minmax(390px,1.35fr);
-  }
-
-  .scene{
-    min-height:0;
-  }
-
-  .opt{
-    min-height:38px;
-    padding:6px;
-  }
-
-  .btn{
-    padding:9px;
-  }
-}
-
 @media(prefers-reduced-motion:reduce){
-  *,
-  *::before,
-  *::after{
+  *,*::before,*::after{
     animation-duration:.01ms!important;
     transition-duration:.01ms!important;
     animation-iteration-count:1!important;
@@ -473,7 +260,6 @@ canvas{
 }
 </style>
 </head>
-
 <body>
 
 <audio id="s-correct" src="assets/correct.mp3" preload="auto"></audio>
@@ -484,1291 +270,880 @@ canvas{
   <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
-<div id="root">
-
-  <div id="intro">
-    <div class="card">
-      <h1>🚂 Solid Shapes Express</h1>
-      <p>
-        Answer 10 Visualising Solid Shapes questions.
-        Select an answer and send the train to the Geometry Station.
-        The station scanner will display the solid or view connected to the current question.
-        You get only two attempts; after that, the correct answer is revealed.
-      </p>
-
-      <button class="btn" style="margin-top:18px" onclick="closeIntro()">
-        Start Journey
-      </button>
+<div id="intro">
+  <div class="intro-card">
+    <div class="intro-icon">🔒</div>
+    <h1>3D Geometry Museum Quest</h1>
+    <p>
+      Each exhibit begins as a mystery. Choose the correct geometry label and verify it.
+      When you answer correctly, the mystery exhibit unlocks and comes alive.
+    </p>
+    <div class="role">
+      <div><b>Mystery</b>The exhibit stays hidden first.</div>
+      <div><b>Choose</b>Select the correct label.</div>
+      <div><b>Reveal</b>Unlock the 3D exhibit after the answer.</div>
     </div>
+    <button class="btn" onclick="startGame()">Open the Museum</button>
+  </div>
+</div>
+
+<main id="app">
+  <div class="header">
+    <div class="brand">🏛️ 3D Geometry Museum</div>
+    <div class="stat">⭐ Exhibits: <span id="score">0</span>/10</div>
+    <div class="stat">🎯 Attempt: <span id="attempt">1</span>/2</div>
   </div>
 
-  <div class="top">
-    <span>Station: <span id="qnum">1</span>/10</span>
-    <span>Stars: ⭐ <span id="score">0</span></span>
-    <span>Attempt: <span id="attempt">1</span>/2</span>
+  <div class="progress-wrap">
+    <div class="progress"><div id="progressBar"></div></div>
+    <div class="counter">Exhibit <span id="qnum">1</span>/10</div>
   </div>
 
-  <div class="progress">
-    <div class="bar" id="bar"></div>
+  <div class="collection" id="collection">
+    <div class="slot">1</div><div class="slot">2</div><div class="slot">3</div><div class="slot">4</div><div class="slot">5</div>
+    <div class="slot">6</div><div class="slot">7</div><div class="slot">8</div><div class="slot">9</div><div class="slot">10</div>
   </div>
 
-  <div class="game">
+  <div class="stage">
+    <section class="panel question-panel">
+      <div class="category-row">
+        <div class="attempt">Attempt <span id="attemptText">1</span> of 2</div>
+      </div>
 
-    <div class="panel left">
-
-      <div class="question">
-        <div class="qtext" id="qtext">Loading...</div>
+      <div class="question-card">
+        <h2 id="questionText">Loading...</h2>
       </div>
 
       <div class="options">
-        <button class="opt" id="o0" onclick="pick(0)">A</button>
-        <button class="opt" id="o1" onclick="pick(1)">B</button>
-        <button class="opt" id="o2" onclick="pick(2)">C</button>
-        <button class="opt" id="o3" onclick="pick(3)">D</button>
+        <button class="opt" id="o0" onclick="selectOption(0)"></button>
+        <button class="opt" id="o1" onclick="selectOption(1)"></button>
+        <button class="opt" id="o2" onclick="selectOption(2)"></button>
+        <button class="opt" id="o3" onclick="selectOption(3)"></button>
       </div>
 
-    </div>
+      <div class="feedback">
+        <div class="ficon" id="feedbackIcon">👀</div>
+        <div id="feedbackText">Select one answer.</div>
+      </div>
 
-    <div class="panel scene">
-      <div class="scene-title">🔎 GEOMETRY STATION SCANNER</div>
+      <div class="explanation" id="explanation"></div>
+
+      <button class="btn" id="checkBtn" onclick="checkAnswer()" disabled>
+        Verify Museum Label
+      </button>
+    </section>
+
+    <section class="panel exhibit-panel" id="exhibitPanel">
+      <div class="exhibit-header">
+        <div class="exhibit-title">🔐 MYSTERY EXHIBIT VIEWER</div>
+        <div class="exhibit-state" id="exhibitState">Exhibit sealed</div>
+      </div>
       <canvas id="canvas"></canvas>
-    </div>
-
+    </section>
   </div>
-
-  <div class="status" id="status">
-    Select an answer and send the train.
-  </div>
-
-  <button class="btn" id="go" onclick="sendTrain()" disabled>
-    Send Express Train
-  </button>
-
-</div>
+</main>
 
 <script>
-let canvas,
-    ctx,
-    current,
-    choices=[],
-    selected=-1,
-    qIndex=0,
-    score=0,
-    attempt=1,
-    locked=false,
-    time=0;
-
-let train={
-  progress:0,
-  moving:false,
-  reverse:false,
-  success:false,
-  timer:0,
-  rot:0,
-  cargo:false
-};
-
 const questions=[
-  {
-    tag:'Real-life Solid',
-    q:'A dice is placed on a table. Which solid shape does it represent?',
-    ans:'Cube',
-    w:['Cone','Cylinder','Sphere'],
-    exp:'A dice has 6 square faces, so it represents a cube.',
-    visual:'dice'
-  },
-  {
-    tag:'Identify Solid',
-    q:'A water storage tank has two circular faces and one curved surface. It is a:',
-    ans:'Cylinder',
-    w:['Cone','Sphere','Prism'],
-    exp:'A cylinder has two circular flat faces and one curved surface.',
-    visual:'tank'
-  },
-  {
-    tag:'Curved Surface',
-    q:'Which solid has only one curved surface and no edges?',
-    ans:'Sphere',
-    w:['Cone','Cylinder','Cube'],
-    exp:'A sphere has one curved surface and no edges or vertices.',
-    visual:'sphere'
-  },
-  {
-    tag:'Application',
-    q:'A tent with triangular ends is closest to which solid?',
-    ans:'Triangular Prism',
-    w:['Cuboid','Cone','Cylinder'],
-    exp:'A triangular prism has two triangular ends and rectangular side faces.',
-    visual:'tent'
-  },
-  {
-    tag:'Vertices',
-    q:'Which solid has exactly 8 vertices?',
-    ans:'Cube',
-    w:['Cylinder','Cone','Sphere'],
-    exp:'A cube has 8 vertices.',
-    visual:'cubeVertices'
-  },
-  {
-    tag:'Shape Clues',
-    q:'A solid has 5 faces, 9 edges and 6 vertices. Identify it.',
-    ans:'Triangular Prism',
-    w:['Cube','Cylinder','Cone'],
-    exp:'A triangular prism has 5 faces, 9 edges and 6 vertices.',
-    visual:'prism'
-  },
-  {
-    tag:'Nets',
-    q:'A cube is unfolded into a flat pattern. This pattern is called:',
-    ans:'Net',
-    w:['Face','Edge','Vertex'],
-    exp:'A flat pattern that folds to make a solid is called a net.',
-    visual:'net'
-  },
-  {
-    tag:'Views',
-    q:'Which view of a cylinder appears as a circle?',
-    ans:'Top View',
-    w:['Front View','Side View','Rear View'],
-    exp:'From the top, the circular face of a cylinder is visible.',
-    visual:'topView'
-  },
-  {
-    tag:'Rolling',
-    q:'Which solid can roll smoothly in every direction?',
-    ans:'Sphere',
-    w:['Cube','Cuboid','Prism'],
-    exp:'A sphere has no flat faces, so it rolls smoothly in every direction.',
-    visual:'rollingSphere'
-  },
-  {
-    tag:'Cone Property',
-    q:'A cone has:',
-    ans:'1 vertex',
-    w:['2 vertices','6 vertices','No vertices'],
-    exp:'A cone has exactly one vertex.',
-    visual:'cone'
-  }
+  {q:'A dice is placed on a board game. Which solid shape does it represent?',ans:'Cube',wrong:['Cylinder','Sphere','Cone'],exp:'A dice has 6 square faces, so it represents a cube.',visual:'dice'},
+  {q:'A water storage tank has two circular faces and one curved surface. It is a:',ans:'Cylinder',wrong:['Cone','Sphere','Prism'],exp:'A cylinder has two circular flat faces and one curved surface.',visual:'tank'},
+  {q:'Which solid has only one curved surface and no edges?',ans:'Sphere',wrong:['Cone','Cylinder','Cube'],exp:'A sphere has one curved surface and no edges or vertices.',visual:'sphere'},
+  {q:'A tent with triangular ends is closest to which solid?',ans:'Triangular Prism',wrong:['Cuboid','Cone','Cylinder'],exp:'A triangular prism has two triangular ends and rectangular side faces.',visual:'tent'},
+  {q:'Which solid has exactly 8 vertices?',ans:'Cube',wrong:['Cylinder','Cone','Sphere'],exp:'A cube has 8 vertices.',visual:'cubeVertices'},
+  {q:'A solid has 5 faces, 9 edges and 6 vertices. Identify it.',ans:'Triangular Prism',wrong:['Cube','Cylinder','Cone'],exp:'A triangular prism has 5 faces, 9 edges and 6 vertices.',visual:'prism'},
+  {q:'A cube is unfolded into a flat pattern. This pattern is called:',ans:'Net',wrong:['Face','Edge','Vertex'],exp:'A flat pattern that folds to make a solid is called a net.',visual:'net'},
+  {q:'Which view of a cylinder appears as a circle?',ans:'Top View',wrong:['Front View','Side View','Rear View'],exp:'From the top, the circular face of a cylinder is visible.',visual:'topView'},
+  {q:'Which solid can roll smoothly in every direction?',ans:'Sphere',wrong:['Cube','Cuboid','Prism'],exp:'A sphere has no flat faces, so it rolls smoothly in every direction.',visual:'rollingSphere'},
+  {q:'A cone has:',ans:'1 vertex',wrong:['2 vertices','6 vertices','No vertices'],exp:'A cone has exactly one vertex.',visual:'cone'}
 ];
 
-/* =====================================================
-   SPLASH / INIT
-===================================================== */
+let currentIndex=0,score=0,attempt=1,selected=-1,choices=[],locked=false;
+let canvas,ctx;
+let earned=Array(10).fill(false);
+let revealMode='hidden'; // hidden | success | review
+
+let exhibitAnim={
+  type:'',
+  active:false,
+  t:0,
+  raf:null
+};
+
 setTimeout(()=>{
-  const s=document.getElementById('splash');
-  s.style.opacity='0';
-
+  const splash=document.getElementById('splash');
+  splash.style.opacity='0';
   setTimeout(()=>{
-    s.remove();
-    document.getElementById('root').style.opacity='1';
-    init();
-  },500);
-},5000);
+    splash.remove();
+    document.getElementById('app').style.opacity='1';
+    initCanvas();
+  },450);
+},1800);
 
-function init(){
-  canvas=document.getElementById('canvas');
-  ctx=canvas.getContext('2d');
-
-  resize();
-
-  window.addEventListener('resize',resize);
-  window.addEventListener('orientationchange',()=>setTimeout(resize,250));
-
+function startGame(){
+  document.getElementById('intro').remove();
   shuffle(questions);
-  loadQ();
-  loop();
+  currentIndex=0;score=0;attempt=1;selected=-1;
+  earned=Array(questions.length).fill(false);
+  loadQuestion();
 }
 
-function resize(){
-  const r=canvas.getBoundingClientRect();
+function initCanvas(){
+  canvas=document.getElementById('canvas');
+  ctx=canvas.getContext('2d');
+  resizeCanvas();
+  window.addEventListener('resize',()=>{resizeCanvas();drawCurrentExhibit();});
+  window.addEventListener('orientationchange',()=>setTimeout(()=>{resizeCanvas();drawCurrentExhibit();},200));
+}
+
+function resizeCanvas(){
+  if(!canvas) return;
+  const rect=canvas.getBoundingClientRect();
   const dpr=window.devicePixelRatio||1;
-
-  canvas.width=Math.max(300,Math.floor(r.width*dpr));
-  canvas.height=Math.max(200,Math.floor(r.height*dpr));
-
-  canvas.logicalWidth=r.width;
-  canvas.logicalHeight=r.height;
-
+  canvas.width=Math.max(300,Math.floor(rect.width*dpr));
+  canvas.height=Math.max(280,Math.floor(rect.height*dpr));
+  canvas.logicalWidth=rect.width;
+  canvas.logicalHeight=rect.height;
   ctx=canvas.getContext('2d');
   ctx.setTransform(dpr,0,0,dpr,0,0);
 }
 
-function closeIntro(){
-  const m=document.getElementById('intro');
-  if(m) m.remove();
-}
-
-function shuffle(a){
-  for(let i=a.length-1;i>0;i--){
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
     const j=Math.floor(Math.random()*(i+1));
-    [a[i],a[j]]=[a[j],a[i]];
+    [arr[i],arr[j]]=[arr[j],arr[i]];
   }
-
-  return a;
+  return arr;
 }
 
-/* =====================================================
-   LOAD QUESTION
-===================================================== */
-function loadQ(){
+function loadQuestion(){
+  if(!canvas) initCanvas();
+  stopExhibitAnimation();
+
   locked=false;
   attempt=1;
   selected=-1;
+  revealMode='hidden';
 
-  current=questions[qIndex];
+  const q=questions[currentIndex];
+  document.getElementById('qnum').textContent=currentIndex+1;
+  document.getElementById('score').textContent=score;
+  document.getElementById('attempt').textContent=attempt;
+  document.getElementById('attemptText').textContent=attempt;
+  document.getElementById('progressBar').style.width=(currentIndex/questions.length*100)+'%';
+  document.getElementById('questionText').textContent=q.q;
 
-  document.getElementById('qnum').innerText=qIndex+1;
-  document.getElementById('score').innerText=score;
-  document.getElementById('attempt').innerText=attempt;
+  document.getElementById('feedbackIcon').textContent='👀';
+  document.getElementById('feedbackText').textContent='Select one answer.';
+  document.getElementById('explanation').className='explanation';
+  document.getElementById('explanation').textContent='';
 
-  document.getElementById('bar').style.width=
-    (qIndex/questions.length*100)+'%';
+  const state=document.getElementById('exhibitState');
+  state.className='exhibit-state';
+  state.textContent='Exhibit sealed';
 
-  document.getElementById('qtext').innerText=current.q;
+  document.getElementById('checkBtn').disabled=true;
+  document.getElementById('checkBtn').textContent='Verify Museum Label';
 
-  const status=document.getElementById('status');
-  status.innerText='Select an answer and send the train.';
-  status.style.color='#475569';
-
-  document.getElementById('go').disabled=true;
-
-  choices=shuffle([
-    {text:current.ans,correct:true},
-    ...current.w.map(x=>({text:x,correct:false}))
-  ]);
+  choices=shuffle([{text:q.ans,correct:true},...q.wrong.map(x=>({text:x,correct:false}))]);
 
   for(let i=0;i<4;i++){
     const b=document.getElementById('o'+i);
-
     b.className='opt';
     b.disabled=false;
-    b.innerText=String.fromCharCode(65+i)+'. '+choices[i].text;
+    b.textContent=choices[i].text;
   }
 
-  train={
-    progress:0,
-    moving:false,
-    reverse:false,
-    success:false,
-    timer:0,
-    rot:0,
-    cargo:false
-  };
+  updateCollection();
+  drawCurrentExhibit();
 }
 
-/* =====================================================
-   SELECT
-===================================================== */
-function pick(i){
-  if(train.moving||train.reverse||locked) return;
-
+function selectOption(i){
+  if(locked) return;
   const btn=document.getElementById('o'+i);
   if(btn.disabled) return;
 
   selected=i;
-
   for(let k=0;k<4;k++){
-    document
-      .getElementById('o'+k)
-      .classList
-      .toggle('selected',k===i);
+    document.getElementById('o'+k).classList.toggle('selected',k===i);
   }
 
-  document.getElementById('go').disabled=false;
-
-  const status=document.getElementById('status');
-  status.innerText='Answer selected. Send the train to the Geometry Station.';
-  status.style.color='#0284c7';
+  document.getElementById('checkBtn').disabled=false;
+  document.getElementById('feedbackIcon').textContent='🏷️';
+  document.getElementById('feedbackText').textContent='Label selected. Verify when you are ready.';
+  const state=document.getElementById('exhibitState');
+  state.className='exhibit-state selected';
+  state.textContent='Ready to verify';
 }
 
-/* =====================================================
-   SEND TRAIN
-===================================================== */
-function sendTrain(){
-  if(selected===-1 || train.moving || train.reverse || locked) return;
-
-  document.getElementById('go').disabled=true;
-
-  train.moving=true;
-  train.cargo=true;
-
-  const status=document.getElementById('status');
-  status.innerText='🚂 Express train is carrying the geometry cargo to the scanner...';
-  status.style.color='#0284c7';
-}
-
-/* =====================================================
-   UPDATE
-===================================================== */
-function update(){
-  time+=.016;
-
-  if(train.moving){
-    train.progress+=.016;
-
-    if(train.progress>=1){
-      train.progress=1;
-      train.moving=false;
-      checkAnswer();
-    }
-  }
-
-  if(train.reverse){
-    train.timer++;
-    train.rot=Math.sin(train.timer*.45)*.08;
-    train.progress=Math.max(0,train.progress-.025);
-
-    if(train.timer>45){
-      train.reverse=false;
-      train.timer=0;
-      train.rot=0;
-      train.cargo=false;
-
-      selected=-1;
-
-      for(let k=0;k<4;k++){
-        document
-          .getElementById('o'+k)
-          .classList
-          .remove('selected');
-      }
-
-      document.getElementById('go').disabled=true;
-
-      const status=document.getElementById('status');
-      status.innerText='Try again. Attempt '+attempt+' of 2.';
-      status.style.color='#dc2626';
-    }
-  }
-}
-
-/* =====================================================
-   CHECK
-===================================================== */
 function checkAnswer(){
-  const st=document.getElementById('status');
+  if(selected<0 || locked) return;
+  const q=questions[currentIndex];
+  const btn=document.getElementById('o'+selected);
+  document.getElementById('checkBtn').disabled=true;
 
   if(choices[selected].correct){
-
-    document.getElementById('s-correct').play().catch(()=>{});
-    document.getElementById('s-claps').play().catch(()=>{});
-
-    document.getElementById('o'+selected).classList.add('correct');
-
-    score++;
-
-    document.getElementById('score').innerText=score;
-
-    st.innerText='Correct! '+current.exp;
-    st.style.color='#16a34a';
-
-    train.success=true;
     locked=true;
+    btn.classList.add('correct');
+    score++;
+    earned[currentIndex]=true;
+    document.getElementById('score').textContent=score;
+    safePlay('s-correct');
 
+    revealMode='success';
+    document.getElementById('feedbackIcon').textContent='✅';
+    document.getElementById('feedbackText').textContent='Correct label. Mystery exhibit unlocked!';
+    const ex=document.getElementById('explanation');
+    ex.className='explanation show good';
+    ex.innerHTML='<b>Why:</b> '+q.exp;
+
+    const state=document.getElementById('exhibitState');
+    state.className='exhibit-state verified';
+    state.textContent='Exhibit unlocked';
+
+    updateCollection();
+
+    /* IMPORTANT:
+       Reveal the exhibit immediately before starting its animation.
+       This guarantees that the board-game scene + dice (and every other
+       exhibit) are visible as soon as the correct answer is verified. */
+    drawCurrentExhibit();
+
+    flashExhibit();
     confetti();
+    startExhibitAnimation(q.visual);
 
-    setTimeout(nextQ,2100);
-  }
-
-  else{
-
-    document.getElementById('s-wrong').play().catch(()=>{});
-
-    const wrong=document.getElementById('o'+selected);
-
-    wrong.classList.remove('selected');
-    wrong.classList.add('wrong');
-    wrong.disabled=true;
+    /* Give the learner enough time to see the revealed exhibit. */
+    setTimeout(nextQuestion,4200);
+  }else{
+    btn.classList.remove('selected');
+    btn.classList.add('wrong');
+    btn.disabled=true;
+    safePlay('s-wrong');
 
     if(attempt<2){
       attempt++;
-      document.getElementById('attempt').innerText=attempt;
+      selected=-1;
+      document.getElementById('attempt').textContent=attempt;
+      document.getElementById('attemptText').textContent=attempt;
+      document.getElementById('feedbackIcon').textContent='🔄';
+      document.getElementById('feedbackText').textContent='That label does not match the exhibit. You have one more attempt.';
+      document.getElementById('checkBtn').disabled=true;
+      for(let i=0;i<4;i++){
+        document.getElementById('o'+i).classList.remove('selected');
+      }
+      const state=document.getElementById('exhibitState');
+      state.className='exhibit-state review';
+      state.textContent='First label rejected';
+    }else{
+      locked=true;
+      revealMode='review';
+      for(let i=0;i<4;i++){
+        const b=document.getElementById('o'+i);
+        b.disabled=true;
+        if(choices[i].correct) b.classList.add('correct');
+      }
+      document.getElementById('feedbackIcon').textContent='📘';
+      document.getElementById('feedbackText').textContent='Both attempts are complete. The correct exhibit is now revealed.';
+      const ex=document.getElementById('explanation');
+      ex.className='explanation show review';
+      ex.innerHTML='<b>Correct label: '+q.ans+'.</b> '+q.exp;
+      const state=document.getElementById('exhibitState');
+      state.className='exhibit-state review';
+      state.textContent='Review exhibit';
 
-      st.innerText='Wrong answer. The train is returning for one more attempt.';
-      st.style.color='#dc2626';
+      /* Reveal the correct exhibit immediately for review. */
+      drawCurrentExhibit();
 
-      train.reverse=true;
-      train.timer=0;
-    }
-
-    else{
-      revealAnswer();
+      setTimeout(nextQuestion,3800);
     }
   }
 }
 
-function revealAnswer(){
-  locked=true;
-  document.getElementById('go').disabled=true;
+function nextQuestion(){
+  currentIndex++;
+  if(currentIndex>=questions.length){
+    finishGame();
+  }else{
+    loadQuestion();
+  }
+}
 
-  for(let i=0;i<4;i++){
-    document.getElementById('o'+i).disabled=true;
-
-    if(choices[i].correct){
-      document.getElementById('o'+i).classList.add('correct');
+function updateCollection(){
+  const slots=[...document.querySelectorAll('.slot')];
+  slots.forEach((slot,i)=>{
+    slot.className='slot';
+    if(earned[i]){
+      slot.classList.add('earned');
+      slot.textContent='✓';
+    }else{
+      slot.textContent=i+1;
     }
-  }
-
-  document.getElementById('status').innerText=
-    'Attempts over. Correct answer: '
-    +current.ans
-    +'. '
-    +current.exp;
-
-  document.getElementById('status').style.color='#ea580c';
-
-  train.success=true;
-  train.cargo=true;
-
-  setTimeout(nextQ,3300);
+    if(i===currentIndex && currentIndex<questions.length){
+      slot.classList.add('current');
+    }
+  });
 }
 
-function nextQ(){
-  qIndex++;
+function flashExhibit(){
+  const panel=document.getElementById('exhibitPanel');
+  panel.classList.remove('flash-good');
+  void panel.offsetWidth;
+  panel.classList.add('flash-good');
+}
 
-  if(qIndex>=questions.length){
-    finish();
+function safePlay(id){
+  const a=document.getElementById(id);
+  if(!a) return;
+  a.currentTime=0;
+  a.play().catch(()=>{});
+}
+
+/* animation control */
+function startExhibitAnimation(type){
+  stopExhibitAnimation();
+  exhibitAnim={type:type,active:true,t:0,raf:null};
+  animateExhibit();
+}
+
+function stopExhibitAnimation(){
+  if(exhibitAnim.raf){
+    cancelAnimationFrame(exhibitAnim.raf);
   }
-  else{
-    loadQ();
+  exhibitAnim={type:'',active:false,t:0,raf:null};
+}
+
+function animateExhibit(){
+  if(!exhibitAnim.active) return;
+  exhibitAnim.t += 0.04;
+  drawCurrentExhibit();
+  if(exhibitAnim.t < 3.0){
+    exhibitAnim.raf = requestAnimationFrame(animateExhibit);
+  }else{
+    exhibitAnim.active = false;
+    exhibitAnim.raf = null;
+    drawCurrentExhibit();
   }
 }
 
-/* =====================================================
-   RENDER
-===================================================== */
-function render(){
-  if(!ctx||!canvas) return;
-
+/* drawing */
+function drawCurrentExhibit(){
+  if(!ctx || !canvas || !questions[currentIndex]) return;
+  const q=questions[currentIndex];
   const w=canvas.logicalWidth||canvas.getBoundingClientRect().width;
   const h=canvas.logicalHeight||canvas.getBoundingClientRect().height;
 
   ctx.clearRect(0,0,w,h);
-
-  /* BACKGROUND */
   const bg=ctx.createLinearGradient(0,0,0,h);
-  bg.addColorStop(0,'#e0f2fe');
-  bg.addColorStop(.54,'#fff7ed');
-  bg.addColorStop(1,'#bbf7d0');
-
+  bg.addColorStop(0,'#f8fafc');
+  bg.addColorStop(.65,'#ffffff');
+  bg.addColorStop(1,'#f5f3ff');
   ctx.fillStyle=bg;
   ctx.fillRect(0,0,w,h);
 
-  cloud(w*.17,h*.14,1);
-  cloud(w*.70,h*.18,.78);
-
-  hill(w,h);
-
-  const trackY=h*.76;
-
-  drawTrack(35,trackY,w-72,trackY);
-  drawStation(w-112,trackY-108);
-
-  /*
-    Replaces the old meaningless cube.
-    This visual changes with the current question.
-  */
-  drawScannerArea(w,h);
-
-  const x=50+(w-205)*train.progress;
-  const y=trackY-14;
-
-  drawTrain(x,y,train.rot);
-
-  if(train.cargo){
-    drawCargoOnTrain(x,y,current.visual);
+  if(revealMode==='hidden'){
+    drawMysteryGallery(w,h);
+    return;
   }
 
-  if(train.success){
-    spark(w-86,trackY-85);
-    drawSuccessBeam(w,h);
+  if(q.visual==='dice'){
+    drawBoardGameScene(w,h);
+  }else{
+    drawMuseumArchitecture(w,h);
+  }
+
+  const cx=w*.5;
+  const cy=h*.47;
+  const size=Math.min(w,h)*.38;
+
+  drawQuestionVisual(q.visual,cx,cy,size);
+
+  if(q.visual!=='dice'){
+    drawPedestal(cx,h*.73,Math.min(210,w*.44),58);
   }
 }
 
-/* =====================================================
-   SCANNER AREA
-===================================================== */
-function drawScannerArea(w,h){
-  const cx=w*.58;
-  const cy=h*.38;
+function drawMysteryGallery(w,h){
+  drawMuseumArchitecture(w,h);
 
-  const panelW=Math.min(190,w*.38);
-  const panelH=Math.min(165,h*.45);
+  const cx=w*.5;
+  const cy=h*.47;
+  const caseW=Math.min(220,w*.46);
+  const caseH=Math.min(180,h*.38);
 
-  const px=cx-panelW/2;
-  const py=cy-panelH/2;
+  drawPedestal(cx,h*.73,Math.min(210,w*.44),58);
 
-  roundedRect(
-    ctx,
-    px,
-    py,
-    panelW,
-    panelH,
-    14,
-    true,
-    true,
-    'rgba(255,255,255,.78)',
-    '#7dd3fc'
-  );
-
-  /* scanner corners */
-  ctx.strokeStyle='#0ea5e9';
+  /* display case */
+  ctx.fillStyle='rgba(255,255,255,.58)';
+  ctx.strokeStyle='#cbd5e1';
   ctx.lineWidth=3;
+  roundedRect(cx-caseW/2,cy-caseH/2,caseW,caseH,14,true,true);
 
-  drawCorner(px+10,py+10,1,1);
-  drawCorner(px+panelW-10,py+10,-1,1);
-  drawCorner(px+10,py+panelH-10,1,-1);
-  drawCorner(px+panelW-10,py+panelH-10,-1,-1);
+  /* curtains */
+  ctx.fillStyle='#dbeafe';
+  roundedRect(cx-caseW/2+8,cy-caseH/2+8,caseW/2-12,caseH-16,10,true,false);
+  roundedRect(cx+4,cy-caseH/2+8,caseW/2-12,caseH-16,10,true,false);
 
-  /* moving scanner beam */
-  const beamY=
-    py+20+
-    ((Math.sin(time*2.2)+1)/2)
-    *(panelH-40);
-
-  ctx.strokeStyle='rgba(34,197,94,.65)';
-  ctx.lineWidth=3;
+  ctx.strokeStyle='#93c5fd';
+  ctx.lineWidth=2;
   ctx.beginPath();
-  ctx.moveTo(px+18,beamY);
-  ctx.lineTo(px+panelW-18,beamY);
+  ctx.moveTo(cx,cy-caseH/2+10);
+  ctx.lineTo(cx,cy+caseH/2-10);
   ctx.stroke();
 
-  ctx.fillStyle='rgba(34,197,94,.09)';
-  ctx.fillRect(px+18,beamY-7,panelW-36,14);
-
-  /* dynamic visual */
-  drawQuestionVisual(
-    current.visual,
-    cx,
-    cy+4,
-    Math.min(panelW,panelH)*.48
-  );
-}
-
-function drawCorner(x,y,dx,dy){
-  const s=13;
-
+  /* lock badge */
+  ctx.fillStyle='#fff';
+  ctx.strokeStyle='#94a3b8';
+  ctx.lineWidth=2;
   ctx.beginPath();
-  ctx.moveTo(x+dx*s,y);
-  ctx.lineTo(x,y);
-  ctx.lineTo(x,y+dy*s);
+  ctx.arc(cx,cy-4,28,0,Math.PI*2);
+  ctx.fill();
   ctx.stroke();
+
+  ctx.strokeStyle='#64748b';
+  ctx.lineWidth=3;
+  ctx.beginPath();
+  ctx.arc(cx,cy-10,8,Math.PI,0);
+  ctx.stroke();
+  ctx.fillStyle='#94a3b8';
+  roundedRect(cx-12,cy-10,24,24,6,true,false);
+
+  ctx.fillStyle='#475569';
+  ctx.font='bold 16px sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText('?',cx,cy+8);
+
+  ctx.fillStyle='#64748b';
+  ctx.font='900 15px sans-serif';
+  ctx.fillText('MYSTERY EXHIBIT',cx,cy+caseH/2+28);
+
+  ctx.font='700 11px sans-serif';
+  ctx.fillText('Reveal after verifying the correct label',cx,cy+caseH/2+48);
 }
 
-/* =====================================================
-   QUESTION-SPECIFIC VISUALS
-===================================================== */
+function drawMuseumArchitecture(w,h){
+  ctx.strokeStyle='#dbe4ea';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(w*.10,h*.18);
+  ctx.lineTo(w*.90,h*.18);
+  ctx.stroke();
+
+  ctx.fillStyle='#f1f5f9';
+  ctx.fillRect(w*.08,h*.20,18,h*.55);
+  ctx.fillRect(w*.92-18,h*.20,18,h*.55);
+
+  ctx.fillStyle='#cbd5e1';
+  ctx.fillRect(w*.065,h*.18,48,10);
+  ctx.fillRect(w*.90-20,h*.18,48,10);
+
+  ctx.fillStyle='#f8fafc';
+  ctx.fillRect(0,h*.79,w,h*.21);
+
+  ctx.strokeStyle='#e2e8f0';
+  ctx.lineWidth=1;
+  for(let i=0;i<6;i++){
+    const x=i*w/5;
+    ctx.beginPath();
+    ctx.moveTo(w*.5,h*.79);
+    ctx.lineTo(x,h);
+    ctx.stroke();
+  }
+}
+
+function drawBoardGameScene(w,h){
+  const floor=ctx.createLinearGradient(0,h*.75,0,h);
+  floor.addColorStop(0,'#eff6ff');
+  floor.addColorStop(1,'#dbeafe');
+  ctx.fillStyle=floor;
+  ctx.fillRect(0,h*.76,w,h*.24);
+
+  const bx=w*.14, by=h*.23, bw=w*.72, bh=h*.54;
+  ctx.fillStyle='#cbd5e1';
+  roundedRect(bx-8,by-8,bw+16,bh+16,18,true,false);
+  ctx.fillStyle='#ffffff';
+  roundedRect(bx,by,bw,bh,16,true,false);
+
+  const cell=Math.min(bw,bh)/5;
+  for(let r=0;r<5;r++){
+    for(let c=0;c<5;c++){
+      ctx.fillStyle=((r+c)%2===0)?'#fef3c7':'#dbeafe';
+      ctx.fillRect(bx+c*cell,by+r*cell,cell,cell);
+    }
+  }
+
+  ctx.strokeStyle='#94a3b8';
+  ctx.lineWidth=2;
+  roundedRect(bx,by,bw,bh,16,false,true);
+
+  ctx.fillStyle='#fb7185';
+  ctx.beginPath(); ctx.arc(bx+cell*.65,by+cell*.65,cell*.22,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#22c55e';
+  ctx.beginPath(); ctx.arc(bx+bw-cell*.65,by+bh-cell*.65,cell*.22,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#0284c7';
+  ctx.beginPath(); ctx.arc(bx+bw-cell*.65,by+cell*.65,cell*.22,0,Math.PI*2); ctx.fill();
+
+  ctx.fillStyle='#334155';
+  ctx.font='bold 11px sans-serif';
+  ctx.textAlign='center';
+  ctx.fillText('BOARD GAME ZONE', w*.5, by+bh+26);
+
+  ctx.fillStyle='#166534';
+  ctx.font='900 13px sans-serif';
+  ctx.fillText('EXHIBIT UNLOCKED: DICE', w*.5, by-18);
+}
+
+function drawPedestal(cx,y,w,h){
+  ctx.fillStyle='#e2e8f0';
+  ctx.strokeStyle='#94a3b8';
+  ctx.lineWidth=2;
+  ctx.fillRect(cx-w/2,y,w,h);
+  ctx.strokeRect(cx-w/2,y,w,h);
+  ctx.fillStyle='#cbd5e1';
+  ctx.fillRect(cx-w*.56,y-10,w*1.12,10);
+}
+
 function drawQuestionVisual(type,x,y,size){
+  const t=exhibitAnim.active && exhibitAnim.type===type ? exhibitAnim.t : 0;
   ctx.save();
-
   ctx.translate(x,y);
 
   if(type==='dice'){
-    drawCube(0,0,size*.70,true);
-    drawDiceDots(size*.70);
+    drawRealDiceOnBoard(0,18,size*.92,t);
+  }else if(type==='tank'){
+    drawCylinder(0,0,size*.82,'#0ea5e9',t);
+  }else if(type==='sphere'){
+    drawSphere(0,0,size*.78,'#f97316',t,false);
+  }else if(type==='tent'){
+    drawTriangularPrism(0,0,size*.86,'#16a34a',t);
+  }else if(type==='cubeVertices'){
+    drawCubeWithVertices(0,0,size*.79,t);
+  }else if(type==='prism'){
+    drawPrismWithVertices(0,0,size*.86,t);
+  }else if(type==='net'){
+    drawCubeNet(0,0,size*.82,t);
+  }else if(type==='topView'){
+    drawTopView(0,0,size*.84,t);
+  }else if(type==='rollingSphere'){
+    drawSphere(0,0,size*.74,'#0284c7',t,true);
+  }else if(type==='cone'){
+    drawCone(0,0,size*.82,t);
   }
+  ctx.restore();
+}
 
-  else if(type==='tank'){
-    drawCylinder(0,0,size*.78,'#60a5fa');
-    ctx.fillStyle='#475569';
-    ctx.font='bold 9px sans-serif';
-    ctx.textAlign='center';
-    ctx.fillText('WATER TANK',0,size*.62);
+function drawRealDiceOnBoard(x,y,s,t){
+  const active=exhibitAnim.active && exhibitAnim.type==='dice';
+  const angle = active ? Math.sin(t*7)*0.30 : -0.12;
+  const lift = active ? Math.abs(Math.sin(t*6))*11 : 0;
+  const scale = active ? 1 + Math.sin(t*6)*0.025 : 1;
+
+  ctx.save();
+  ctx.translate(x,y-lift);
+  ctx.scale(scale,scale);
+  ctx.rotate(angle);
+
+  const side=s*.58;
+  const off=side*.26;
+
+  ctx.fillStyle='rgba(0,0,0,.10)';
+  ctx.beginPath();
+  ctx.ellipse(0,side*.88,side*.62,side*.20,0,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle='#d7ecfb';
+  ctx.beginPath();
+  ctx.moveTo(side/2,-side/2);
+  ctx.lineTo(side/2+off,-side/2-off);
+  ctx.lineTo(side/2+off,side/2-off);
+  ctx.lineTo(side/2,side/2);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle='#eef8ff';
+  ctx.beginPath();
+  ctx.moveTo(-side/2,-side/2);
+  ctx.lineTo(side/2,-side/2);
+  ctx.lineTo(side/2+off,-side/2-off);
+  ctx.lineTo(-side/2+off,-side/2-off);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(-side/2,-side/2,side,side);
+
+  ctx.strokeStyle='#0284c7';
+  ctx.lineWidth=3;
+  ctx.strokeRect(-side/2,-side/2,side,side);
+  ctx.beginPath();
+  ctx.moveTo(-side/2,-side/2); ctx.lineTo(-side/2+off,-side/2-off);
+  ctx.lineTo(side/2+off,-side/2-off);
+  ctx.lineTo(side/2,-side/2);
+  ctx.moveTo(side/2,-side/2); ctx.lineTo(side/2+off,-side/2-off);
+  ctx.lineTo(side/2+off,side/2-off);
+  ctx.lineTo(side/2,side/2);
+  ctx.moveTo(side/2,side/2); ctx.lineTo(side/2+off,side/2-off);
+  ctx.moveTo(-side/2,side/2); ctx.lineTo(side/2,side/2);
+  ctx.moveTo(-side/2,side/2); ctx.lineTo(-side/2+off,side/2-off);
+  ctx.stroke();
+
+  drawPips([[-0.22,-0.22],[0.22,-0.22],[0,0],[-0.22,0.22],[0.22,0.22]],side*.065,side);
+  ctx.restore();
+
+  function drawPips(pts,r,side){
+    ctx.fillStyle='#334155';
+    pts.forEach(([px,py])=>{
+      ctx.beginPath();
+      ctx.arc(px*side,py*side,r*side,0,Math.PI*2);
+      ctx.fill();
+    });
   }
+}
 
-  else if(type==='sphere'){
-    drawSphere(0,0,size*.72,'#f97316');
-  }
+function drawCylinder(x,y,s,color,t){
+  const active=exhibitAnim.active && (exhibitAnim.type==='tank' || exhibitAnim.type==='topView');
+  const sway = active ? Math.sin(t*6)*6 : 0;
+  const stretch = active ? 1 + Math.sin(t*6)*0.03 : 1;
 
-  else if(type==='tent'){
-    drawTriangularPrism(0,0,size*.82,'#22c55e');
-  }
+  ctx.save();
+  ctx.translate(sway,0);
+  ctx.scale(stretch,1);
 
-  else if(type==='cubeVertices'){
-    drawCube(0,0,size*.72,false);
-    drawCubeVertices(size*.72);
-  }
+  const rx=s*.42, ry=s*.15, hh=s*.62;
+  ctx.fillStyle='rgba(14,165,233,.15)';
+  ctx.strokeStyle=color;
+  ctx.lineWidth=3;
 
-  else if(type==='prism'){
-    drawTriangularPrism(0,0,size*.82,'#8b5cf6');
-    drawPrismVertices(size*.82);
-  }
-
-  else if(type==='net'){
-    drawCubeNet(0,0,size*.78);
-  }
-
-  else if(type==='topView'){
-    drawCylinderTopView(0,0,size*.78);
-  }
-
-  else if(type==='rollingSphere'){
-    const rollX=Math.sin(time*2.2)*size*.22;
-    drawSphere(rollX,0,size*.62,'#0ea5e9');
-
-    ctx.strokeStyle='#64748b';
-    ctx.lineWidth=2;
-    ctx.beginPath();
-    ctx.moveTo(-size*.48,size*.38);
-    ctx.lineTo(size*.48,size*.38);
-    ctx.stroke();
-  }
-
-  else if(type==='cone'){
-    drawCone(0,0,size*.78);
-  }
+  ctx.beginPath(); ctx.ellipse(x,y-hh/2,rx,ry,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x-rx,y-hh/2); ctx.lineTo(x-rx,y+hh/2); ctx.moveTo(x+rx,y-hh/2); ctx.lineTo(x+rx,y+hh/2); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(x,y+hh/2,rx,ry,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
 
   ctx.restore();
 }
 
-/* =====================================================
-   SOLID DRAWING FUNCTIONS
-===================================================== */
-function drawCube(x,y,s,filled){
-  const off=s*.28;
+function drawSphere(x,y,s,color,t,rolling){
+  const active=exhibitAnim.active && (exhibitAnim.type==='sphere' || exhibitAnim.type==='rollingSphere');
+  const r=s*.42;
+  let dx=0, dy=0, rot=0;
 
-  ctx.strokeStyle='#0ea5e9';
-  ctx.lineWidth=3;
-
-  if(filled){
-    ctx.fillStyle='rgba(56,189,248,.20)';
-    ctx.fillRect(x-s/2,y-s/2,s,s);
+  if(active){
+    if(rolling){
+      dx = Math.sin(t*3.14) * s*.38;
+      rot = t*8;
+    }else{
+      dy = -Math.abs(Math.sin(t*5))*6;
+      rot = t*4;
+    }
   }
 
-  ctx.strokeRect(x-s/2,y-s/2,s,s);
-  ctx.strokeRect(x-s/2+off,y-s/2-off,s,s);
+  const g=ctx.createRadialGradient(x-r*.26+dx,y-r*.30+dy,r*.08,x+dx,y+dy,r);
+  g.addColorStop(0,'#fff');
+  g.addColorStop(.25,color);
+  g.addColorStop(1,'rgba(31,41,55,.20)');
 
+  ctx.fillStyle='rgba(0,0,0,.10)';
   ctx.beginPath();
-  ctx.moveTo(x-s/2,y-s/2);
-  ctx.lineTo(x-s/2+off,y-s/2-off);
-
-  ctx.moveTo(x+s/2,y-s/2);
-  ctx.lineTo(x+s/2+off,y-s/2-off);
-
-  ctx.moveTo(x-s/2,y+s/2);
-  ctx.lineTo(x-s/2+off,y+s/2-off);
-
-  ctx.moveTo(x+s/2,y+s/2);
-  ctx.lineTo(x+s/2+off,y+s/2-off);
-
-  ctx.stroke();
-}
-
-function drawDiceDots(s){
-  const r=Math.max(2,s*.035);
-
-  ctx.fillStyle='#1e293b';
-
-  [
-    [-s*.20,-s*.18],
-    [ s*.20,-s*.18],
-    [0,0],
-    [-s*.20,s*.18],
-    [ s*.20,s*.18]
-  ].forEach(([dx,dy])=>{
-    ctx.beginPath();
-    ctx.arc(dx,dy,r,0,Math.PI*2);
-    ctx.fill();
-  });
-}
-
-function drawCubeVertices(s){
-  const off=s*.28;
-
-  ctx.fillStyle='#ef4444';
-
-  const pts=[
-    [-s/2,-s/2],
-    [ s/2,-s/2],
-    [-s/2, s/2],
-    [ s/2, s/2],
-    [-s/2+off,-s/2-off],
-    [ s/2+off,-s/2-off],
-    [-s/2+off, s/2-off],
-    [ s/2+off, s/2-off]
-  ];
-
-  pts.forEach(([px,py])=>{
-    ctx.beginPath();
-    ctx.arc(px,py,3.5,0,Math.PI*2);
-    ctx.fill();
-  });
-}
-
-function drawCylinder(x,y,s,color){
-  const rx=s*.42;
-  const ry=s*.16;
-  const h=s*.58;
-
-  ctx.fillStyle='rgba(96,165,250,.20)';
-  ctx.strokeStyle=color;
-  ctx.lineWidth=3;
-
-  ctx.beginPath();
-  ctx.ellipse(x,y-h/2,rx,ry,0,0,Math.PI*2);
+  ctx.ellipse(x+dx,y+r*1.08,r*.75,r*.22,0,0,Math.PI*2);
   ctx.fill();
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(x-rx,y-h/2);
-  ctx.lineTo(x-rx,y+h/2);
-  ctx.moveTo(x+rx,y-h/2);
-  ctx.lineTo(x+rx,y+h/2);
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.ellipse(x,y+h/2,rx,ry,0,0,Math.PI*2);
-  ctx.fill();
-  ctx.stroke();
-}
-
-function drawSphere(x,y,s,color){
-  const r=s*.42;
-
-  const g=ctx.createRadialGradient(
-    x-r*.25,
-    y-r*.30,
-    r*.08,
-    x,
-    y,
-    r
-  );
-
-  g.addColorStop(0,'#ffffff');
-  g.addColorStop(.22,color);
-  g.addColorStop(1,'rgba(30,41,59,.18)');
 
   ctx.fillStyle=g;
   ctx.strokeStyle=color;
   ctx.lineWidth=3;
+  ctx.beginPath(); ctx.arc(x+dx,y+dy,r,0,Math.PI*2); ctx.fill(); ctx.stroke();
 
-  ctx.beginPath();
-  ctx.arc(x,y,r,0,Math.PI*2);
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.strokeStyle='rgba(255,255,255,.55)';
+  ctx.save();
+  ctx.translate(x+dx,y+dy);
+  ctx.rotate(rot);
+  ctx.strokeStyle='rgba(255,255,255,.62)';
   ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(-r*.12,-r*.04,r*.58,-2.45,-.85); ctx.stroke();
+  if(rolling){
+    ctx.strokeStyle='rgba(255,255,255,.35)';
+    ctx.beginPath(); ctx.moveTo(-r*.78,0); ctx.lineTo(r*.78,0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,-r*.78); ctx.lineTo(0,r*.78); ctx.stroke();
+  }
+  ctx.restore();
 
-  ctx.beginPath();
-  ctx.arc(x-r*.12,y-r*.05,r*.58,-2.4,-.8);
-  ctx.stroke();
+  if(rolling){
+    ctx.strokeStyle='#64748b'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(-s*.50,s*.34); ctx.lineTo(s*.50,s*.34); ctx.stroke();
+
+    if(active){
+      ctx.strokeStyle='#f97316';
+      ctx.beginPath();
+      ctx.moveTo(-s*.46,s*.53); ctx.lineTo(s*.42,s*.53);
+      ctx.lineTo(s*.34,s*.46);
+      ctx.moveTo(s*.42,s*.53); ctx.lineTo(s*.34,s*.60);
+      ctx.stroke();
+    }
+  }
 }
 
-function drawTriangularPrism(x,y,s,color){
-  const w=s*.62;
-  const h=s*.58;
-  const off=s*.30;
+function drawTriangularPrism(x,y,s,color,t){
+  const active=exhibitAnim.active && (exhibitAnim.type==='tent' || exhibitAnim.type==='prism');
+  const offSpin = active ? Math.sin(t*5)*0.18 : -0.02;
+  ctx.save();
+  ctx.rotate(offSpin);
 
-  const a={x:x-w/2,y:y+h/2};
-  const b={x:x,y:y-h/2};
-  const c={x:x+w/2,y:y+h/2};
+  const w=s*.62, hh=s*.58, off=s*.30;
+  const a={x:x-w/2,y:y+hh/2}, b={x:x,y:y-hh/2}, c={x:x+w/2,y:y+hh/2};
+  const a2={x:a.x+off,y:a.y-off*.55}, b2={x:b.x+off,y:b.y-off*.55}, c2={x:c.x+off,y:c.y-off*.55};
 
-  const a2={x:a.x+off,y:a.y-off*.55};
-  const b2={x:b.x+off,y:b.y-off*.55};
-  const c2={x:c.x+off,y:c.y-off*.55};
-
-  ctx.fillStyle='rgba(34,197,94,.14)';
-  ctx.strokeStyle=color;
-  ctx.lineWidth=3;
-
-  ctx.beginPath();
-  ctx.moveTo(a.x,a.y);
-  ctx.lineTo(b.x,b.y);
-  ctx.lineTo(c.x,c.y);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.moveTo(a2.x,a2.y);
-  ctx.lineTo(b2.x,b2.y);
-  ctx.lineTo(c2.x,c2.y);
-  ctx.closePath();
-  ctx.stroke();
-
+  ctx.fillStyle='rgba(34,197,94,.12)';
+  ctx.strokeStyle=color; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.lineTo(c.x,c.y); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(a2.x,a2.y); ctx.lineTo(b2.x,b2.y); ctx.lineTo(c2.x,c2.y); ctx.closePath(); ctx.stroke();
   ctx.beginPath();
   ctx.moveTo(a.x,a.y); ctx.lineTo(a2.x,a2.y);
   ctx.moveTo(b.x,b.y); ctx.lineTo(b2.x,b2.y);
   ctx.moveTo(c.x,c.y); ctx.lineTo(c2.x,c2.y);
   ctx.stroke();
+
+  ctx.restore();
 }
 
-function drawPrismVertices(s){
-  const w=s*.62;
-  const h=s*.58;
-  const off=s*.30;
+function drawCubeWithVertices(x,y,s,t){
+  const active=exhibitAnim.active && exhibitAnim.type==='cubeVertices';
+  const pulse = active ? 1 + 0.18*Math.abs(Math.sin(t*7)) : 1;
+  const off=s*.27;
+
+  ctx.strokeStyle='#0284c7'; ctx.lineWidth=3;
+  ctx.strokeRect(x-s/2,y-s/2,s,s);
+  ctx.strokeRect(x-s/2+off,y-s/2-off,s,s);
+  ctx.beginPath();
+  ctx.moveTo(x-s/2,y-s/2); ctx.lineTo(x-s/2+off,y-s/2-off);
+  ctx.moveTo(x+s/2,y-s/2); ctx.lineTo(x+s/2+off,y-s/2-off);
+  ctx.moveTo(x-s/2,y+s/2); ctx.lineTo(x-s/2+off,y+s/2-off);
+  ctx.moveTo(x+s/2,y+s/2); ctx.lineTo(x+s/2+off,y+s/2-off);
+  ctx.stroke();
 
   const pts=[
-    [-w/2,h/2],
-    [0,-h/2],
-    [w/2,h/2],
-    [-w/2+off,h/2-off*.55],
-    [off,-h/2-off*.55],
-    [w/2+off,h/2-off*.55]
+    [-s/2,-s/2],[s/2,-s/2],[-s/2,s/2],[s/2,s/2],
+    [-s/2+off,-s/2-off],[s/2+off,-s/2-off],
+    [-s/2+off,s/2-off],[s/2+off,s/2-off]
   ];
-
-  ctx.fillStyle='#ef4444';
-
-  pts.forEach(([px,py])=>{
-    ctx.beginPath();
-    ctx.arc(px,py,3.5,0,Math.PI*2);
-    ctx.fill();
+  ctx.fillStyle='#dc2626';
+  pts.forEach(([px,py],i)=>{
+    const r = 4 * (active && i%2===Math.floor((t*8)%2) ? pulse : 1);
+    ctx.beginPath(); ctx.arc(px,py,r,0,Math.PI*2); ctx.fill();
   });
 }
 
-function drawCubeNet(x,y,s){
-  const cell=s*.22;
-
-  const cells=[
-    [0,0],
-    [-1,0],
-    [1,0],
-    [2,0],
-    [0,-1],
-    [0,1]
+function drawPrismWithVertices(x,y,s,t){
+  drawTriangularPrism(x,y,s,'#7c3aed',t);
+  const active=exhibitAnim.active && exhibitAnim.type==='prism';
+  const pulse = active ? 1 + 0.18*Math.abs(Math.sin(t*7)) : 1;
+  const w=s*.62, hh=s*.58, off=s*.30;
+  const pts=[
+    [-w/2,hh/2],[0,-hh/2],[w/2,hh/2],
+    [-w/2+off,hh/2-off*.55],[off,-hh/2-off*.55],[w/2+off,hh/2-off*.55]
   ];
+  ctx.fillStyle='#dc2626';
+  pts.forEach(([px,py],i)=>{
+    const r = 4 * (active && i===Math.floor((t*8)%6) ? pulse : 1);
+    ctx.beginPath(); ctx.arc(px,py,r,0,Math.PI*2); ctx.fill();
+  });
+}
+
+function drawCubeNet(x,y,s,t){
+  const active=exhibitAnim.active && exhibitAnim.type==='net';
+  const cell=s*.22;
+  const cells=[[0,0],[-1,0],[1,0],[2,0],[0,-1],[0,1]];
+  const fold = active ? Math.sin(t*6)*0.12 : 0;
 
   cells.forEach(([cx,cy],i)=>{
-    ctx.fillStyle=
-      i===0
-      ? 'rgba(249,115,22,.22)'
-      : 'rgba(56,189,248,.18)';
+    const px = x+cx*cell-cell/2;
+    const py = y+cy*cell-cell/2;
+    const offsetX = active && i!==0 ? (cx*fold*cell*.7) : 0;
+    const offsetY = active && i!==0 ? (cy*fold*cell*.7) : 0;
 
-    ctx.strokeStyle=
-      i===0
-      ? '#f97316'
-      : '#0ea5e9';
-
+    ctx.fillStyle=i===0?'rgba(249,115,22,.20)':'rgba(14,165,233,.14)';
+    ctx.strokeStyle=i===0?'#f97316':'#0284c7';
     ctx.lineWidth=2;
-
-    ctx.fillRect(
-      x+cx*cell-cell/2,
-      y+cy*cell-cell/2,
-      cell,
-      cell
-    );
-
-    ctx.strokeRect(
-      x+cx*cell-cell/2,
-      y+cy*cell-cell/2,
-      cell,
-      cell
-    );
+    ctx.fillRect(px+offsetX,py+offsetY,cell,cell);
+    ctx.strokeRect(px+offsetX,py+offsetY,cell,cell);
   });
 }
 
-function drawCylinderTopView(x,y,s){
-  const r=s*.34;
+function drawTopView(x,y,s,t){
+  drawCylinder(x,y+10,s*.58,'#0284c7',t);
 
-  ctx.fillStyle='rgba(14,165,233,.18)';
-  ctx.strokeStyle='#0ea5e9';
-  ctx.lineWidth=4;
+  const active=exhibitAnim.active && exhibitAnim.type==='topView';
+  const arrowY = active ? -s*.55 + Math.abs(Math.sin(t*5))*10 : -s*.55;
 
-  ctx.beginPath();
-  ctx.arc(x,y,r,0,Math.PI*2);
-  ctx.fill();
-  ctx.stroke();
+  ctx.strokeStyle='#475569'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.moveTo(0,arrowY); ctx.lineTo(0,-s*.31); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-7,-s*.37); ctx.lineTo(0,-s*.29); ctx.lineTo(7,-s*.37); ctx.stroke();
 
-  ctx.fillStyle='#0369a1';
-  ctx.font='bold 10px sans-serif';
-  ctx.textAlign='center';
-  ctx.fillText('TOP VIEW',x,y+r+18);
+  ctx.fillStyle='#334155'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center';
+  ctx.fillText('VIEW FROM ABOVE',0,-s*.61);
 }
 
-function drawCone(x,y,s){
-  const rx=s*.34;
-  const ry=s*.13;
-  const h=s*.66;
-
-  ctx.fillStyle='rgba(249,115,22,.18)';
-  ctx.strokeStyle='#f97316';
-  ctx.lineWidth=3;
-
-  ctx.beginPath();
-  ctx.moveTo(0,-h/2);
-  ctx.lineTo(-rx,h/2);
-  ctx.lineTo(rx,h/2);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.ellipse(0,h/2,rx,ry,0,0,Math.PI*2);
-  ctx.stroke();
-
-  ctx.fillStyle='#ef4444';
-  ctx.beginPath();
-  ctx.arc(0,-h/2,4,0,Math.PI*2);
-  ctx.fill();
-}
-
-/* =====================================================
-   CARGO ON TRAIN
-===================================================== */
-function drawCargoOnTrain(x,y,type){
+function drawCone(x,y,s,t){
+  const active=exhibitAnim.active && exhibitAnim.type==='cone';
+  const pulse = active ? 1 + 0.08*Math.abs(Math.sin(t*7)) : 1;
   ctx.save();
+  ctx.scale(pulse,pulse);
 
-  ctx.translate(x-67,y-33);
-
-  const s=34;
-
-  if(type==='dice'||type==='cubeVertices'){
-    ctx.strokeStyle='#2563eb';
-    ctx.fillStyle='#dbeafe';
-    ctx.lineWidth=2;
-    ctx.fillRect(-12,-12,24,24);
-    ctx.strokeRect(-12,-12,24,24);
-  }
-
-  else if(type==='tank'||type==='topView'){
-    ctx.strokeStyle='#0ea5e9';
-    ctx.fillStyle='#dbeafe';
-    ctx.lineWidth=2;
-
-    ctx.beginPath();
-    ctx.ellipse(0,-8,12,5,0,0,Math.PI*2);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillRect(-12,-8,24,18);
-
-    ctx.beginPath();
-    ctx.ellipse(0,10,12,5,0,0,Math.PI*2);
-    ctx.fill();
-    ctx.stroke();
-  }
-
-  else if(type==='sphere'||type==='rollingSphere'){
-    ctx.fillStyle='#fb923c';
-    ctx.beginPath();
-    ctx.arc(0,0,13,0,Math.PI*2);
-    ctx.fill();
-  }
-
-  else if(type==='tent'||type==='prism'){
-    ctx.fillStyle='#22c55e';
-    ctx.strokeStyle='#166534';
-    ctx.lineWidth=2;
-
-    ctx.beginPath();
-    ctx.moveTo(-14,10);
-    ctx.lineTo(0,-13);
-    ctx.lineTo(14,10);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-  }
-
-  else if(type==='net'){
-    ctx.strokeStyle='#8b5cf6';
-    ctx.lineWidth=2;
-    ctx.strokeRect(-12,-12,12,12);
-    ctx.strokeRect(0,-12,12,12);
-    ctx.strokeRect(-12,0,12,12);
-  }
-
-  else if(type==='cone'){
-    ctx.fillStyle='#f97316';
-    ctx.beginPath();
-    ctx.moveTo(0,-15);
-    ctx.lineTo(-12,10);
-    ctx.lineTo(12,10);
-    ctx.closePath();
-    ctx.fill();
-  }
-
+  const rx=s*.34, ry=s*.13, hh=s*.68;
+  ctx.fillStyle='rgba(249,115,22,.16)';
+  ctx.strokeStyle='#f97316'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(0,-hh/2); ctx.lineTo(-rx,hh/2); ctx.lineTo(rx,hh/2); ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(0,hh/2,rx,ry,0,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle='#dc2626';
+  const dotR = active ? 4.5 + Math.abs(Math.sin(t*8))*2 : 4.5;
+  ctx.beginPath(); ctx.arc(0,-hh/2,dotR,0,Math.PI*2); ctx.fill();
   ctx.restore();
 }
 
-/* =====================================================
-   LANDSCAPE / TRACK / TRAIN
-===================================================== */
-function cloud(x,y,s){
-  ctx.fillStyle='rgba(255,255,255,.92)';
-
+function roundedRect(x,y,w,h,r,fill,stroke){
   ctx.beginPath();
-  ctx.arc(x,y,16*s,0,Math.PI*2);
-  ctx.arc(x+19*s,y-8*s,23*s,0,Math.PI*2);
-  ctx.arc(x+43*s,y,18*s,0,Math.PI*2);
-  ctx.fill();
-}
-
-function hill(w,h){
-  ctx.fillStyle='#86efac';
-
-  ctx.beginPath();
-  ctx.moveTo(0,h*.78);
-  ctx.quadraticCurveTo(w*.3,h*.63,w*.56,h*.79);
-  ctx.quadraticCurveTo(w*.78,h*.91,w,h*.73);
-  ctx.lineTo(w,h);
-  ctx.lineTo(0,h);
-  ctx.fill();
-}
-
-function drawTrack(x1,y1,x2,y2){
-  ctx.strokeStyle='#64748b';
-  ctx.lineWidth=7;
-  ctx.lineCap='round';
-
-  ctx.beginPath();
-  ctx.moveTo(x1,y1);
-  ctx.lineTo(x2,y2);
-  ctx.stroke();
-
-  ctx.strokeStyle='#fef3c7';
-  ctx.lineWidth=3;
-  ctx.setLineDash([16,12]);
-
-  ctx.beginPath();
-  ctx.moveTo(x1,y1);
-  ctx.lineTo(x2,y2);
-  ctx.stroke();
-
-  ctx.setLineDash([]);
-}
-
-function drawStation(x,y){
-  ctx.fillStyle='#fed7aa';
-  ctx.fillRect(x,y+28,88,70);
-
-  ctx.fillStyle='#f97316';
-
-  ctx.beginPath();
-  ctx.moveTo(x-8,y+30);
-  ctx.lineTo(x+44,y);
-  ctx.lineTo(x+96,y+30);
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
   ctx.closePath();
-  ctx.fill();
-
-  ctx.fillStyle='#7c2d12';
-  ctx.font='bold 11px sans-serif';
-  ctx.textAlign='center';
-  ctx.fillText('GEOMETRY',x+44,y+51);
-  ctx.fillText('STATION',x+44,y+65);
-
-  ctx.fillStyle='#fdba74';
-  ctx.fillRect(x+31,y+70,26,28);
-
-  /* scanner light */
-  ctx.fillStyle=
-    train.success
-    ? '#22c55e'
-    : '#0ea5e9';
-
-  ctx.beginPath();
-  ctx.arc(x+44,y+18,6,0,Math.PI*2);
-  ctx.fill();
+  if(fill) ctx.fill();
+  if(stroke) ctx.stroke();
 }
 
-function drawTrain(x,y,r){
-  ctx.save();
+function finishGame(){
+  stopExhibitAnimation();
+  document.getElementById('progressBar').style.width='100%';
+  safePlay('s-claps');
 
-  ctx.translate(x,y);
-  ctx.rotate(r);
-
-  /* engine */
-  ctx.fillStyle='#0ea5e9';
-  ctx.fillRect(-48,-22,54,28);
-
-  ctx.fillStyle='#0284c7';
-  ctx.fillRect(-43,-28,30,10);
-
-  /* cabin */
-  ctx.fillStyle='#f97316';
-  ctx.fillRect(4,-34,30,40);
-
-  ctx.fillStyle='#bae6fd';
-  ctx.fillRect(11,-27,15,13);
-
-  /* chimney */
-  ctx.fillStyle='#475569';
-  ctx.fillRect(22,-48,10,16);
-
-  /* smoke */
-  ctx.fillStyle='rgba(148,163,184,.55)';
-
-  ctx.beginPath();
-  ctx.arc(29,-58,7,0,Math.PI*2);
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.arc(39,-66,5,0,Math.PI*2);
-  ctx.fill();
-
-  /* nose */
-  ctx.fillStyle='#fb923c';
-
-  ctx.beginPath();
-  ctx.moveTo(34,-18);
-  ctx.lineTo(48,-8);
-  ctx.lineTo(34,2);
-  ctx.closePath();
-  ctx.fill();
-
-  /* cargo coach */
-  ctx.fillStyle='#22c55e';
-  ctx.fillRect(-90,-20,36,25);
-
-  ctx.fillStyle='#dcfce7';
-  ctx.fillRect(-84,-15,10,9);
-  ctx.fillRect(-68,-15,10,9);
-
-  /* connector */
-  ctx.strokeStyle='#475569';
-  ctx.lineWidth=3;
-
-  ctx.beginPath();
-  ctx.moveTo(-54,-8);
-  ctx.lineTo(-48,-8);
-  ctx.stroke();
-
-  /* windows */
-  ctx.fillStyle='#fff';
-  ctx.fillRect(-39,-16,11,10);
-  ctx.fillRect(-23,-16,11,10);
-
-  /* wheels */
-  ctx.fillStyle='#111827';
-
-  [-80,-61,-34,-12,18,36].forEach(wx=>{
-    ctx.beginPath();
-    ctx.arc(wx,8,7,0,Math.PI*2);
-    ctx.fill();
-  });
-
-  ctx.fillStyle='#e5e7eb';
-
-  [-80,-61,-34,-12,18,36].forEach(wx=>{
-    ctx.beginPath();
-    ctx.arc(wx,8,3,0,Math.PI*2);
-    ctx.fill();
-  });
-
-  ctx.restore();
-}
-
-/* =====================================================
-   SUCCESS EFFECTS
-===================================================== */
-function spark(x,y){
-  for(let i=0;i<10;i++){
-    const a=(Date.now()/240+i)*.7;
-
-    ctx.fillStyle=
-      ['#facc15','#0ea5e9','#22c55e'][i%3];
-
-    ctx.beginPath();
-    ctx.arc(
-      x+Math.cos(a)*35,
-      y+Math.sin(a)*28,
-      3,
-      0,
-      Math.PI*2
-    );
-    ctx.fill();
-  }
-}
-
-function drawSuccessBeam(w,h){
-  const x=w-88;
-
-  const g=ctx.createLinearGradient(x-40,h*.25,x+40,h*.72);
-
-  g.addColorStop(0,'rgba(34,197,94,.0)');
-  g.addColorStop(.5,'rgba(34,197,94,.18)');
-  g.addColorStop(1,'rgba(34,197,94,.0)');
-
-  ctx.fillStyle=g;
-
-  ctx.beginPath();
-  ctx.moveTo(x-35,h*.22);
-  ctx.lineTo(x+35,h*.22);
-  ctx.lineTo(x+68,h*.74);
-  ctx.lineTo(x-68,h*.74);
-  ctx.closePath();
-  ctx.fill();
-}
-
-/* =====================================================
-   ROUND RECT
-===================================================== */
-function roundedRect(c,x,y,w,h,r,fill,stroke,fillStyle,strokeStyle){
-  c.beginPath();
-
-  c.moveTo(x+r,y);
-  c.arcTo(x+w,y,x+w,y+h,r);
-  c.arcTo(x+w,y+h,x,y+h,r);
-  c.arcTo(x,y+h,x,y,r);
-  c.arcTo(x,y,x+w,y,r);
-
-  c.closePath();
-
-  if(fill){
-    c.fillStyle=fillStyle;
-    c.fill();
+  let icon='🏛️', heading='Museum Collection Complete!', message='You completed all 10 exhibits.';
+  if(score>=9){
+    icon='🏆'; message='Excellent! Your 3D geometry museum is almost perfectly curated.';
+  }else if(score>=6){
+    icon='🌟'; message='Good work! Your museum collection is strong. Replay to collect the remaining exhibits.';
+  }else{
+    icon='🧩'; message='You completed the museum tour. Replay and use the questions carefully.';
   }
 
-  if(stroke){
-    c.strokeStyle=strokeStyle;
-    c.lineWidth=2;
-    c.stroke();
-  }
-}
-
-/* =====================================================
-   LOOP / FINISH
-===================================================== */
-function loop(){
-  update();
-  render();
-  requestAnimationFrame(loop);
-}
-
-function finish(){
-  document.getElementById('s-claps').play().catch(()=>{});
-
-  document.getElementById('root').innerHTML=
-  `
-  <div class="card" style="margin:auto;text-align:center">
-    <h1>🏁 Journey Complete!</h1>
-
-    <p>
-      You completed all 10 Visualising Solid Shapes stations.
-    </p>
-
-    <p style="margin-top:10px;font-weight:900;color:#16a34a">
-      Final Stars: ${score}/10
-    </p>
-
-    <button
-      class="btn"
-      style="margin-top:18px"
-      onclick="location.reload()"
-    >
-      Play Again
-    </button>
-  </div>
+  document.getElementById('app').innerHTML=`
+    <div class="result-card">
+      <div class="result-icon">${icon}</div>
+      <h1>${heading}</h1>
+      <p>${message}</p>
+      <p style="margin-top:14px;font-size:1.15rem;font-weight:950;color:#0f766e">
+        Exhibits Collected: ${score}/10
+      </p>
+      <button class="btn" style="margin-top:18px" onclick="location.reload()">
+        Visit Museum Again
+      </button>
+    </div>
   `;
 }
 
 function confetti(){
-  for(let i=0;i<18;i++){
+  for(let i=0;i<20;i++){
     const p=document.createElement('div');
-
     p.className='confetti';
-
-    p.style.left=
-      Math.random()*100
-      +'vw';
-
-    p.style.background=
-      ['#0ea5e9','#f97316','#22c55e','#facc15']
-      [Math.floor(Math.random()*4)];
-
+    p.style.left=Math.random()*100+'vw';
+    p.style.background=['#0f766e','#0284c7','#d97706','#7c3aed','#16a34a'][Math.floor(Math.random()*5)];
     document.body.appendChild(p);
-
-    setTimeout(()=>p.remove(),1600);
+    setTimeout(()=>p.remove(),1450);
   }
 }
 </script>
