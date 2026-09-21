@@ -60,10 +60,10 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.45;ba
         <div class="visual" id="visual"></div>
       </div>
       <div class="opts">
-        <button class="opt" id="o0" onclick="pick(0)">A</button>
-        <button class="opt" id="o1" onclick="pick(1)">B</button>
-        <button class="opt" id="o2" onclick="pick(2)">C</button>
-        <button class="opt" id="o3" onclick="pick(3)">D</button>
+        <button class="opt" id="o0" onclick="pick(0)"></button>
+        <button class="opt" id="o1" onclick="pick(1)"></button>
+        <button class="opt" id="o2" onclick="pick(2)"></button>
+        <button class="opt" id="o3" onclick="pick(3)"></button>
       </div>
     </div>
 
@@ -115,7 +115,7 @@ function loadQ(){
    let b=document.getElementById('o'+i);
    b.className='opt';
    b.disabled=false;
-   b.innerText=String.fromCharCode(65+i)+'. '+choices[i].text;
+   b.innerText=choices[i].text;
  }
  butterfly={progress:0,moving:false,fail:false,success:false,timer:0,wing:0,target:0};
 }
