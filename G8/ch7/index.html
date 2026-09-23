@@ -2,105 +2,548 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Quadrilateral Blueprint Rescue</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Quadrilateral City Challenge - Grade 8</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
-  body{min-height:100vh;overflow:hidden;background:linear-gradient(135deg,#182848,#4b6cb7);color:#fff}
-  .screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:18px}
-  .active{display:flex}
-  .splash{background:radial-gradient(circle,#ffffff 0%,#e8f0ff 38%,#89a8ff 100%)}
-  .logo{width:min(320px,70vw);animation:pulse 1.6s infinite ease-in-out}
-  @keyframes pulse{50%{transform:scale(1.07);filter:drop-shadow(0 0 22px #fff)}}
-  .bg-tools span{position:absolute;font-size:38px;opacity:.16;animation:float 8s infinite linear}
-  .bg-tools span:nth-child(1){left:7%;top:16%}.bg-tools span:nth-child(2){right:12%;top:18%;animation-delay:1s}.bg-tools span:nth-child(3){left:12%;bottom:16%;animation-delay:2s}.bg-tools span:nth-child(4){right:7%;bottom:18%;animation-delay:3s}
-  @keyframes float{50%{transform:translateY(-28px) rotate(12deg)}}
-  .panel{width:min(960px,96vw);background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.32);border-radius:28px;padding:26px;box-shadow:0 24px 60px rgba(0,0,0,.25);backdrop-filter:blur(10px);text-align:center}
-  h1{font-size:clamp(30px,5vw,54px);margin-bottom:12px}.subtitle{font-size:clamp(16px,2.5vw,22px);line-height:1.55;margin:12px auto 22px;max-width:720px}
-  button{border:0;border-radius:18px;padding:14px 24px;font-weight:800;font-size:18px;color:#14213d;background:#ffd166;cursor:pointer;box-shadow:0 8px 0 #c79522;transition:.15s}
-  button:active{transform:translateY(5px);box-shadow:0 3px 0 #c79522}
-  .game{flex-direction:column;gap:12px;justify-content:flex-start;background:linear-gradient(160deg,#0f2027,#203a43,#2c5364)}
-  .scorebar{width:min(1000px,96vw);display:flex;justify-content:space-between;gap:8px;align-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);padding:12px 16px;border-radius:20px;font-weight:800;font-size:clamp(14px,2.5vw,18px)}
-  .blueprint{width:min(1000px,96vw);min-height:250px;background:#123a5a;border:3px dashed #7ee7ff;border-radius:26px;padding:20px;position:relative;box-shadow:inset 0 0 40px rgba(126,231,255,.12)}
-  .blueprint:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(126,231,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(126,231,255,.12) 1px,transparent 1px);background-size:30px 30px;border-radius:23px;pointer-events:none}
-  .scenario{position:relative;z-index:1;font-size:clamp(17px,3vw,25px);line-height:1.5;font-weight:700}.scenario small{display:block;margin-top:8px;color:#b9f7ff;font-weight:600}
-  .dropzone{position:relative;z-index:2;margin:18px auto 0;min-height:82px;width:min(660px,94%);border:3px dashed rgba(255,255,255,.7);border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#dffcff;background:rgba(255,255,255,.08)}
-  .dropzone.hover{background:rgba(255,209,102,.2);border-color:#ffd166}
-  .cards{width:min(1000px,96vw);display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.card{min-height:82px;border-radius:20px;background:linear-gradient(145deg,#fff3bd,#ffcc5c);color:#17213d;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;font-weight:900;font-size:clamp(14px,2.4vw,18px);cursor:grab;box-shadow:0 9px 0 #bf8120;user-select:none}.card:active{cursor:grabbing}.card.used{opacity:.25;pointer-events:none}.card.correct{background:linear-gradient(145deg,#bcffcf,#50d890)}.card.wrong{background:linear-gradient(145deg,#ffd0d0,#ff6b6b)}
-  .message{height:42px;font-size:20px;font-weight:900;text-align:center}.sparkle{animation:pop .7s ease}@keyframes pop{50%{transform:scale(1.04);filter:drop-shadow(0 0 20px #fff)}}
-  .final h2{font-size:clamp(32px,6vw,58px)}.badge{font-size:clamp(22px,4vw,34px);margin:18px 0;color:#ffd166;font-weight:900}
-  .confetti{position:absolute;width:10px;height:16px;top:-20px;animation:fall 2.4s linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(420deg)}}
-  @media(max-width:720px){body{overflow:auto}.screen{min-height:100vh}.cards{grid-template-columns:repeat(2,1fr)}.blueprint{min-height:300px}.game{padding-bottom:20px}.card{min-height:74px}.scorebar{flex-wrap:wrap}.panel{padding:20px}}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Arial,sans-serif;-webkit-tap-highlight-color:transparent}
+:root{
+  --ink:#183044;--muted:#607386;--blue:#22a8e8;--blue2:#dff5ff;--orange:#ff9d2e;
+  --gold:#ffd166;--green:#22b573;--red:#e34b5f;--card:#fff;--border:#b9e6fb;
+}
+html,body{width:100%;min-height:100%;background:linear-gradient(180deg,#f4fbff 0%,#fff8ec 56%,#eefcf4 100%);color:var(--ink)}
+body{overflow-x:hidden}
+button{font:inherit}
+#splash{position:fixed;inset:0;z-index:9999;background:#fff;display:flex;align-items:center;justify-content:center;transition:opacity .45s}
+#splash img{width:min(310px,72vw);height:auto;animation:logoPulse 1.7s ease-in-out infinite}
+@keyframes logoPulse{50%{transform:scale(1.045)}}
+
+#app{width:min(980px,100%);margin:auto;padding:10px;opacity:0;transition:.4s}
+.screen{display:none}.screen.active{display:block}
+.centerScreen{min-height:calc(100vh - 20px);display:flex!important;align-items:center;justify-content:center}
+.introCard,.resultCard{
+  width:min(620px,94vw);background:#fff;border:2px solid var(--border);border-radius:26px;
+  box-shadow:0 16px 40px rgba(40,112,150,.14);padding:clamp(20px,4vw,34px);text-align:center
+}
+.introCard h1,.resultCard h1{font-size:clamp(1.65rem,5vw,2.35rem);color:#126fa6;margin-bottom:10px}
+.introCard p,.resultCard p{font-size:clamp(.96rem,2.6vw,1.08rem);line-height:1.55;color:#516579}
+.how{margin:16px auto;background:#fff7e7;border:2px solid #ffd79a;border-radius:18px;padding:12px;text-align:left;max-width:500px;line-height:1.55;font-weight:700;color:#6e4c1d}
+.primary{
+  border:0;border-radius:17px;background:linear-gradient(135deg,#20b7f0,#ff9d2e);color:#fff;
+  font-weight:900;font-size:1rem;padding:13px 24px;cursor:pointer;box-shadow:0 7px 0 #cf7617;margin-top:14px
+}
+.primary:active{transform:translateY(4px);box-shadow:0 3px 0 #cf7617}
+
+#game{padding-bottom:12px}
+.topbar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.pill{
+  background:#fff;border:2px solid var(--border);border-radius:16px;padding:8px 10px;text-align:center;
+  font-weight:900;color:#17668f;box-shadow:0 4px 12px rgba(34,168,232,.08);font-size:clamp(.78rem,2.2vw,.98rem)
+}
+.progress{height:11px;border-radius:20px;background:#e5f6ff;border:1px solid #c6ebfb;overflow:hidden;margin-bottom:9px}
+.progressBar{height:100%;width:0;background:linear-gradient(90deg,#20b7f0,#ff9d2e);transition:width .4s ease}
+
+.gameGrid{display:grid;grid-template-columns:1.08fr .92fr;gap:10px;align-items:start}
+.panel{
+  background:rgba(255,255,255,.94);border:2px solid #ffd08d;border-radius:22px;
+  box-shadow:0 12px 28px rgba(102,78,37,.10);padding:12px;min-width:0
+}
+.challengePanel{display:flex;flex-direction:column;gap:9px}
+.questionBox{
+  background:#f1fbff;border:2px solid #56c5f3;border-radius:18px;padding:13px;text-align:center;
+  min-height:100px;display:flex;flex-direction:column;align-items:center;justify-content:center
+}
+.qtag{font-size:.78rem;font-weight:900;color:#e36e18;letter-spacing:.03em;margin-bottom:6px;text-transform:uppercase}
+.question{font-size:clamp(1rem,2.8vw,1.28rem);line-height:1.38;font-weight:900;color:#1b2e40}
+.instruction{font-size:.82rem;color:#61778b;font-weight:750;margin-top:7px}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.option{
+  min-height:64px;border:2px solid #bde8fb;background:#fff;border-radius:17px;padding:10px;
+  font-weight:900;font-size:clamp(.9rem,2.35vw,1.06rem);color:#203346;cursor:pointer;
+  box-shadow:0 4px 10px rgba(26,108,149,.08);transition:.16s;overflow-wrap:anywhere
+}
+.option:active{transform:scale(.98)}
+.option.correct{background:#dcfce8;border-color:#20a965;color:#12633e}
+.option.wrong{background:#ffe1e5;border-color:#df4256;color:#8a1f2d}
+.option:disabled{cursor:default;opacity:.92}
+.feedback{
+  min-height:55px;border:2px solid #ffe0ad;border-radius:16px;background:#fffaf2;padding:9px 10px;
+  display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.35;
+  font-weight:850;font-size:clamp(.84rem,2.2vw,.96rem);color:#4f6274
+}
+.feedback.good{border-color:#98e0b9;background:#effcf4;color:#17653e}
+.feedback.bad{border-color:#f5b4bd;background:#fff3f5;color:#972637}
+.explain{display:none;background:#eef9ff;border:1px solid #bde8fb;border-radius:14px;padding:8px 10px;color:#456173;font-size:.86rem;line-height:1.35;font-weight:700}
+.explain.show{display:block}
+
+.scene{position:relative;overflow:hidden;padding:0;min-height:430px;background:linear-gradient(180deg,#dff5ff 0%,#fdf6e8 67%,#c8f2d8 68%)}
+.sceneTitle{
+  position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:3;background:rgba(255,255,255,.92);
+  border:2px solid #c2eafb;border-radius:999px;padding:6px 16px;font-weight:900;color:#1474a7;white-space:nowrap
+}
+.skyline{position:absolute;left:6%;right:6%;bottom:12%;height:63%;display:flex;align-items:flex-end;justify-content:center;gap:7px}
+.building{
+  width:8.8%;min-width:25px;background:linear-gradient(180deg,#dcecff,#bcd8f6);border:2px solid #82b8e8;
+  border-radius:8px 8px 2px 2px;position:relative;transition:.45s;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)
+}
+.building:nth-child(1){height:42%}.building:nth-child(2){height:62%}.building:nth-child(3){height:48%}.building:nth-child(4){height:76%}.building:nth-child(5){height:57%}
+.building:nth-child(6){height:88%}.building:nth-child(7){height:54%}.building:nth-child(8){height:69%}.building:nth-child(9){height:46%}.building:nth-child(10){height:61%}
+.building:before{
+  content:"";position:absolute;left:24%;right:24%;top:12%;height:10px;border-radius:3px;background:#edf6ff;
+  box-shadow:0 22px 0 #edf6ff,0 44px 0 #edf6ff,0 66px 0 #edf6ff
+}
+.building.on{background:linear-gradient(180deg,#ffe48b,#ffad4c);border-color:#f37c20;box-shadow:0 0 20px rgba(255,157,46,.48),inset 0 0 0 2px rgba(255,255,255,.48);animation:buildPop .5s}
+.building.on:before{background:#fff9c7;box-shadow:0 22px 0 #fff9c7,0 44px 0 #fff9c7,0 66px 0 #fff9c7}
+@keyframes buildPop{50%{transform:translateY(-8px) scale(1.035)}}
+
+.inspector{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);font-size:58px;filter:drop-shadow(0 7px 7px rgba(0,0,0,.16));z-index:4}
+.inspector.happy{animation:bounce .8s}
+.inspector.oops{animation:shake .45s}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}40%{transform:translateX(-50%) translateY(-18px)}}
+@keyframes shake{0%,100%{transform:translateX(-50%)}25%{transform:translateX(calc(-50% - 9px))}75%{transform:translateX(calc(-50% + 9px))}}
+
+.shapeBoard{
+  position:absolute;top:21%;left:50%;transform:translateX(-50%);width:62%;height:33%;border:2px solid rgba(50,156,203,.3);
+  background:rgba(255,255,255,.54);border-radius:18px;display:flex;align-items:center;justify-content:center;z-index:2
+}
+#shapeSvg{width:88%;height:88%;overflow:visible}
+.shapeLine{fill:rgba(255,255,255,.66);stroke:#268fbe;stroke-width:5;stroke-linejoin:round}
+.diag{stroke:#f08b32;stroke-width:3;stroke-dasharray:7 6}
+.angleArc{fill:none;stroke:#25a36f;stroke-width:4}
+.shapeLabel{font-size:15px;font-weight:800;fill:#27495e}
+.rewardPop{
+  position:absolute;left:50%;top:54%;transform:translate(-50%,-50%) scale(.6);z-index:10;
+  background:#fff;border:3px solid #38bd7d;color:#157247;border-radius:18px;padding:9px 14px;
+  font-weight:950;opacity:0;pointer-events:none
+}
+.rewardPop.show{animation:reward 1s ease forwards}
+@keyframes reward{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}25%,70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-70%) scale(.95)}}
+
+.confetti{position:fixed;top:-12px;width:9px;height:9px;z-index:999;pointer-events:none;animation:fall 1.35s linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(650deg);opacity:0}}
+
+.resultBadge{font-size:64px;margin:8px 0 12px}
+.resultStats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+.stat{background:#f3fbff;border:2px solid #c2eafb;border-radius:16px;padding:12px 6px;font-weight:900;color:#1b668e}
+.stat b{display:block;font-size:1.3rem;margin-top:4px;color:#173b52}
+
+@media(max-width:760px){
+  #app{padding:7px;max-width:540px}
+  .topbar{gap:5px}.pill{padding:6px 4px;border-radius:13px}
+  .gameGrid{grid-template-columns:1fr;gap:7px}
+  .challengePanel{gap:7px;padding:9px}
+  .questionBox{min-height:0;padding:10px}
+  .options{gap:7px}
+  .option{min-height:58px;padding:8px}
+  .feedback{min-height:46px;padding:7px 8px}
+  .scene{min-height:245px;height:clamp(245px,56vw,310px)}
+  .sceneTitle{top:8px;padding:5px 12px;font-size:.88rem}
+  .shapeBoard{top:20%;height:34%;width:68%}
+  .skyline{bottom:14%;height:56%;gap:4px}
+  .building{min-width:0;width:9%}
+  .inspector{font-size:44px;bottom:4%}
+  .resultStats{gap:6px}
+}
+@media(max-width:390px){
+  .pill{font-size:.73rem}
+  .option{font-size:.88rem;min-height:54px}
+  .instruction{font-size:.76rem}
+  .scene{min-height:230px;height:58vw}
+  .inspector{font-size:40px}
+}
+@media(orientation:landscape) and (max-height:520px){
+  #app{max-width:960px}
+  .gameGrid{grid-template-columns:1.08fr .92fr}
+  .scene{height:auto;min-height:330px}
+  .questionBox{padding:8px}
+  .option{min-height:46px}
+  .feedback{min-height:38px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}
+}
 </style>
 </head>
 <body>
-<audio id="correctSound" src="assets/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
 
-<section id="splash" class="screen splash active"><img src="assets/innovine-logo.png" class="logo" alt="Innovine Logo"></section>
+<div id="splash"><img src="assets/innovine-logo.png" alt="Innovine Logo"></div>
 
-<section id="intro" class="screen">
-  <div class="bg-tools"><span>📐</span><span>🏗️</span><span>📏</span><span>🧱</span></div>
-  <div class="panel">
-    <h1>Quadrilateral Blueprint Rescue</h1>
-    <p class="subtitle">Drag the correct evidence card into the blueprint zone. You get two attempts for each challenge. Complete all 10 blueprints to finish the mission.</p>
-    <button onclick="startGame()">Start Rescue</button>
-  </div>
-</section>
+<main id="app">
+  <section id="intro" class="screen active centerScreen">
+    <div class="introCard">
+      <h1>🏙️ Quadrilateral City Challenge</h1>
+      <p><b>Grade 8 Mathematics</b><br>Understanding Quadrilaterals</p>
+      <div class="how">
+        • Inspect each quadrilateral clue.<br>
+        • Tap the best answer — no dragging.<br>
+        • You get <b>2 chances</b> for every challenge.<br>
+        • Every correct answer completes one city building.
+      </div>
+      <button class="primary" id="startBtn">Start Inspection</button>
+    </div>
+  </section>
 
-<section id="game" class="screen game">
-  <div class="bg-tools"><span>📐</span><span>🏗️</span><span>📏</span><span>🧱</span></div>
-  <div class="scorebar"><div id="scoreTxt">Score: 0/10</div><div id="qTxt">Blueprint: 1/10</div><div id="attemptTxt">Attempts left: 2</div></div>
-  <div class="blueprint" id="blueprint">
-    <div class="scenario" id="scenario"></div>
-    <div class="dropzone" id="dropzone">Drop the correct evidence card here</div>
-  </div>
-  <div class="message" id="message"></div>
-  <div class="cards" id="cards"></div>
-</section>
+  <section id="game" class="screen">
+    <div class="topbar">
+      <div class="pill">🏗️ Built <span id="built">0</span>/10</div>
+      <div class="pill">⭐ Score <span id="score">0</span></div>
+      <div class="pill">🎯 Chances <span id="tries">2</span></div>
+    </div>
+    <div class="progress"><div id="progressBar" class="progressBar"></div></div>
 
-<section id="final" class="screen final">
-  <div class="bg-tools"><span>⭐</span><span>🏗️</span><span>🎉</span><span>📐</span></div>
-  <div class="panel">
-    <h2>Project Complete!</h2>
-    <p class="subtitle" id="finalScore"></p>
-    <div class="badge" id="badge"></div>
-    <button onclick="restartGame()">Play Again</button>
-  </div>
-</section>
+    <div class="gameGrid">
+      <section class="panel challengePanel">
+        <div class="questionBox">
+          <div class="qtag" id="qtag">Property Check</div>
+          <div class="question" id="question"></div>
+          <div class="instruction">Tap the correct option. You get 2 chances.</div>
+        </div>
+
+        <div class="options" id="options"></div>
+        <div class="feedback" id="feedback" aria-live="polite">Choose the best answer.</div>
+        <div class="explain" id="explain"></div>
+      </section>
+
+      <section class="panel scene" aria-label="Quadrilateral city construction animation">
+        <div class="sceneTitle">Quadrilateral City</div>
+
+        <div class="shapeBoard">
+          <svg id="shapeSvg" viewBox="0 0 280 160" role="img" aria-label="Quadrilateral diagram">
+            <polygon id="shapePoly" class="shapeLine" points="55,35 225,35 235,125 45,125"></polygon>
+            <line id="diag1" class="diag" x1="55" y1="35" x2="235" y2="125"></line>
+            <line id="diag2" class="diag" x1="225" y1="35" x2="45" y2="125"></line>
+            <text x="42" y="28" class="shapeLabel">A</text>
+            <text x="230" y="28" class="shapeLabel">B</text>
+            <text x="242" y="140" class="shapeLabel">C</text>
+            <text x="28" y="140" class="shapeLabel">D</text>
+          </svg>
+        </div>
+
+        <div class="skyline" id="skyline"></div>
+        <div class="rewardPop" id="rewardPop">✓ BLUEPRINT VERIFIED</div>
+        <div class="inspector" id="inspector">🧑‍🏫</div>
+      </section>
+    </div>
+  </section>
+
+  <section id="result" class="screen centerScreen">
+    <div class="resultCard">
+      <div class="resultBadge">🏆</div>
+      <h1>City Inspection Complete!</h1>
+      <p>You completed all 10 Grade 8 quadrilateral challenges.</p>
+      <div class="resultStats">
+        <div class="stat">Score<b id="finalScore">0/100</b></div>
+        <div class="stat">First Try<b id="firstTry">0/10</b></div>
+        <div class="stat">Accuracy<b id="accuracy">0%</b></div>
+      </div>
+      <button class="primary" id="againBtn">Play Again</button>
+    </div>
+  </section>
+</main>
 
 <script>
-const questions=[
-{scenario:'A square metal plate is being used as part of a rectangular frame. Which statement correctly supports this decision?',answer:'Every square is a rectangle',explain:'A square has four right angles and opposite sides equal, so it satisfies rectangle properties.',cards:['Every square is a rectangle','Every rectangle is a square','Every rhombus is a square','Every trapezium is a rectangle']},
-{scenario:'A garden tile has all sides equal and one angle measuring 90°. What must the tile be?',answer:'Square',explain:'All sides equal plus one right angle makes all angles right angles in a rhombus, so it is a square.',cards:['Square','Rhombus only','Kite only','Trapezium']},
-{scenario:'A bridge panel has diagonals that bisect each other and are equal. Which quadrilateral family fits best?',answer:'Rectangle',explain:'A parallelogram with equal diagonals is a rectangle.',cards:['Rectangle','Kite','Trapezium','Irregular quadrilateral']},
-{scenario:'A student claims that all rhombuses are squares. Drag the correct judgement.',answer:'Incorrect',explain:'A rhombus needs all sides equal, but its angles need not be 90°.',cards:['Correct','Incorrect','Always true','Cannot be decided']},
-{scenario:'A banner frame has exactly one pair of opposite sides parallel. Which name is most suitable?',answer:'Trapezium',explain:'A trapezium has exactly one pair of parallel sides.',cards:['Trapezium','Rectangle','Rhombus','Square']},
-{scenario:'A kite-shaped design has diagonals meeting at right angles, and only one diagonal bisects the other. Which shape matches?',answer:'Kite',explain:'In a kite, diagonals are perpendicular and one diagonal bisects the other.',cards:['Kite','Rectangle','Parallelogram','Trapezium']},
-{scenario:'A floor pattern has opposite angles equal and opposite sides equal. Which conclusion is definitely true?',answer:'Parallelogram',explain:'Both pairs of opposite sides equal is a property of a parallelogram.',cards:['Parallelogram','Kite','Trapezium','Only square']},
-{scenario:'A rhombus-shaped logo has diagonals that are perpendicular. Which extra statement is also true for its diagonals?',answer:'They bisect each other',explain:'The diagonals of a rhombus bisect each other at right angles.',cards:['They bisect each other','They are always equal','Only one diagonal exists','They never intersect']},
-{scenario:'A notice board has four right angles and diagonals of equal length. Which classification is strongest from the given cards?',answer:'Rectangle',explain:'Four right angles and equal diagonals indicate a rectangle.',cards:['Rectangle','Kite','Trapezium','Rhombus only']},
-{scenario:'A quadrilateral has all sides equal, diagonals perpendicular, diagonals bisect each other, but angles are not all equal. What is it?',answer:'Rhombus',explain:'It is a rhombus, not a square, because all angles are not equal.',cards:['Rhombus','Square','Rectangle','Trapezium']}
+const questions = [
+  {
+    tag:'Angle Sum',
+    q:'Three interior angles of a quadrilateral are 85°, 95° and 110°. What is the fourth angle?',
+    ans:'70°',
+    opts:['60°','70°','80°','90°'],
+    exp:'The interior angles of a quadrilateral add to 360°. So the fourth angle is 360° − (85° + 95° + 110°) = 70°.',
+    shape:'quad'
+  },
+  {
+    tag:'Parallelogram Reasoning',
+    q:'In parallelogram ABCD, ∠A = (3x + 10)° and ∠B = (5x − 30)°. Find x.',
+    ans:'25',
+    opts:['20','25','30','35'],
+    exp:'Adjacent angles of a parallelogram are supplementary: (3x + 10) + (5x − 30) = 180, so 8x = 200 and x = 25.',
+    shape:'para'
+  },
+  {
+    tag:'Opposite Angles',
+    q:'ABCD is a parallelogram and ∠A = 72°. What is ∠D?',
+    ans:'108°',
+    opts:['72°','90°','108°','144°'],
+    exp:'Adjacent angles in a parallelogram sum to 180°. Therefore ∠D = 180° − 72° = 108°.',
+    shape:'para'
+  },
+  {
+    tag:'Test for a Parallelogram',
+    q:'Which condition is sufficient to conclude that a quadrilateral is a parallelogram?',
+    ans:'Its diagonals bisect each other',
+    opts:['Its diagonals are equal','Its diagonals bisect each other','Its diagonals are perpendicular','It has one pair of equal sides'],
+    exp:'If the diagonals of a quadrilateral bisect each other, the quadrilateral is a parallelogram.',
+    shape:'diag'
+  },
+  {
+    tag:'Rectangle Properties',
+    q:'Which statement about the diagonals of a rectangle is always true?',
+    ans:'They are equal and bisect each other',
+    opts:['They are perpendicular only','They are equal and bisect each other','Only one diagonal is bisected','They are unequal'],
+    exp:'A rectangle is a parallelogram, so its diagonals bisect each other; in addition, the two diagonals are equal.',
+    shape:'rect'
+  },
+  {
+    tag:'Rhombus Properties',
+    q:'A rhombus has diagonals that intersect at O. Which statement is always true?',
+    ans:'The diagonals bisect each other at right angles',
+    opts:['The diagonals are always equal','The diagonals bisect each other at right angles','Only one diagonal is bisected','The diagonals never meet at 90°'],
+    exp:'The diagonals of a rhombus bisect each other and are perpendicular. They are not necessarily equal.',
+    shape:'rhombus'
+  },
+  {
+    tag:'Quadrilateral Hierarchy',
+    q:'Which statement is always correct?',
+    ans:'Every square is both a rectangle and a rhombus',
+    opts:['Every rectangle is a square','Every rhombus is a rectangle','Every square is both a rectangle and a rhombus','Every parallelogram is a rhombus'],
+    exp:'A square has four right angles like a rectangle and four equal sides like a rhombus.',
+    shape:'square'
+  },
+  {
+    tag:'Classification',
+    q:'ABCD has AB ∥ CD, while AD is not parallel to BC. Which quadrilateral best matches this information?',
+    ans:'Trapezium',
+    opts:['Parallelogram','Rectangle','Trapezium','Rhombus'],
+    exp:'With exactly one pair of opposite sides parallel, the quadrilateral is classified here as a trapezium.',
+    shape:'trap'
+  },
+  {
+    tag:'Diagonal Insight',
+    q:'A diagonal of a parallelogram divides it into two triangles. What can be concluded about these triangles?',
+    ans:'They are congruent',
+    opts:['They are always equilateral','They are congruent','They are always right-angled','They have different areas'],
+    exp:'A diagonal of a parallelogram divides it into two congruent triangles.',
+    shape:'para1diag'
+  },
+  {
+    tag:'Error Analysis',
+    q:'A student says, “If a parallelogram has perpendicular diagonals, it must be a square.” What is the best judgement?',
+    ans:'Incorrect; it could be a rhombus',
+    opts:['Correct; it must be a square','Incorrect; it could be a rhombus','Correct; all parallelograms have equal diagonals','Incorrect; perpendicular diagonals are impossible'],
+    exp:'A rhombus is a parallelogram whose diagonals are perpendicular. Right angles at the vertices are not guaranteed, so it need not be a square.',
+    shape:'rhombus'
+  }
 ];
-let order=[],idx=0,score=0,attempts=2,locked=false;
-const screens={splash:document.getElementById('splash'),intro:document.getElementById('intro'),game:document.getElementById('game'),final:document.getElementById('final')};
-const $=id=>document.getElementById(id);
-function show(name){Object.values(screens).forEach(s=>s.classList.remove('active'));screens[name].classList.add('active')}
-setTimeout(()=>show('intro'),5000);
-function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
-function startGame(){order=shuffle([...Array(questions.length).keys()]);idx=0;score=0;show('game');loadQ()}
-function loadQ(){locked=false;attempts=2;let q=questions[order[idx]];$('scoreTxt').textContent=`Score: ${score}/10`;$('qTxt').textContent=`Blueprint: ${idx+1}/10`;$('attemptTxt').textContent='Attempts left: 2';$('message').textContent='';$('scenario').innerHTML=q.scenario+'<small>Drag the best evidence card.</small>';$('dropzone').textContent='Drop the correct evidence card here';$('dropzone').className='dropzone';$('cards').innerHTML='';shuffle(q.cards).forEach(txt=>{let c=document.createElement('div');c.className='card';c.textContent=txt;c.draggable=true;c.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',txt));c.addEventListener('click',()=>check(txt,c));$('cards').appendChild(c)});}
-$('dropzone').addEventListener('dragover',e=>{e.preventDefault();$('dropzone').classList.add('hover')});
-$('dropzone').addEventListener('dragleave',()=>$('dropzone').classList.remove('hover'));
-$('dropzone').addEventListener('drop',e=>{e.preventDefault();$('dropzone').classList.remove('hover');let txt=e.dataTransfer.getData('text/plain');let card=[...document.querySelectorAll('.card')].find(x=>x.textContent===txt);check(txt,card)});
-function play(id){let a=$(id);a.currentTime=0;a.play().catch(()=>{})}
-function check(txt,card){if(locked)return;let q=questions[order[idx]];if(txt===q.answer){locked=true;card.classList.add('correct');$('dropzone').textContent=txt;$('blueprint').classList.add('sparkle');score++;play('correctSound');setTimeout(()=>play('clapSound'),250);$('message').textContent='Blueprint rescued!';confetti();setTimeout(nextQ,1500)}else{attempts--;card.classList.add('wrong');play('wrongSound');$('attemptTxt').textContent=`Attempts left: ${attempts}`;if(attempts>0){$('message').textContent='Try again';setTimeout(()=>card.classList.remove('wrong'),700)}else{locked=true;$('message').textContent=`Correct answer: ${q.answer}. ${q.explain}`;[...document.querySelectorAll('.card')].forEach(c=>{if(c.textContent===q.answer)c.classList.add('correct')});setTimeout(nextQ,2800)}}}
-function nextQ(){$('blueprint').classList.remove('sparkle');idx++;idx<questions.length?loadQ():finish()}
-function finish(){show('final');$('finalScore').textContent=`Final Score: ${score} / 10`;let badge=score>=9?'Master Architect':score>=7?'Skilled Designer':score>=5?'Junior Builder':'Apprentice Builder';$('badge').textContent=badge;play('clapSound');confetti(80)}
-function restartGame(){startGame()}
-function confetti(n=35){for(let i=0;i<n;i++){let d=document.createElement('div');d.className='confetti';d.style.left=Math.random()*100+'vw';d.style.background=['#ffd166','#06d6a0','#4cc9f0','#f72585'][Math.floor(Math.random()*4)];d.style.animationDelay=Math.random()*0.6+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3000)}}
+
+const $ = id => document.getElementById(id);
+let order=[], idx=0, score=0, attempts=0, firstTryCorrect=0, locked=false;
+
+function shuffle(a){
+  const out=[...a];
+  for(let i=out.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [out[i],out[j]]=[out[j],out[i]];
+  }
+  return out;
+}
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active','centerScreen'));
+  const el=$(id);
+  el.classList.add('active');
+  if(id==='intro'||id==='result') el.classList.add('centerScreen');
+  window.scrollTo({top:0,behavior:'auto'});
+}
+
+setTimeout(()=>{
+  $('splash').style.opacity='0';
+  setTimeout(()=>{ $('splash').remove(); $('app').style.opacity='1'; },450);
+},5000);
+
+function makeCity(){
+  $('skyline').innerHTML='';
+  for(let i=0;i<10;i++){
+    const b=document.createElement('div');
+    b.className='building';
+    b.setAttribute('aria-hidden','true');
+    $('skyline').appendChild(b);
+  }
+}
+
+function startGame(){
+  order=shuffle(questions);
+  idx=0;score=0;firstTryCorrect=0;
+  makeCity();
+  show('game');
+  loadQuestion();
+}
+
+function loadQuestion(){
+  locked=false; attempts=0;
+  const q=order[idx];
+  $('built').textContent=idx;
+  $('score').textContent=score;
+  $('tries').textContent='2';
+  $('progressBar').style.width=(idx*10)+'%';
+  $('qtag').textContent=q.tag;
+  $('question').textContent=q.q;
+  $('feedback').className='feedback';
+  $('feedback').textContent='Choose the best answer.';
+  $('explain').className='explain';
+  $('explain').textContent='';
+  $('inspector').textContent='🧑‍🏫';
+  $('inspector').className='inspector';
+  renderShape(q.shape);
+
+  const box=$('options');
+  box.innerHTML='';
+  shuffle(q.opts).forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='option';
+    btn.textContent=opt;
+    btn.addEventListener('click',()=>choose(btn,opt));
+    box.appendChild(btn);
+  });
+}
+
+function choose(btn,opt){
+  if(locked || btn.disabled) return;
+  const q=order[idx];
+  attempts++;
+  $('tries').textContent=Math.max(0,2-attempts);
+
+  if(opt===q.ans){
+    locked=true;
+    btn.classList.add('correct');
+    document.querySelectorAll('.option').forEach(b=>b.disabled=true);
+    score+=10;
+    if(attempts===1) firstTryCorrect++;
+    $('score').textContent=score;
+    $('built').textContent=idx+1;
+    $('feedback').className='feedback good';
+    $('feedback').textContent=attempts===1
+      ? 'Excellent! Correct on the first try — building approved!'
+      : 'Well done! You corrected it — building approved!';
+    $('explain').textContent=q.exp;
+    $('explain').className='explain show';
+    lightBuilding();
+    celebrate();
+    play('correctSound');
+    setTimeout(()=>play('clapSound'),180);
+    setTimeout(nextQuestion,2100);
+  }else{
+    btn.classList.add('wrong');
+    btn.disabled=true;
+    play('wrongSound');
+    $('inspector').textContent='🤔';
+    $('inspector').className='inspector oops';
+
+    if(attempts<2){
+      $('feedback').className='feedback bad';
+      $('feedback').textContent='Not quite. Use the quadrilateral property and try once more.';
+      setTimeout(()=>{
+        $('inspector').textContent='🧑‍🏫';
+        $('inspector').className='inspector';
+      },650);
+    }else{
+      locked=true;
+      document.querySelectorAll('.option').forEach(b=>{
+        b.disabled=true;
+        if(b.textContent===q.ans) b.classList.add('correct');
+      });
+      $('feedback').className='feedback bad';
+      $('feedback').innerHTML='Correct answer: <b>'+q.ans+'</b>';
+      $('explain').textContent=q.exp;
+      $('explain').className='explain show';
+      setTimeout(nextQuestion,3300);
+    }
+  }
+}
+
+function nextQuestion(){
+  idx++;
+  if(idx>=order.length) finish();
+  else loadQuestion();
+}
+
+function lightBuilding(){
+  const buildings=[...document.querySelectorAll('.building')];
+  if(buildings[idx]) buildings[idx].classList.add('on');
+}
+
+function celebrate(){
+  $('inspector').textContent='🙌';
+  $('inspector').className='inspector happy';
+  const pop=$('rewardPop');
+  pop.classList.remove('show');
+  void pop.offsetWidth;
+  pop.classList.add('show');
+
+  for(let i=0;i<18;i++){
+    const c=document.createElement('div');
+    c.className='confetti';
+    c.style.left=(Math.random()*100)+'vw';
+    c.style.background=['#22a8e8','#ff9d2e','#22b573','#ffd166'][Math.floor(Math.random()*4)];
+    c.style.animationDelay=(Math.random()*.2)+'s';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),1500);
+  }
+}
+
+function play(id){
+  const a=$(id);
+  try{a.currentTime=0;a.play().catch(()=>{});}catch(e){}
+}
+
+function finish(){
+  $('progressBar').style.width='100%';
+  $('finalScore').textContent=score+'/100';
+  $('firstTry').textContent=firstTryCorrect+'/10';
+  $('accuracy').textContent=Math.round((firstTryCorrect/10)*100)+'%';
+  show('result');
+  play('clapSound');
+  for(let i=0;i<35;i++){
+    setTimeout(()=>{
+      const c=document.createElement('div');
+      c.className='confetti';
+      c.style.left=(Math.random()*100)+'vw';
+      c.style.background=['#22a8e8','#ff9d2e','#22b573','#ffd166'][Math.floor(Math.random()*4)];
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(),1500);
+    },i*25);
+  }
+}
+
+function renderShape(type){
+  const poly=$('shapePoly'), d1=$('diag1'), d2=$('diag2');
+  d1.style.display='block'; d2.style.display='block';
+
+  const shapes={
+    quad:'55,35 225,35 235,125 45,125',
+    para:'70,35 225,35 205,125 50,125',
+    diag:'70,35 225,35 205,125 50,125',
+    rect:'55,35 225,35 225,125 55,125',
+    rhombus:'140,24 230,80 140,136 50,80',
+    square:'72,25 208,25 208,135 72,135',
+    trap:'78,40 202,40 235,125 45,125',
+    para1diag:'70,35 225,35 205,125 50,125'
+  };
+  poly.setAttribute('points',shapes[type]||shapes.quad);
+
+  if(type==='rect'||type==='square'){
+    d1.setAttribute('x1','72');d1.setAttribute('y1','25');d1.setAttribute('x2','208');d1.setAttribute('y2','135');
+    d2.setAttribute('x1','208');d2.setAttribute('y1','25');d2.setAttribute('x2','72');d2.setAttribute('y2','135');
+  }else if(type==='rhombus'){
+    d1.setAttribute('x1','140');d1.setAttribute('y1','24');d1.setAttribute('x2','140');d1.setAttribute('y2','136');
+    d2.setAttribute('x1','50');d2.setAttribute('y1','80');d2.setAttribute('x2','230');d2.setAttribute('y2','80');
+  }else if(type==='trap'){
+    d1.setAttribute('x1','78');d1.setAttribute('y1','40');d1.setAttribute('x2','235');d1.setAttribute('y2','125');
+    d2.setAttribute('x1','202');d2.setAttribute('y1','40');d2.setAttribute('x2','45');d2.setAttribute('y2','125');
+  }else{
+    d1.setAttribute('x1','70');d1.setAttribute('y1','35');d1.setAttribute('x2','205');d1.setAttribute('y2','125');
+    d2.setAttribute('x1','225');d2.setAttribute('y1','35');d2.setAttribute('x2','50');d2.setAttribute('y2','125');
+  }
+
+  if(type==='para1diag') d2.style.display='none';
+  if(type==='quad') {d1.style.display='none';d2.style.display='none';}
+}
+
+$('startBtn').addEventListener('click',startGame);
+$('againBtn').addEventListener('click',startGame);
 </script>
 </body>
 </html>
-
