@@ -108,15 +108,30 @@ h1{margin:0 0 10px;font-size:clamp(31px,5vw,56px);line-height:1.05;color:#062b57
   .mathChip{font-size:16px;padding:6px 8px}
   .factor{font-size:13px;padding:5px 7px}
   .cubeIcon{width:54px;height:54px}
-  .vaultScene{height:330px}
-  .vaultDoor{width:160px;height:160px;top:24px}
-  .lockRing{width:72px;height:72px;font-size:30px;border-width:7px}
-  .keyBtns{grid-template-columns:1fr;bottom:52px;gap:7px;padding:0 12px}
-  .keyBtn{min-height:49px;font-size:15px}
+  .vaultScene{height:405px}
+  .vaultDoor{width:150px;height:150px;top:18px}
+  .lockRing{width:68px;height:68px;font-size:28px;border-width:7px}
+  .keyBtns{
+    grid-template-columns:1fr;
+    top:188px;
+    bottom:auto;
+    gap:7px;
+    padding:0 12px
+  }
+  .keyBtn{min-height:48px;font-size:15px}
   .vaultLights{bottom:12px}
   .vaultLight{height:16px}
   .feedback{font-size:16px;min-height:52px}
 }
+
+@media(max-width:380px){
+  .vaultScene{height:390px}
+  .vaultDoor{width:138px;height:138px;top:16px}
+  .lockRing{width:62px;height:62px;font-size:25px}
+  .keyBtns{top:170px;padding:0 9px;gap:6px}
+  .keyBtn{min-height:46px;font-size:14px}
+}
+
 </style>
 </head>
 <body>
