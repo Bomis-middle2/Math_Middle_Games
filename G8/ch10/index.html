@@ -59,11 +59,11 @@ button{font:inherit;border:0;cursor:pointer}
 
 .labScene{height:255px;margin-top:12px;border-radius:22px;background:linear-gradient(180deg,#06142a 0%,#10385e 62%,#08172d 100%);border:3px solid #bee0ff;position:relative;overflow:hidden}
 .sceneLabel{position:absolute;left:10px;top:10px;background:#ffffffdd;border-radius:999px;padding:6px 10px;font-weight:1000;color:#10233f;font-size:12px;z-index:12}
-.floor{position:absolute;left:0;right:0;bottom:0;height:42px;background:#061021}
-.reactor{position:absolute;right:18px;bottom:52px;left:auto;top:auto;transform:none;width:86px;height:86px;border-radius:24px;background:linear-gradient(135deg,#173a59,#1c79a8);border:5px solid #8de7ff;box-shadow:0 0 24px #12d6ff;display:grid;place-items:center;color:#fff;font-size:30px;font-weight:1000;z-index:5}
+.floor{position:absolute;left:0;right:0;bottom:0;height:28px;background:#061021}
+.reactor{position:absolute;right:18px;bottom:46px;left:auto;top:auto;transform:none;width:86px;height:86px;border-radius:24px;background:linear-gradient(135deg,#173a59,#1c79a8);border:5px solid #8de7ff;box-shadow:0 0 24px #12d6ff;display:grid;place-items:center;color:#fff;font-size:30px;font-weight:1000;z-index:5}
 .reactor.good{animation:reactorWin .8s ease}
 @keyframes reactorWin{45%{transform:scale(1.1);box-shadow:0 0 40px #49f39a}}
-.energyCells{position:absolute;left:7%;right:32%;bottom:18px;display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
+.energyCells{position:absolute;left:7%;right:32%;bottom:38px;display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
 .cell{height:32px;border-radius:8px;background:#173651;border:2px solid #345f7e;transition:.35s}
 .cell.on{background:linear-gradient(180deg,#fff07f,#ffb238);border-color:#ffe36e;box-shadow:0 0 14px #ffcf45;animation:cellPop .45s}
 @keyframes cellPop{50%{transform:translateY(-5px) scale(1.08)}}
@@ -118,15 +118,15 @@ button{font:inherit;border:0;cursor:pointer}
   .details{font-size:15px;padding:8px 9px}
   .labScene{height:178px;margin-top:8px;border-radius:17px}
   .sceneLabel{font-size:10px;padding:4px 7px}
-  .reactor{width:58px;height:58px;border-width:3px;font-size:18px;right:10px;bottom:39px;top:auto}
+  .reactor{width:58px;height:58px;border-width:3px;font-size:18px;right:10px;bottom:34px;top:auto}
   .visualBox{top:38px;height:66px;left:5%;right:5%}
   .numberCard{padding:5px 8px;font-size:18px}
   .arrowSymbol{font-size:25px}
   .squareGrid{padding:4px;gap:2px}
   .sq{width:8px;height:8px}
-  .energyCells{left:4%;right:27%;bottom:12px;gap:3px}
+  .energyCells{left:4%;right:27%;bottom:30px;gap:3px}
   .cell{height:21px;border-radius:5px}
-  .floor{height:34px}
+  .floor{height:22px}
   .rootTrack{top:75px}
   .optionTitle{font-size:16px}
   .chips{grid-template-columns:repeat(2,1fr);gap:7px}
@@ -140,10 +140,10 @@ button{font:inherit;border:0;cursor:pointer}
   .scenario{font-size:16px}
   .details{font-size:13px}
   .labScene{height:160px}
-  .reactor{width:52px;height:52px;font-size:16px;right:8px;bottom:34px}
+  .reactor{width:52px;height:52px;font-size:16px;right:8px;bottom:30px}
   .visualBox{top:34px;height:58px;left:4%;right:4%}
   .numberCard{font-size:16px;padding:4px 7px}
-  .energyCells{bottom:10px;right:28%}
+  .energyCells{bottom:26px;right:28%}
   .cell{height:18px}
   .chip{min-height:48px;font-size:13px}
 }
