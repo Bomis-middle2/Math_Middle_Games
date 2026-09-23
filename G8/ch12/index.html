@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Grade 8 Mensuration - Measure Metro</title>
 <style>
 :root{
@@ -19,6 +19,270 @@ html,body{overflow:auto}.screen{position:fixed}.gameWrap{overflow:visible}.quest
 .roadSign{position:absolute;left:50%;top:14px;transform:translateX(-50%);z-index:6;background:white;border:3px solid #b8def2;border-radius:999px;padding:7px 12px;font-weight:900;color:#0c4a6e;box-shadow:0 8px 16px rgba(41,105,150,.13)}
 @media(max-width:760px){.screen{position:absolute}.panel{padding:18px}.top{top:8px;left:8px;right:8px}.badge{padding:7px 10px;font-size:14px;border-width:2px}.gameWrap{position:relative;padding:56px 8px 12px;gap:8px}.questionCard{border-radius:18px;border-width:2px}.board{min-height:360px;border-radius:20px;border-width:2px;box-shadow:inset 0 0 0 4px rgba(255,255,255,.65)}.sun{width:46px;height:46px;right:18px;top:18px}.cloud{transform:scale(.72)}.depot{left:8px;width:62px;height:58px;border-width:3px;font-size:28px}.target{right:8px;width:76px;height:72px;border-width:3px;font-size:32px}.vehicle{left:52px;font-size:32px}.vehicle.runTop{left:44%;top:31%}.vehicle.runMid{left:46%;top:50%}.vehicle.runBot{left:44%;top:69%}.vehicle.finish{left:78%;top:50%}.laneLabel{right:88px;min-width:92px;max-width:150px;font-size:13px;padding:6px 7px;border-width:2px}.l1{top:20%}.l2{top:45%}.l3{top:70%}.construction{width:62vw;height:82px;gap:3px;opacity:.92}.piece{width:20px}.p1{height:26px}.p2{height:38px}.p3{height:52px}.p4{height:43px}.p5{height:64px}.p6{height:34px}.p7{height:57px}.p8{height:45px}.p9{height:70px}.p10{height:50px}.controls{grid-template-columns:1fr;gap:7px}.routeBtn{min-height:48px;font-size:16px;border-width:2px;box-shadow:0 5px 0 #9fcfe8}.launch{gap:7px}.feedback{font-size:15px;line-height:1.25;min-height:auto}.btn{font-size:17px;padding:12px 18px}.summaryGrid{grid-template-columns:1fr}.bigCity{height:220px}.finalPieces .piece{width:34px}.roadSign{top:8px;font-size:12px;padding:5px 9px}}
 @media(max-width:420px){.qtext{font-size:17px}.board{min-height:335px}.laneLabel{right:78px;min-width:82px;font-size:12px}.construction{width:56vw}.piece{width:17px}.controls .routeBtn{font-size:14px}.launch .btn{width:100%}}
+
+
+/* ===== RESPONSIVE ROUTE ALIGNMENT FIX ===== */
+:root{
+  --route-top:25%;
+  --route-mid:50%;
+  --route-bot:75%;
+}
+
+.board{
+  isolation:isolate;
+}
+
+.routeSvg{
+  width:100%;
+  height:100%;
+}
+
+.laneLabel{
+  top:auto;
+  right:15.5%;
+  width:clamp(112px,19vw,185px);
+  min-width:0;
+  max-width:none;
+  transform:translateY(-50%);
+  z-index:8;
+}
+
+.l1{top:var(--route-top)}
+.l2{top:var(--route-mid)}
+.l3{top:var(--route-bot)}
+
+.vehicle.runTop{left:48%;top:var(--route-top)}
+.vehicle.runMid{left:51%;top:var(--route-mid)}
+.vehicle.runBot{left:48%;top:var(--route-bot)}
+
+.controls{
+  position:relative;
+  z-index:12;
+}
+
+@media(max-width:760px){
+  html,body{width:100%;overflow-x:hidden}
+  .screen{width:100%;padding-left:6px;padding-right:6px}
+  .top{left:6px;right:6px}
+  .gameWrap{width:100%;padding:54px 4px 10px}
+
+  .questionCard{
+    width:100%;
+    padding:9px 10px;
+  }
+
+  .missionTitle{
+    font-size:12px;
+    line-height:1.2;
+  }
+
+  .qtext{
+    font-size:clamp(16px,4.5vw,20px);
+    line-height:1.28;
+  }
+
+  .board{
+    width:100%;
+    min-height:330px;
+    height:clamp(330px,88vw,390px);
+    overflow:hidden;
+  }
+
+  /* Keep start and destination small, leaving a clean central route corridor. */
+  .depot{
+    left:7px;
+    top:50%;
+    width:54px;
+    height:54px;
+    font-size:25px;
+    border-width:2px;
+    z-index:10;
+  }
+
+  .target{
+    right:7px;
+    top:50%;
+    width:64px;
+    height:64px;
+    font-size:29px;
+    border-width:2px;
+    z-index:10;
+  }
+
+  /* Route labels share the exact vertical coordinates of the SVG routes. */
+  .laneLabel{
+    right:76px;
+    width:clamp(94px,31vw,130px);
+    padding:5px 6px;
+    border-width:2px;
+    border-radius:12px;
+    font-size:clamp(11px,3.3vw,14px);
+    line-height:1.12;
+    transform:translateY(-50%);
+    white-space:normal;
+    overflow-wrap:anywhere;
+    pointer-events:none;
+  }
+
+  .l1{top:25%}
+  .l2{top:50%}
+  .l3{top:75%}
+
+  .vehicle{
+    left:42px;
+    top:50%;
+    font-size:29px;
+  }
+
+  .vehicle.runTop{
+    left:39%;
+    top:25%;
+    transform:translate(-50%,-50%) scale(1.08);
+  }
+
+  .vehicle.runMid{
+    left:42%;
+    top:50%;
+    transform:translate(-50%,-50%) scale(1.08);
+  }
+
+  .vehicle.runBot{
+    left:39%;
+    top:75%;
+    transform:translate(-50%,-50%) scale(1.08);
+  }
+
+  .vehicle.finish{
+    left:80%;
+    top:50%;
+    transform:translate(-50%,-50%) scale(1.1);
+  }
+
+  /* Route strokes remain behind labels and objects. */
+  .routeSvg{z-index:2}
+  .lane{stroke-width:11}
+
+  /* Keep construction away from route labels on mobile. */
+  .construction{
+    left:9%;
+    transform:none;
+    width:44%;
+    height:58px;
+    bottom:3px;
+    gap:2px;
+    opacity:.75;
+    z-index:3;
+  }
+
+  .piece{width:13px;border-width:2px}
+  .p1{height:17px}.p2{height:25px}.p3{height:33px}.p4{height:29px}.p5{height:40px}
+  .p6{height:22px}.p7{height:36px}.p8{height:31px}.p9{height:44px}.p10{height:34px}
+
+  .roadSign{
+    top:6px;
+    font-size:10px;
+    padding:4px 7px;
+    border-width:2px;
+  }
+
+  .sun{
+    width:38px;
+    height:38px;
+    right:10px;
+    top:10px;
+  }
+
+  .cloud{opacity:.55}
+
+  /* Answer controls stay compact and directly below the board. */
+  .controls{
+    width:100%;
+    grid-template-columns:1fr;
+    gap:6px;
+  }
+
+  .routeBtn{
+    min-height:44px;
+    padding:7px 8px;
+    font-size:clamp(13px,3.7vw,16px);
+    line-height:1.2;
+    border-radius:13px;
+  }
+
+  .launch{
+    width:100%;
+    gap:6px;
+  }
+
+  .feedback{
+    width:100%;
+    font-size:13px;
+    line-height:1.25;
+  }
+
+  .launch .btn{
+    font-size:15px;
+    padding:10px 12px;
+  }
+
+  /* Flow animation follows the same 25/50/75% route anchors. */
+  @keyframes flowTop{
+    0%{left:10%;top:50%;opacity:1}
+    45%{left:40%;top:25%;opacity:1}
+    100%{left:78%;top:25%;opacity:0}
+  }
+  @keyframes flowMid{
+    0%{left:10%;top:50%;opacity:1}
+    50%{left:42%;top:50%;opacity:1}
+    100%{left:78%;top:50%;opacity:0}
+  }
+  @keyframes flowBot{
+    0%{left:10%;top:50%;opacity:1}
+    45%{left:40%;top:75%;opacity:1}
+    100%{left:78%;top:75%;opacity:0}
+  }
+}
+
+@media(max-width:420px){
+  .board{
+    min-height:315px;
+    height:88vw;
+  }
+
+  .laneLabel{
+    right:68px;
+    width:96px;
+    font-size:11px;
+    padding:4px 5px;
+  }
+
+  .target{
+    right:5px;
+    width:58px;
+    height:58px;
+    font-size:26px;
+  }
+
+  .depot{
+    left:5px;
+    width:50px;
+    height:50px;
+    font-size:23px;
+  }
+
+  .vehicle{left:38px;font-size:26px}
+  .vehicle.finish{left:79%}
+
+  .construction{
+    width:40%;
+    opacity:.62;
+  }
+
+  .routeBtn{
+    min-height:42px;
+    font-size:13px;
+  }
+}
 
 </style>
 </head>
@@ -43,12 +307,12 @@ html,body{overflow:auto}.screen{position:fixed}.gameWrap{overflow:visible}.quest
     <div class="board" id="board">
       <div class="mapGrid"></div><div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div><div class="sun"></div><div class="mapBase"></div><div class="roadSign">Mensuration Route Map</div><div id="measureFlow" class="measureFlow">📏</div>
       <svg class="routeSvg" viewBox="0 0 1000 420" preserveAspectRatio="none">
-        <path id="lane1" class="lane" d="M90 210 C260 80, 560 70, 880 100" onclick="chooseLane(1)"></path>
-        <path id="lane2" class="lane" d="M90 210 C300 210, 560 210, 880 210" onclick="chooseLane(2)"></path>
-        <path id="lane3" class="lane" d="M90 210 C260 340, 560 350, 880 320" onclick="chooseLane(3)"></path>
+        <path id="lane1" class="lane" d="M90 210 C250 100, 560 100, 880 105" onclick="chooseLane(1)"></path>
+        <path id="lane2" class="lane" d="M90 210 C300 210, 590 210, 880 210" onclick="chooseLane(2)"></path>
+        <path id="lane3" class="lane" d="M90 210 C250 320, 560 320, 880 315" onclick="chooseLane(3)"></path>
       </svg>
       <div class="depot">📐</div><div class="target" id="target">🏗️</div><div id="vehicle" class="vehicle">🚇</div>
-      <div class="labels"><div id="lab1" class="laneLabel l1"></div><div id="lab2" class="laneLabel l2"></div><div id="lab3" class="laneLabel l3"></div></div>
+      <div class="labels"><div id="lab1" class="laneLabel l1" data-route="1"></div><div id="lab2" class="laneLabel l2" data-route="2"></div><div id="lab3" class="laneLabel l3" data-route="3"></div></div>
       <div class="construction" id="construction"></div><div class="spark" id="spark"></div>
     </div>
     <div class="controls"><button class="routeBtn" id="b1" onclick="chooseLane(1)">Route 1</button><button class="routeBtn" id="b2" onclick="chooseLane(2)">Route 2</button><button class="routeBtn" id="b3" onclick="chooseLane(3)">Route 3</button></div>
@@ -103,4 +367,3 @@ document.addEventListener('keydown',e=>{if(!$('game').classList.contains('active
 </script>
 </body>
 </html>
-
