@@ -65,7 +65,7 @@
   .trackRow.wrongFlash .light{background:#ff5363;box-shadow:0 0 20px #ff5363}
   .answerCard{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:118px;min-height:58px;border-radius:18px;background:#fff;border:3px solid #bdeeff;display:grid;place-items:center;text-align:center;font-size:clamp(20px,4.2vw,32px);font-weight:900;color:#173253;box-shadow:0 8px 18px rgba(31,82,118,.13);z-index:4;padding:6px}
   .trackLabel{position:absolute;left:78px;top:8px;color:#47718c;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;z-index:3}
-  .train{position:absolute;left:14px;bottom:16px;width:118px;height:70px;z-index:5;transition:transform 1.15s cubic-bezier(.2,.8,.2,1)}
+  .train{position:absolute;left:14px;bottom:16px;width:118px;height:70px;z-index:5;transition:left 1.05s cubic-bezier(.2,.8,.2,1),top 1.05s cubic-bezier(.2,.8,.2,1),transform .25s ease;will-change:left,top}
   .engine{position:absolute;left:0;bottom:8px;width:82px;height:44px;border-radius:14px 18px 10px 10px;background:linear-gradient(180deg,#49d1d1,#12a8c6);border:3px solid #fff;box-shadow:0 7px 13px rgba(31,82,118,.18)}
   .engine:before{content:"";position:absolute;left:16px;top:-22px;width:42px;height:24px;border-radius:23px 23px 0 0;background:#4bd6ca;border:3px solid #fff;border-bottom:0}
   .window{position:absolute;right:10px;top:8px;width:25px;height:16px;border-radius:5px;background:#e4fbff;border:2px solid #fff}
@@ -93,6 +93,297 @@
     body{padding:6px}.screen{width:100%;min-height:calc(100vh - 12px);border-radius:20px}.rules{grid-template-columns:1fr}.introCard{padding:20px}.trackStage{min-height:420px;padding:10px}.trackRows{left:8px;right:8px;top:54px;bottom:78px}.trackRow{height:82px}.railLine{left:62px;right:105px;height:22px}.answerCard{right:8px;width:94px;min-height:52px}.signal{left:8px;width:40px;height:52px}.trackLabel{left:62px;font-size:10px}.train{width:100px;transform-origin:left center}.launchBtn{min-width:190px;padding:13px 20px}.qCard{padding:12px}.question{font-size:clamp(17px,5vw,24px)}
   }
   @media (max-height:640px){.trackStage{min-height:360px}.trackRow{height:70px}.trackRows{top:50px;bottom:66px}.launchArea{height:62px}.question{font-size:20px}.station{font-size:14px}.qCard{padding:10px}.feedback{min-height:22px}.miniStations{display:none}}
+
+/* ===== MOBILE RESPONSIVE FIX ===== */
+@media (max-width:640px){
+  html,body{
+    width:100%;
+    min-height:100%;
+    overflow-x:hidden;
+  }
+
+  body{
+    display:block;
+    padding:0;
+  }
+
+  .screen{
+    width:100%;
+    min-height:100vh;
+    border-radius:0;
+    border-left:0;
+    border-right:0;
+    box-shadow:none;
+    overflow:visible;
+  }
+
+  #game{
+    padding:7px;
+    gap:7px;
+  }
+
+  .topbar{
+    gap:5px;
+    flex-wrap:nowrap;
+  }
+
+  .pill{
+    flex:1;
+    min-width:0;
+    padding:6px 5px;
+    font-size:clamp(11px,3.2vw,14px);
+    text-align:center;
+    white-space:nowrap;
+  }
+
+  .qCard{
+    padding:9px 10px;
+    border-radius:16px;
+  }
+
+  .station{
+    font-size:11px;
+    margin-bottom:4px;
+  }
+
+  .question{
+    font-size:clamp(16px,4.6vw,20px);
+    line-height:1.24;
+  }
+
+  /* Stage now grows naturally instead of relying on desktop fixed positions. */
+  .trackStage{
+    flex:none;
+    min-height:0;
+    height:auto;
+    padding:8px 7px 72px;
+    border-radius:18px;
+    overflow:hidden;
+  }
+
+  .stationBoard{
+    position:relative;
+    top:auto;
+    left:auto;
+    transform:none;
+    width:max-content;
+    max-width:90%;
+    margin:0 auto 8px;
+    padding:6px 11px;
+    font-size:12px;
+    display:block;
+  }
+
+  .trackRows{
+    position:relative;
+    left:auto;
+    right:auto;
+    top:auto;
+    bottom:auto;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+    padding:0;
+  }
+
+  .trackRow{
+    height:76px;
+    border-radius:15px;
+    overflow:hidden;
+  }
+
+  /* Compact signal */
+  .signal{
+    left:6px;
+    width:34px;
+    height:46px;
+    border-width:2px;
+    border-radius:10px;
+    gap:4px;
+  }
+
+  .light{
+    width:14px;
+    height:14px;
+  }
+
+  /* Track stays between the signal and answer card. */
+  .railLine{
+    left:48px;
+    right:92px;
+    height:18px;
+  }
+
+  .railLine:before,
+  .railLine:after{
+    height:3px;
+  }
+
+  .trackLabel{
+    left:48px;
+    top:5px;
+    font-size:9px;
+  }
+
+  /* Answer stays inside its own row, never outside the stage. */
+  .answerCard{
+    right:6px;
+    width:80px;
+    min-height:46px;
+    padding:4px;
+    border-width:2px;
+    border-radius:12px;
+    font-size:clamp(15px,4.5vw,20px);
+  }
+
+  /* Smaller train, parked safely in the launch zone. */
+  .train{
+    left:8px;
+    bottom:10px;
+    top:auto;
+    width:84px;
+    height:52px;
+    transform:scale(.86);
+    transform-origin:left center;
+  }
+
+  .engine{
+    width:59px;
+    height:34px;
+    border-width:2px;
+  }
+
+  .engine:before{
+    left:12px;
+    top:-16px;
+    width:31px;
+    height:18px;
+    border-width:2px;
+  }
+
+  .window{
+    right:7px;
+    top:6px;
+    width:18px;
+    height:12px;
+  }
+
+  .coach{
+    width:34px;
+    height:30px;
+    border-width:2px;
+  }
+
+  .wheel{
+    width:14px;
+    height:14px;
+    left:6px;
+    box-shadow:34px 0 #173253,64px 0 #173253;
+  }
+
+  .chimney{
+    left:13px;
+    width:11px;
+    height:14px;
+  }
+
+  .smoke{
+    left:14px;
+    width:9px;
+    height:9px;
+  }
+
+  .launchArea{
+    height:62px;
+  }
+
+  .launchBtn{
+    min-width:0;
+    width:min(220px,78%);
+    padding:11px 16px;
+    font-size:15px;
+    border-radius:14px;
+  }
+
+  .feedback{
+    min-height:26px;
+    padding:1px 4px;
+    font-size:13px;
+    line-height:1.25;
+  }
+
+  .miniStations{
+    gap:4px;
+    padding-bottom:1px;
+  }
+
+  .dot{
+    width:17px;
+    height:17px;
+    border-radius:5px;
+  }
+
+  /* Decorative scenery cannot widen the page. */
+  .cloud,
+  .hills{
+    pointer-events:none;
+  }
+}
+
+@media (max-width:390px){
+  #game{padding:5px}
+  .pill{font-size:10px;padding:5px 3px}
+  .question{font-size:15px}
+
+  .trackStage{
+    padding-left:5px;
+    padding-right:5px;
+    padding-bottom:66px;
+  }
+
+  .trackRow{height:71px}
+
+  .signal{
+    left:4px;
+    width:30px;
+    height:42px;
+  }
+
+  .railLine{
+    left:41px;
+    right:82px;
+    height:16px;
+  }
+
+  .trackLabel{
+    left:41px;
+    font-size:8px;
+  }
+
+  .answerCard{
+    right:4px;
+    width:72px;
+    min-height:42px;
+    font-size:15px;
+  }
+
+  .train{
+    width:78px;
+    transform:scale(.80);
+  }
+
+  .launchBtn{
+    width:75%;
+    padding:10px 12px;
+    font-size:14px;
+  }
+
+  .dot{
+    width:15px;
+    height:15px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -187,7 +478,7 @@ function loadQuestion(){
   $('boardText').textContent='Select a track';
   $('feedback').textContent='Select a track to move the train.';
   $('launchBtn').disabled=true;
-  $('train').style.transform='translate(0,0)';
+  resetTrain();
   const rows=$('trackRows');rows.innerHTML='';
   const opts=shuffle(item.options);
   opts.forEach((op,i)=>{
@@ -196,6 +487,7 @@ function loadQuestion(){
     row.onclick=()=>selectTrack(row);
     rows.appendChild(row);
   });
+  requestAnimationFrame(resetTrain);
 }
 function selectTrack(row){
   if(locked)return;
@@ -203,12 +495,37 @@ function selectTrack(row){
   row.classList.add('selected'); selected=row;
   $('launchBtn').disabled=false; $('boardText').textContent=`Track ${Number(row.dataset.index)+1} selected`;
 }
+function resetTrain(){
+  const train=$('train');
+  train.style.left = window.innerWidth <= 640 ? '8px' : '14px';
+  train.style.top = 'auto';
+  train.style.bottom = window.innerWidth <= 640 ? '10px' : '16px';
+  train.style.transform = window.innerWidth <= 390 ? 'scale(.80)' : (window.innerWidth <= 640 ? 'scale(.86)' : 'none');
+}
+
 function launchTrain(){
-  if(!selected||locked)return; locked=true;
-  const stage=$('stage').getBoundingClientRect(); const row=selected.getBoundingClientRect();
-  const y = row.top - stage.top + row.height/2 - 50;
-  const x = Math.max(0, stage.width - 168);
-  $('train').style.transform=`translate(${x}px, ${y}px)`;
+  if(!selected||locked)return;
+  locked=true;
+
+  const stageRect=$('stage').getBoundingClientRect();
+  const rowRect=selected.getBoundingClientRect();
+  const answer=selected.querySelector('.answerCard');
+  const answerRect=answer.getBoundingClientRect();
+  const train=$('train');
+  const trainRect=train.getBoundingClientRect();
+
+  // Destination is centred on the selected rail and stops before its answer card.
+  let x = answerRect.left - stageRect.left - trainRect.width - 10;
+  let y = rowRect.top - stageRect.top + (rowRect.height - trainRect.height)/2;
+
+  // Clamp inside the stage so no phone width can push the train off-screen.
+  x = Math.max(6, Math.min(x, stageRect.width - trainRect.width - 6));
+  y = Math.max(44, Math.min(y, stageRect.height - trainRect.height - 66));
+
+  train.style.bottom='auto';
+  train.style.left=x+'px';
+  train.style.top=y+'px';
+
   setTimeout(()=>checkAnswer(),850);
 }
 function checkAnswer(){
@@ -225,7 +542,7 @@ function checkAnswer(){
     $('attemptPill').textContent=`Attempts: ${attempts}`;
     if(attempts>0){
       $('feedback').textContent='Wrong track. Try once more.';
-      setTimeout(()=>{selected.classList.remove('wrongFlash','selected'); selected=null; locked=false; $('launchBtn').disabled=true; $('train').style.transform='translate(0,0)'; $('boardText').textContent='Select another track';},900);
+      setTimeout(()=>{selected.classList.remove('wrongFlash','selected'); selected=null; locked=false; $('launchBtn').disabled=true; resetTrain(); $('boardText').textContent='Select another track';},900);
     } else {
       $('feedback').textContent=`Correct answer: ${item.answer}. ${item.exp}`;
       document.querySelectorAll('.trackRow').forEach(r=>{if(r.dataset.answer===item.answer)r.classList.add('correctFlash')});
