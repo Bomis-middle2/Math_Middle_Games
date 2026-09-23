@@ -47,6 +47,27 @@
   @keyframes steam{0%{opacity:1;transform:translate(-50%,-10%) scale(.6)}100%{opacity:0;transform:translate(-50%,-80%) scale(1.4)}}
   .sparkle{position:absolute;pointer-events:none;font-size:26px;animation:spark .8s ease forwards}
   @keyframes spark{to{transform:translateY(-70px) rotate(80deg);opacity:0}}
+
+  /* Positive reinforcement after every correct answer */
+  .success-glow{position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.95) 0,rgba(255,230,109,.52) 22%,rgba(56,176,0,.16) 43%,transparent 65%);z-index:1}
+  .success-glow.show{animation:successGlow 1.15s ease both}
+  @keyframes successGlow{0%{opacity:0}22%{opacity:1}100%{opacity:0}}
+
+  .repair-stamp{position:absolute;left:50%;top:41%;transform:translate(-50%,-50%) scale(.55) rotate(-8deg);z-index:6;opacity:0;pointer-events:none;background:#fffdf2;border:5px solid #38b000;border-radius:22px;padding:10px 18px;color:#176b17;font-weight:1000;font-size:clamp(18px,3.2vw,30px);line-height:1.05;box-shadow:0 10px 0 rgba(20,107,20,.16);text-align:center;white-space:nowrap}
+  .repair-stamp small{display:block;margin-top:5px;color:#7b3f00;font-size:clamp(12px,1.8vw,16px)}
+  .repair-stamp.show{animation:repairStamp 1.15s cubic-bezier(.18,.9,.25,1.2) both}
+  @keyframes repairStamp{0%{opacity:0;transform:translate(-50%,-50%) scale(.4) rotate(-10deg)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.08) rotate(2deg)}65%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0)}100%{opacity:0;transform:translate(-50%,-58%) scale(.92)}}
+
+  .score-pop{position:absolute;right:7%;top:12%;z-index:7;opacity:0;pointer-events:none;background:#fff;border:4px solid #ffd166;border-radius:999px;padding:8px 14px;color:#7b3f00;font-weight:1000;font-size:clamp(16px,2.8vw,24px);box-shadow:0 7px 0 rgba(166,106,0,.15)}
+  .score-pop.show{animation:scorePop 1.05s ease both}
+  @keyframes scorePop{0%{opacity:0;transform:translateY(16px) scale(.65)}22%{opacity:1;transform:translateY(0) scale(1.1)}70%{opacity:1;transform:translateY(-6px) scale(1)}100%{opacity:0;transform:translateY(-22px) scale(.95)}}
+
+  .worker.celebrate{animation:workerCelebrate .9s ease}
+  @keyframes workerCelebrate{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-18px) rotate(-8deg)}50%{transform:translateY(-3px) rotate(8deg)}75%{transform:translateY(-13px) rotate(-5deg)}}
+  .score-pill.reward{animation:scoreReward .7s ease}
+  @keyframes scoreReward{45%{transform:scale(1.08);border-color:#38b000;background:#efffe8}}
+
+  .feedback.correct-feedback{color:#176b17;background:#efffe8;border:2px solid #a7e88d;border-radius:12px;padding:6px 10px}
   .qa-card{background:#fff;border:4px solid #ffd166;border-radius:24px;padding:12px;box-shadow:0 8px 0 rgba(0,0,0,.08);z-index:4}
   .question{font-size:clamp(16px,2.4vw,22px);line-height:1.35;font-weight:900;text-align:center;margin-bottom:10px;min-height:54px;display:flex;align-items:center;justify-content:center}
   .options{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
@@ -60,7 +81,7 @@
   .badge{font-size:clamp(70px,15vw,130px);animation:badge .9s ease infinite alternate}@keyframes badge{to{transform:translateY(-8px) rotate(3deg)}}
   .result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px auto;max-width:720px}.result-box{background:#fff3cf;border:3px solid #f4a261;border-radius:18px;padding:13px;font-size:clamp(16px,2.4vw,22px);font-weight:900}
   @media(max-width:700px){
-    .screen{padding:6px}.game-wrap{gap:6px;height:100%}.scorebar{grid-template-columns:1fr 1fr 1fr;gap:5px}.score-pill{padding:6px 2px;border-width:2px}.factory-stage{min-height:185px;border-radius:18px}.machine{top:39%;height:120px}.belt{height:55px;bottom:20px}.crate{width:62px;height:48px;bottom:62px}.worker{bottom:73px}.qa-card{padding:9px;border-radius:18px}.question{min-height:60px}.options{gap:7px}.option{padding:9px 5px;min-height:48px}.simple-info{line-height:1.55}.result-grid{grid-template-columns:1fr;gap:7px}
+    .screen{padding:6px}.game-wrap{gap:6px;height:100%}.scorebar{grid-template-columns:1fr 1fr 1fr;gap:5px}.score-pill{padding:6px 2px;border-width:2px}.factory-stage{min-height:185px;border-radius:18px}.machine{top:39%;height:120px}.belt{height:55px;bottom:20px}.crate{width:62px;height:48px;bottom:62px}.worker{bottom:73px}.repair-stamp{top:38%;padding:8px 12px;border-width:4px}.score-pop{right:4%;top:8%;padding:6px 10px}.qa-card{padding:9px;border-radius:18px}.question{min-height:60px}.options{gap:7px}.option{padding:9px 5px;min-height:48px}.simple-info{line-height:1.55}.result-grid{grid-template-columns:1fr;gap:7px}
   }
   @media(max-height:620px){.factory-stage{min-height:165px}.question{min-height:45px}.option{min-height:42px;padding:7px}.feedback{min-height:28px}.panel{padding:14px}.title{margin-bottom:4px}.subtitle{margin-bottom:8px}.simple-info{margin-bottom:10px}}
 </style>
@@ -94,11 +115,14 @@
     </div>
     <div class="factory-stage" id="stage">
       <div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+      <div class="success-glow" id="successGlow"></div>
       <div class="machine" id="machine">⚖️</div>
       <div class="steam" id="steam">💨</div>
+      <div class="repair-stamp" id="repairStamp">✅ MACHINE FIXED<small id="praiseText">Excellent work!</small></div>
+      <div class="score-pop" id="scorePop">⭐ +10</div>
       <div class="belt"></div>
       <div class="crate" id="crate">📦</div>
-      <div class="worker">👷</div>
+      <div class="worker" id="worker">👷</div>
     </div>
     <div class="qa-card">
       <div class="question" id="questionText"></div>
@@ -125,16 +149,16 @@
 
 <script>
 const originalQuestions = [
- {q:'A pencil box costs ₹x. If stickers worth ₹15 are added, the total bill becomes ₹75. Which equation represents this situation?', opts:['x + 15 = 75','x - 15 = 75','15x = 75','x/15 = 75'], ans:'x + 15 = 75', exp:'The total cost is the sum of the pencil box price and the sticker cost, so x + 15 = 75.'},
- {q:'Solve: 3x + 6 = 24', opts:['4','5','6','8'], ans:'6', exp:'3x + 6 = 24 ⇒ 3x = 18 ⇒ x = 6.'},
- {q:'A café sells 4 identical sandwiches for ₹180. If one sandwich costs ₹x, which equation represents the situation?', opts:['4x = 180','x + 4 = 180','x - 4 = 180','x/4 = 180'], ans:'4x = 180', exp:'Since each sandwich costs x and there are 4 sandwiches, the total cost is 4x = 180.'},
- {q:'Solve: 5x - 7 = 28', opts:['5','6','7','8'], ans:'7', exp:'5x - 7 = 28 ⇒ 5x = 35 ⇒ x = 7.'},
- {q:'A school bus initially has x students. After 12 more students board the bus, there are 47 students in all. Which equation represents this situation?', opts:['x + 12 = 47','x - 12 = 47','12x = 47','x/12 = 47'], ans:'x + 12 = 47', exp:'Twelve students joined the bus, so 12 is added to the original number of students: x + 12 = 47.'},
- {q:'Solve: x/4 + 3 = 11', opts:['24','28','32','36'], ans:'32', exp:'x/4 + 3 = 11 ⇒ x/4 = 8 ⇒ x = 32.'},
- {q:'Riya had x marbles. After giving away 9 marbles, she was left with 26 marbles. Which equation represents this situation?', opts:['x - 9 = 26','x + 9 = 26','9x = 26','x/9 = 26'], ans:'x - 9 = 26', exp:'Since 9 marbles were given away, subtract 9 from the original number of marbles: x - 9 = 26.'},
- {q:'Solve: 2x + 5 = 17', opts:['4','5','6','7'], ans:'6', exp:'2x + 5 = 17 ⇒ 2x = 12 ⇒ x = 6.'},
- {q:'Three identical notebooks and a pen costing ₹20 together cost ₹95. If one notebook costs ₹x, which equation represents this situation?', opts:['3x + 20 = 95','3x - 20 = 95','x + 20 = 95','20x + 3 = 95'], ans:'3x + 20 = 95', exp:'The cost of three notebooks is 3x. Adding the ₹20 pen gives a total cost of ₹95, so 3x + 20 = 95.'},
- {q:'Solve: 7x - 10 = 39', opts:['5','6','7','8'], ans:'7', exp:'7x - 10 = 39 ⇒ 7x = 49 ⇒ x = 7.'}
+ {q:'Solve: 4(x - 3) = 2x + 10', opts:['9','10','11','12'], ans:'11', exp:'4x - 12 = 2x + 10 ⇒ 2x = 22 ⇒ x = 11.'},
+ {q:'Solve: 5x + 7 = 3x - 9', opts:['-8','-6','6','8'], ans:'-8', exp:'5x + 7 = 3x - 9 ⇒ 2x = -16 ⇒ x = -8.'},
+ {q:'The equation x/2 + x/4 = 18 has which solution?', opts:['12','18','24','36'], ans:'24', exp:'x/2 + x/4 = 18 ⇒ 2x/4 + x/4 = 18 ⇒ 3x/4 = 18 ⇒ x = 24.'},
+ {q:'Solve: 3(x + 4) - 5 = 2x + 11', opts:['2','4','6','8'], ans:'4', exp:'3x + 12 - 5 = 2x + 11 ⇒ 3x + 7 = 2x + 11 ⇒ x = 4.'},
+ {q:'A rectangle has length (x + 3) cm and breadth (x - 1) cm. Its perimeter is 40 cm. Find x.', opts:['8','9','10','11'], ans:'9', exp:'2[(x + 3) + (x - 1)] = 40 ⇒ 2(2x + 2) = 40 ⇒ 4x + 4 = 40 ⇒ x = 9.'},
+ {q:'A taxi charges ₹50 as a fixed fare and ₹12 per kilometre. The total fare is ₹146. How many kilometres were travelled?', opts:['6 km','7 km','8 km','9 km'], ans:'8 km', exp:'50 + 12x = 146 ⇒ 12x = 96 ⇒ x = 8 km.'},
+ {q:'A student solves 3x - 8 = 19. Which should be the correct first step?', opts:['3x = 19 - 8','3x = 19 + 8','x = 19 + 8','x = 19/3 + 8'], ans:'3x = 19 + 8', exp:'Add 8 to both sides: 3x - 8 + 8 = 19 + 8, so 3x = 27.'},
+ {q:'Solve: x/2 - x/5 = 9', opts:['20','25','30','45'], ans:'30', exp:'x/2 - x/5 = 9 ⇒ (5x - 2x)/10 = 9 ⇒ 3x/10 = 9 ⇒ x = 30.'},
+ {q:'The sum of three consecutive integers is 72. What is the smallest integer?', opts:['22','23','24','25'], ans:'23', exp:'Let the integers be x, x + 1 and x + 2. Then 3x + 3 = 72 ⇒ 3x = 69 ⇒ x = 23.'},
+ {q:'After spending one-fourth of an amount, ₹450 remains. What was the original amount?', opts:['₹540','₹600','₹650','₹720'], ans:'₹600', exp:'x - x/4 = 450 ⇒ 3x/4 = 450 ⇒ x = 600.'}
 ]
 let questions=[], current=0, score=0, power=100, attempts=0, answered=0, firstTryCorrect=0;
 const $=id=>document.getElementById(id);
@@ -144,9 +168,9 @@ setTimeout(()=>show('intro'),5000);
 function startGame(){questions=shuffle(originalQuestions.map(x=>({...x,opts:shuffle([...x.opts])})));current=0;score=0;power=100;answered=0;firstTryCorrect=0;updateScore();show('game');loadQuestion()}
 function updateScore(){$('fixed').textContent=answered;$('score').textContent=score;$('power').textContent=power}
 function renderDots(){let html='';for(let i=0;i<10;i++){html+=`<span class="dot ${i<current?'done':''} ${i===current?'current':''}"></span>`}$('dots').innerHTML=html}
-function loadQuestion(){attempts=0;const item=questions[current];$('questionText').innerHTML=item.q;$('feedback').textContent='';$('nextBtn').style.display='none';$('crate').style.left='7%';$('crate').style.transform='translateX(0)';$('machine').classList.remove('good','bad');renderDots();const optBox=$('options');optBox.innerHTML='';item.opts.forEach(opt=>{const b=document.createElement('button');b.className='option';b.innerHTML=opt;b.onclick=()=>choose(b,opt);optBox.appendChild(b)})}
-function choose(btn,opt){const item=questions[current];const buttons=[...document.querySelectorAll('.option')];if(buttons.some(b=>b.disabled))return;attempts++;btn.classList.add('selected');if(opt===item.ans){btn.classList.add('correct');buttons.forEach(b=>b.disabled=true);score+=10;answered++;if(attempts===1)firstTryCorrect++;play('correctSound');setTimeout(()=>play('clapSound'),220);correctAnim();$('feedback').textContent='Correct! Machine fixed.';$('nextBtn').style.display='inline-block';updateScore()}else{btn.classList.add('wrong');play('wrongSound');wrongAnim();power=Math.max(0,power-10);updateScore();if(attempts<2){$('feedback').textContent='Try once more.';setTimeout(()=>{btn.classList.remove('selected','wrong')},650)}else{buttons.forEach(b=>{b.disabled=true;if(b.innerHTML===item.ans)b.classList.add('selected','correct')});answered++;$('feedback').innerHTML=`Correct answer: <b>${item.ans}</b><br>${item.exp}`;$('nextBtn').style.display='inline-block';updateScore()}}}
-function correctAnim(){const m=$('machine'),crate=$('crate');m.classList.add('good');crate.style.left='72%';crate.style.transform='translateX(0) rotate(3deg)';for(let i=0;i<14;i++){setTimeout(()=>sparkle(),i*45)}setTimeout(()=>m.classList.remove('good'),900)}
+function loadQuestion(){attempts=0;const item=questions[current];$('questionText').innerHTML=item.q;$('feedback').textContent='';$('feedback').classList.remove('correct-feedback');$('nextBtn').style.display='none';$('crate').style.left='7%';$('crate').style.transform='translateX(0)';$('machine').classList.remove('good','bad');$('worker').classList.remove('celebrate');$('successGlow').classList.remove('show');$('repairStamp').classList.remove('show');$('scorePop').classList.remove('show');renderDots();const optBox=$('options');optBox.innerHTML='';item.opts.forEach(opt=>{const b=document.createElement('button');b.className='option';b.innerHTML=opt;b.onclick=()=>choose(b,opt);optBox.appendChild(b)})}
+function choose(btn,opt){const item=questions[current];const buttons=[...document.querySelectorAll('.option')];if(buttons.some(b=>b.disabled))return;attempts++;btn.classList.add('selected');if(opt===item.ans){btn.classList.add('correct');buttons.forEach(b=>b.disabled=true);score+=10;answered++;if(attempts===1)firstTryCorrect++;play('correctSound');setTimeout(()=>play('clapSound'),220);correctAnim(attempts===1);$('feedback').classList.add('correct-feedback');$('feedback').textContent=attempts===1?'Excellent! Correct on the first try — machine repaired!':'Well done! You corrected it and repaired the machine!';$('nextBtn').style.display='inline-block';updateScore();document.querySelectorAll('.score-pill')[1].classList.remove('reward');void document.querySelectorAll('.score-pill')[1].offsetWidth;document.querySelectorAll('.score-pill')[1].classList.add('reward')}else{btn.classList.add('wrong');$('feedback').classList.remove('correct-feedback');play('wrongSound');wrongAnim();power=Math.max(0,power-10);updateScore();if(attempts<2){$('feedback').textContent='Try once more.';setTimeout(()=>{btn.classList.remove('selected','wrong')},650)}else{buttons.forEach(b=>{b.disabled=true;if(b.innerHTML===item.ans)b.classList.add('selected','correct')});answered++;$('feedback').innerHTML=`Correct answer: <b>${item.ans}</b><br>${item.exp}`;$('nextBtn').style.display='inline-block';updateScore()}}}
+function correctAnim(firstTry){const m=$('machine'),crate=$('crate'),worker=$('worker'),glow=$('successGlow'),stamp=$('repairStamp'),scorePop=$('scorePop');$('praiseText').textContent=firstTry?'First-try fix! Fantastic!':'Great recovery — fixed!';m.classList.remove('good');worker.classList.remove('celebrate');glow.classList.remove('show');stamp.classList.remove('show');scorePop.classList.remove('show');void m.offsetWidth;m.classList.add('good');worker.classList.add('celebrate');glow.classList.add('show');stamp.classList.add('show');scorePop.classList.add('show');crate.style.left='72%';crate.style.transform='translateX(0) rotate(3deg)';for(let i=0;i<18;i++){setTimeout(()=>sparkle(),i*42)}setTimeout(()=>{m.classList.remove('good');worker.classList.remove('celebrate');glow.classList.remove('show');stamp.classList.remove('show');scorePop.classList.remove('show')},1200)}
 function wrongAnim(){const m=$('machine'),s=$('steam');m.classList.add('bad');s.classList.add('show');setTimeout(()=>{m.classList.remove('bad');s.classList.remove('show')},800)}
 function sparkle(){const st=$('stage');const e=document.createElement('div');e.className='sparkle';e.textContent=['✨','⭐','🔧','⚡'][Math.floor(Math.random()*4)];e.style.left=(35+Math.random()*30)+'%';e.style.top=(28+Math.random()*24)+'%';st.appendChild(e);setTimeout(()=>e.remove(),850)}
 function nextQuestion(){current++;if(current>=10){finish()}else loadQuestion()}
